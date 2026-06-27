@@ -1237,6 +1237,11 @@ export default function Home() {
             </div>
 
             {/* Right Column (Interactive List) */}
+            <div className="flex flex-col gap-6">
+              {[
+                { number: "01", icon: "🎨", title: "Bespoke Art & Code", desc: "Tailored to your requirements. We design physical gifts and engineer modern web systems matching your exact specification." },
+                { number: "02", icon: "✨", title: "Impeccable Quality", desc: "Crafted with premium materials and high precision tools. We check every detail to ensure it meets our rigorous standards." },
+                { number: "03", icon: "📦", title: "Seamless Experience", desc: "From instant digital downloads to securely packaged tracked worldwide shipping, we guarantee a hassle-free journey." },
                 { number: "04", icon: "🔥", title: "Uncompromising Uniqueness", desc: "Stand out with confidence. Our custom layouts, high-end materials, and bespoke systems ensure you leave a lasting impression of quality and authenticity." },
               ].map((c, i) => (
                 <FadeUp key={c.number} delay={i * 0.08}>
