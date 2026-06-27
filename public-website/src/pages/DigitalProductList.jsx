@@ -1,0 +1,1165 @@
+import { useEffect, useState, useCallback } from "react";
+import { Link } from "react-router-dom";
+import API from "../api";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import { useCart } from "../context/CartContext";
+import SEO from "../components/SEO";
+import AdBanner from "../components/AdBanner";
+
+/* ─── Google Fonts injected once ─────────────────────────── */
+if (typeof document !== "undefined" && !document.getElementById("olive-fonts")) {
+  const link = document.createElement("link");
+  link.id = "olive-fonts";
+  link.rel = "stylesheet";
+  link.href =
+    "https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap";
+  document.head.appendChild(link);
+}
+
+/* ─── Design tokens ───────────────────────────────────────── */
+const T = {
+  bg: "#0B1020",
+  surface1: "#12192D",
+  surface2: "#1A233A",
+  textPrimary: "#F8FAFC",
+  textSecondary: "#A5B4C7",
+  accent1: "#6EE7F9",
+  accent2: "#8B7CFF",
+  accent3: "#00D4A6",
+  border: "rgba(255,255,255,0.08)",
+};
+
+const SORT_OPTIONS = [
+  { value: "newest", label: "Newest" },
+  { value: "price_asc", label: "Price: Low → High" },
+  { value: "price_desc", label: "Price: High → Low" },
+  { value: "rating", label: "Top Rated" },
+];
+
+/* ─── Shared styles injected once ────────────────────────── */
+const GLOBAL_CSS = `
+  :root {
+    --bg: ${T.bg};
+    --s1: ${T.surface1};
+    --s2: ${T.surface2};
+    --tp: ${T.textPrimary};
+    --ts: ${T.textSecondary};
+    --a1: ${T.accent1};
+    --a2: ${T.accent2};
+    --a3: ${T.accent3};
+    --bd: ${T.border};
+  }
+  .sora { font-family: 'Sora', sans-serif; }
+  .inter { font-family: 'Inter', sans-serif; }
+
+  /* Vault category pill */
+  .vault-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.01em;
+    border: 1px solid var(--bd);
+    color: var(--ts);
+    background: rgba(255,255,255,0.03);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+  }
+  .vault-pill:hover {
+    border-color: rgba(110,231,249,0.35);
+    color: var(--a1);
+    background: rgba(110,231,249,0.06);
+  }
+  .vault-pill.active {
+    background: linear-gradient(90deg, rgba(110,231,249,0.18), rgba(139,124,255,0.18));
+    border-color: rgba(110,231,249,0.45);
+    color: var(--a1);
+    box-shadow: 0 0 18px rgba(110,231,249,0.15);
+  }
+
+  /* Digital card */
+  .dcard {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    border: 1px solid var(--bd);
+    background: var(--s1);
+    transition: transform 0.4s cubic-bezier(.22,.68,0,1.2),
+                box-shadow 0.4s ease,
+                border-color 0.4s ease;
+    will-change: transform;
+  }
+  .dcard:hover {
+    transform: translateY(-6px) scale(1.012);
+    border-color: rgba(110,231,249,0.22);
+    box-shadow: 0 24px 64px rgba(0,0,0,0.55),
+                0 0 40px rgba(110,231,249,0.07),
+                inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+  .dcard__glow {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 50% 0%, rgba(110,231,249,0.12), transparent 65%);
+    transition: opacity 0.4s ease;
+  }
+  .dcard:hover .dcard__glow { opacity: 1; }
+
+  .dcard__img-wrap {
+    position: relative;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    background: #080f1e;
+  }
+  .dcard__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease, filter 0.4s ease;
+  }
+  .dcard:hover .dcard__img {
+    transform: scale(1.08);
+    filter: brightness(1.1);
+  }
+  .dcard__img-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(11,16,32,0.82) 0%, transparent 55%);
+  }
+
+  /* Trust badge */
+  .trust-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 28px 20px;
+    border-radius: 16px;
+    border: 1px solid var(--bd);
+    background: var(--s1);
+    transition: border-color 0.3s ease, background 0.3s ease;
+    flex: 1;
+    min-width: 130px;
+  }
+  .trust-badge:hover {
+    border-color: rgba(110,231,249,0.2);
+    background: rgba(110,231,249,0.04);
+  }
+
+  /* Filter sidebar */
+  .filter-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    border: 1px solid transparent;
+    color: var(--ts);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.22s ease;
+  }
+  .filter-btn:hover {
+    background: rgba(110,231,249,0.06);
+    color: var(--a1);
+    border-color: rgba(110,231,249,0.15);
+  }
+  .filter-btn.active {
+    background: linear-gradient(90deg, rgba(110,231,249,0.14), rgba(139,124,255,0.10));
+    color: var(--a1);
+    border-color: rgba(110,231,249,0.28);
+    font-weight: 600;
+  }
+
+  /* Input / select */
+  .vault-input {
+    outline: none;
+    background: rgba(18,25,45,0.9);
+    border: 1px solid var(--bd);
+    border-radius: 12px;
+    color: var(--tp);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    padding: 10px 42px 10px 16px;
+    width: 260px;
+    backdrop-filter: blur(16px);
+    transition: border-color 0.25s;
+  }
+  .vault-input::placeholder { color: rgba(165,180,199,0.45); }
+  .vault-input:focus { border-color: rgba(110,231,249,0.4); }
+
+  .vault-select {
+    outline: none;
+    background: rgba(18,25,45,0.9);
+    border: 1px solid var(--bd);
+    border-radius: 12px;
+    color: var(--tp);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    padding: 10px 16px;
+    cursor: pointer;
+    backdrop-filter: blur(16px);
+    transition: border-color 0.25s;
+  }
+  .vault-select:focus { border-color: rgba(110,231,249,0.4); }
+
+  /* Cart button */
+  .cart-btn {
+    width: 100%;
+    padding: 11px 0;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.06em;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .cart-btn:hover { transform: scale(1.025); }
+  .cart-btn:active { transform: scale(0.97); }
+
+  /* Skeleton pulse */
+  @keyframes skeletonPulse {
+    0%,100% { opacity: 0.4; }
+    50% { opacity: 0.7; }
+  }
+  .skeleton { animation: skeletonPulse 1.6s ease-in-out infinite; }
+
+  /* Ambient floating orbs */
+  @keyframes orb1 {
+    0%,100% { transform: translate(0,0) scale(1); }
+    50% { transform: translate(30px,-40px) scale(1.08); }
+  }
+  @keyframes orb2 {
+    0%,100% { transform: translate(0,0) scale(1); }
+    50% { transform: translate(-25px,30px) scale(0.94); }
+  }
+  .orb1 { animation: orb1 14s ease-in-out infinite; }
+  .orb2 { animation: orb2 18s ease-in-out infinite; }
+
+  /* Sticky vault nav */
+  .vault-nav-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(11,16,32,0.88);
+    border-bottom: 1px solid var(--bd);
+  }
+
+  /* Hide scrollbar for category nav */
+  .cats-scroll::-webkit-scrollbar { display: none; }
+  .cats-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Collection card */
+  .coll-card {
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid var(--bd);
+    background: var(--s1);
+    cursor: pointer;
+    transition: border-color 0.3s, transform 0.3s, background 0.3s;
+  }
+  .coll-card:hover {
+    border-color: rgba(139,124,255,0.35);
+    background: rgba(139,124,255,0.05);
+    transform: translateY(-4px);
+  }
+
+  /* Newsletter input */
+  .nl-input {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--bd);
+    border-radius: 12px;
+    padding: 12px 18px;
+    color: var(--tp);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.25s;
+    min-width: 0;
+  }
+  .nl-input::placeholder { color: rgba(165,180,199,0.4); }
+  .nl-input:focus { border-color: rgba(110,231,249,0.4); }
+`;
+
+function injectStyles() {
+  if (typeof document !== "undefined" && !document.getElementById("olive-vault-css")) {
+    const s = document.createElement("style");
+    s.id = "olive-vault-css";
+    s.textContent = GLOBAL_CSS;
+    document.head.appendChild(s);
+  }
+}
+
+/* ─── Trust badges data ───────────────────────────────────── */
+const TRUST_ITEMS = [
+  { icon: "⚡", label: "Instant Download", sub: "Available immediately" },
+  { icon: "♾️", label: "Lifetime Access", sub: "Access forever" },
+  { icon: "📄", label: "Commercial License", sub: "Use in client work" },
+  { icon: "🔒", label: "Secure Checkout", sub: "256-bit encrypted" },
+  { icon: "🔄", label: "Regular Updates", sub: "Always improving" },
+  { icon: "🌐", label: "Global Access", sub: "Available worldwide" },
+];
+
+/* ─── Featured collections ───────────────────────────────── */
+const COLLECTIONS = [
+  { icon: "🤖", title: "AI Automation Vault", desc: "Next-gen agent workflows & AI systems", accent: T.accent1 },
+  { icon: "🚀", title: "Startup Launch Kit", desc: "Everything to launch fast and look great", accent: T.accent2 },
+  { icon: "🎨", title: "Creator Toolkit", desc: "Assets built for content creators", accent: T.accent3 },
+  { icon: "🧩", title: "Design System Collection", desc: "Scalable component systems & libraries", accent: "#F59E0B" },
+  { icon: "⚙️", title: "Business Automation", desc: "Automate ops with N8N & AI", accent: "#F472B6" },
+];
+
+
+/* ─── DigitalCard ─────────────────────────────────────────── */
+function DigitalCard({ p }) {
+  const { addToCart } = useCart();
+  const [added, setAdded] = useState(false);
+
+  const img = p.thumbnail_url || (p.images && p.images[0]);
+  const finalPrice = p.discount_price || p.price;
+  const discount = p.discount_price
+    ? Math.round((1 - p.discount_price / p.price) * 100)
+    : 0;
+  const tags = Array.isArray(p.tags) ? p.tags : [];
+
+  const handleAdd = (e) => {
+    e.preventDefault();
+    addToCart({ ...p, type: "digital" });
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1500);
+  };
+
+  return (
+    <div className="dcard">
+      <div className="dcard__glow" />
+
+      {/* Image */}
+      <Link to={`/digital/${p.id}`} style={{ display: "block" }}>
+        <div className="dcard__img-wrap">
+          {img ? (
+            <img src={img} alt={p.name} className="dcard__img" />
+          ) : (
+            <div
+              style={{
+                width: "100%", height: "100%",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 48, color: "rgba(110,231,249,0.15)",
+              }}
+            >
+              ⬡
+            </div>
+          )}
+          <div className="dcard__img-overlay" />
+
+          {discount > 0 && (
+            <div style={{ position: "absolute", top: 12, left: 12 }}>
+              <span style={{
+                padding: "4px 10px",
+                borderRadius: 999,
+                fontSize: 11,
+                fontWeight: 700,
+                fontFamily: "Inter, sans-serif",
+                background: "linear-gradient(90deg,#F59E0B,#EF4444)",
+                color: "#fff",
+                boxShadow: "0 4px 16px rgba(239,68,68,0.35)",
+              }}>
+                -{discount}%
+              </span>
+            </div>
+          )}
+
+          {p.file_format && (
+            <div style={{ position: "absolute", bottom: 10, left: 12 }}>
+              <span style={{
+                padding: "4px 10px",
+                borderRadius: 999,
+                fontSize: 11,
+                fontWeight: 600,
+                fontFamily: "Inter, sans-serif",
+                background: "rgba(255,255,255,0.1)",
+                backdropFilter: "blur(10px)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                color: "#fff",
+              }}>
+                {p.file_format}
+              </span>
+            </div>
+          )}
+
+          {tags.length > 0 && (
+            <div style={{ position: "absolute", top: 12, right: 12 }}>
+              <span style={{
+                padding: "4px 10px",
+                borderRadius: 999,
+                fontSize: 11,
+                fontWeight: 700,
+                fontFamily: "Inter, sans-serif",
+                background: "linear-gradient(90deg, rgba(110,231,249,0.25), rgba(139,124,255,0.25))",
+                border: "1px solid rgba(110,231,249,0.3)",
+                color: T.accent1,
+                backdropFilter: "blur(8px)",
+              }}>
+                {tags[0]}
+              </span>
+            </div>
+          )}
+        </div>
+      </Link>
+
+      {/* Body */}
+      <div style={{ padding: "16px 18px 20px", display: "flex", flexDirection: "column", gap: 10 }}>
+        {p.category_name && (
+          <p style={{
+            fontFamily: "Inter, sans-serif",
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: "0.18em",
+            textTransform: "uppercase",
+            color: T.accent1,
+            margin: 0,
+          }}>
+            {p.category_name}
+          </p>
+        )}
+
+        <Link to={`/digital/${p.id}`} style={{ textDecoration: "none" }}>
+          <h3
+            className="sora"
+            style={{
+              fontSize: 15,
+              fontWeight: 700,
+              lineHeight: 1.35,
+              color: T.textPrimary,
+              margin: 0,
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
+          >
+            {p.name}
+          </h3>
+        </Link>
+
+        {/* Rating */}
+        <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
+          {[1, 2, 3, 4, 5].map((i) => (
+            <span
+              key={i}
+              style={{
+                fontSize: 12,
+                color: i <= Math.round(p.rating) ? "#FBBF24" : "rgba(255,255,255,0.12)",
+              }}
+            >
+              ★
+            </span>
+          ))}
+          <span style={{
+            fontFamily: "Inter, sans-serif",
+            fontSize: 11,
+            color: "rgba(165,180,199,0.5)",
+            marginLeft: 4,
+          }}>
+            ({p.review_count || 0})
+          </span>
+        </div>
+
+        {/* Price */}
+        <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: 2 }}>
+          <span
+            className="sora"
+            style={{
+              fontSize: 22,
+              fontWeight: 800,
+              background: `linear-gradient(90deg, ${T.accent1}, ${T.textPrimary})`,
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
+          >
+            ₹{finalPrice}
+          </span>
+          {p.discount_price && (
+            <span style={{
+              fontFamily: "Inter, sans-serif",
+              fontSize: 13,
+              textDecoration: "line-through",
+              color: "rgba(165,180,199,0.35)",
+            }}>
+              ₹{p.price}
+            </span>
+          )}
+        </div>
+
+        <button
+          onClick={handleAdd}
+          className="cart-btn"
+          style={{
+            background: added
+              ? `linear-gradient(90deg, ${T.accent3}, #00b899)`
+              : `linear-gradient(90deg, ${T.accent2}, ${T.accent1})`,
+            color: added ? "#fff" : T.bg,
+            boxShadow: added
+              ? "0 8px 24px rgba(0,212,166,0.28)"
+              : "0 8px 24px rgba(110,231,249,0.22)",
+            marginTop: 4,
+          }}
+        >
+          {added ? "✓ Added to Cart" : "Add to Cart"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Skeleton card ───────────────────────────────────────── */
+function SkeletonCard() {
+  return (
+    <div
+      className="skeleton"
+      style={{
+        borderRadius: 20,
+        border: "1px solid rgba(255,255,255,0.05)",
+        overflow: "hidden",
+        background: T.surface1,
+      }}
+    >
+      <div style={{ aspectRatio: "16/9", background: "rgba(255,255,255,0.04)" }} />
+      <div style={{ padding: "16px 18px 20px", display: "flex", flexDirection: "column", gap: 10 }}>
+        <div style={{ height: 10, borderRadius: 6, background: "rgba(255,255,255,0.05)", width: "40%" }} />
+        <div style={{ height: 14, borderRadius: 6, background: "rgba(255,255,255,0.05)" }} />
+        <div style={{ height: 14, borderRadius: 6, background: "rgba(255,255,255,0.05)", width: "70%" }} />
+        <div style={{ height: 40, borderRadius: 12, background: "rgba(255,255,255,0.04)", marginTop: 8 }} />
+      </div>
+    </div>
+  );
+}
+
+/* ─── Main page ───────────────────────────────────────────── */
+export default function DigitalProductList() {
+  injectStyles();
+
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const [filters, setFilters] = useState({
+    search: "",
+    category: "",
+    sort: "newest",
+    minPrice: "",
+    maxPrice: "",
+    minRating: "",
+  });
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([k, v]) => { if (v) params.set(k, v); });
+    const [r, c] = await Promise.all([
+      API.get(`/digital-products?${params}`),
+      API.get("/categories?type=digital"),
+    ]);
+    setProducts(r.data);
+    setCategories(c.data);
+    setLoading(false);
+  }, [filters]);
+
+  useEffect(() => { load(); }, [load]);
+
+  const setFilter = (key, val) => setFilters((f) => ({ ...f, [key]: val }));
+
+  return (
+    <div
+      className="inter"
+      style={{
+        minHeight: "100vh",
+        background: T.bg,
+        position: "relative",
+        overflowX: "hidden",
+      }}
+    >
+      <SEO
+        title="Digital Products — Instant Download | Figma Templates, Web Templates & More | Olive Seeds"
+        description="Download premium Figma UI templates, website templates, printables, 3D models and n8n automation tools instantly. Commercial license included. Designed for creators and businesses."
+        keywords="buy Figma templates online, instant download design templates, UI kit download for designers, website template instant download, printable design assets download, n8n automation workflow template, 3D model files instant download, branding kit download, social media template pack, Figma UI components download, web design templates purchase"
+      />
+
+      {/* ── Ambient background orbs ── */}
+      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", overflow: "hidden", zIndex: 0 }}>
+        <div
+          className="orb1"
+          style={{
+            position: "absolute",
+            top: "-15%",
+            left: "-10%",
+            width: 700,
+            height: 700,
+            borderRadius: "50%",
+            background: `radial-gradient(circle, rgba(110,231,249,0.07) 0%, transparent 70%)`,
+            filter: "blur(60px)",
+          }}
+        />
+        <div
+          className="orb2"
+          style={{
+            position: "absolute",
+            bottom: "-20%",
+            right: "-12%",
+            width: 800,
+            height: 800,
+            borderRadius: "50%",
+            background: `radial-gradient(circle, rgba(139,124,255,0.07) 0%, transparent 70%)`,
+            filter: "blur(80px)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            top: "40%",
+            left: "30%",
+            width: 500,
+            height: 500,
+            borderRadius: "50%",
+            background: `radial-gradient(circle, rgba(0,212,166,0.04) 0%, transparent 70%)`,
+            filter: "blur(80px)",
+          }}
+        />
+      </div>
+
+      {/* ── Global Navbar ── */}
+      <div style={{ position: "relative", zIndex: 50 }}>
+        <Navbar />
+      </div>
+
+
+
+      {/* ── Hero ── */}
+      <section
+        style={{
+          position: "relative",
+          padding: "100px 24px 80px",
+          overflow: "hidden",
+          borderBottom: `1px solid ${T.border}`,
+        }}
+      >
+        <div style={{ maxWidth: 1280, margin: "0 auto", position: "relative", zIndex: 2 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "center" }}>
+            {/* Left */}
+            <div>
+              <div style={{ marginBottom: 20 }}>
+                <span style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "6px 14px",
+                  borderRadius: 999,
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  fontFamily: "Inter, sans-serif",
+                  background: "rgba(110,231,249,0.08)",
+                  border: "1px solid rgba(110,231,249,0.2)",
+                  color: T.accent1,
+                }}>
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: T.accent1, display: "inline-block" }} />
+                  Premium Digital Vault
+                </span>
+              </div>
+
+              <h1
+                className="sora"
+                style={{
+                  fontSize: "clamp(36px, 5vw, 58px)",
+                  fontWeight: 900,
+                  lineHeight: 1.1,
+                  color: T.textPrimary,
+                  margin: "0 0 12px",
+                  letterSpacing: "-2px",
+                }}
+              >
+                Digital Assets That
+                <span style={{
+                  display: "block",
+                  background: `linear-gradient(90deg, ${T.accent1}, ${T.accent2})`,
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}>
+                  Accelerate Creation.
+                </span>
+              </h1>
+
+              <p
+                className="inter"
+                style={{
+                  fontSize: "clamp(15px, 1.8vw, 18px)",
+                  lineHeight: 1.7,
+                  color: T.textSecondary,
+                  margin: "20px 0 36px",
+                  maxWidth: 480,
+                }}
+              >
+                Premium templates, AI systems, automation workflows, and creative resources built for professionals and businesses.
+              </p>
+
+              <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+                <button
+                  style={{
+                    padding: "14px 30px",
+                    borderRadius: 12,
+                    fontFamily: "Inter, sans-serif",
+                    fontWeight: 700,
+                    fontSize: 14,
+                    letterSpacing: "0.04em",
+                    border: "none",
+                    cursor: "pointer",
+                    background: `linear-gradient(135deg, ${T.accent1}, ${T.accent2})`,
+                    color: T.bg,
+                    boxShadow: `0 10px 32px rgba(110,231,249,0.3)`,
+                    transition: "transform 0.2s, box-shadow 0.2s",
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = "translateY(-2px)";
+                    e.currentTarget.style.boxShadow = "0 16px 40px rgba(110,231,249,0.4)";
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "0 10px 32px rgba(110,231,249,0.3)";
+                  }}
+                >
+                  Explore Assets
+                </button>
+                <button
+                  style={{
+                    padding: "14px 30px",
+                    borderRadius: 12,
+                    fontFamily: "Inter, sans-serif",
+                    fontWeight: 600,
+                    fontSize: 14,
+                    letterSpacing: "0.04em",
+                    cursor: "pointer",
+                    background: "transparent",
+                    color: T.textPrimary,
+                    border: `1px solid ${T.border}`,
+                    transition: "border-color 0.25s, background 0.25s",
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(110,231,249,0.35)";
+                    e.currentTarget.style.background = "rgba(110,231,249,0.05)";
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.borderColor = T.border;
+                    e.currentTarget.style.background = "transparent";
+                  }}
+                >
+                  View Best Sellers
+                </button>
+              </div>
+            </div>
+
+            {/* Right: floating preview cards */}
+            <div style={{ position: "relative", height: 360, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              {[
+                { label: "Figma Template", icon: "🎨", x: 0, y: 0, accent: T.accent1 },
+                { label: "AI Agent", icon: "🤖", x: 160, y: -50, accent: T.accent2 },
+                { label: "3D Asset", icon: "⬡", x: 30, y: 140, accent: T.accent3 },
+                { label: "N8N Workflow", icon: "⚙️", x: 200, y: 90, accent: "#F59E0B" },
+              ].map((card, i) => (
+                <div
+                  key={card.label}
+                  style={{
+                    position: "absolute",
+                    left: `calc(50% - 90px + ${card.x}px)`,
+                    top: `calc(50% - 48px + ${card.y}px)`,
+                    width: 156,
+                    padding: "14px 16px",
+                    borderRadius: 16,
+                    border: `1px solid rgba(255,255,255,0.09)`,
+                    background: "rgba(18,25,45,0.85)",
+                    backdropFilter: "blur(20px)",
+                    boxShadow: `0 16px 48px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.03)`,
+                    animation: `orb${(i % 2) + 1} ${12 + i * 3}s ease-in-out infinite`,
+                    animationDelay: `${i * 1.5}s`,
+                  }}
+                >
+                  <div style={{ fontSize: 24, marginBottom: 8 }}>{card.icon}</div>
+                  <div style={{
+                    fontFamily: "Sora, sans-serif",
+                    fontSize: 12,
+                    fontWeight: 700,
+                    color: T.textPrimary,
+                    marginBottom: 4,
+                  }}>
+                    {card.label}
+                  </div>
+                  <div style={{
+                    height: 3,
+                    borderRadius: 2,
+                    background: `linear-gradient(90deg, ${card.accent}, transparent)`,
+                    width: "70%",
+                  }} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Trust Section ── */}
+      <section style={{ padding: "48px 24px", borderBottom: `1px solid ${T.border}`, position: "relative", zIndex: 2 }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
+            {TRUST_ITEMS.map((item) => (
+              <div key={item.label} className="trust-badge" style={{ maxWidth: 180 }}>
+                <span style={{ fontSize: 26 }}>{item.icon}</span>
+                <div style={{ textAlign: "center" }}>
+                  <div className="sora" style={{ fontSize: 13, fontWeight: 700, color: T.textPrimary, marginBottom: 2 }}>
+                    {item.label}
+                  </div>
+                  <div style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: T.textSecondary }}>
+                    {item.sub}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Ad Banner ── */}
+      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "32px 24px 0", position: "relative", zIndex: 2 }}>
+        <AdBanner placement="Horizontal Banner" />
+      </div>
+
+      {/* ── Featured Collections ── */}
+      <section style={{ padding: "64px 24px 48px", position: "relative", zIndex: 2 }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+          <div style={{ marginBottom: 32 }}>
+            <p style={{
+              fontFamily: "Inter, sans-serif",
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              color: T.accent2,
+              marginBottom: 10,
+            }}>
+              Curated Vaults
+            </p>
+            <h2 className="sora" style={{
+              fontSize: "clamp(22px, 3vw, 32px)",
+              fontWeight: 800,
+              color: T.textPrimary,
+              letterSpacing: "-1px",
+              margin: 0,
+            }}>
+              Featured Collections
+            </h2>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 16 }}>
+            {COLLECTIONS.map((col) => (
+              <div key={col.title} className="coll-card">
+                <div style={{ fontSize: 28, marginBottom: 12 }}>{col.icon}</div>
+                <h3 className="sora" style={{ fontSize: 14, fontWeight: 700, color: T.textPrimary, margin: "0 0 6px", letterSpacing: "-0.3px" }}>
+                  {col.title}
+                </h3>
+                <p style={{ fontFamily: "Inter, sans-serif", fontSize: 12.5, color: T.textSecondary, margin: "0 0 14px", lineHeight: 1.5 }}>
+                  {col.desc}
+                </p>
+                <div style={{ height: 2, borderRadius: 2, background: `linear-gradient(90deg, ${col.accent}, transparent)`, width: "60%" }} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Main Products Section ── */}
+      <section style={{ padding: "0 24px 80px", position: "relative", zIndex: 2 }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto", display: "flex", gap: 28 }}>
+
+          {/* ── Sidebar ── */}
+          <aside style={{ width: 240, flexShrink: 0, display: "none" }} className="vault-sidebar">
+            <style>{`@media(min-width:1024px){.vault-sidebar{display:block!important;}}`}</style>
+            <div style={{
+              position: "sticky",
+              top: 72,
+              borderRadius: 18,
+              border: `1px solid ${T.border}`,
+              background: T.surface1,
+              overflow: "hidden",
+            }}>
+              {/* Categories */}
+              <div style={{ padding: "20px 16px" }}>
+                <p className="sora" style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  letterSpacing: "0.22em",
+                  textTransform: "uppercase",
+                  color: T.accent1,
+                  marginBottom: 14,
+                }}>
+                  Categories
+                </p>
+                <button
+                  onClick={() => setFilter("category", "")}
+                  className={`filter-btn${!filters.category ? " active" : ""}`}
+                >
+                  All Products
+                </button>
+                {categories.map((c) => (
+                  <button
+                    key={c.id}
+                    onClick={() => setFilter("category", c.name)}
+                    className={`filter-btn${filters.category === c.name ? " active" : ""}`}
+                  >
+                    {c.name}
+                  </button>
+                ))}
+              </div>
+
+              {/* Divider */}
+              <div style={{ height: 1, background: T.border, margin: "0 16px" }} />
+
+              {/* Sort */}
+              <div style={{ padding: "16px" }}>
+                <p className="sora" style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  letterSpacing: "0.22em",
+                  textTransform: "uppercase",
+                  color: T.accent2,
+                  marginBottom: 12,
+                }}>
+                  Sort By
+                </p>
+                {SORT_OPTIONS.map((o) => (
+                  <button
+                    key={o.value}
+                    onClick={() => setFilter("sort", o.value)}
+                    className={`filter-btn${filters.sort === o.value ? " active" : ""}`}
+                  >
+                    {o.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Sidebar Ad */}
+            <div style={{ marginTop: 20 }}>
+              <AdBanner placement="Vertical Tower" />
+            </div>
+          </aside>
+
+          {/* ── Product Grid ── */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            {/* Controls bar */}
+            <div style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 12,
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: 28,
+              paddingTop: 8,
+            }}>
+              <p style={{ fontFamily: "Inter, sans-serif", fontSize: 13.5, color: T.textSecondary, margin: 0 }}>
+                {loading
+                  ? "Loading premium assets…"
+                  : `${products.length} products available`}
+              </p>
+
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+                {/* Search */}
+                <div style={{ position: "relative" }}>
+                  <input
+                    value={filters.search}
+                    onChange={(e) => setFilter("search", e.target.value)}
+                    placeholder="Search premium products…"
+                    className="vault-input"
+                  />
+                  <span style={{
+                    position: "absolute",
+                    right: 14,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    color: T.accent1,
+                    fontSize: 16,
+                    pointerEvents: "none",
+                  }}>
+                    ⌕
+                  </span>
+                </div>
+
+                {/* Sort (mobile) */}
+                <select
+                  value={filters.sort}
+                  onChange={(e) => setFilter("sort", e.target.value)}
+                  className="vault-select"
+                >
+                  {SORT_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value} style={{ background: T.bg }}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Grid */}
+            {loading ? (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 20 }}>
+                {[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}
+              </div>
+            ) : products.length === 0 ? (
+              <div style={{
+                padding: "80px 24px",
+                textAlign: "center",
+                borderRadius: 20,
+                border: `1px solid ${T.border}`,
+                background: T.surface1,
+              }}>
+                <div style={{ fontSize: 48, opacity: 0.15, marginBottom: 16 }}>⬡</div>
+                <p className="sora" style={{ fontSize: 18, fontWeight: 700, color: T.textPrimary, margin: "0 0 8px" }}>
+                  No products found
+                </p>
+                <p style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: T.textSecondary, margin: 0 }}>
+                  Try adjusting your filters or search terms.
+                </p>
+              </div>
+            ) : (
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+                gap: 20,
+              }}>
+                {products.map((p) => (
+                  <DigitalCard key={p.id} p={p} />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Newsletter ── */}
+      <section style={{
+        position: "relative",
+        zIndex: 2,
+        borderTop: `1px solid ${T.border}`,
+        padding: "72px 24px",
+        overflow: "hidden",
+      }}>
+        {/* bg accent */}
+        <div style={{
+          position: "absolute",
+          inset: 0,
+          background: `radial-gradient(ellipse at 50% 100%, rgba(139,124,255,0.08), transparent 60%)`,
+          pointerEvents: "none",
+        }} />
+
+        <div style={{ maxWidth: 560, margin: "0 auto", textAlign: "center", position: "relative" }}>
+          <span style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            padding: "5px 14px",
+            borderRadius: 999,
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: "0.18em",
+            textTransform: "uppercase",
+            fontFamily: "Inter, sans-serif",
+            background: "rgba(139,124,255,0.1)",
+            border: "1px solid rgba(139,124,255,0.2)",
+            color: T.accent2,
+            marginBottom: 20,
+          }}>
+            Vault Insider
+          </span>
+
+          <h2 className="sora" style={{
+            fontSize: "clamp(24px, 3.5vw, 36px)",
+            fontWeight: 800,
+            color: T.textPrimary,
+            letterSpacing: "-1px",
+            margin: "0 0 14px",
+          }}>
+            Stay Ahead of the Curve
+          </h2>
+          <p style={{
+            fontFamily: "Inter, sans-serif",
+            fontSize: 15,
+            color: T.textSecondary,
+            margin: "0 0 32px",
+            lineHeight: 1.6,
+          }}>
+            Get new releases, exclusive assets, early access drops, and industry resources delivered first.
+          </p>
+
+          <div style={{ display: "flex", gap: 10, maxWidth: 440, margin: "0 auto" }}>
+            <input
+              type="email"
+              placeholder="your@email.com"
+              className="nl-input"
+            />
+            <button style={{
+              padding: "12px 22px",
+              borderRadius: 12,
+              fontFamily: "Inter, sans-serif",
+              fontWeight: 700,
+              fontSize: 13,
+              letterSpacing: "0.04em",
+              border: "none",
+              cursor: "pointer",
+              background: `linear-gradient(135deg, ${T.accent1}, ${T.accent2})`,
+              color: T.bg,
+              whiteSpace: "nowrap",
+              boxShadow: "0 8px 24px rgba(110,231,249,0.25)",
+              transition: "transform 0.2s",
+            }}
+            onMouseOver={(e) => e.currentTarget.style.transform = "scale(1.04)"}
+            onMouseOut={(e) => e.currentTarget.style.transform = "scale(1)"}
+            >
+              Get Access
+            </button>
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "center", gap: 24, marginTop: 20, flexWrap: "wrap" }}>
+            {["New Releases", "Exclusive Assets", "Early Access"].map((t) => (
+              <span key={t} style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: 12,
+                color: "rgba(165,180,199,0.5)",
+                display: "flex",
+                alignItems: "center",
+                gap: 5,
+              }}>
+                <span style={{ color: T.accent3, fontSize: 10 }}>✓</span> {t}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Footer ── */}
+      <div style={{ position: "relative", zIndex: 2 }}>
+        <Footer dark />
+      </div>
+    </div>
+  );
+}
