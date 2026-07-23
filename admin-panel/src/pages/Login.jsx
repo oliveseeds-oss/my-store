@@ -20,7 +20,7 @@ export default function Login() {
     setError("");
 
     try {
-      const res = await axios.post("/admin/login", {
+      const res = await api.post("../admin/login", {
         username: form.username,
         password: form.password,
       });
