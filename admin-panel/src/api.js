@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = axios.create({ baseURL: "http://localhost:5000/api" });
+const API = axios.create({ baseURL: "http://200.141.2.131:5000/api" });
 
 // Attach token to every request
 API.interceptors.request.use((config) => {
