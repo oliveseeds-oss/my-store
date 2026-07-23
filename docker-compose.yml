@@ -1,0 +1,57 @@
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: oliveseeds-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: mystore
+      MYSQL_ROOT_PASSWORD: QWER1234
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/mystore.sql:/docker-entrypoint-initdb.d/mystore.sql
+
+
+  backend:
+    build:
+      context: ./backend
+    container_name: oliveseeds-backend
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: QWER1234
+      DB_NAME: mystore
+      PORT: 5000
+    depends_on:
+      - mysql
+
+
+  public-website:
+    build:
+      context: ./public-website
+    container_name: oliveseeds-public
+    restart: always
+    ports:
+      - "3001:3001"
+    depends_on:
+      - backend
+
+
+  admin-panel:
+    build:
+      context: ./admin-panel
+    container_name: oliveseeds-admin
+    restart: always
+    ports:
+      - "3002:3002"
+    depends_on:
+      - backend
+
+
+volumes:
+  mysql_data:Local
