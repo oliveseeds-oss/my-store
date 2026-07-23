@@ -19,8 +19,51 @@ const FadeUp = ({ children, delay = 0, className = "", style = {} }) => (
   >
     {children}
   </motion.div>
-);
+); const COLLECTIONS = [
+  { title: "Corporate Excellence", sub: "Elevate your brand identity", emoji: "🏆" },
+  { title: "Modern Workspace", sub: "Desk accessories & name plates", emoji: "🖊️" },
+  { title: "Wedding Collection", sub: "Timeless keepsakes for love", emoji: "💍" },
+  { title: "Business Branding", sub: "Custom branding at scale", emoji: "📦" },
+];
 
+function CollectionCard({ col }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <div
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        background: hov ? "var(--gold-soft)" : "var(--surface)",
+        borderRadius: "var(--radius)",
+        border: `1px solid var(--border)`,
+        padding: "36px 28px",
+        cursor: "pointer",
+        transition: "all 0.35s ease",
+        boxShadow: hov ? "var(--shadow-md)" : "var(--shadow-sm)",
+        transform: hov ? "translateY(-4px)" : "translateY(0)",
+      }}
+    >
+      <span style={{ fontSize: 36, display: "block", marginBottom: 16 }}>{col.emoji}</span>
+      <h3 style={{
+        fontFamily: "'Clash Display', sans-serif",
+        fontWeight: 600,
+        fontSize: 22, color: "var(--accent)", marginBottom: 8,
+      }}>
+        {col.title}
+      </h3>
+      <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: "var(--text-2)", lineHeight: 1.6 }}>
+        {col.sub}
+      </p>
+      <div style={{
+        marginTop: 20, display: "flex", alignItems: "center", gap: 6,
+        fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 600,
+        color: "var(--gold)", letterSpacing: "0.08em", textTransform: "uppercase",
+      }}>
+        Explore <span style={{ fontSize: 14 }}>→</span>
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -40,7 +83,7 @@ export default function Home() {
 
     API.get("/settings")
       .then((r) => { if (r.data) setSettings(r.data); })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   return (
@@ -338,10 +381,11 @@ export default function Home() {
       ══════════════════════════════════════════════ */}
       <section
         ref={heroRef}
+        className="hero-section"
         style={{
-          minHeight: "100vh",
-          paddingTop: "130px",
-          paddingBottom: "100px",
+          minHeight: "80vh",
+          paddingTop: "110px",
+          paddingBottom: "80px",
           position: "relative",
           background: "#F8F8F5",
           display: "flex",
@@ -438,8 +482,8 @@ export default function Home() {
                   fontWeight: 400,
                 }}
               >
-                Bespoke laser-engraved gifts, personalized wooden frames &amp; acrylic keepsakes — 
-                paired with premium Notion workspaces, Figma systems, and React web engineering, 
+                Bespoke laser-acrylic & wooden engraved gifts, personalized arts,  &amp; interior products keepsakes —
+                paired with premium Notion workspaces, Figma systems, and React web engineering,
                 all crafted from our design studio.
               </motion.p>
 
@@ -452,7 +496,7 @@ export default function Home() {
               >
                 <Link to="/products" className="btn-primary">
                   Shop Gifts
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                 </Link>
                 <Link to="/digital" className="btn-outline">
                   Explore Digital Studio
@@ -620,9 +664,9 @@ export default function Home() {
       {/* ══════════════════════════════════════════════
           THREE CORE DIVISIONS
       ══════════════════════════════════════════════ */}
-      <section style={{ padding: "60px 0 100px", background: "var(--surface)" }}>
+      <section style={{ padding: "50px 0 70px", background: "var(--surface)" }}>
         <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
-          <FadeUp style={{ textAlign: "center", marginBottom: "96px" }}>
+          <FadeUp style={{ textAlign: "center", marginBottom: "48px" }}>
             <span className="eyebrow" style={{ justifyContent: "center" }}>What We Offer</span>
             <h2 className="clash" style={{
               fontSize: "clamp(2.2rem, 4vw, 4rem)",
@@ -666,10 +710,10 @@ export default function Home() {
                   letterSpacing: "-0.01em", marginBottom: "14px",
                 }}>Physical Products</h3>
                 <p style={{ color: "var(--text-2)", fontSize: "14px", lineHeight: 1.75, marginBottom: "28px" }}>
-                  Precision laser-engraved arts, frames, acrylic keepsakes, custom nameplates &amp; corporate gifts — more products in our design studio.
+                  Precision laser-engraved acrylic & wooden arts, gifts, interior keepsakes, custom nameplates &amp; corporate gifts — more products in our design studio.
                 </p>
                 <ul style={{ listStyle: "none", padding: 0, marginBottom: "36px" }}>
-                  {["Custom Engraved Premium Art", "Acrylic Keepsake Products", "Personalized Nameplates", "Corporate Gift & More"].map((li) => (
+                  {["Custom Engraved Premium Art", "Acrylic Keepsake Products", "Personalized Interior Products", "Corporate Gift & More"].map((li) => (
                     <li key={li} style={{
                       fontSize: "13px", color: "var(--text-2)",
                       padding: "9px 0", borderBottom: "1px solid var(--border)",
@@ -776,14 +820,14 @@ export default function Home() {
       {/* ══════════════════════════════════════════════
           AD BANNER (Horizontal)
       ══════════════════════════════════════════════ */}
-      <section style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px 80px" }}>
+      <section style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px 40px" }}>
         <AdBanner placement="Horizontal Banner" />
       </section>
 
       {/* ══════════════════════════════════════════════
           STUDIO STORY / ABOUT
       ══════════════════════════════════════════════ */}
-      <section style={{ padding: "120px 0", background: "#F4F4F1" }}>
+      <section style={{ padding: "70px 0", background: "#F4F4F1" }}>
         <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
           <div
             className="two-cols"
@@ -802,7 +846,7 @@ export default function Home() {
                   src="https://images.unsplash.com/photo-1540206351-d6465b3ac5c1?q=80&w=900&auto=format&fit=crop"
                   alt="Artisan laser engraving wood craftsmanship design studio"
                   style={{
-                    width: "100%", height: "520px", objectFit: "cover",
+                    width: "100%", height: "400px", objectFit: "cover",
                     borderRadius: "var(--radius)",
                     border: "1px solid var(--border)",
                     display: "block", position: "relative", zIndex: 1,
@@ -876,7 +920,7 @@ export default function Home() {
       {/* ══════════════════════════════════════════════
           PHYSICAL PRODUCTS
       ══════════════════════════════════════════════ */}
-      <section style={{ padding: "120px 0", background: "#F8F8F5" }}>
+      <section style={{ padding: "70px 0", background: "#F8F8F5" }}>
         <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
           {/* Header */}
           <div style={{
@@ -891,7 +935,7 @@ export default function Home() {
                 marginTop: "14px", letterSpacing: "-0.02em", lineHeight: 1.08,
               }}>Physical Masterpieces</h2>
             </FadeUp>
-            <Link to="/products" style={{
+            <Link to="/catalog" style={{
               fontSize: "12px", fontWeight: 600, letterSpacing: "0.1em",
               textTransform: "uppercase", color: "var(--gold)",
               textDecoration: "none",
@@ -945,7 +989,17 @@ export default function Home() {
                 <p style={{ color: "rgba(255,255,255,0.72)", fontSize: "15px", lineHeight: 1.7, marginBottom: "28px" }}>
                   Cherry wood boards, clean acrylic tags, personalized frames and corporate items etched with precision lasers.
                 </p>
-                <Link to="/products" className="btn-gold">Customize Your Craft →</Link>
+                <button
+                  onClick={() => {
+                    const event = new CustomEvent("open-whatsapp-chat", {
+                      detail: { text: "Hi Olive Seeds, I would like to customize a craft." }
+                    });
+                    window.dispatchEvent(event);
+                  }}
+                  className="btn-gold cursor-pointer"
+                >
+                  Customize Your Craft →
+                </button>
               </div>
             </div>
           </FadeUp>
@@ -1020,9 +1074,45 @@ export default function Home() {
       </section>
 
       {/* ══════════════════════════════════════════════
+          FEATURED COLLECTIONS
+      ══════════════════════════════════════════════ */}
+      <section style={{ padding: "50px 24px", maxWidth: "1280px", margin: "0 auto" }}>
+        <div style={{ marginBottom: 48, textAlign: "center" }}>
+          <FadeUp>
+            <span className="eyebrow" style={{ justifyContent: "center" }}>Featured Collections</span>
+            <h2 className="clash" style={{
+              fontSize: "clamp(2rem, 4vw, 3.6rem)",
+              fontWeight: 700, color: "var(--accent)",
+              marginTop: "18px", letterSpacing: "-0.02em", lineHeight: 1.08,
+              textAlign: "center", marginBottom: 8
+            }}>Curated for Every Occasion</h2>
+            <p style={{
+              color: "var(--text-2)", maxWidth: "540px",
+              margin: "0 auto", fontSize: "15px", lineHeight: 1.7,
+              textAlign: "center"
+            }}>
+              Explore our editorial collections — each one crafted with a singular vision.
+            </p>
+          </FadeUp>
+        </div>
+
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+          gap: 24,
+        }}>
+          {COLLECTIONS.map((col, i) => (
+            <FadeUp key={i} delay={i * 0.08}>
+              <CollectionCard col={col} />
+            </FadeUp>
+          ))}
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════
           DIGITAL PRODUCTS
       ══════════════════════════════════════════════ */}
-      <section style={{ padding: "120px 0", background: "var(--accent)" }}>
+      <section style={{ padding: "70px 0", background: "var(--accent)" }}>
         <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
           <FadeUp style={{ textAlign: "center", marginBottom: "64px" }}>
             <span style={{
@@ -1114,10 +1204,51 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Digital Trust Section ── */}
+      <section style={{ padding: "64px 24px", background: "#0B1020", position: "relative", zIndex: 2 }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+          <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}>
+            {[
+              { icon: "⚡", label: "Instant Download", sub: "Available immediately" },
+              { icon: "♾️", label: "Lifetime Access", sub: "Access forever" },
+              { icon: "📄", label: "Commercial License", sub: "Use in client work" },
+              { icon: "🔒", label: "Secure Checkout", sub: "256-bit encrypted" },
+              { icon: "🔄", label: "Regular Updates", sub: "Always improving" },
+              { icon: "🌐", label: "Global Access", sub: "Available worldwide" },
+            ].map((item, i) => (
+              <FadeUp key={item.label} delay={i * 0.05} style={{ display: "flex", flex: "1 1 150px", maxWidth: "200px" }}>
+                <div style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: "12px",
+                  padding: "24px 16px",
+                  borderRadius: "16px",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  background: "#12192D",
+                  width: "100%",
+                  transition: "all 0.3s ease",
+                }}>
+                  <span style={{ fontSize: 28 }}>{item.icon}</span>
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "#F8FAFC", marginBottom: 4, fontFamily: "'Inter', sans-serif" }}>
+                      {item.label}
+                    </div>
+                    <div style={{ fontSize: 11, color: "#A5B4C7", fontFamily: "'Inter', sans-serif" }}>
+                      {item.sub}
+                    </div>
+                  </div>
+                </div>
+              </FadeUp>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════════════════════════════════
           WHY CHOOSE OLIVE SEEDS
       ══════════════════════════════════════════════ */}
-      <section style={{ padding: "120px 0", background: "#F8F8F5" }}>
+      <section style={{ padding: "70px 0", background: "#F8F8F5" }}>
         <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
           <FadeUp style={{ textAlign: "center", marginBottom: "72px" }}>
             <span className="eyebrow" style={{ justifyContent: "center" }}>Why Choose Us</span>
@@ -1181,9 +1312,9 @@ export default function Home() {
         </div>
       </section>
 
-      <section style={{ padding: "100px 0", background: "var(--surface)" }}>
+      <section style={{ padding: "70px 0", background: "var(--surface)" }}>
         <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
-          
+
           <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "60px" }} className="lg-grid-cols-3">
             <style>{`
               @media(min-width: 1024px) {
@@ -1206,7 +1337,7 @@ export default function Home() {
                 }
               }
             `}</style>
-            
+
             {/* Left Column (Sticky Intro) */}
             <div className="lg-sticky self-start flex flex-col gap-6">
               <FadeUp>
@@ -1229,9 +1360,9 @@ export default function Home() {
                 }}>
                   We believe that the designs you choose should speak to who you are. Olive Seeds is created to make you feel unique, feel special, and express a rare personality that stands out from the rest.
                 </p>
-                <Link to="/products" className="btn-primary" style={{ display: "inline-flex" }}>
+                <Link to="/gallery" className="btn-primary" style={{ display: "inline-flex" }}>
                   Explore Premium Design
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: "8px" }}><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: "8px" }}><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                 </Link>
               </FadeUp>
             </div>
@@ -1274,7 +1405,7 @@ export default function Home() {
       </section>
 
       <section style={{
-        padding: "100px 0", background: "#0D1512",
+        padding: "70px 0", background: "#0D1512",
         borderTop: "1px solid rgba(255,255,255,0.1)",
         overflow: "hidden",
       }}>
@@ -1342,7 +1473,7 @@ export default function Home() {
               }
             }
           `}</style>
-          
+
           <div className="stories-track">
             <div className="marquee-container-loop">
               {[
@@ -1364,14 +1495,14 @@ export default function Home() {
                     <span className="quote-mark" style={{ color: "var(--gold)", opacity: 0.35 }}>"</span>
                     <div style={{ display: "flex", gap: "3px", marginBottom: "16px", marginTop: "8px" }}>
                       {[...Array(5)].map((_, si) => (
-                        <svg key={si} width="14" height="14" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg key={si} width="14" height="14" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
                       ))}
                     </div>
                     <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.8)", lineHeight: 1.7, fontStyle: "italic" }}>
                       "{t.text}"
                     </p>
                   </div>
-                  
+
                   <div style={{ display: "flex", alignItems: "center", gap: "14px", marginTop: "28px", paddingTop: "22px", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
                     <div style={{
                       width: "44px", height: "44px", borderRadius: "50%",
@@ -1408,14 +1539,14 @@ export default function Home() {
                     <span className="quote-mark" style={{ color: "var(--gold)", opacity: 0.35 }}>"</span>
                     <div style={{ display: "flex", gap: "3px", marginBottom: "16px", marginTop: "8px" }}>
                       {[...Array(5)].map((_, si) => (
-                        <svg key={si} width="14" height="14" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg key={si} width="14" height="14" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
                       ))}
                     </div>
                     <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.8)", lineHeight: 1.7, fontStyle: "italic" }}>
                       "{t.text}"
                     </p>
                   </div>
-                  
+
                   <div style={{ display: "flex", alignItems: "center", gap: "14px", marginTop: "28px", paddingTop: "22px", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
                     <div style={{
                       width: "44px", height: "44px", borderRadius: "50%",
@@ -1440,7 +1571,7 @@ export default function Home() {
       {/* ══════════════════════════════════════════════
           FINAL CTA
       ══════════════════════════════════════════════ */}
-      <section className="cta-section" style={{ padding: "140px 0" }}>
+      <section className="cta-section" style={{ padding: "80px 0" }}>
         {/* Top decorative corners */}
         <div style={{ position: "absolute", top: "36px", left: "36px", width: "52px", height: "52px", borderTop: "1px solid rgba(201,168,106,0.25)", borderLeft: "1px solid rgba(201,168,106,0.25)" }} />
         <div style={{ position: "absolute", top: "36px", right: "36px", width: "52px", height: "52px", borderTop: "1px solid rgba(201,168,106,0.25)", borderRight: "1px solid rgba(201,168,106,0.25)" }} />
@@ -1481,9 +1612,9 @@ export default function Home() {
             <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap" }}>
               <Link to="/contact" className="btn-gold">
                 Start Custom Project
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
               </Link>
-              <Link to="/products" style={{
+              <Link to="/gallery" style={{
                 display: "inline-flex", alignItems: "center", gap: "10px",
                 background: "transparent", color: "#fff",
                 fontSize: "13px", fontWeight: 600, letterSpacing: "0.02em",

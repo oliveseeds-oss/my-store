@@ -4,7 +4,7 @@ import Topbar from "../components/Topbar";
 import API from "../api";
 import { MdAdd, MdEdit, MdDelete, MdClose } from "react-icons/md";
 
-const INIT = { name: "", type: "physical", description: "" };
+const INIT = { name: "", type: "physical", description: "", image_url: "" };
 
 export default function Categories() {
   const [categories, setCategories] = useState([]);
@@ -16,7 +16,7 @@ export default function Categories() {
   useEffect(() => { load(); }, []);
 
   const openAdd = () => { setForm(INIT); setEditId(null); setShowForm(true); };
-  const openEdit = (c) => { setForm(c); setEditId(c.id); setShowForm(true); };
+  const openEdit = (c) => { setForm({ ...INIT, ...c }); setEditId(c.id); setShowForm(true); };
 
   const save = async () => {
     if (!form.name) return;
@@ -60,18 +60,23 @@ export default function Categories() {
             {categories.map(c => (
               <div key={c.id}
                 className="bg-white rounded-xl border border-gray-100 p-4 flex
-                           items-start justify-between gap-3">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <p className="font-semibold text-gray-700 text-sm">{c.name}</p>
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium
-                                     ${TYPE_COLOR[c.type]}`}>
-                      {c.type}
-                    </span>
-                  </div>
-                  {c.description && (
-                    <p className="text-xs text-gray-400">{c.description}</p>
+                           items-start justify-between gap-3 shadow-sm">
+                <div className="flex-1 flex gap-3">
+                  {c.image_url && (
+                    <img src={c.image_url} alt={c.name} className="w-12 h-12 rounded-lg object-cover border border-gray-100 flex-shrink-0" />
                   )}
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="font-semibold text-gray-700 text-sm">{c.name}</p>
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium
+                                       ${TYPE_COLOR[c.type]}`}>
+                        {c.type}
+                      </span>
+                    </div>
+                    {c.description && (
+                      <p className="text-xs text-gray-400">{c.description}</p>
+                    )}
+                  </div>
                 </div>
                 <div className="flex gap-1 flex-shrink-0">
                   <button onClick={() => openEdit(c)}
@@ -123,6 +128,14 @@ export default function Categories() {
                     <input value={form.description}
                       onChange={e => setForm({ ...form, description: e.target.value })}
                       placeholder="Short description"
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm
+                                 focus:outline-none focus:ring-2 focus:ring-indigo-200" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-500 mb-1 block">Category Image URL</label>
+                    <input value={form.image_url}
+                      onChange={e => setForm({ ...form, image_url: e.target.value })}
+                      placeholder="e.g. https://images.unsplash.com/..."
                       className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm
                                  focus:outline-none focus:ring-2 focus:ring-indigo-200" />
                   </div>

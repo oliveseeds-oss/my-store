@@ -44,7 +44,7 @@ export default function MemberLogin() {
         setOtpPurpose("registration");
         setShowOtp(true);
         if (res.data.dev_otp) {
-          setSuccess(`OTP Code generated: ${res.data.dev_otp}`);
+          // Dev OTP on-screen helper removed for production launch
         }
       }
     } catch (e) {

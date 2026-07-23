@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { MdArticle, MdArrowBack, MdOutlineTimer, MdWhatshot } from "react-icons/md";
 import API from "../api";
 import Navbar from "../components/Navbar";
@@ -276,7 +275,7 @@ export default function BlogList() {
           background: "linear-gradient(135deg, #0D1512 0%, #0d1a16 100%)",
           color: "#FAF9F6"
         }}
-        className="relative py-24 overflow-hidden text-center shadow-xl"
+        className="relative py-24 blog-hero overflow-hidden text-center shadow-xl"
       >
         {/* Luxury glowing mesh blurs */}
         <div className="absolute top-1/4 right-1/4 w-80 h-80 bg-[#FAF9F6]/10 rounded-full blur-[90px] pointer-events-none" />

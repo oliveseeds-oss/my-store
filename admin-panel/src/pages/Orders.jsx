@@ -33,9 +33,300 @@ export default function Orders() {
   const [statusFilter, setStatusFilter] = useState("");
   const [expanded, setExpanded] = useState(null);
 
-  // Editable fields per order to avoid input lag
-  const [editShipping, setEditShipping] = useState({});
   const [demoLoading, setDemoLoading] = useState(false);
+  const [editShipping, setEditShipping] = useState({});
+
+  // Invoice Export States
+  const [exportStartDate, setExportStartDate] = useState("");
+  const [exportEndDate, setExportEndDate] = useState("");
+  const [exportType, setExportType] = useState("all");
+
+  const handleExportReports = () => {
+    let url = `/orders/admin/reports/export?type=${exportType}`;
+    if (exportStartDate) url += `&startDate=${exportStartDate}`;
+    if (exportEndDate) url += `&endDate=${exportEndDate}`;
+    
+    API.get(url, { responseType: 'blob' })
+      .then(response => {
+        const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.setAttribute('download', `invoice_report_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      })
+      .catch(err => {
+        alert("Failed to export reports: " + err.message);
+      });
+  };
+
+  // Order Details & Production states
+  const [orderDetails, setOrderDetails] = useState({});
+  const [prodStatus, setProdStatus] = useState({});
+  const [prodNotes, setProdNotes] = useState({});
+
+  const handleToggleExpand = async (uid) => {
+    if (expanded === uid) {
+      setExpanded(null);
+      return;
+    }
+    setExpanded(uid);
+    if (!orderDetails[uid] && tab === "engraved") {
+      try {
+        const res = await API.get(`/orders/admin/engraved/${uid}/details`);
+        setOrderDetails(prev => ({ ...prev, [uid]: res.data }));
+        setProdStatus(prev => ({ ...prev, [uid]: res.data.order.production_status || "Pending" }));
+        setProdNotes(prev => ({ ...prev, [uid]: res.data.order.production_notes || "" }));
+      } catch (err) {
+        console.error("Failed to load order details", err);
+      }
+    }
+  };
+
+  const handleUpdateProduction = async (uid) => {
+    const status = prodStatus[uid] || orderDetails[uid]?.order?.production_status || "Pending";
+    const notes = prodNotes[uid] !== undefined ? prodNotes[uid] : orderDetails[uid]?.order?.production_notes || "";
+    try {
+      await API.put(`/orders/admin/engraved/${uid}/production`, {
+        production_status: status,
+        production_notes: notes
+      });
+      alert("✅ Production details updated successfully!");
+      const res = await API.get(`/orders/admin/engraved/${uid}/details`);
+      setOrderDetails(prev => ({ ...prev, [uid]: res.data }));
+      loadEngraved();
+    } catch (e) {
+      alert("❌ Failed to update production: " + (e.response?.data?.error || e.message));
+    }
+  };
+
+  const handlePrintCustomization = (uid) => {
+    const details = orderDetails[uid];
+    if (!details) return;
+    const printWindow = window.open("", "_blank");
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Order \${uid} Customization Details</title>
+          <style>
+            body { font-family: sans-serif; padding: 20px; color: #333; }
+            h1 { font-size: 20px; margin-bottom: 5px; }
+            h2 { font-size: 14px; color: #666; margin-top: 0; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+            th { background-color: #f5f5f5; font-size: 12px; text-transform: uppercase; }
+            td { font-size: 13px; }
+            .notes { background-color: #fafafa; border-left: 4px solid #4f46e5; padding: 10px; margin-top: 20px; }
+          </style>
+        </head>
+        <body>
+          <h1>Order Customization Details</h1>
+          <h2>Order ID: \${uid} | Date: \${new Date(details.order.invoice_date).toLocaleString("en-IN")}</h2>
+          <p><strong>Customer:</strong> \${details.order.delivery_name || details.order.customer_name || 'Guest'}</p>
+          <p><strong>Address:</strong> \${[details.order.delivery_street, details.order.delivery_city, details.order.delivery_state, details.order.delivery_pincode].filter(Boolean).join(", ")}</p>
+          
+          <h3>Items to Customize:</h3>
+          \${details.items.map(item => \`
+            <div style="margin-bottom: 25px;">
+              <p><strong>Item:</strong> \${item.product_name} (\${item.selected_size || 'Standard'}) x \${item.qty}</p>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Field Label</th>
+                    <th>Customized Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  \${item.customizations && item.customizations.length ? item.customizations.map(c => \\\`
+                    <tr>
+                      <td><strong>\${c.field_label}</strong></td>
+                      <td>
+                        \${c.field_type === 'image' || c.field_type === 'file' 
+                          ? \\\`<a href="http://localhost:5000\${c.field_value}" target="_blank">View File (\${c.field_value.split('/').pop()})</a>\\\` 
+                          : c.field_value
+                        }
+                      </td>
+                    </tr>
+                  \\\`).join('') : \\\`<tr><td colspan="2">No engraving details provided</td></tr>\\\`}
+                </tbody>
+              </table>
+            </div>
+          \`).join('')}
+          
+          <div class="notes">
+            <p><strong>Production Status:</strong> \${details.order.production_status || 'Pending'}</p>
+            <p><strong>Production Notes:</strong> \${details.order.production_notes || 'No notes'}</p>
+          </div>
+          <script>window.onload = function() { window.print(); }</script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
+  const handlePrintShippingLabel = (uid) => {
+    const details = orderDetails[uid];
+    if (!details) {
+      alert("Please expand the order details first to load shipping label data.");
+      return;
+    }
+    const o = details.order;
+    const items = details.items;
+    const printWindow = window.open("", "_blank");
+    
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(`Order: ${o.order_uid}\nAWB: ${o.tracking_number || 'N/A'}\nCourier: ${o.courier_name || 'N/A'}`)}`;
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Shipping Label - ${o.order_uid}</title>
+          <style>
+            @page {
+              size: 4in 6in;
+              margin: 0;
+            }
+            body {
+              font-family: 'Courier New', Courier, monospace;
+              margin: 0;
+              padding: 15px;
+              width: 3.6in;
+              height: 5.6in;
+              box-sizing: border-box;
+              border: 2px solid #000;
+              font-size: 11px;
+              line-height: 1.3;
+              color: #000;
+            }
+            .header {
+              border-bottom: 2px dashed #000;
+              padding-bottom: 5px;
+              margin-bottom: 8px;
+              text-align: center;
+            }
+            .logo {
+              font-size: 14px;
+              font-weight: bold;
+            }
+            .tracking-box {
+              border: 2px solid #000;
+              padding: 6px;
+              text-align: center;
+              margin-bottom: 8px;
+            }
+            .carrier-title {
+              font-size: 13px;
+              font-weight: bold;
+              text-transform: uppercase;
+            }
+            .awb-text {
+              font-size: 14px;
+              font-weight: bold;
+              letter-spacing: 1px;
+              margin-top: 3px;
+            }
+            .address-section {
+              border-bottom: 2px dashed #000;
+              padding-bottom: 8px;
+              margin-bottom: 8px;
+            }
+            .section-title {
+              font-size: 9px;
+              font-weight: bold;
+              text-decoration: underline;
+              margin-bottom: 3px;
+              text-transform: uppercase;
+            }
+            .recipient-name {
+              font-size: 13px;
+              font-weight: bold;
+              text-transform: uppercase;
+            }
+            .recipient-address {
+              font-size: 11px;
+              font-weight: bold;
+            }
+            .footer-grid {
+              display: grid;
+              grid-template-columns: 2fr 1fr;
+              gap: 5px;
+              align-items: center;
+              border-top: 2px dashed #000;
+              padding-top: 8px;
+              margin-top: auto;
+            }
+            .items-list {
+              font-size: 9px;
+              max-height: 1.2in;
+              overflow: hidden;
+            }
+            .qr-img {
+              width: 70px;
+              height: 70px;
+              display: block;
+              margin-left: auto;
+            }
+            .sender-info {
+              font-size: 8px;
+              margin-top: 5px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="logo">OLIVESEEDS CUSTOMS</div>
+            <div style="font-size: 8px;">Premium Laser Engraving Workshop</div>
+          </div>
+
+          <div class="tracking-box">
+            <div class="carrier-title">${o.courier_name ? o.courier_name.toUpperCase() : 'DELHIVERY EXPRESS'}</div>
+            <div class="awb-text">${o.tracking_number || 'PENDING AWB'}</div>
+            <div style="font-size: 7px; margin-top: 2px;">SCAN TO TRACK PARCEL</div>
+          </div>
+
+          <div class="address-section">
+            <div class="section-title">Deliver To:</div>
+            <div class="recipient-name">${o.delivery_name || o.customer_name}</div>
+            <div class="recipient-address">
+              ${o.delivery_street || ''}<br/>
+              ${o.delivery_city || ''}, ${o.delivery_state || ''} - ${o.delivery_pincode || ''}<br/>
+              <strong>${o.delivery_country ? o.delivery_country.toUpperCase() : 'INDIA'}</strong>
+            </div>
+            <div style="font-weight: bold; margin-top: 4px;">Phone: ${o.guest_phone || 'N/A'}</div>
+          </div>
+
+          <div class="section-title">Package Contents (Items):</div>
+          <div class="items-list">
+            ${items.map(item => `* ${item.product_name} ${item.selected_size ? `(${item.selected_size})` : ''} x ${item.qty}`).join('<br/>')}
+          </div>
+
+          <div class="footer-grid">
+            <div>
+              <div class="section-title">Sender (Return Address):</div>
+              <div class="sender-info">
+                <strong>OLIVESEEDS CUSTOMS</strong><br/>
+                Laser Engraving Unit 4B, Industrial Estate,<br/>
+                Mumbai, Maharashtra - 400001<br/>
+                Order ID: ${o.order_uid}<br/>
+                Date: ${new Date(o.invoice_date).toLocaleDateString()}
+              </div>
+            </div>
+            <div>
+              <img class="qr-img" src="${qrUrl}" alt="QR" />
+            </div>
+          </div>
+
+          <script>
+            window.onload = function() {
+              window.print();
+              setTimeout(function() { window.close(); }, 500);
+            };
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
 
   const loadEngraved = async () => {
     try {
@@ -167,6 +458,53 @@ export default function Orders() {
             </button>
           </div>
 
+          {/* Export Invoice Reports Panel (Admin Option) */}
+          <div className="bg-white border border-gray-150 rounded-2xl p-5 shadow-sm flex flex-col gap-4">
+            <div>
+              <span className="text-[10px] text-indigo-600 font-extrabold uppercase tracking-wider block">📊 Invoice Reports & Spreadsheet Exporter</span>
+              <h3 className="text-sm font-bold text-gray-800">Export Invoice History</h3>
+            </div>
+            <div className="flex flex-wrap items-end gap-3.5 text-xs font-semibold text-gray-650">
+              <div className="flex flex-col gap-1 flex-1 min-w-[150px]">
+                <label className="text-[9px] uppercase tracking-wider text-gray-400 font-bold">Order Type</label>
+                <select
+                  value={exportType}
+                  onChange={e => setExportType(e.target.value)}
+                  className="border border-gray-200 rounded-xl px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 font-bold">
+                  <option value="all">All Invoices (Physical + Digital)</option>
+                  <option value="physical">Physical Engraving Invoices</option>
+                  <option value="digital">Digital Product Invoices</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1 flex-1 min-w-[130px]">
+                <label className="text-[9px] uppercase tracking-wider text-gray-400 font-bold">Start Date</label>
+                <input
+                  type="date"
+                  value={exportStartDate}
+                  onChange={e => setExportStartDate(e.target.value)}
+                  className="border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400 font-bold"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1 flex-1 min-w-[130px]">
+                <label className="text-[9px] uppercase tracking-wider text-gray-400 font-bold">End Date</label>
+                <input
+                  type="date"
+                  value={exportEndDate}
+                  onChange={e => setExportEndDate(e.target.value)}
+                  className="border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400 font-bold"
+                />
+              </div>
+
+              <button
+                onClick={handleExportReports}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white font-black px-5 py-2.5 rounded-xl transition shadow flex items-center justify-center gap-1.5 whitespace-nowrap h-10">
+                📥 Download CSV Report
+              </button>
+            </div>
+          </div>
+
           {/* Search, Filter & Tab Controls */}
           <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4">
             
@@ -225,11 +563,9 @@ export default function Orders() {
               const courierVal = editShipping[o.order_id]?.courier_name ?? "delhivery";
 
               return (
-                <div key={o.order_id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md/50 transition duration-200">
-                  
-                  {/* Header Row */}
+                <div key={o.order_id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md/50 transition duration-200">                  {/* Header Row */}
                   <div
-                    onClick={() => setExpanded(expanded === o.order_id ? null : o.order_id)}
+                    onClick={() => handleToggleExpand(o.order_id)}
                     className="flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-gray-50/50 transition">
                     <div className="flex items-center gap-4 min-w-0">
                       <span className={`font-mono text-xs px-2.5 py-1 rounded font-black
@@ -258,6 +594,24 @@ export default function Orders() {
                   {/* Expanded View */}
                   {expanded === o.order_id && (
                     <div className="border-t border-gray-100 px-5 py-5 bg-gray-50/30 flex flex-col gap-6">
+                      
+                      {/* Action Bar */}
+                      <div className="flex gap-2.5 border-b border-gray-100 pb-3.5 no-print">
+                        <button
+                          onClick={() => window.open(`http://localhost:3000/order-success?id=${o.order_id}`, "_blank")}
+                          className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-[11px] font-black px-4 py-2 rounded-xl border border-indigo-200/50 transition flex items-center gap-1.5 shadow-sm"
+                        >
+                          📄 View / Print Retail Invoice
+                        </button>
+                        {tab === "engraved" && (
+                          <button
+                            onClick={() => handlePrintShippingLabel(o.order_id)}
+                            className="bg-amber-50 hover:bg-amber-100 text-amber-700 text-[11px] font-black px-4 py-2 rounded-xl border border-amber-200/50 transition flex items-center gap-1.5 shadow-sm"
+                          >
+                            🏷️ Print Shipping Sticker (4x6)
+                          </button>
+                        )}
+                      </div>
                       
                       {/* Grid with Details */}
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
@@ -333,6 +687,90 @@ export default function Orders() {
                         )}
                       </div>
 
+                      {/* Dynamic Customization Details section */}
+                      {tab === "engraved" && orderDetails[o.order_id] && (
+                        <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm flex flex-col gap-4">
+                          <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                            <h4 className="text-xs font-black text-gray-700 uppercase tracking-widest flex items-center gap-1.5">
+                              ✨ Customization Details
+                            </h4>
+                            <button
+                              onClick={() => handlePrintCustomization(o.order_id)}
+                              className="bg-gray-50 hover:bg-gray-100 text-gray-700 text-[10px] font-extrabold px-3 py-1.5 rounded-lg border border-gray-200 transition">
+                              🖨️ Print Customization Details
+                            </button>
+                          </div>
+                          
+                          <div className="flex flex-col gap-3 text-xs">
+                            {orderDetails[o.order_id].items.map((item, iIdx) => (
+                              <div key={iIdx} className="bg-stone-50/50 rounded-xl p-3 border border-stone-200/50">
+                                <p className="font-bold text-stone-850 mb-2 border-b border-stone-200/40 pb-1">
+                                  Item: {item.product_name} ({item.selected_size || 'Standard'}) x {item.qty}
+                                </p>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mt-2">
+                                  {item.customizations && item.customizations.length ? (
+                                    item.customizations.map((c, cIdx) => (
+                                      <div key={cIdx} className="flex flex-col gap-0.5 border-l-2 border-amber-250 pl-2.5 py-0.5">
+                                        <span className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">{c.field_label}</span>
+                                        {c.field_type === 'image' || c.field_type === 'file' ? (
+                                          <div className="flex items-center gap-2 mt-1">
+                                            {c.field_type === 'image' && (
+                                              <img src={`http://localhost:5000${c.field_value}`} alt="" className="w-12 h-12 object-cover rounded-lg border bg-stone-100" />
+                                            )}
+                                            <a href={`http://localhost:5000${c.field_value}`} target="_blank" rel="noreferrer" className="text-xs text-indigo-600 hover:underline font-bold">
+                                              Download Uploaded File
+                                            </a>
+                                          </div>
+                                        ) : (
+                                          <span className="font-bold text-gray-800 text-sm">{c.field_value}</span>
+                                        )}
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <p className="text-gray-400 italic text-[11px]">No personalization fields filled</p>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Production Tracking Control */}
+                          <div className="border-t border-gray-100 pt-4 mt-2">
+                            <span className="text-[10px] text-indigo-650 font-extrabold uppercase tracking-wider block mb-2">⚙️ Production & Engraving Tracker</span>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                              <div>
+                                <label className="text-[9px] font-bold text-gray-400 block mb-1">Production Status</label>
+                                <select
+                                  value={prodStatus[o.order_id] || ""}
+                                  onChange={e => setProdStatus({ ...prodStatus, [o.order_id]: e.target.value })}
+                                  className="w-full border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 font-medium">
+                                  {["Pending", "Design Review", "Approved", "Production Started", "Engraving Completed", "Packed", "Shipped", "Delivered"].map(st => (
+                                    <option key={st} value={st}>{st}</option>
+                                  ))}
+                                </select>
+                              </div>
+                              <div className="md:col-span-2 flex gap-2">
+                                <div className="flex-1">
+                                  <label className="text-[9px] font-bold text-gray-400 block mb-1">Production Notes</label>
+                                  <input
+                                    value={prodNotes[o.order_id] || ""}
+                                    onChange={e => setProdNotes({ ...prodNotes, [o.order_id]: e.target.value })}
+                                    placeholder="Enter internal production/engraving notes..."
+                                    className="w-full border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                                  />
+                                </div>
+                                <button
+                                  onClick={() => handleUpdateProduction(o.order_id)}
+                                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2 rounded-lg shadow-sm transition whitespace-nowrap">
+                                  Update Production
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
                       {/* Shipping information entry (PHYSICAL ONLY) */}
                       {tab === "engraved" && (
                         <div className="bg-white border border-gray-100 rounded-xl p-4 flex flex-col md:flex-row items-end gap-3 shadow-sm">
@@ -375,7 +813,7 @@ export default function Orders() {
                         {tab === "engraved" ? (
                           <div className="flex flex-wrap gap-2 items-center">
                             <p className="text-xs font-bold text-gray-500 mr-2 flex items-center gap-1">
-                              <MdLocalShipping className="text-indigo-600 text-base" /> Change Status:
+                              <MdLocalShipping className="text-indigo-600 text-base" /> Change Shipment Status:
                             </p>
                             {ENV_STATUS.map(s => (
                               <button
@@ -429,7 +867,6 @@ export default function Orders() {
                           </div>
                         )}
                       </div>
-
                     </div>
                   )}
                 </div>

@@ -45,11 +45,10 @@ export default function Cart() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
-            {/* Cart Items List */}
             <div className="lg:col-span-2 flex flex-col gap-4">
               {cart.map((item) => (
                 <div 
-                  key={`${item.id}-${item.type}`}
+                  key={`${item.id}-${item.type}-${item.selectedSize || ""}-${item.customizationSummary || ""}`}
                   style={{ background: "white", borderColor: "rgba(27, 57, 49, 0.15)" }}
                   className="rounded-3xl border p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300"
                 >
@@ -67,7 +66,14 @@ export default function Cart() {
                   
                   <div className="flex-1 w-full min-w-0">
                     <p style={{ fontFamily: "'Outfit', sans-serif" }} className="text-base font-bold truncate">{item.name}</p>
-                    <p className="text-xs opacity-60 capitalize font-medium tracking-wide mt-0.5">{item.type} asset</p>
+                    <p className="text-xs opacity-60 capitalize font-medium tracking-wide mt-0.5">
+                      {item.type} asset {item.selectedSize ? `— Size: ${item.selectedSize}` : ''}
+                    </p>
+                    {item.customizationSummary && (
+                      <p className="text-[11px] text-amber-800 bg-amber-50/50 rounded-lg px-2.5 py-1.5 font-bold mt-1.5 border border-amber-100/40">
+                        ✒️ Custom: {item.customizationSummary}
+                      </p>
+                    )}
                     <p className="text-sm font-black text-[#0D1512] mt-2">{convert(item.price)}</p>
                   </div>
 
@@ -76,15 +82,15 @@ export default function Cart() {
                       <div className="flex items-center border border-[#0D1512]/20 rounded-xl overflow-hidden bg-stone-50">
                         <button
                           onClick={() => item.qty > 1
-                            ? updateQty(item.id, item.type, item.qty - 1)
-                            : removeFromCart(item.id, item.type)}
+                            ? updateQty(item.id, item.type, item.qty - 1, item.selectedSize, item.customizationSummary)
+                            : removeFromCart(item.id, item.type, item.selectedSize, item.customizationSummary)}
                           className="px-3 py-1.5 hover:bg-stone-200 text-sm font-black transition"
                         >
                           −
                         </button>
                         <span className="px-3 text-xs font-bold text-center min-w-[24px]">{item.qty}</span>
                         <button
-                          onClick={() => updateQty(item.id, item.type, item.qty + 1)}
+                          onClick={() => updateQty(item.id, item.type, item.qty + 1, item.selectedSize, item.customizationSummary)}
                           className="px-3 py-1.5 hover:bg-stone-200 text-sm font-black transition"
                         >
                           +
@@ -93,13 +99,12 @@ export default function Cart() {
                     )}
 
                     <button
-                      onClick={() => removeFromCart(item.id, item.type)}
+                      onClick={() => removeFromCart(item.id, item.type, item.selectedSize, item.customizationSummary)}
                       className="text-red-600 hover:bg-red-50 px-3 py-1.5 rounded-xl transition text-xs font-bold border border-red-100 bg-red-50/20"
                     >
                       Remove
                     </button>
                   </div>
-
                 </div>
               ))}
             </div>

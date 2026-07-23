@@ -134,24 +134,7 @@ const GLOBAL_CSS = `
     background: linear-gradient(to top, rgba(11,16,32,0.82) 0%, transparent 55%);
   }
 
-  /* Trust badge */
-  .trust-badge {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    padding: 28px 20px;
-    border-radius: 16px;
-    border: 1px solid var(--bd);
-    background: var(--s1);
-    transition: border-color 0.3s ease, background 0.3s ease;
-    flex: 1;
-    min-width: 130px;
-  }
-  .trust-badge:hover {
-    border-color: rgba(110,231,249,0.2);
-    background: rgba(110,231,249,0.04);
-  }
+
 
   /* Filter sidebar */
   .filter-btn {
@@ -294,26 +277,65 @@ const GLOBAL_CSS = `
   }
   .nl-input::placeholder { color: rgba(165,180,199,0.4); }
   .nl-input:focus { border-color: rgba(110,231,249,0.4); }
+
+  .mobile-filter-btn {
+    display: none;
+  }
+  @media (max-width: 1023px) {
+    .mobile-filter-btn {
+      display: block !important;
+    }
+  }
+
+  @keyframes mobOrb1 {
+    0%, 100% { transform: translate(0,0) scale(0.7); }
+    50% { transform: translate(15px,-20px) scale(0.75); }
+  }
+  @keyframes mobOrb2 {
+    0%, 100% { transform: translate(0,0) scale(0.7); }
+    50% { transform: translate(-12px,15px) scale(0.65); }
+  }
+
+  @media (max-width: 768px) {
+    .vault-orb-card:nth-of-type(1) {
+      left: calc(50% - 78px - 60px) !important;
+      top: calc(50% - 48px - 50px) !important;
+      animation: mobOrb1 12s ease-in-out infinite !important;
+    }
+    .vault-orb-card:nth-of-type(2) {
+      left: calc(50% - 78px + 60px) !important;
+      top: calc(50% - 48px - 50px) !important;
+      animation: mobOrb2 15s ease-in-out infinite !important;
+      animation-delay: 1.5s !important;
+    }
+    .vault-orb-card:nth-of-type(3) {
+      left: calc(50% - 78px - 60px) !important;
+      top: calc(50% - 48px + 50px) !important;
+      animation: mobOrb2 18s ease-in-out infinite !important;
+      animation-delay: 3s !important;
+    }
+    .vault-orb-card:nth-of-type(4) {
+      left: calc(50% - 78px + 60px) !important;
+      top: calc(50% - 48px + 50px) !important;
+      animation: mobOrb1 21s ease-in-out infinite !important;
+      animation-delay: 4.5s !important;
+    }
+  }
 `;
 
 function injectStyles() {
-  if (typeof document !== "undefined" && !document.getElementById("olive-vault-css")) {
-    const s = document.createElement("style");
-    s.id = "olive-vault-css";
+  if (typeof document !== "undefined") {
+    let s = document.getElementById("olive-vault-css");
+    if (!s) {
+      s = document.createElement("style");
+      s.id = "olive-vault-css";
+      document.head.appendChild(s);
+    }
     s.textContent = GLOBAL_CSS;
-    document.head.appendChild(s);
   }
 }
 
-/* ─── Trust badges data ───────────────────────────────────── */
-const TRUST_ITEMS = [
-  { icon: "⚡", label: "Instant Download", sub: "Available immediately" },
-  { icon: "♾️", label: "Lifetime Access", sub: "Access forever" },
-  { icon: "📄", label: "Commercial License", sub: "Use in client work" },
-  { icon: "🔒", label: "Secure Checkout", sub: "256-bit encrypted" },
-  { icon: "🔄", label: "Regular Updates", sub: "Always improving" },
-  { icon: "🌐", label: "Global Access", sub: "Available worldwide" },
-];
+
 
 /* ─── Featured collections ───────────────────────────────── */
 const COLLECTIONS = [
@@ -556,6 +578,7 @@ export default function DigitalProductList() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const [filters, setFilters] = useState({
     search: "",
@@ -650,6 +673,7 @@ export default function DigitalProductList() {
 
       {/* ── Hero ── */}
       <section
+        className="digital-hero"
         style={{
           position: "relative",
           padding: "100px 24px 80px",
@@ -658,7 +682,7 @@ export default function DigitalProductList() {
         }}
       >
         <div style={{ maxWidth: 1280, margin: "0 auto", position: "relative", zIndex: 2 }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "center" }}>
+          <div className="digital-hero-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "center" }}>
             {/* Left */}
             <div>
               <div style={{ marginBottom: 20 }}>
@@ -676,6 +700,7 @@ export default function DigitalProductList() {
                   background: "rgba(110,231,249,0.08)",
                   border: "1px solid rgba(110,231,249,0.2)",
                   color: T.accent1,
+                  whiteSpace: "nowrap",
                 }}>
                   <span style={{ width: 6, height: 6, borderRadius: "50%", background: T.accent1, display: "inline-block" }} />
                   Premium Digital Vault
@@ -782,6 +807,7 @@ export default function DigitalProductList() {
               ].map((card, i) => (
                 <div
                   key={card.label}
+                  className="vault-orb-card"
                   style={{
                     position: "absolute",
                     left: `calc(50% - 90px + ${card.x}px)`,
@@ -820,26 +846,7 @@ export default function DigitalProductList() {
         </div>
       </section>
 
-      {/* ── Trust Section ── */}
-      <section style={{ padding: "48px 24px", borderBottom: `1px solid ${T.border}`, position: "relative", zIndex: 2 }}>
-        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
-            {TRUST_ITEMS.map((item) => (
-              <div key={item.label} className="trust-badge" style={{ maxWidth: 180 }}>
-                <span style={{ fontSize: 26 }}>{item.icon}</span>
-                <div style={{ textAlign: "center" }}>
-                  <div className="sora" style={{ fontSize: 13, fontWeight: 700, color: T.textPrimary, marginBottom: 2 }}>
-                    {item.label}
-                  </div>
-                  <div style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: T.textSecondary }}>
-                    {item.sub}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       {/* ── Ad Banner ── */}
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "32px 24px 0", position: "relative", zIndex: 2 }}>
@@ -871,7 +878,7 @@ export default function DigitalProductList() {
               Featured Collections
             </h2>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 16 }}>
+          <div className="collections-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 16 }}>
             {COLLECTIONS.map((col) => (
               <div key={col.title} className="coll-card">
                 <div style={{ fontSize: 28, marginBottom: 12 }}>{col.icon}</div>
@@ -1017,6 +1024,22 @@ export default function DigitalProductList() {
                     </option>
                   ))}
                 </select>
+
+                {/* Mobile Filter Toggle */}
+                <button
+                  className="mobile-filter-btn"
+                  onClick={() => setShowMobileFilters(true)}
+                  style={{
+                    padding: "10px 16px",
+                    borderRadius: 12, border: `1px solid ${T.border}`,
+                    fontFamily: "Inter, sans-serif", fontSize: 13,
+                    background: T.surface1, color: T.textPrimary,
+                    cursor: "pointer",
+                    display: "none"
+                  }}
+                >
+                  🎛️ Filters
+                </button>
               </div>
             </div>
 
@@ -1155,6 +1178,127 @@ export default function DigitalProductList() {
           </div>
         </div>
       </section>
+
+      {/* Mobile Filters Drawer Overlay */}
+      {showMobileFilters && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 9999,
+          background: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "flex-end"
+        }}>
+          <div style={{
+            width: "300px", background: T.surface1, height: "100%", overflowY: "auto",
+            padding: "30px 24px", display: "flex", flexDirection: "column", gap: 20,
+            position: "relative", boxShadow: "-8px 0 32px rgba(0,0,0,0.15)"
+          }}>
+            <button
+              onClick={() => setShowMobileFilters(false)}
+              style={{
+                position: "absolute", top: 20, right: 20,
+                border: "none", background: "none", fontSize: 24, cursor: "pointer",
+                color: T.textPrimary
+              }}
+            >
+              ×
+            </button>
+            <h3 className="sora" style={{ fontSize: 22, fontWeight: 700, margin: "0 0 10px 0", color: T.textPrimary }}>Filters</h3>
+            
+            {/* Categories */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <p className="sora" style={{
+                fontSize: 10,
+                fontWeight: 700,
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                color: T.accent1,
+                marginBottom: 10,
+              }}>
+                Categories
+              </p>
+              <button
+                onClick={() => { setFilter("category", ""); setShowMobileFilters(false); }}
+                className={`filter-btn${!filters.category ? " active" : ""}`}
+              >
+                All Products
+              </button>
+              {categories.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => { setFilter("category", c.name); setShowMobileFilters(false); }}
+                  className={`filter-btn${filters.category === c.name ? " active" : ""}`}
+                >
+                  {c.name}
+                </button>
+              ))}
+            </div>
+
+            {/* Price Range */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <p className="sora" style={{
+                fontSize: 10,
+                fontWeight: 700,
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                color: T.accent1,
+              }}>
+                Price Range
+              </p>
+              <div style={{ display: "flex", gap: 8 }}>
+                <input
+                  type="number"
+                  placeholder="Min"
+                  value={filters.minPrice}
+                  onChange={(e) => setFilter("minPrice", e.target.value)}
+                  className="vault-input"
+                  style={{ width: "100%", paddingRight: 10 }}
+                />
+                <input
+                  type="number"
+                  placeholder="Max"
+                  value={filters.maxPrice}
+                  onChange={(e) => setFilter("maxPrice", e.target.value)}
+                  className="vault-input"
+                  style={{ width: "100%", paddingRight: 10 }}
+                />
+              </div>
+            </div>
+
+            {/* Rating */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <p className="sora" style={{
+                fontSize: 10,
+                fontWeight: 700,
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                color: T.accent1,
+              }}>
+                Rating
+              </p>
+              {[4, 3, 2, 1].map((r) => (
+                <button
+                  key={r}
+                  onClick={() => { setFilter("minRating", filters.minRating === r ? "" : r); setShowMobileFilters(false); }}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 8,
+                    padding: "9px 12px", borderRadius: 10, border: "none",
+                    cursor: "pointer", width: "100%",
+                    fontFamily: "Inter, sans-serif", fontSize: 13,
+                    background: filters.minRating === r ? "rgba(110,231,249,0.1)" : "transparent",
+                    color: filters.minRating === r ? T.accent1 : T.textSecondary,
+                    textAlign: "left",
+                  }}
+                >
+                  <span>
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <span key={i} style={{ color: i <= r ? "#FBBF24" : "rgba(255,255,255,0.1)", fontSize: 12 }}>★</span>
+                    ))}
+                  </span>
+                  & Up
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Footer ── */}
       <div style={{ position: "relative", zIndex: 2 }}>

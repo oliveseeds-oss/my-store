@@ -3,7 +3,7 @@ import {
   MdDashboard, MdShoppingBag, MdDownload, MdPeople,
   MdListAlt, MdArticle, MdMail, MdCampaign,
   MdNotifications, MdSettings, MdCategory,
-  MdPublic, MdLocalShipping, MdBarChart, MdReceipt, MdSearch
+  MdPublic, MdLocalShipping, MdBarChart, MdReceipt, MdSearch, MdInsertPhoto
 } from "react-icons/md";
 
 const links = [
@@ -11,6 +11,7 @@ const links = [
   { to: "/reports", icon: <MdBarChart />, label: "Reports & Analytics" },
   { to: "/transactions", icon: <MdReceipt />, label: "Transactions Ledger" },
   { to: "/categories", icon: <MdCategory />, label: "Categories" },
+  { to: "/gallery", icon: <MdInsertPhoto />, label: "Gallery Showcase" },
   { to: "/products", icon: <MdShoppingBag />, label: "Products" },
   { to: "/digital-products", icon: <MdDownload />, label: "Digital products" },
   { to: "/orders", icon: <MdListAlt />, label: "Orders" },

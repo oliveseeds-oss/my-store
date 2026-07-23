@@ -1,0 +1,53 @@
+{
+  "name": "Olive Seeds Design Studio",
+  "description": "Bespoke laser-engraved crafts, luxury physical keepsakes, personalized nameplates, and professional digital assets/Notion templates.",
+  "url": "https://oliveseeds-studio.com",
+  "founder": "Olive Seeds",
+  "contact": {
+    "email": "hello@oliveseeds-studio.com",
+    "phone": "+91 987654 3210",
+    "country": "India"
+  },
+  "services": [
+    {
+      "name": "Bespoke Engraving & Handcrafting",
+      "description": "Premium laser engraving on organic bamboo, high-grade teakwood, crystal glass, premium MDF and optical acrylic."
+    },
+    {
+      "name": "UI/UX & Web Engineering",
+      "description": "State-of-the-art React components, complete Figma design libraries, and Next.js applications."
+    },
+    {
+      "name": "AI Automation Systems",
+      "description": "Self-hosted N8N workflows, LLM integration blueprints, and custom digital trackers."
+    }
+  ],
+  "products": {
+    "physical": [
+      "Custom Engraved Wooden Plaques",
+      "Acrylic Wedding Keepsake Blocks",
+      "Bespoke Desk Nameplates",
+      "Teakwood Family Portraits"
+    ],
+    "digital": [
+      "Minimalist Personal Productivity Notion Dashboard",
+      "Figma UI Component System & Wireframe Kit",
+      "Next.js E-Commerce Starter Blueprint",
+      "N8N Multi-Channel Sales Automation Workflow"
+    ]
+  },
+  "shipping": {
+    "regions": ["United States", "United Kingdom", "Canada", "Australia", "Malaysia", "Singapore", "United Arab Emirates", "India", "South Korea", "Japan", "Germany", "New Zealand", "Saudi Arabia", "Ireland", "Belgium", "Sweden", "Switzerland"],
+    "notes": "Fast, insured parcel shipping worldwide via logistics partners. Instant downloads for all digital assets."
+  },
+  "faqs": [
+    {
+      "question": "How do I request a custom engraving design?",
+      "answer": "Use our live on-site WhatsApp chat widget or contact form to send your image or text. We provide a digital blueprint preview before production."
+    },
+    {
+      "question": "Which currencies are supported?",
+      "answer": "Our store automatically recognizes your country to display regional pricing (USD, GBP, CAD, AUD, MYR, SGD, AED, INR, KRW, JPY, EUR, NZD, SAR, SEK, CHF). For unspecified regions, US Dollars are shown."
+    }
+  ]
+}

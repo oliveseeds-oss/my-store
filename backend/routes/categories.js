@@ -21,20 +21,20 @@ router.get("/admin/all", verifyAdmin, async (req, res) => {
 
 // ADMIN — add
 router.post("/", verifyAdmin, async (req, res) => {
-  const { name, type, description } = req.body;
+  const { name, type, description, image_url } = req.body;
   const [result] = await db.query(
-    "INSERT INTO categories (name, type, description) VALUES (?,?,?)",
-    [name, type || "physical", description]
+    "INSERT INTO categories (name, type, description, image_url) VALUES (?,?,?,?)",
+    [name, type || "physical", description, image_url || null]
   );
   res.json({ id: result.insertId });
 });
 
 // ADMIN — update
 router.put("/:id", verifyAdmin, async (req, res) => {
-  const { name, type, description } = req.body;
+  const { name, type, description, image_url } = req.body;
   await db.query(
-    "UPDATE categories SET name=?, type=?, description=? WHERE id=?",
-    [name, type, description, req.params.id]
+    "UPDATE categories SET name=?, type=?, description=?, image_url=? WHERE id=?",
+    [name, type, description, image_url || null, req.params.id]
   );
   res.json({ message: "Updated" });
 });

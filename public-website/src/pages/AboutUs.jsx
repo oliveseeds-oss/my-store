@@ -51,7 +51,7 @@ export default function AboutUs() {
           background: "linear-gradient(135deg, #0D1512 0%, #0d1a16 100%)",
           color: "#FAF9F6"
         }}
-        className="relative py-24 overflow-hidden shadow-xl"
+        className="relative py-24 about-hero overflow-hidden shadow-xl"
       >
         {/* Luxury glowing mesh blurs */}
         <div className="absolute top-1/4 right-10 w-80 h-80 bg-[#FAF9F6]/10 rounded-full blur-[90px] pointer-events-none" />

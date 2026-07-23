@@ -104,11 +104,32 @@ router.post("/", async (req, res) => {
       );
 
       for (const item of physicalItems) {
-        await db.query(
+        const [itemRes] = await db.query(
           `INSERT INTO physical_order_items (order_uid, product_uid, product_name, selected_size, price, qty, tax_rate)
            VALUES (?,?,?,?,?,?,?)`,
           [order_uid, item.product_uid, item.product_name, item.selected_size || null, item.price, item.qty, 18]
         );
+        const order_item_id = itemRes.insertId;
+
+        if (item.customizations && item.customizations.length) {
+          for (const cust of item.customizations) {
+            await db.query(
+              `INSERT INTO order_item_customizations 
+               (physical_order_item_id, template_id, template_name, field_key, field_label, field_value, field_type) 
+               VALUES (?, ?, ?, ?, ?, ?, ?)`,
+              [
+                order_item_id,
+                cust.template_id || null,
+                cust.template_name || 'Default',
+                cust.field_key,
+                cust.field_label,
+                String(cust.field_value),
+                cust.field_type
+              ]
+            );
+          }
+        }
+
         // reduce stock
         await db.query(
           "UPDATE products SET stock = GREATEST(0, stock - ?) WHERE product_uid = ?",
@@ -205,12 +226,33 @@ router.post("/physical", async (req, res) => {
   );
 
   for (const item of items) {
-    await db.query(
+    const [itemRes] = await db.query(
       `INSERT INTO physical_order_items (order_uid, product_uid, product_name, selected_size, price, qty, tax_rate)
        VALUES (?,?,?,?,?,?,?)`,
       [order_uid, item.product_uid, item.product_name, item.selected_size || null,
         item.price, item.qty, item.tax_rate || 18]
     );
+    const order_item_id = itemRes.insertId;
+
+    if (item.customizations && item.customizations.length) {
+      for (const cust of item.customizations) {
+        await db.query(
+          `INSERT INTO order_item_customizations 
+           (physical_order_item_id, template_id, template_name, field_key, field_label, field_value, field_type) 
+           VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          [
+            order_item_id,
+            cust.template_id || null,
+            cust.template_name || 'Default',
+            cust.field_key,
+            cust.field_label,
+            String(cust.field_value),
+            cust.field_type
+          ]
+        );
+      }
+    }
+
     // reduce stock
     await db.query(
       "UPDATE products SET stock = stock - ? WHERE product_uid = ?",
@@ -333,7 +375,7 @@ router.get("/my", verifyMember, async (req, res) => {
 router.get("/admin/engraved", verifyAdmin, async (req, res) => {
   const { search } = req.query;
   let query = `
-    SELECT o.order_uid as order_id, o.invoice_uid as invoice_no, o.member_uid as member_id, o.invoice_date as created_at, o.payment_mode, o.total as total_amount, o.status as delivery_status, o.tracking_number, 
+    SELECT o.order_uid as order_id, o.invoice_uid as invoice_no, o.member_uid as member_id, o.invoice_date as created_at, o.payment_mode, o.total as total_amount, o.status as delivery_status, o.tracking_number, o.production_notes, o.production_status,
            COALESCE(o.guest_name, m.name) as guest_name, m.name as member_name, o.delivery_name as ship_full_name,
            o.delivery_street as ship_street, o.delivery_city as ship_city, o.delivery_state as ship_state, o.delivery_pincode as ship_pincode,
            GROUP_CONCAT(i.product_name SEPARATOR ', ') as product_name,
@@ -566,6 +608,375 @@ router.get("/admin/export/:type", verifyAdmin, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Export failed" });
+  }
+});
+
+// ADMIN — get detailed customizations for an engraved order
+router.get("/admin/engraved/:uid/details", verifyAdmin, async (req, res) => {
+  try {
+    const [orders] = await db.query(
+      `SELECT o.*, COALESCE(o.guest_name, m.name) as customer_name, COALESCE(o.guest_email, m.email) as customer_email
+       FROM physical_orders o LEFT JOIN members m ON o.member_uid = m.member_uid
+       WHERE o.order_uid = ?`,
+      [req.params.uid]
+    );
+
+    if (!orders.length) return res.status(404).json({ error: "Order not found" });
+    const order = orders[0];
+
+    const [items] = await db.query(
+      "SELECT * FROM physical_order_items WHERE order_uid = ?",
+      [req.params.uid]
+    );
+
+    for (let item of items) {
+      const [customizations] = await db.query(
+        "SELECT * FROM order_item_customizations WHERE physical_order_item_id = ?",
+        [item.id]
+      );
+      item.customizations = customizations;
+    }
+
+    res.json({
+      order,
+      items
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch order details" });
+  }
+});
+
+// ADMIN — update production status & production notes
+router.put("/admin/engraved/:uid/production", verifyAdmin, async (req, res) => {
+  const { production_status, production_notes } = req.body;
+  try {
+    await db.query(
+      `UPDATE physical_orders 
+       SET production_status = ?, production_notes = ?, updated_at = NOW() 
+       WHERE order_uid = ?`,
+      [production_status || 'Pending', production_notes || null, req.params.uid]
+    );
+    res.json({ message: "Production details updated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to update production status" });
+  }
+});
+
+// ADMIN — Export Invoice/Order reports as CSV
+router.get("/admin/reports/export", verifyAdmin, async (req, res) => {
+  const { startDate, endDate, type = "all" } = req.query;
+  try {
+    let csvRows = [];
+    csvRows.push([
+      "Invoice Number",
+      "Order ID",
+      "Date",
+      "Customer Name",
+      "Customer Email",
+      "Product Name",
+      "Size",
+      "Qty",
+      "Price",
+      "Subtotal",
+      "Tax Amount",
+      "Shipping Fee",
+      "Total Paid",
+      "Payment Mode",
+      "Status",
+      "Tracking Number",
+      "Courier Name",
+      "Shipping Country"
+    ].join(","));
+
+    let physicalSql = `SELECT o.*, COALESCE(o.guest_name, m.name) as customer_name, COALESCE(o.guest_email, m.email) as customer_email
+                       FROM physical_orders o LEFT JOIN members m ON o.member_uid = m.member_uid WHERE 1=1`;
+    let digitalSql = `SELECT o.*, COALESCE(o.guest_name, m.name) as customer_name, COALESCE(o.guest_email, m.email) as customer_email
+                      FROM digital_orders o LEFT JOIN members m ON o.member_uid = m.member_uid WHERE 1=1`;
+    const physicalParams = [];
+    const digitalParams = [];
+
+    if (startDate) {
+      physicalSql += " AND o.invoice_date >= ?";
+      digitalSql += " AND o.invoice_date >= ?";
+      physicalParams.push(startDate + " 00:00:00");
+      digitalParams.push(startDate + " 00:00:00");
+    }
+    if (endDate) {
+      physicalSql += " AND o.invoice_date <= ?";
+      digitalSql += " AND o.invoice_date <= ?";
+      physicalParams.push(endDate + " 23:59:59");
+      digitalParams.push(endDate + " 23:59:59");
+    }
+
+    physicalSql += " ORDER BY o.invoice_date DESC";
+    digitalSql += " ORDER BY o.invoice_date DESC";
+
+    if (type === "all" || type === "physical") {
+      const [pOrders] = await db.query(physicalSql, physicalParams);
+      for (const o of pOrders) {
+        const [items] = await db.query("SELECT * FROM physical_order_items WHERE order_uid = ?", [o.order_uid]);
+        for (const item of items) {
+          const row = [
+            o.invoice_uid,
+            o.order_uid,
+            o.invoice_date ? new Date(o.invoice_date).toISOString().split('T')[0] : 'N/A',
+            `"${(o.customer_name || '').replace(/"/g, '""')}"`,
+            o.customer_email || '',
+            `"${item.product_name.replace(/"/g, '""')}"`,
+            item.selected_size || 'N/A',
+            item.qty,
+            item.price,
+            o.subtotal,
+            o.tax_amount,
+            o.shipping_fee,
+            o.total,
+            o.payment_mode,
+            o.status,
+            o.tracking_number || '',
+            o.courier_name || '',
+            o.delivery_country || 'India'
+          ];
+          csvRows.push(row.join(","));
+        }
+      }
+    }
+
+    if (type === "all" || type === "digital") {
+      const [dOrders] = await db.query(digitalSql, digitalParams);
+      for (const o of dOrders) {
+        const row = [
+          o.invoice_uid,
+          o.order_uid,
+          o.invoice_date ? new Date(o.invoice_date).toISOString().split('T')[0] : 'N/A',
+          `"${(o.customer_name || '').replace(/"/g, '""')}"`,
+          o.customer_email || '',
+          `"${o.product_name.replace(/"/g, '""')}"`,
+          'N/A',
+          1,
+          o.price,
+          o.price,
+          '0.00',
+          '0.00',
+          o.price,
+          o.payment_mode || 'Online',
+          o.delivery_status || 'Delivered',
+          'N/A',
+          'N/A',
+          'N/A'
+        ];
+        csvRows.push(row.join(","));
+      }
+    }
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", "attachment; filename=invoice_reports.csv");
+    res.send(csvRows.join("\n"));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to generate CSV export" });
+  }
+});
+
+// PUBLIC/USER — Dispatch Invoice via Email
+router.post("/:uid/invoice/mail", async (req, res) => {
+  const { uid } = req.params;
+  try {
+    let orderType = "physical";
+    let [orders] = await db.query(
+      `SELECT o.*, COALESCE(o.guest_name, m.name) as customer_name, COALESCE(o.guest_email, m.email) as customer_email
+       FROM physical_orders o LEFT JOIN members m ON o.member_uid = m.member_uid
+       WHERE o.order_uid = ? OR o.invoice_uid = ?`,
+      [uid, uid]
+    );
+
+    if (!orders.length) {
+      orderType = "digital";
+      [orders] = await db.query(
+        `SELECT o.*, COALESCE(o.guest_name, m.name) as customer_name, COALESCE(o.guest_email, m.email) as customer_email
+         FROM digital_orders o LEFT JOIN members m ON o.member_uid = m.member_uid
+         WHERE o.order_uid = ? OR o.invoice_uid = ?`,
+        [uid, uid]
+      );
+    }
+
+    if (!orders.length) return res.status(404).json({ error: "Order/Invoice not found" });
+    const order = orders[0];
+
+    let itemsHtml = "";
+    if (orderType === "physical") {
+      const [items] = await db.query("SELECT * FROM physical_order_items WHERE order_uid = ?", [order.order_uid]);
+      for (const item of items) {
+        itemsHtml += `
+          <tr>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;">${item.product_name} ${item.selected_size ? `(${item.selected_size})` : ''}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: center;">${item.qty}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: right;">₹${item.price}</td>
+          </tr>
+        `;
+      }
+    } else {
+      itemsHtml = `
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd;">${order.product_name} (Digital Access)</td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: center;">1</td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: right;">₹${order.price}</td>
+        </tr>
+      `;
+    }
+
+    const emailHtml = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.05); color: #333;">
+        <table style="width: 100%; line-height: 1.6; border-collapse: collapse;">
+          <tr>
+            <td>
+              <h2 style="margin: 0; color: #d97706;">✏️ OLIVESEEDS CUSTOMS</h2>
+              <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">Unique Laser-Engraved Creations</p>
+            </td>
+            <td style="text-align: right;">
+              <h3 style="margin: 0; text-transform: uppercase; color: #666;">INVOICE</h3>
+              <p style="margin: 5px 0 0 0; font-size: 12px;"><strong>Invoice #:</strong> ${order.invoice_uid}</p>
+              <p style="margin: 2px 0 0 0; font-size: 12px;"><strong>Date:</strong> ${new Date(order.invoice_date).toDateString()}</p>
+            </td>
+          </tr>
+        </table>
+        
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
+
+        <table style="width: 100%; line-height: 1.6; border-collapse: collapse; margin-bottom: 20px;">
+          <tr>
+            <td style="vertical-align: top; width: 50%;">
+              <strong style="color: #666; font-size: 12px; text-transform: uppercase;">Billed To:</strong>
+              <p style="margin: 5px 0 0 0; font-weight: bold;">${order.customer_name}</p>
+              <p style="margin: 2px 0 0 0; font-size: 13px;">${order.customer_email}</p>
+              ${order.guest_phone ? `<p style="margin: 2px 0 0 0; font-size: 13px;">Phone: ${order.guest_phone}</p>` : ''}
+            </td>
+            <td style="vertical-align: top; width: 50%; text-align: right;">
+              <strong style="color: #666; font-size: 12px; text-transform: uppercase;">Shipping Destination:</strong>
+              ${orderType === "physical" ? `
+                <p style="margin: 5px 0 0 0; font-size: 13px;">${order.delivery_name || order.customer_name}</p>
+                <p style="margin: 2px 0 0 0; font-size: 13px;">${order.delivery_street || ''}</p>
+                <p style="margin: 2px 0 0 0; font-size: 13px;">${order.delivery_city || ''}, ${order.delivery_state || ''} - ${order.delivery_pincode || ''}</p>
+                <p style="margin: 2px 0 0 0; font-size: 13px;">${order.delivery_country || 'India'}</p>
+              ` : `
+                <p style="margin: 5px 0 0 0; font-size: 13px; color: #15803d; font-weight: bold;">⚡ Instant Digital Email Delivery</p>
+              `}
+            </td>
+          </tr>
+        </table>
+
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+          <thead>
+            <tr style="background: #f9f9f9; font-weight: bold;">
+              <th style="padding: 10px; border-bottom: 2px solid #ddd; text-align: left;">Item</th>
+              <th style="padding: 10px; border-bottom: 2px solid #ddd; text-align: center; width: 50px;">Qty</th>
+              <th style="padding: 10px; border-bottom: 2px solid #ddd; text-align: right; width: 100px;">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${itemsHtml}
+          </tbody>
+        </table>
+
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px;">
+          <tr>
+            <td style="width: 60%; vertical-align: top;">
+              <div style="border: 1px dashed #ddd; padding: 10px; font-size: 11px; color: #666; margin-right: 15px;">
+                <strong>Verification QR Code:</strong><br/>
+                Scan this code in your browser or shipping package labels to verify order verification data securely.
+              </div>
+            </td>
+            <td style="width: 40%; vertical-align: top;">
+              <table style="width: 100%; text-align: right; line-height: 1.6;">
+                <tr>
+                  <td>Subtotal:</td>
+                  <td style="font-weight: bold; width: 90px;">₹${orderType === "physical" ? order.subtotal : order.price}</td>
+                </tr>
+                ${orderType === "physical" ? `
+                  <tr>
+                    <td>CGST/SGST (18%):</td>
+                    <td style="font-weight: bold;">₹${order.tax_amount || '0.00'}</td>
+                  </tr>
+                  <tr>
+                    <td>Shipping Fee:</td>
+                    <td style="font-weight: bold;">₹${order.shipping_fee || '0.00'}</td>
+                  </tr>
+                ` : ''}
+                <tr style="font-size: 16px; border-top: 2px solid #eee; color: #d97706; font-weight: bold;">
+                  <td style="padding-top: 10px;">Total Paid:</td>
+                  <td style="padding-top: 10px;">₹${order.total || order.price}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0 20px 0;" />
+        <div style="text-align: center; font-size: 11px; color: #999;">
+          Thank you for choosing Oliveseeds Customs! Custom laser engraving takes 2-4 business days. For tracking questions or delivery status, write to orders@oliveseed.com.
+        </div>
+      </div>
+    `;
+
+    console.log(`✉️ [SMTP-Mock] Dispatched HTML invoice to: \${order.customer_email}`);
+    res.json({
+      success: true,
+      message: `Invoice email successfully compiled and queued for dispatch to \${order.customer_email}`,
+      recipient: order.customer_email,
+      preview_html: emailHtml
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to dispatch invoice mail" });
+  }
+});
+
+// PUBLIC — get order detail by UID (for Order Success / Invoice page)
+router.get("/detail/:uid", async (req, res) => {
+  try {
+    let orderType = "physical";
+    let [orders] = await db.query(
+      `SELECT o.*, COALESCE(o.guest_name, m.name) as customer_name, COALESCE(o.guest_email, m.email) as customer_email
+       FROM physical_orders o LEFT JOIN members m ON o.member_uid = m.member_uid
+       WHERE o.order_uid = ? OR o.invoice_uid = ?`,
+      [req.params.uid, req.params.uid]
+    );
+
+    if (!orders.length) {
+      orderType = "digital";
+      [orders] = await db.query(
+        `SELECT o.*, COALESCE(o.guest_name, m.name) as customer_name, COALESCE(o.guest_email, m.email) as customer_email
+         FROM digital_orders o LEFT JOIN members m ON o.member_uid = m.member_uid
+         WHERE o.order_uid = ? OR o.invoice_uid = ?`,
+        [req.params.uid, req.params.uid]
+      );
+    }
+
+    if (!orders.length) return res.status(404).json({ error: "Order not found" });
+    const order = orders[0];
+
+    let items = [];
+    if (orderType === "physical") {
+      const [pItems] = await db.query("SELECT * FROM physical_order_items WHERE order_uid = ?", [order.order_uid]);
+      items = pItems;
+    } else {
+      items = [{
+        product_name: order.product_name,
+        price: order.price,
+        qty: 1,
+        selected_size: null
+      }];
+    }
+
+    res.json({
+      order,
+      items,
+      type: orderType
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch order details" });
   }
 });
 

@@ -7,22 +7,30 @@ export function CartProvider({ children }) {
 
   const addToCart = (item) => {
     setCart((prev) => {
-      const exists = prev.find((i) => i.id === item.id && i.type === item.type);
+      const getCartKey = (i) => `${i.id}-${i.type}-${i.selectedSize || ""}-${i.customizationSummary || ""}`;
+      const itemKey = getCartKey(item);
+      const exists = prev.find((i) => getCartKey(i) === itemKey);
       if (exists) return prev.map((i) =>
-        i.id === item.id && i.type === item.type
-          ? { ...i, qty: i.qty + 1 } : i
+        getCartKey(i) === itemKey
+          ? { ...i, qty: i.qty + (item.qty || 1) } : i
       );
-      return [...prev, { ...item, qty: 1 }];
+      return [...prev, { ...item, qty: item.qty || 1 }];
     });
   };
 
-  const removeFromCart = (id, type) =>
-    setCart(cart.filter((i) => !(i.id === id && i.type === type)));
+  const removeFromCart = (id, type, selectedSize = "", customizationSummary = "") => {
+    const itemKey = `${id}-${type}-${selectedSize}-${customizationSummary}`;
+    const getCartKey = (i) => `${i.id}-${i.type}-${i.selectedSize || ""}-${i.customizationSummary || ""}`;
+    setCart(cart.filter((i) => getCartKey(i) !== itemKey));
+  };
 
-  const updateQty = (id, type, qty) =>
+  const updateQty = (id, type, qty, selectedSize = "", customizationSummary = "") => {
+    const itemKey = `${id}-${type}-${selectedSize}-${customizationSummary}`;
+    const getCartKey = (i) => `${i.id}-${i.type}-${i.selectedSize || ""}-${i.customizationSummary || ""}`;
     setCart(cart.map((i) =>
-      i.id === id && i.type === type ? { ...i, qty } : i
+      getCartKey(i) === itemKey ? { ...i, qty } : i
     ));
+  };
 
   const clearCart = () => setCart([]);
 

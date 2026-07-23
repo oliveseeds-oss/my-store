@@ -16,6 +16,8 @@ import Profile from "./pages/Profile";
 import BlogList from "./pages/BlogList";
 import Service from "./pages/Service";
 import Contact from "./pages/Contact";
+import Catalog from "./pages/Catalog";
+import Gallery from "./pages/Gallery";
 
 // ── The pages your footer links to ──
 import TermsConditions from "./pages/TermsConditions";
@@ -25,12 +27,27 @@ import ShippingPolicy from "./pages/ShippingPolicy";
 import CookiesPolicy from "./pages/CookiesPolicy";
 import AboutUs from "./pages/AboutUs";
 
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import WhatsAppChat from "./components/WhatsAppChat";
+
+// ── Scroll to Top on Route Change ──
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
 export default function App() {
   return (
     <MemberProvider>
       <CurrencyProvider>
         <CartProvider>
           <BrowserRouter>
+            <ScrollToTop />
+            <WhatsAppChat />
             <Routes>
               <Route path="/"                   element={<Home />} />
               <Route path="/products"           element={<ProductList />} />
@@ -45,6 +62,8 @@ export default function App() {
               <Route path="/blog"               element={<BlogList />} />
               <Route path="/service" element={<Service/>}/>
               <Route path="/contact"            element={<Contact />} />
+              <Route path="/catalog"            element={<Catalog />} />
+              <Route path="/gallery"            element={<Gallery />} />
 
               {/* ── Legal & info pages ── */}
               <Route path="/terms"              element={<TermsConditions />} />

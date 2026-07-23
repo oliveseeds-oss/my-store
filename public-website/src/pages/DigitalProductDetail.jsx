@@ -143,9 +143,9 @@ export default function DigitalProductDetail() {
         <div className="flex flex-col lg:flex-row gap-8">
 
           {/* Images */}
-          <div className="lg:w-1/2 flex gap-3">
+          <div className="lg:w-1/2 flex flex-col-reverse sm:flex-row gap-3">
             {allImages.length > 1 && (
-              <div className="flex flex-col gap-2 w-16">
+              <div className="flex flex-row sm:flex-col gap-2 w-full sm:w-16 overflow-x-auto">
                 {allImages.map((img, i) => (
                   <button key={i} onClick={() => setSelectedImg(i)}
                     className="border-2 overflow-hidden transition aspect-video"
@@ -349,32 +349,50 @@ export default function DigitalProductDetail() {
         {/* Related */}
         {related.length > 0 && (
           <div className="mt-10 pt-8" style={{ borderTop: "1px solid rgba(56,189,248,0.1)" }}>
-            <h2 className="text-sm font-bold tracking-widest mb-6" style={{ color: "#38bdf8" }}>
-              // YOU MAY ALSO LIKE
+            <h2 className="text-sm font-bold tracking-widest mb-4" style={{ color: "#38bdf8", fontFamily: "'Space Mono', monospace" }}>
+              // CUSTOMERS ALSO VIEWED
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-              {related.map(r => (
-                <Link key={r.id} to={`/digital/${r.id}`}
-                  onClick={() => window.scrollTo(0,0)}
-                  className="group overflow-hidden transition hover:translate-y-[-2px]"
-                  style={{ background: "#0f172a", border: "1px solid rgba(56,189,248,0.1)" }}>
-                  <div className="aspect-video overflow-hidden"
-                    style={{ background: "#020617" }}>
-                    {(r.thumbnail_url || (r.images && r.images[0]))
-                      ? <img src={r.thumbnail_url || r.images[0]} alt={r.name}
-                          className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition" />
-                      : <div className="w-full h-full flex items-center justify-center">
-                          <span className="text-2xl opacity-20">⬡</span>
-                        </div>}
-                  </div>
-                  <div className="p-2">
-                    <p className="text-xs line-clamp-2 mb-1" style={{ color: "#94a3b8" }}>{r.name}</p>
-                    <p className="text-xs font-bold" style={{ color: "#38bdf8" }}>
-                      ₹{r.discount_price || r.price}
-                    </p>
-                  </div>
-                </Link>
-              ))}
+            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin" style={{ scrollbarWidth: "thin" }}>
+              {related.map(r => {
+                const img = r.thumbnail_url || (r.images && r.images[0]);
+                const price = r.discount_price || r.price;
+                const discount = r.discount_price ? Math.round((1 - r.discount_price / r.price) * 100) : 0;
+                return (
+                  <Link key={r.id} to={`/digital/${r.id}`}
+                    onClick={() => window.scrollTo(0, 0)}
+                    style={{ flex: "0 0 180px", background: "#0f172a", border: "1px solid rgba(56,189,248,0.15)" }}
+                    className="group hover:shadow-md transition overflow-hidden rounded-[4px] p-3 flex flex-col justify-between">
+                    <div>
+                      <div className="aspect-video bg-slate-950 overflow-hidden rounded-[4px] mb-2 flex items-center justify-center">
+                        {img
+                          ? <img src={img} alt={r.name} className="w-full h-full object-cover group-hover:scale-105 transition" />
+                          : <span className="text-2xl opacity-20">⬡</span>}
+                      </div>
+                      <p className="text-xs hover:underline line-clamp-2 leading-snug mb-1 font-medium" style={{ color: "#38bdf8" }}>
+                        {r.name}
+                      </p>
+                      {/* Rating */}
+                      <div className="flex items-center gap-1 mb-1">
+                        <span className="text-xs text-amber-400">
+                          {"★".repeat(Math.round(r.rating || 5)) + "☆".repeat(5 - Math.round(r.rating || 5))}
+                        </span>
+                        <span className="text-[10px]" style={{ color: "#64748b" }}>{r.review_count || 8}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex items-baseline gap-1.5 flex-wrap">
+                        <span className="text-sm font-bold text-white">₹{price}</span>
+                        {r.discount_price && (
+                          <>
+                            <span className="text-[10px] line-through" style={{ color: "#64748b" }}>₹{r.price}</span>
+                            <span className="text-[10px] font-bold text-rose-500">({discount}% off)</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         )}

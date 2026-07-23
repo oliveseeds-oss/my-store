@@ -89,7 +89,7 @@ export default function Contact() {
           background: "linear-gradient(135deg, #0D1512 0%, #0d1a16 100%)",
           color: "#FAF9F6"
         }}
-        className="relative py-20 md:py-28 overflow-hidden shadow-xl"
+        className="relative py-20 md:py-28 blog-hero overflow-hidden shadow-xl"
       >
         {/* Luxury glowing mesh blurs */}
         <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-[#FAF9F6]/10 rounded-full blur-[100px] pointer-events-none" />

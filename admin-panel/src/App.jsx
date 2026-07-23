@@ -17,6 +17,7 @@ import CurrencySettings from "./pages/CurrencySettings";
 import Reports from "./pages/Reports";
 import Transactions from "./pages/Transactions";
 import SeoSettings from "./pages/SeoSettings";
+import GalleryAdmin from "./pages/GalleryAdmin";
 
 const P = ({ children }) => <ProtectedRoute>{children}</ProtectedRoute>;
 
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<P><Dashboard /></P>} />
           <Route path="/categories" element={<P><Categories /></P>} />
+          <Route path="/gallery" element={<P><GalleryAdmin /></P>} />
           <Route path="/products" element={<P><Products /></P>} />
           <Route path="/digital-products" element={<P><DigitalProducts /></P>} />
           <Route path="/orders" element={<P><Orders /></P>} />

@@ -37,51 +37,46 @@ const T = {
 
 /* ─── Sort options (unchanged logic) ─────────────────────────────────── */
 const SORT_OPTIONS = [
-  { value: "newest",     label: "Featured"           },
-  { value: "rating",     label: "Best Selling"       },
-  { value: "price_asc",  label: "Price: Low to High" },
+  { value: "newest", label: "Featured" },
+  { value: "rating", label: "Best Selling" },
+  { value: "price_asc", label: "Price: Low to High" },
   { value: "price_desc", label: "Price: High to Low" },
 ];
 
 
 const TRUST_ITEMS = [
-  { icon: "✈️", label: "Worldwide Shipping"  },
-  { icon: "🔒", label: "Secure Payments"     },
-  { icon: "🪵", label: "Premium Materials"   },
-  { icon: "✂️", label: "Made To Order"       },
-  { icon: "🔏", label: "Custom Engraving"    },
-  { icon: "🎁", label: "Gift Ready Packaging"},
+  { icon: "✈️", label: "Worldwide Shipping" },
+  { icon: "🔒", label: "Secure Payments" },
+  { icon: "🪵", label: "Premium Materials" },
+  { icon: "✂️", label: "Made To Order" },
+  { icon: "🔏", label: "Custom Engraving" },
+  { icon: "🎁", label: "Gift Ready Packaging" },
 ];
 
 const MATERIALS = [
-  { name: "Wood",        desc: "Natural grain, warm tones", emoji: "🪵" },
-  { name: "Acrylic",    desc: "Crystal clarity, bold finish", emoji: "💠" },
-  { name: "Leather",    desc: "Rich texture, lasting luxury", emoji: "🧶" },
-  { name: "Glass",      desc: "Precision-cut, timeless shine", emoji: "⚙️" },
-  { name: "Premium MDF",desc: "Smooth surface, perfect engraving", emoji: "📐" },
+  { name: "Wood", desc: "Natural grain, warm tones", emoji: "🪵" },
+  { name: "Acrylic", desc: "Crystal clarity, bold finish", emoji: "💠" },
+  { name: "Leather", desc: "Rich texture, lasting luxury", emoji: "🧶" },
+  { name: "Glass", desc: "Precision-cut, timeless shine", emoji: "⚙️" },
+  { name: "Premium MDF", desc: "Smooth surface, perfect engraving", emoji: "📐" },
 ];
 
-const COLLECTIONS = [
-  { title: "Corporate Excellence", sub: "Elevate your brand identity",   emoji: "🏆" },
-  { title: "Modern Workspace",     sub: "Desk accessories & name plates", emoji: "🖊️" },
-  { title: "Wedding Collection",   sub: "Timeless keepsakes for love",   emoji: "💍" },
-  { title: "Business Branding",    sub: "Custom branding at scale",      emoji: "📦" },
-];
+
 
 const WHY_US = [
-  { icon: "🪵", title: "Premium Materials",     desc: "Only the finest wood, acrylic, metal and MDF." },
-  { icon: "🔏", title: "Precision Engraving",   desc: "Laser-cut to micron accuracy every time." },
-  { icon: "✈️", title: "Worldwide Shipping",    desc: "Fast, insured delivery to your doorstep." },
-  { icon: "🎁", title: "Gift Ready Packaging",  desc: "Luxury packaging that makes unboxing special." },
-  { icon: "💬", title: "Dedicated Support",     desc: "Expert guidance from order to delivery." },
-  { icon: "🏢", title: "Business Orders",       desc: "Bulk corporate gifting with volume pricing." },
+  { icon: "🪵", title: "Premium Materials", desc: "Only the finest wood, acrylic, metal and MDF." },
+  { icon: "🔏", title: "Precision Engraving", desc: "Laser-cut to micron accuracy every time." },
+  { icon: "✈️", title: "Worldwide Shipping", desc: "Fast, insured delivery to your doorstep." },
+  { icon: "🎁", title: "Gift Ready Packaging", desc: "Luxury packaging that makes unboxing special." },
+  { icon: "💬", title: "Dedicated Support", desc: "Expert guidance from order to delivery." },
+  { icon: "🏢", title: "Business Orders", desc: "Bulk corporate gifting with volume pricing." },
 ];
 
 const STEPS = [
-  { num: "01", title: "Choose Product",      desc: "Browse our curated collection of premium engravables." },
+  { num: "01", title: "Choose Product", desc: "Browse our curated collection of premium engravables." },
   { num: "02", title: "Add Personalization", desc: "Upload your name, logo or message for engraving." },
-  { num: "03", title: "Review Design",       desc: "We send a digital proof before production begins." },
-  { num: "04", title: "Worldwide Delivery",  desc: "Gift-packaged and shipped straight to your door." },
+  { num: "03", title: "Review Design", desc: "We send a digital proof before production begins." },
+  { num: "04", title: "Worldwide Delivery", desc: "Gift-packaged and shipped straight to your door." },
 ];
 
 /* ─── Star Rating (unchanged logic) ──────────────────────────────────── */
@@ -110,12 +105,12 @@ function StarRating({ rating, count }) {
 function ProductCard({ p, onWishlist, isWishlisted }) {
   const { addToCart } = useCart();
   const { convert } = useCurrency();
-  const [added, setAdded]       = useState(false);
-  const [hovered, setHovered]   = useState(false);
+  const [added, setAdded] = useState(false);
+  const [hovered, setHovered] = useState(false);
 
-  const img         = p.image_url || (p.images && p.images[0]);
-  const finalPrice  = p.discount_price || p.price;
-  const discount    = p.discount_price
+  const img = p.image_url || (p.images && p.images[0]);
+  const finalPrice = p.discount_price || p.price;
+  const discount = p.discount_price
     ? Math.round((1 - p.discount_price / p.price) * 100)
     : 0;
   const tags = Array.isArray(p.tags) ? p.tags : [];
@@ -343,18 +338,19 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
 
 /* ─── Main Export ─────────────────────────────────────────────────────── */
 export default function ProductList() {
-  const [products,   setProducts]   = useState([]);
+  const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [loading,    setLoading]    = useState(true);
-  const [wishlist,   setWishlist]   = useState([]);
-  const [email,      setEmail]      = useState("");
+  const [loading, setLoading] = useState(true);
+  const [wishlist, setWishlist] = useState([]);
+  const [email, setEmail] = useState("");
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const [filters, setFilters] = useState({
-    search:    "",
-    category:  "",
-    sort:      "newest",
-    minPrice:  "",
-    maxPrice:  "",
+    search: "",
+    category: "",
+    sort: "newest",
+    minPrice: "",
+    maxPrice: "",
     minRating: "",
   });
 
@@ -373,6 +369,14 @@ export default function ProductList() {
   }, [filters]);
 
   useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const cat = urlParams.get("category");
+    if (cat) {
+      setFilters(f => ({ ...f, category: cat }));
+    }
+  }, []);
 
 
 
@@ -433,7 +437,7 @@ export default function ProductList() {
       {/* ═══════════════════════════════════════════════════
           HERO SECTION
       ═══════════════════════════════════════════════════ */}
-      <section style={{
+      <section className="products-hero" style={{
         background: `linear-gradient(135deg, #1B1510 0%, #2C1F14 55%, #3D2B1F 100%)`,
         padding: "100px 24px 80px",
         position: "relative",
@@ -466,7 +470,7 @@ export default function ProductList() {
             letterSpacing: "0.4em", textTransform: "uppercase",
             color: T.highlight, marginBottom: 20,
           }}>
-            Olive Seeds Design Studio · Premium Collection
+            Olive Seeds · Premium Collection
           </p>
 
           <h1 style={{
@@ -581,28 +585,7 @@ export default function ProductList() {
         <AdBanner placement="Horizontal Banner" />
       </div>
 
-      {/* ═══════════════════════════════════════════════════
-          FEATURED COLLECTIONS
-      ═══════════════════════════════════════════════════ */}
-      <section style={{ padding: "80px 24px", maxWidth: 1280, margin: "0 auto" }}>
-        <div style={{ marginBottom: 48, textAlign: "center" }}>
-          <p style={eyebrow(true)}>Featured Collections</p>
-          <h2 style={sectionHeading(true)}>Curated for Every Occasion</h2>
-          <p style={sectionSub(true)}>
-            Explore our editorial collections — each one crafted with a singular vision.
-          </p>
-        </div>
 
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-          gap: 24,
-        }}>
-          {COLLECTIONS.map((col, i) => (
-            <CollectionCard key={i} col={col} />
-          ))}
-        </div>
-      </section>
 
       {/* ═══════════════════════════════════════════════════
           MAIN PRODUCT AREA (Sidebar + Grid)
@@ -739,6 +722,23 @@ export default function ProductList() {
                   <option key={o.value} value={o.value}>{o.label}</option>
                 ))}
               </select>
+
+              {/* Mobile Filter Toggle */}
+              <button
+                className="mobile-filter-btn"
+                onClick={() => setShowMobileFilters(true)}
+                style={{
+                  padding: "12px 16px",
+                  borderRadius: 12, border: `1px solid ${T.border}`,
+                  fontFamily: T.bodyFont, fontSize: 13,
+                  background: T.card, color: T.text,
+                  cursor: "pointer",
+                  display: "none",
+                  boxShadow: "0 4px 16px rgba(27,27,27,0.05)",
+                }}
+              >
+                🎛️ Filters
+              </button>
             </div>
           </div>
 
@@ -796,54 +796,58 @@ export default function ProductList() {
       </section>
 
       {/* ═══════════════════════════════════════════════════
-          CUSTOMIZATION STEPS
+          CUSTOMIZATION STEPS (Redesigned & Smaller)
       ═══════════════════════════════════════════════════ */}
       <section style={{
         background: T.card,
         borderTop: `1px solid ${T.border}`,
         borderBottom: `1px solid ${T.border}`,
-        padding: "80px 24px",
+        padding: "48px 24px",
       }}>
-        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 56 }}>
-            <p style={eyebrow(true)}>How It Works</p>
-            <h2 style={sectionHeading(true)}>Your Customization Journey</h2>
+        <div style={{ maxWidth: 1000, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 36 }}>
+            <p style={{ ...eyebrow(true), marginBottom: 6 }}>How It Works</p>
+            <h2 style={{ ...sectionHeading(true), fontSize: "clamp(24px, 3.5vw, 32px)", marginBottom: 4 }}>Your Customization Journey</h2>
           </div>
 
           <div style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-            gap: 32,
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: 24,
           }}>
             {STEPS.map((step, i) => (
-              <div key={i} style={{ textAlign: "center" }}>
+              <div key={i} style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
                 <div style={{
-                  width: 64, height: 64, borderRadius: "50%",
+                  width: 36, height: 36, borderRadius: "50%",
                   background: "#F0EBE3",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  margin: "0 auto 20px",
-                  border: `2px solid ${T.border}`,
+                  border: `1.5px solid ${T.border}`,
+                  flexShrink: 0,
                 }}>
                   <span style={{
-                    fontFamily: T.headingFont, fontSize: 22, fontWeight: 700,
+                    fontFamily: T.headingFont, fontSize: 14, fontWeight: 700,
                     color: T.accent,
                   }}>
                     {step.num}
                   </span>
                 </div>
-                <h3 style={{
-                  fontFamily: T.headingFont, fontStyle: "italic",
-                  fontSize: 20, fontWeight: 500, color: T.text,
-                  marginBottom: 10,
-                }}>
-                  {step.title}
-                </h3>
-                <p style={{
-                  fontFamily: T.bodyFont, fontSize: 14,
-                  color: T.textSec, lineHeight: 1.7,
-                }}>
-                  {step.desc}
-                </p>
+                <div>
+                  <h3 style={{
+                    fontFamily: T.bodyFont,
+                    fontWeight: 600,
+                    fontSize: 14, color: T.text,
+                    margin: "0 0 4px 0",
+                  }}>
+                    {step.title}
+                  </h3>
+                  <p style={{
+                    fontFamily: T.bodyFont, fontSize: 12.5,
+                    color: T.textSec, lineHeight: 1.5,
+                    margin: 0,
+                  }}>
+                    {step.desc}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
@@ -851,49 +855,110 @@ export default function ProductList() {
       </section>
 
       {/* ═══════════════════════════════════════════════════
-          MATERIAL SHOWCASE
+          MATERIAL SHOWCASE (Redesigned & Smaller)
       ═══════════════════════════════════════════════════ */}
-      <section style={{ padding: "80px 24px", maxWidth: 1280, margin: "0 auto" }}>
-        <div style={{ marginBottom: 48 }}>
-          <p style={eyebrow()}>Our Materials</p>
-          <h2 style={sectionHeading()}>Tactile. Premium. Lasting.</h2>
-          <p style={sectionSub()}>
+      <section style={{ padding: "48px 24px", maxWidth: 1000, margin: "0 auto" }}>
+        <div style={{ marginBottom: 28, textAlign: "center" }}>
+          <p style={{ ...eyebrow(true), marginBottom: 6 }}>Our Materials</p>
+          <h2 style={{ ...sectionHeading(true), fontSize: "clamp(24px, 3.5vw, 32px)", marginBottom: 4 }}>Tactile. Premium. Lasting.</h2>
+          <p style={{ ...sectionSub(true), fontSize: 13.5, margin: "0 auto" }}>
             Every material is selected for its engraving quality, durability, and luxurious appearance.
           </p>
         </div>
 
-        <div style={{
+        <div className="materials-grid" style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-          gap: 20,
+          gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))",
+          gap: 16,
         }}>
           {MATERIALS.map((mat, i) => (
-            <MaterialCard key={i} mat={mat} />
+            <div
+              key={i}
+              style={{
+                background: "#FAF8F5",
+                borderRadius: 12,
+                border: `1px solid ${T.border}`,
+                padding: "16px",
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                transition: "all 0.3s ease",
+              }}
+            >
+              <span style={{ fontSize: 24, flexShrink: 0 }}>{mat.emoji}</span>
+              <div>
+                <h4 style={{
+                  fontFamily: T.bodyFont,
+                  fontWeight: 600, fontSize: 13.5,
+                  color: "#1B1B1B", margin: "0 0 2px 0",
+                }}>
+                  {mat.name}
+                </h4>
+                <p style={{
+                  fontFamily: "'Inter', sans-serif", fontSize: 11,
+                  color: "#66615B", margin: 0, lineHeight: 1.4
+                }}>
+                  {mat.desc}
+                </p>
+              </div>
+            </div>
           ))}
         </div>
       </section>
 
       {/* ═══════════════════════════════════════════════════
-          WHY CHOOSE US
+          WHY CHOOSE US (Redesigned & Smaller)
       ═══════════════════════════════════════════════════ */}
       <section style={{
         background: T.card,
         borderTop: `1px solid ${T.border}`,
-        padding: "80px 24px",
+        padding: "48px 24px",
       }}>
-        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 52 }}>
-            <p style={eyebrow(true)}>Why Olive Seeds</p>
-            <h2 style={sectionHeading(true)}>Craftsmanship You Can Trust</h2>
+        <div style={{ maxWidth: 1000, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 32 }}>
+            <p style={{ ...eyebrow(true), marginBottom: 6 }}>Why Olive Seeds</p>
+            <h2 style={{ ...sectionHeading(true), fontSize: "clamp(24px, 3.5vw, 32px)" }}>Craftsmanship You Can Trust</h2>
           </div>
 
-          <div style={{
+          <div className="why-grid" style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-            gap: 28,
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: 20,
           }}>
             {WHY_US.map((item, i) => (
-              <WhyCard key={i} item={item} />
+              <div
+                key={i}
+                style={{
+                  display: "flex", gap: 14, alignItems: "center",
+                  padding: "16px", borderRadius: 12,
+                  border: `1px solid ${T.border}`,
+                  background: T.card,
+                }}
+              >
+                <span style={{
+                  fontSize: 20, flexShrink: 0,
+                  width: 38, height: 38, display: "flex",
+                  alignItems: "center", justifyContent: "center",
+                  background: "#F0EBE3", borderRadius: 10,
+                }}>
+                  {item.icon}
+                </span>
+                <div>
+                  <h4 style={{
+                    fontFamily: T.bodyFont,
+                    fontWeight: 600, fontSize: 14,
+                    color: "#1B1B1B", margin: "0 0 2px 0",
+                  }}>
+                    {item.title}
+                  </h4>
+                  <p style={{
+                    fontFamily: "'Inter', sans-serif", fontSize: 12,
+                    color: "#66615B", margin: 0, lineHeight: 1.4,
+                  }}>
+                    {item.desc}
+                  </p>
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -965,6 +1030,92 @@ export default function ProductList() {
         </div>
       </section>
 
+      {/* Mobile Filters Drawer Overlay */}
+      {showMobileFilters && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 9999,
+          background: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "flex-end"
+        }}>
+          <div style={{
+            width: "300px", background: "#FAF8F5", height: "100%", overflowY: "auto",
+            padding: "30px 24px", display: "flex", flexDirection: "column", gap: 20,
+            position: "relative", boxShadow: "-8px 0 32px rgba(0,0,0,0.15)"
+          }}>
+            <button
+              onClick={() => setShowMobileFilters(false)}
+              style={{
+                position: "absolute", top: 20, right: 20,
+                border: "none", background: "none", fontSize: 24, cursor: "pointer",
+                color: T.text
+              }}
+            >
+              ×
+            </button>
+            <h3 style={{ fontFamily: T.headingFont, fontSize: 22, fontStyle: "italic", margin: "0 0 10px 0", color: T.text }}>Filters</h3>
+
+            {/* Categories */}
+            <SidebarPanel title="Categories">
+              {[{ id: "", name: "All Products" }, ...categories].map((c) => (
+                <SidebarBtn
+                  key={c.id}
+                  label={c.name}
+                  active={filters.category === c.name || (!filters.category && c.id === "")}
+                  onClick={() => { setFilter("category", c.id === "" ? "" : c.name); setShowMobileFilters(false); }}
+                />
+              ))}
+            </SidebarPanel>
+
+            {/* Price Range */}
+            <SidebarPanel title="Price Range">
+              <div style={{ display: "flex", gap: 8 }}>
+                <input
+                  type="number"
+                  placeholder="Min"
+                  value={filters.minPrice}
+                  onChange={(e) => setFilter("minPrice", e.target.value)}
+                  style={priceInputStyle}
+                />
+                <input
+                  type="number"
+                  placeholder="Max"
+                  value={filters.maxPrice}
+                  onChange={(e) => setFilter("maxPrice", e.target.value)}
+                  style={priceInputStyle}
+                />
+              </div>
+            </SidebarPanel>
+
+            {/* Customer Rating */}
+            <SidebarPanel title="Customer Rating">
+              {ratingOptions.map((r) => (
+                <button
+                  key={r}
+                  onClick={() => { setFilter("minRating", filters.minRating === r ? "" : r); setShowMobileFilters(false); }}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 8,
+                    padding: "9px 12px", borderRadius: 10, border: "none",
+                    cursor: "pointer", width: "100%",
+                    fontFamily: T.bodyFont, fontSize: 12,
+                    background: filters.minRating === r ? "#FFF8EC" : "transparent",
+                    color: filters.minRating === r ? T.accent : T.textSec,
+                    fontWeight: filters.minRating === r ? 600 : 400,
+                    transition: "all 0.2s ease",
+                    textAlign: "left",
+                  }}
+                >
+                  <span>
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <span key={i} style={{ color: i <= r ? "#C6A77D" : "#D6CEC4", fontSize: 12 }}>★</span>
+                    ))}
+                  </span>
+                  & Up
+                </button>
+              ))}
+            </SidebarPanel>
+          </div>
+        </div>
+      )}
+
       <Footer />
 
       {/* ─── Inline responsive styles ─────────────────── */}
@@ -975,6 +1126,9 @@ export default function ProductList() {
         }
         @media (min-width: 1024px) {
           .luxury-sidebar { display: flex !important; }
+        }
+        @media (max-width: 1023px) {
+          .mobile-filter-btn { display: block !important; }
         }
         @media (max-width: 600px) {
           #product-grid > div > div[style*="grid-template-columns"] {
@@ -1040,119 +1194,3 @@ const priceInputStyle = {
   outline: "none", width: "100%",
 };
 
-function CollectionCard({ col }) {
-  const [hov, setHov] = useState(false);
-  return (
-    <div
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
-        background: hov ? "#F0EBE3" : T.card,
-        borderRadius: 20,
-        border: `1px solid ${T.border}`,
-        padding: "36px 28px",
-        cursor: "pointer",
-        transition: "all 0.35s ease",
-        boxShadow: hov ? "0 16px 48px rgba(140,106,67,0.14)" : "0 4px 20px rgba(27,27,27,0.05)",
-        transform: hov ? "translateY(-4px)" : "translateY(0)",
-      }}
-    >
-      <span style={{ fontSize: 36, display: "block", marginBottom: 16 }}>{col.emoji}</span>
-      <h3 style={{
-        fontFamily: "'Cormorant Garamond', Georgia, serif",
-        fontStyle: "italic", fontWeight: 600,
-        fontSize: 22, color: "#1B1B1B", marginBottom: 8,
-      }}>
-        {col.title}
-      </h3>
-      <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: "#66615B", lineHeight: 1.6 }}>
-        {col.sub}
-      </p>
-      <div style={{
-        marginTop: 20, display: "flex", alignItems: "center", gap: 6,
-        fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 600,
-        color: "#8C6A43", letterSpacing: "0.08em", textTransform: "uppercase",
-      }}>
-        Explore <span style={{ fontSize: 14 }}>→</span>
-      </div>
-    </div>
-  );
-}
-
-function MaterialCard({ mat }) {
-  const [hov, setHov] = useState(false);
-  return (
-    <div
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
-        background: hov ? "#F0EBE3" : "#FAF8F5",
-        borderRadius: 20,
-        border: `1px solid ${T.border}`,
-        padding: "32px 24px",
-        textAlign: "center",
-        cursor: "default",
-        transition: "all 0.3s ease",
-        boxShadow: hov ? "0 12px 36px rgba(140,106,67,0.12)" : "none",
-        transform: hov ? "translateY(-3px)" : "translateY(0)",
-      }}
-    >
-      <span style={{ fontSize: 40, display: "block", marginBottom: 14 }}>{mat.emoji}</span>
-      <h4 style={{
-        fontFamily: "'Cormorant Garamond', Georgia, serif",
-        fontStyle: "italic", fontSize: 18, fontWeight: 600,
-        color: "#1B1B1B", marginBottom: 6,
-      }}>
-        {mat.name}
-      </h4>
-      <p style={{
-        fontFamily: "'Inter', sans-serif", fontSize: 12,
-        color: "#66615B", lineHeight: 1.6,
-      }}>
-        {mat.desc}
-      </p>
-    </div>
-  );
-}
-
-function WhyCard({ item }) {
-  const [hov, setHov] = useState(false);
-  return (
-    <div
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
-        display: "flex", gap: 18, alignItems: "flex-start",
-        padding: "24px", borderRadius: 20,
-        border: `1px solid ${hov ? "#C6A77D" : T.border}`,
-        background: hov ? "#FFF8EC" : T.card,
-        transition: "all 0.3s ease",
-        boxShadow: hov ? "0 8px 32px rgba(198,167,125,0.15)" : "none",
-      }}
-    >
-      <span style={{
-        fontSize: 28, flexShrink: 0,
-        width: 52, height: 52, display: "flex",
-        alignItems: "center", justifyContent: "center",
-        background: "#F0EBE3", borderRadius: 14,
-      }}>
-        {item.icon}
-      </span>
-      <div>
-        <h4 style={{
-          fontFamily: "'Cormorant Garamond', Georgia, serif",
-          fontStyle: "italic", fontSize: 19, fontWeight: 600,
-          color: "#1B1B1B", marginBottom: 6,
-        }}>
-          {item.title}
-        </h4>
-        <p style={{
-          fontFamily: "'Inter', sans-serif", fontSize: 13,
-          color: "#66615B", lineHeight: 1.7,
-        }}>
-          {item.desc}
-        </p>
-      </div>
-    </div>
-  );
-}

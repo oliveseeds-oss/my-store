@@ -3,8 +3,12 @@ const db = require("../db");
 const { verifyAdmin } = require("../middleware/auth");
 
 router.get("/", async (req, res) => {
-  const [rows] = await db.query("SELECT site_name, site_email, phone, address, currency, shipping_fee, free_shipping_above FROM settings WHERE id = 1");
-  res.json(rows[0]);
+  const [rows] = await db.query("SELECT site_name, site_email, phone, address, currency, shipping_fee, free_shipping_above, razorpay_key FROM settings WHERE id = 1");
+  const settings = rows[0] || {};
+  res.json({
+    ...settings,
+    paypal_client_id: process.env.PAYPAL_CLIENT_ID || "sb" // 'sb' is standard PayPal sandbox testing client ID
+  });
 });
 
 router.put("/", verifyAdmin, async (req, res) => {

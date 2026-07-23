@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useMember } from "../context/MemberContext";
@@ -7,6 +7,32 @@ import API from "../api";
 import Navbar from "../components/Navbar";
 import AdBanner from "../components/AdBanner";
 import SEO from "../components/SEO";
+
+const loadRazorpayScript = () => {
+  return new Promise((resolve) => {
+    if (window.Razorpay) return resolve(true);
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
+
+const loadPayPalScript = (clientId, currency) => {
+  return new Promise((resolve) => {
+    const id = "paypal-sdk-script";
+    const existing = document.getElementById(id);
+    if (existing) existing.remove();
+    
+    const script = document.createElement("script");
+    script.id = id;
+    script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=${currency}`;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
 
 export default function Checkout() {
   const { cart, total, clearCart } = useCart();
@@ -22,9 +48,64 @@ export default function Checkout() {
     address: "",
   });
   const [placing, setPlacing] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("online");
+  const [paypalLoaded, setPaypalLoaded] = useState(false);
+  const [siteSettings, setSiteSettings] = useState(null);
 
-  const placeOrder = async () => {
-    if (!form.name || !form.email || !form.address) return;
+  useEffect(() => {
+    API.get("/settings")
+      .then(res => setSiteSettings(res.data))
+      .catch(err => console.error("Failed to load settings keys", err));
+  }, []);
+
+  useEffect(() => {
+    if (!siteSettings || selected.currency_code === "INR") {
+      setPaypalLoaded(false);
+      return;
+    }
+    loadPayPalScript(siteSettings.paypal_client_id, selected.currency_code)
+      .then(success => {
+        if (success && window.paypal) {
+          setPaypalLoaded(true);
+        }
+      });
+  }, [siteSettings, selected.currency_code]);
+
+  useEffect(() => {
+    if (paypalLoaded && window.paypal && document.getElementById("paypal-button-container")) {
+      document.getElementById("paypal-button-container").innerHTML = "";
+      window.paypal.Buttons({
+        createOrder: (data, actions) => {
+          const convertedVal = ((total + shipping) * selected.rate_to_inr).toFixed(2);
+          return actions.order.create({
+            purchase_units: [{
+              amount: {
+                currency_code: selected.currency_code,
+                value: convertedVal
+              }
+            }]
+          });
+        },
+        onApprove: async (data, actions) => {
+          const details = await actions.order.capture();
+          await placeOrder({
+            mode: "PayPal",
+            transactionId: details.id
+          });
+        },
+        onError: (err) => {
+          console.error("PayPal processing error:", err);
+          alert("PayPal encounter validation or system failures. Please try again.");
+        }
+      }).render("#paypal-button-container");
+    }
+  }, [paypalLoaded, total, shipping, selected]);
+
+  const placeOrder = async (gatewayDetails = null) => {
+    if (!form.name || !form.email || !form.address) {
+      alert("Please fill in delivery details first.");
+      return;
+    }
     setPlacing(true);
     try {
       const items = cart.map((i) => ({
@@ -35,6 +116,8 @@ export default function Checkout() {
         price: i.price,
         qty: i.qty,
         type: i.type,
+        selected_size: i.selectedSize || null,
+        customizations: i.customizations || []
       }));
       const res = await API.post("/orders", {
         member_id: member?.id || null,
@@ -44,12 +127,65 @@ export default function Checkout() {
         items,
         address_line: form.address,
         shipping_fee: shipping,
+        payment_mode: gatewayDetails?.mode || "COD",
+        transaction_id: gatewayDetails?.transactionId || null,
+        currency_code: selected.currency_code,
+        currency_rate: selected.rate_to_inr
       });
       clearCart();
       navigate(`/order-success?id=${res.data.order_id}`);
     } catch {
       alert("Order failed. Please try again.");
     } finally {
+      setPlacing(false);
+    }
+  };
+
+  const handleRazorpayPayment = async () => {
+    if (!form.name || !form.email || !form.address) {
+      alert("Please fill in delivery details first.");
+      return;
+    }
+    setPlacing(true);
+    const loaded = await loadRazorpayScript();
+    if (!loaded) {
+      alert("Failed to load Razorpay Payment Gateway. Check your connectivity.");
+      setPlacing(false);
+      return;
+    }
+
+    try {
+      const amountInINR = Math.round((total + shipping) * 100);
+      const options = {
+        key: siteSettings?.razorpay_key,
+        amount: amountInINR,
+        currency: "INR",
+        name: siteSettings?.site_name || "Oliveseeds Customs",
+        description: "Secure Order Payment",
+        handler: async function (response) {
+          await placeOrder({
+            mode: "Razorpay",
+            transactionId: response.razorpay_payment_id
+          });
+        },
+        prefill: {
+          name: form.name,
+          email: form.email,
+          contact: form.phone
+        },
+        theme: {
+          color: "#d97706"
+        },
+        modal: {
+          ondismiss: function() {
+            setPlacing(false);
+          }
+        }
+      };
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      alert("Razorpay checkout failed to initialize: " + err.message);
       setPlacing(false);
     }
   };
@@ -106,6 +242,17 @@ export default function Checkout() {
                 className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] resize-none"
               />
             </div>
+
+            {/* Payment Details */}
+            <div className="border-t border-stone-150 pt-5 mt-3">
+              <h4 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-sm font-bold text-stone-700 mb-3">Secure Payment Methods Available</h4>
+              <div className="p-4 border border-[#0D1512]/15 bg-white rounded-2xl flex flex-col gap-2">
+                <span className="text-xs font-black">💳 Online Payments Gateways Enabled</span>
+                <span className="text-[11px] text-stone-600 font-semibold leading-relaxed">
+                  We securely accept Debit Cards, Credit Cards (Visa, Mastercard, RuPay, etc.), UPI, and Netbanking via <strong>Razorpay</strong> for domestic orders, and international card payments via <strong>PayPal</strong>.
+                </span>
+              </div>
+            </div>
           </div>
 
           {/* Summary Sidebar */}
@@ -118,9 +265,14 @@ export default function Checkout() {
               
               <div className="flex flex-col gap-3 max-h-48 overflow-y-auto pr-1">
                 {cart.map((i) => (
-                  <div key={`${i.id}-${i.type}`} className="flex justify-between text-xs font-semibold">
-                    <span className="truncate flex-1 mr-2 opacity-85">{i.name} × {i.qty}</span>
-                    <span className="text-[#0D1512]">{convert(i.price * i.qty)}</span>
+                  <div key={`${i.id}-${i.type}-${i.selectedSize || ""}-${i.customizationSummary || ""}`} className="flex flex-col text-xs font-semibold border-b border-stone-50 pb-1.5 mb-1.5 last:border-b-0 last:pb-0 last:mb-0">
+                    <div className="flex justify-between">
+                      <span className="truncate flex-1 mr-2 opacity-85">{i.name} × {i.qty}</span>
+                      <span className="text-[#0D1512]">{convert(i.price * i.qty)}</span>
+                    </div>
+                    {i.customizationSummary && (
+                      <span className="text-[10px] text-amber-800 font-bold mt-0.5">✒️ {i.customizationSummary}</span>
+                    )}
                   </div>
                 ))}
               </div>
@@ -138,22 +290,39 @@ export default function Checkout() {
 
               {selected.currency_code !== "INR" && (
                 <div className="bg-[#FAF9F6]/60 border border-[#0D1512]/10 rounded-xl p-3 text-[10px] leading-relaxed text-[#0D1512]/75">
-                  ℹ️ Your card will be processed in Indian Rupees (INR) at the store base rate: <strong>₹{total + shipping}</strong>.
+                  ℹ️ Transactions are processed securely in your currency: <strong>{convert(total + shipping)}</strong>.
                 </div>
               )}
 
-              <button
-                onClick={placeOrder}
-                disabled={placing || cart.length === 0}
-                style={{ background: "#0D1512", color: "#FAF9F6" }}
-                className="w-full py-4 rounded-xl font-black text-xs uppercase tracking-wider shadow-lg hover:scale-105 active:scale-95 transition-all mt-2 disabled:opacity-50"
-              >
-                {placing ? "Placing order..." : `Pay ₹${total + shipping}`}
-              </button>
-              
-              <p className="text-[10px] text-stone-400 text-center font-bold uppercase tracking-widest mt-1">
-                Pay via cash on delivery / cards
-              </p>
+              <div className="mt-2">
+                {selected.currency_code === "INR" ? (
+                  <>
+                    <button
+                      onClick={handleRazorpayPayment}
+                      disabled={placing || cart.length === 0}
+                      style={{ background: "#d97706", color: "#ffffff" }}
+                      className="w-full py-4 rounded-xl font-black text-xs uppercase tracking-wider shadow-lg hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
+                    >
+                      {placing ? "Processing..." : `Pay ₹${total + shipping} via Razorpay`}
+                    </button>
+                    <p className="text-[9px] text-stone-400 text-center font-bold uppercase tracking-widest mt-1.5">
+                      Secure Debit/Credit Card, UPI, Netbanking
+                    </p>
+                  </>
+                ) : (
+                  <div className="mt-1">
+                    {!paypalLoaded ? (
+                      <div className="text-center py-3 text-xs text-stone-400 font-bold">
+                        ⏳ Loading PayPal checkout Buttons...
+                      </div>
+                    ) : null}
+                    <div id="paypal-button-container" className="min-h-[50px] w-full"></div>
+                    <p className="text-[9px] text-stone-400 text-center font-bold uppercase tracking-widest mt-1.5">
+                      Pay via PayPal, Credit/Debit cards
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* High-attention Square Brand Ad */}

@@ -13,18 +13,18 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 backdrop-blur-md bg-[#FAF9F6]/75 border-b border-[#0D1512]/10"
       style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 h-16 flex items-center justify-between gap-1.5 sm:gap-4">
+        <div className="flex items-center gap-1.5 sm:gap-3">
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 hover:bg-[#0D1512]/10 rounded-xl transition text-[#0D1512]"
+            className="md:hidden p-1.5 sm:p-2 hover:bg-[#0D1512]/10 rounded-xl transition text-[#0D1512]"
             aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? <MdClose className="text-2xl" /> : <MdMenu className="text-2xl" />}
           </button>
 
-          <Link to="/" className="text-lg font-black text-[#0D1512] flex-shrink-0"
+          <Link to="/" className="text-sm xs:text-base sm:text-lg font-black text-[#0D1512] flex-shrink-0"
             style={{ fontFamily: "'Outfit', sans-serif" }}>
             🌱 Olive Seeds
           </Link>
@@ -39,22 +39,22 @@ export default function Navbar() {
           <Link to="/contact" className="hover:text-[#0D1512] transition">Contact</Link>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 xs:gap-1.5 sm:gap-2">
           <CurrencySelector />
-          <Link to="/cart" className="relative p-2 hover:bg-[#0D1512]/10 rounded-xl transition text-[#0D1512]">
-            <MdShoppingCart className="text-xl" />
+          <Link to="/cart" className="relative p-1.5 sm:p-2 hover:bg-[#0D1512]/10 rounded-xl transition text-[#0D1512]">
+            <MdShoppingCart className="text-lg sm:text-xl" />
             {count > 0 && (
               <span style={{ background: "#0D1512", color: "#FAF9F6" }} className="absolute -top-0.5 -right-0.5 text-[9px]
-                               w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                                w-4 h-4 rounded-full flex items-center justify-center font-bold">
                 {count}
               </span>
             )}
           </Link>
-          <Link to={member ? "/profile" : "/login"}
-            className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-[#0D1512] hover:bg-[#0D1512]/10
-                       px-3.5 py-2.5 rounded-xl transition">
-            <MdPerson className="text-lg" />
-            <span className="hidden sm:inline">{member ? member.name.split(" ")[0] : "Login"}</span>
+          <Link to="/login"
+            title={member ? `Profile: ${member.name}` : "Login / Register"}
+            className="flex items-center justify-center text-[#0D1512] hover:bg-[#0D1512]/10
+                       p-2 rounded-xl transition">
+            <MdPerson className="text-xl sm:text-2xl" />
           </Link>
         </div>
       </div>

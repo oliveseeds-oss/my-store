@@ -103,16 +103,87 @@ export default function ProductDetail() {
   const [added, setAdded] = useState(false);
   const { addToCart } = useCart();
 
+  // Personalization Module States
+  const [selectedTemplateIdx, setSelectedTemplateIdx] = useState(0);
+  const [customValues, setCustomValues] = useState({});
+  const [customErrors, setCustomErrors] = useState({});
+  const [uploadingField, setUploadingField] = useState(null);
+
   const load = useCallback(async () => {
     const r = await API.get(`/products/${id}`);
     setProduct(r.data);
     if (r.data.sizes?.length) setSelectedSize(r.data.sizes[0]);
+    
+    // Initialize default values for customizable fields
+    if (r.data.enable_personalization && r.data.templates?.length) {
+      const defaultValues = {};
+      r.data.templates[0].fields?.forEach(f => {
+        defaultValues[f.field_key] = f.default_value || "";
+      });
+      setCustomValues(defaultValues);
+    }
   }, [id]);
 
   useEffect(() => {
     load();
     window.scrollTo(0, 0);
   }, [load]);
+
+  const handleTemplateChange = (idx) => {
+    setSelectedTemplateIdx(idx);
+    const template = product.templates[idx];
+    const newValues = {};
+    template.fields?.forEach(f => {
+      newValues[f.field_key] = customValues[f.field_key] || f.default_value || "";
+    });
+    setCustomValues(newValues);
+    setCustomErrors({});
+  };
+
+  const handleFieldChange = (field, value) => {
+    setCustomValues(prev => ({ ...prev, [field.field_key]: value }));
+    
+    // Validate character length & required
+    let err = "";
+    if (field.is_required && !value) {
+      err = `${field.label} is required`;
+    } else if (field.min_chars && value.length < field.min_chars) {
+      err = `Min ${field.min_chars} characters required`;
+    } else if (field.max_chars && value.length > field.max_chars) {
+      err = `Max ${field.max_chars} characters exceeded`;
+    }
+    
+    setCustomErrors(prev => ({ ...prev, [field.field_key]: err }));
+  };
+
+  const handleFieldFileUpload = async (e, field) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Limit files to under 25 MB
+    const maxSizeBytes = 25 * 1024 * 1024;
+    if (file.size > maxSizeBytes) {
+      const errorMsg = "File is too large. Maximum size allowed is 25MB.";
+      setCustomErrors(prev => ({ ...prev, [field.field_key]: errorMsg }));
+      alert(errorMsg);
+      return;
+    }
+
+    setUploadingField(field.field_key);
+    const formData = new FormData();
+    formData.append("file", file);
+    try {
+      const res = await API.post("/uploads/file", formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+      setCustomValues(prev => ({ ...prev, [field.field_key]: res.data.url }));
+      setCustomErrors(prev => ({ ...prev, [field.field_key]: "" }));
+    } catch (err) {
+      setCustomErrors(prev => ({ ...prev, [field.field_key]: "Upload failed. Try again." }));
+    } finally {
+      setUploadingField(null);
+    }
+  };
 
   if (!product) return (
     <div className="min-h-screen flex items-center justify-center" style={{ background: "#f7f3ef" }}>
@@ -135,7 +206,50 @@ export default function ProductDetail() {
 
   const handleAddToCart = () => {
     if (sizes.length && !selectedSize) return;
-    addToCart({ ...product, type: "physical", selectedSize, qty });
+
+    // Customization fields validation
+    const hasTemplates = product.enable_personalization && product.templates && product.templates.length > 0;
+    const currentTemplate = hasTemplates ? product.templates[selectedTemplateIdx] : null;
+
+    let errors = {};
+    if (hasTemplates && currentTemplate.fields) {
+      for (const f of currentTemplate.fields) {
+        const val = customValues[f.field_key] || "";
+        if (f.is_required && !val) {
+          errors[f.field_key] = `${f.label} is required`;
+        }
+        if (f.min_chars && val.length < f.min_chars) {
+          errors[f.field_key] = `${f.label} must be at least ${f.min_chars} characters`;
+        }
+        if (f.max_chars && val.length > f.max_chars) {
+          errors[f.field_key] = `${f.label} cannot exceed ${f.max_chars} characters`;
+        }
+      }
+    }
+    
+    if (Object.keys(errors).length > 0) {
+      setCustomErrors(errors);
+      alert("Please resolve customization errors before adding to cart");
+      return;
+    }
+    
+    const itemCustomizations = hasTemplates ? currentTemplate.fields.map(f => ({
+      template_id: currentTemplate.id,
+      template_name: currentTemplate.name,
+      field_key: f.field_key,
+      field_label: f.label,
+      field_value: customValues[f.field_key] || f.default_value || "",
+      field_type: f.type
+    })) : [];
+
+    addToCart({ 
+      ...product, 
+      type: "physical", 
+      selectedSize, 
+      qty,
+      customizations: itemCustomizations,
+      customizationSummary: itemCustomizations.map(c => `${c.field_label}: ${c.field_value}`).join(", ")
+    });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
@@ -163,10 +277,10 @@ export default function ProductDetail() {
         <div className="flex flex-col lg:flex-row gap-8">
 
           {/* ── Images ── */}
-          <div className="lg:w-1/2 flex gap-3">
+          <div className="lg:w-1/2 flex flex-col-reverse sm:flex-row gap-3">
             {/* Thumbnail strip */}
             {allImages.length > 1 && (
-              <div className="flex flex-col gap-2 w-16 flex-shrink-0">
+              <div className="flex flex-row sm:flex-col gap-2 w-full sm:w-16 flex-shrink-0 overflow-x-auto">
                 {allImages.map((img, i) => (
                   <button key={i} onClick={() => setSelectedImg(i)}
                     className={`border-2 overflow-hidden transition
@@ -176,14 +290,65 @@ export default function ProductDetail() {
                 ))}
               </div>
             )}
-            {/* Main image */}
-            <div className="flex-1 bg-white border border-stone-200 overflow-hidden">
-              {allImages.length > 0
-                ? <img src={allImages[selectedImg]} alt={product.name}
+            {/* Main image / Live Preview */}
+            <div 
+              style={{ containerType: "inline-size" }}
+              className="flex-1 bg-white border border-stone-200 overflow-hidden relative"
+            >
+              {product.enable_personalization && product.templates?.length > 0 ? (
+                (() => {
+                  const t = product.templates[selectedTemplateIdx] || product.templates[0];
+                  return (
+                    <div 
+                      className="relative w-full aspect-square bg-cover bg-center" 
+                      style={{ 
+                        backgroundImage: t.background_image ? `url(${t.background_image})` : 'none',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                      }}
+                    >
+                      <img src={t.preview_image} alt="" className="w-full h-full object-cover absolute inset-0 z-0" />
+                      
+                      {/* Overlay Text Details */}
+                      {t.fields?.map(f => {
+                        if (!["text", "textarea", "number", "date"].includes(f.type)) return null;
+                        if (f.x_pos === null || f.y_pos === null) return null;
+                        
+                        const text = customValues[f.field_key] || f.default_value || "";
+                        
+                        const style = {
+                          position: "absolute",
+                          left: `${(f.x_pos / 500) * 100}%`,
+                          top: `${(f.y_pos / 500) * 100}%`,
+                          fontFamily: f.font_family || "sans-serif",
+                          fontSize: f.font_size ? `${(f.font_size / 500) * 100}cqw` : "3.5cqw",
+                          color: f.font_color || "#000",
+                          textAlign: f.text_align || "center",
+                          maxWidth: f.max_width ? `${(f.max_width / 500) * 100}%` : "90%",
+                          transform: `translate(-50%, -50%) rotate(${f.rotation || 0}deg)`,
+                          whiteSpace: "pre-wrap",
+                          wordBreak: "break-word",
+                          lineHeight: "1.2",
+                          pointerEvents: "none",
+                          zIndex: 10
+                        };
+                        return (
+                          <div key={f.id} style={style}>
+                            {text || f.placeholder || ""}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })()
+              ) : allImages.length > 0 ? (
+                <img src={allImages[selectedImg]} alt={product.name}
                   className="w-full aspect-square object-cover" />
-                : <div className="w-full aspect-square flex items-center justify-center bg-stone-100">
+              ) : (
+                <div className="w-full aspect-square flex items-center justify-center bg-stone-100">
                   <span className="text-8xl">🪵</span>
-                </div>}
+                </div>
+              )}
             </div>
           </div>
 
@@ -282,6 +447,190 @@ export default function ProductDetail() {
 
             {sizes.length > 0 && !selectedSize && (
               <p className="text-xs text-red-500">Please select a size</p>
+            )}
+
+            {/* Personalization Section */}
+            {product.enable_personalization && product.templates?.length > 0 && (
+              <div className="border border-stone-200 bg-white p-4 flex flex-col gap-4 mb-2" style={{ borderRadius: "2px" }}>
+                <div>
+                  <span className="text-[10px] text-amber-700 font-extrabold uppercase tracking-wider block">✏️ Custom Engraving Details</span>
+                  <h3 className="text-lg font-bold text-stone-850">Customize Your Product</h3>
+                </div>
+
+                {/* Template selector */}
+                {product.allow_multiple_templates && product.templates.length > 1 && (
+                  <div>
+                    <span className="text-xs font-bold text-stone-600 block mb-2">Select Design Template:</span>
+                    <div className="grid grid-cols-3 gap-2">
+                      {product.templates.map((t, idx) => (
+                        <button
+                          key={t.id}
+                          type="button"
+                          onClick={() => handleTemplateChange(idx)}
+                          className={`flex flex-col items-center p-2 border-2 transition rounded-sm
+                            ${selectedTemplateIdx === idx
+                              ? "border-amber-500 bg-amber-50 text-amber-800"
+                              : "border-stone-200 text-stone-600 hover:border-stone-300"}`}
+                        >
+                          <img src={t.preview_image} alt="" className="w-12 h-12 object-cover rounded-sm mb-1 bg-stone-100" />
+                          <span className="text-[10px] font-bold text-center truncate w-full">{t.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Form Fields */}
+                <div className="flex flex-col gap-3.5 mt-1">
+                  {(product.templates[selectedTemplateIdx] || product.templates[0]).fields?.map(f => {
+                    const value = customValues[f.field_key] || "";
+                    const error = customErrors[f.field_key] || "";
+                    const charCount = value.length;
+
+                    return (
+                      <div key={f.id} className="flex flex-col gap-1">
+                        <label className="text-xs font-bold text-stone-700 flex items-center justify-between">
+                          <span>
+                            {f.label} {f.is_required && <span className="text-red-500">*</span>}
+                          </span>
+                          {["text", "textarea"].includes(f.type) && f.max_chars && (
+                            <span className="text-[10px] text-stone-400 font-medium">
+                              {charCount}/{f.max_chars}
+                            </span>
+                          )}
+                        </label>
+
+                        {/* Rendering input fields based on type */}
+                        {f.type === "text" && (
+                          <input
+                            type="text"
+                            maxLength={f.max_chars || undefined}
+                            placeholder={f.placeholder}
+                            value={value}
+                            onChange={e => handleFieldChange(f, e.target.value)}
+                            className="w-full border border-stone-300 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-400 rounded-sm"
+                          />
+                        )}
+
+                        {f.type === "textarea" && (
+                          <textarea
+                            rows={3}
+                            maxLength={f.max_chars || undefined}
+                            placeholder={f.placeholder}
+                            value={value}
+                            onChange={e => handleFieldChange(f, e.target.value)}
+                            className="w-full border border-stone-300 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-400 rounded-sm resize-none"
+                          />
+                        )}
+
+                        {f.type === "number" && (
+                          <input
+                            type="number"
+                            placeholder={f.placeholder}
+                            value={value}
+                            onChange={e => handleFieldChange(f, e.target.value)}
+                            className="w-full border border-stone-300 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-400 rounded-sm"
+                          />
+                        )}
+
+                        {f.type === "date" && (
+                          <input
+                            type="date"
+                            value={value}
+                            onChange={e => handleFieldChange(f, e.target.value)}
+                            className="w-full border border-stone-300 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-400 rounded-sm"
+                          />
+                        )}
+
+                        {f.type === "dropdown" && (
+                          <select
+                            value={value}
+                            onChange={e => handleFieldChange(f, e.target.value)}
+                            className="w-full border border-stone-300 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-400 rounded-sm bg-white"
+                          >
+                            <option value="">-- Choose Option --</option>
+                            {f.options?.map(opt => (
+                              <option key={opt} value={opt}>{opt}</option>
+                            ))}
+                          </select>
+                        )}
+
+                        {f.type === "radio" && (
+                          <div className="flex flex-col gap-1.5 mt-0.5">
+                            {f.options?.map(opt => (
+                              <label key={opt} className="flex items-center gap-2 text-xs font-semibold text-stone-600 cursor-pointer">
+                                <input
+                                  type="radio"
+                                  name={`field_${f.id}`}
+                                  value={opt}
+                                  checked={value === opt}
+                                  onChange={e => handleFieldChange(f, e.target.value)}
+                                  className="text-amber-500 focus:ring-amber-400"
+                                />
+                                {opt}
+                              </label>
+                            ))}
+                          </div>
+                        )}
+
+                        {f.type === "checkbox" && (
+                          <div className="flex flex-col gap-1.5 mt-0.5">
+                            {f.options?.map(opt => {
+                              const arr = Array.isArray(value) ? value : (value ? value.split(", ") : []);
+                              const checked = arr.includes(opt);
+                              return (
+                                <label key={opt} className="flex items-center gap-2 text-xs font-semibold text-stone-600 cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    value={opt}
+                                    checked={checked}
+                                    onChange={e => {
+                                      const next = checked ? arr.filter(x => x !== opt) : [...arr, opt];
+                                      handleFieldChange(f, next.join(", "));
+                                    }}
+                                    className="text-amber-500 focus:ring-amber-400 rounded-sm"
+                                  />
+                                  {opt}
+                                </label>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {["image", "file"].includes(f.type) && (
+                          <div className="flex flex-col gap-2 mt-0.5">
+                            <div className="flex gap-2">
+                              <input
+                                type="text"
+                                readOnly
+                                value={value}
+                                placeholder={f.placeholder || "No file uploaded"}
+                                className="flex-1 border border-stone-300 px-3 py-2 text-xs bg-stone-50 rounded-sm focus:outline-none"
+                              />
+                              <label className="bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-4 py-2 rounded-sm cursor-pointer transition flex items-center justify-center shadow-sm whitespace-nowrap">
+                                {uploadingField === f.field_key ? "Uploading..." : "Upload File"}
+                                <input
+                                  type="file"
+                                  disabled={uploadingField !== null}
+                                  accept={f.type === "image" ? "image/*" : "*/*"}
+                                  className="hidden"
+                                  onChange={e => handleFieldFileUpload(e, f)}
+                                />
+                              </label>
+                            </div>
+                            {f.type === "image" && value && (
+                              <img src={`http://localhost:5000${value}`} alt="" className="w-16 h-16 object-cover rounded border bg-stone-50" />
+                            )}
+                          </div>
+                        )}
+
+                        {f.help_text && <p className="text-[10px] text-stone-400 italic mt-0.5">{f.help_text}</p>}
+                        {error && <p className="text-[10px] text-red-500 font-bold mt-0.5">{error}</p>}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             )}
 
             {/* CTAs */}
@@ -402,27 +751,43 @@ export default function ProductDetail() {
             <h2 className="text-xl font-bold text-stone-800 mb-6">
               Customers also viewed
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin" style={{ scrollbarWidth: "thin" }}>
               {related.map(r => {
                 const img = Array.isArray(r.images) ? r.images[0] : null;
                 const price = r.discount_price || r.price;
+                const discount = r.discount_price ? Math.round((1 - r.discount_price / r.price) * 100) : 0;
                 return (
                   <Link key={r.id} to={`/products/${r.id}`}
                     onClick={() => window.scrollTo(0, 0)}
-                    className="group bg-white border border-stone-200 hover:shadow-md
-                               transition text-center overflow-hidden">
-                    <div className="aspect-square bg-stone-100 overflow-hidden">
-                      {img
-                        ? <img src={img} alt={r.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition" />
-                        : <div className="w-full h-full flex items-center justify-center">
-                          <span className="text-3xl">🪵</span>
-                        </div>}
+                    style={{ flex: "0 0 180px" }}
+                    className="group bg-white border border-stone-200 hover:shadow-md transition overflow-hidden rounded-[4px] p-3 flex flex-col justify-between">
+                    <div>
+                      <div className="aspect-square bg-stone-50 overflow-hidden rounded-[4px] mb-2 flex items-center justify-center">
+                        {img
+                          ? <img src={img} alt={r.name} className="w-full h-full object-cover group-hover:scale-105 transition" />
+                          : <span className="text-3xl">🪵</span>}
+                      </div>
+                      <p className="text-xs text-[#007185] hover:text-[#C7511F] hover:underline line-clamp-2 leading-snug mb-1 font-medium">
+                        {r.name}
+                      </p>
+                      {/* Rating */}
+                      <div className="flex items-center gap-1 mb-1">
+                        <span className="text-xs text-amber-500">
+                          {"★".repeat(Math.round(r.rating || 5)) + "☆".repeat(5 - Math.round(r.rating || 5))}
+                        </span>
+                        <span className="text-[10px] text-[#007185]">{r.review_count || 12}</span>
+                      </div>
                     </div>
-                    <div className="p-2">
-                      <p className="text-xs text-stone-700 line-clamp-2 leading-snug
-                                     group-hover:text-amber-800 transition">{r.name}</p>
-                      <p className="text-sm font-bold text-stone-900 mt-1">{convert(price)}</p>
+                    <div>
+                      <div className="flex items-baseline gap-1.5 flex-wrap">
+                        <span className="text-sm font-bold text-stone-900">{convert(price)}</span>
+                        {r.discount_price && (
+                          <>
+                            <span className="text-[10px] text-stone-400 line-through">{convert(r.price)}</span>
+                            <span className="text-[10px] font-bold text-green-700">({discount}% off)</span>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </Link>
                 );
