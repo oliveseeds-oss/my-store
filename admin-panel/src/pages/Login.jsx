@@ -20,7 +20,7 @@ export default function Login() {
     setError("");
 
     try {
-      const res = await API.post("http://200.141.2.131:5000/admin/login", {
+      const res = await API.post("/api/admin/login", {
         username: form.username,
         password: form.password,
       });
