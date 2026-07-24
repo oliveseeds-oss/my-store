@@ -27,6 +27,7 @@ services:
       DB_PASSWORD: QWER1234
       DB_NAME: mystore
       PORT: 5000
+      JWT_SECRET: OliveSeeds_2026_SuperSecret_ChangeOSS
     depends_on:
       - mysql
 
