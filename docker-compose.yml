@@ -33,7 +33,8 @@ services:
       PORT: 5000
       JWT_SECRET: OliveSeeds_2026_SuperSecret_ChangeOSS
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
 
 
   public-website:
