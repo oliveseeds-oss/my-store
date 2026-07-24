@@ -6,7 +6,7 @@ services:
     restart: always
     environment:
       MYSQL_DATABASE: mystore
-      MYSQL_ROOT_PASSWORD: QWER1234
+      MYSQL_ROOT_PASSWORD: Christ7ak5oss
     ports:
       - "3306:3306"
     volumes:
@@ -24,7 +24,7 @@ services:
     environment:
       DB_HOST: mysql
       DB_USER: root
-      DB_PASSWORD: QWER1234
+      DB_PASSWORD: Christ7ak5oss
       DB_NAME: mystore
       PORT: 5000
       JWT_SECRET: OliveSeeds_2026_SuperSecret_ChangeOSS
@@ -55,4 +55,4 @@ services:
 
 
 volumes:
-  mysql_data:Local
+  mysql_data:
