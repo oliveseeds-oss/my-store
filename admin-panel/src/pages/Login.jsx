@@ -18,7 +18,7 @@ export default function Login() {
     e.preventDefault();
 
     setError("");
-
+try {
   const res = await API.post("/admin/login", {
   username: form.username,
   password: form.password,
