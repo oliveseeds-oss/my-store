@@ -12,7 +12,11 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./database/mystore.sql:/docker-entrypoint-initdb.d/mystore.sql
-
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-pCoss"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   backend:
     build:
