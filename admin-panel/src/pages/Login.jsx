@@ -19,12 +19,10 @@ export default function Login() {
 
     setError("");
 
-    try {
-      const res = await API.post("/admin", {
-        username: form.username,
-        password: form.password,
-      });
-
+  const res = await API.post("/admin/login", {
+  username: form.username,
+  password: form.password,
+  });
       // save token + user data
       login(res.data);
 
