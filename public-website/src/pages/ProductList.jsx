@@ -546,37 +546,7 @@ export default function ProductList() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════
-          TRUST BAR
-      ═══════════════════════════════════════════════════ */}
-      <section style={{
-        background: T.card,
-        borderBottom: `1px solid ${T.border}`,
-        padding: "0 24px",
-      }}>
-        <div style={{
-          maxWidth: 1280, margin: "0 auto",
-          display: "flex", justifyContent: "space-between",
-          flexWrap: "wrap", gap: 0,
-        }}>
-          {TRUST_ITEMS.map((item, i) => (
-            <div key={i} style={{
-              display: "flex", alignItems: "center", gap: 10,
-              padding: "20px 16px",
-              borderRight: i < TRUST_ITEMS.length - 1 ? `1px solid ${T.border}` : "none",
-              flex: "1 1 140px",
-            }}>
-              <span style={{ fontSize: 18 }}>{item.icon}</span>
-              <span style={{
-                fontFamily: T.bodyFont, fontSize: 12, fontWeight: 600,
-                color: T.text, letterSpacing: "0.03em",
-              }}>
-                {item.label}
-              </span>
-            </div>
-          ))}
-        </div>
-      </section>
+
 
       {/* ═══════════════════════════════════════════════════
           AD BANNER
@@ -796,175 +766,6 @@ export default function ProductList() {
       </section>
 
       {/* ═══════════════════════════════════════════════════
-          CUSTOMIZATION STEPS (Redesigned & Smaller)
-      ═══════════════════════════════════════════════════ */}
-      <section style={{
-        background: T.card,
-        borderTop: `1px solid ${T.border}`,
-        borderBottom: `1px solid ${T.border}`,
-        padding: "48px 24px",
-      }}>
-        <div style={{ maxWidth: 1000, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 36 }}>
-            <p style={{ ...eyebrow(true), marginBottom: 6 }}>How It Works</p>
-            <h2 style={{ ...sectionHeading(true), fontSize: "clamp(24px, 3.5vw, 32px)", marginBottom: 4 }}>Your Customization Journey</h2>
-          </div>
-
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: 24,
-          }}>
-            {STEPS.map((step, i) => (
-              <div key={i} style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
-                <div style={{
-                  width: 36, height: 36, borderRadius: "50%",
-                  background: "#F0EBE3",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  border: `1.5px solid ${T.border}`,
-                  flexShrink: 0,
-                }}>
-                  <span style={{
-                    fontFamily: T.headingFont, fontSize: 14, fontWeight: 700,
-                    color: T.accent,
-                  }}>
-                    {step.num}
-                  </span>
-                </div>
-                <div>
-                  <h3 style={{
-                    fontFamily: T.bodyFont,
-                    fontWeight: 600,
-                    fontSize: 14, color: T.text,
-                    margin: "0 0 4px 0",
-                  }}>
-                    {step.title}
-                  </h3>
-                  <p style={{
-                    fontFamily: T.bodyFont, fontSize: 12.5,
-                    color: T.textSec, lineHeight: 1.5,
-                    margin: 0,
-                  }}>
-                    {step.desc}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════
-          MATERIAL SHOWCASE (Redesigned & Smaller)
-      ═══════════════════════════════════════════════════ */}
-      <section style={{ padding: "48px 24px", maxWidth: 1000, margin: "0 auto" }}>
-        <div style={{ marginBottom: 28, textAlign: "center" }}>
-          <p style={{ ...eyebrow(true), marginBottom: 6 }}>Our Materials</p>
-          <h2 style={{ ...sectionHeading(true), fontSize: "clamp(24px, 3.5vw, 32px)", marginBottom: 4 }}>Tactile. Premium. Lasting.</h2>
-          <p style={{ ...sectionSub(true), fontSize: 13.5, margin: "0 auto" }}>
-            Every material is selected for its engraving quality, durability, and luxurious appearance.
-          </p>
-        </div>
-
-        <div className="materials-grid" style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))",
-          gap: 16,
-        }}>
-          {MATERIALS.map((mat, i) => (
-            <div
-              key={i}
-              style={{
-                background: "#FAF8F5",
-                borderRadius: 12,
-                border: `1px solid ${T.border}`,
-                padding: "16px",
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
-                transition: "all 0.3s ease",
-              }}
-            >
-              <span style={{ fontSize: 24, flexShrink: 0 }}>{mat.emoji}</span>
-              <div>
-                <h4 style={{
-                  fontFamily: T.bodyFont,
-                  fontWeight: 600, fontSize: 13.5,
-                  color: "#1B1B1B", margin: "0 0 2px 0",
-                }}>
-                  {mat.name}
-                </h4>
-                <p style={{
-                  fontFamily: "'Inter', sans-serif", fontSize: 11,
-                  color: "#66615B", margin: 0, lineHeight: 1.4
-                }}>
-                  {mat.desc}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════
-          WHY CHOOSE US (Redesigned & Smaller)
-      ═══════════════════════════════════════════════════ */}
-      <section style={{
-        background: T.card,
-        borderTop: `1px solid ${T.border}`,
-        padding: "48px 24px",
-      }}>
-        <div style={{ maxWidth: 1000, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 32 }}>
-            <p style={{ ...eyebrow(true), marginBottom: 6 }}>Why Olive Seeds</p>
-            <h2 style={{ ...sectionHeading(true), fontSize: "clamp(24px, 3.5vw, 32px)" }}>Craftsmanship You Can Trust</h2>
-          </div>
-
-          <div className="why-grid" style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: 20,
-          }}>
-            {WHY_US.map((item, i) => (
-              <div
-                key={i}
-                style={{
-                  display: "flex", gap: 14, alignItems: "center",
-                  padding: "16px", borderRadius: 12,
-                  border: `1px solid ${T.border}`,
-                  background: T.card,
-                }}
-              >
-                <span style={{
-                  fontSize: 20, flexShrink: 0,
-                  width: 38, height: 38, display: "flex",
-                  alignItems: "center", justifyContent: "center",
-                  background: "#F0EBE3", borderRadius: 10,
-                }}>
-                  {item.icon}
-                </span>
-                <div>
-                  <h4 style={{
-                    fontFamily: T.bodyFont,
-                    fontWeight: 600, fontSize: 14,
-                    color: "#1B1B1B", margin: "0 0 2px 0",
-                  }}>
-                    {item.title}
-                  </h4>
-                  <p style={{
-                    fontFamily: "'Inter', sans-serif", fontSize: 12,
-                    color: "#66615B", margin: 0, lineHeight: 1.4,
-                  }}>
-                    {item.desc}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════
           NEWSLETTER — DARK LUXURY
       ═══════════════════════════════════════════════════ */}
       <section style={{
@@ -995,7 +796,7 @@ export default function ProductList() {
             Join our community of design lovers. Be first to discover new collections,
             engraving techniques, and bespoke launch offers.
           </p>
-          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: "28px" }}>
             <input
               type="email"
               placeholder="Your email address"
@@ -1026,6 +827,33 @@ export default function ProductList() {
             }}>
               Subscribe
             </button>
+          </div>
+
+          <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
+            <Link to="/engraving#bulk-order" className="btn-gold" style={{ cursor: "pointer", textDecoration: "none" }}>
+              Bulk Order Form
+            </Link>
+            <Link to="/engraving" style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 10,
+              background: "transparent",
+              color: "#F6F3EE",
+              fontSize: 13,
+              fontWeight: 600,
+              letterSpacing: "0.05em",
+              textTransform: "uppercase",
+              padding: "15px 34px",
+              borderRadius: 100,
+              border: `1.5px solid rgba(198,167,125,0.5)`,
+              textDecoration: "none",
+              transition: "all 0.3s ease",
+            }}
+              onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
+            >
+              Learn About Engraving
+            </Link>
           </div>
         </div>
       </section>

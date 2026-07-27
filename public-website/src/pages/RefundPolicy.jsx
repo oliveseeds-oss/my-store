@@ -14,7 +14,7 @@ const timeline = [
 const faqItems = [
   { q: "Can I cancel my order after placing it?", a: "Physical orders can be cancelled within 2 hours of placement, before production begins. After engraving starts, cancellation is not possible. Digital orders cannot be cancelled once payment is confirmed and the file is available for download." },
   { q: "What if I made a spelling mistake in my engraving text?", a: "Unfortunately, we cannot offer refunds for engraving errors made by the customer (typos, wrong names, incorrect dates). We strongly urge you to double-check all text before submitting. However, if the error was on our end, we will replace the item free of charge." },
-  { q: "I received a broken item. What do I do?", a: "Take clear photographs of the damage and packaging within 24 hours of delivery and email them to admin@mystore.com with your Order ID. We will arrange a free replacement immediately." },
+  { q: "I received a broken item. What do I do?", a: "Take clear photographs of the damage and packaging within 24 hours of delivery and email them to contact@oliveseedsdesignstudio.com with your Order ID. We will arrange a free replacement immediately." },
   { q: "Do digital products qualify for refunds?", a: "Digital products are non-refundable once the download link has been accessed. If you have not yet downloaded the file and face a technical issue, contact us within 24 hours and we will assist." },
   { q: "How long does a refund take to appear?", a: "Once approved, refunds are processed within 2–3 business days. Depending on your bank or payment provider, the amount may take an additional 5–7 business days to reflect in your account." },
   { q: "Can I exchange instead of getting a refund?", a: "Yes, we happily offer exchanges for eligible physical products. The replacement item must be of equal or lesser value. Additional charges may apply for size or product upgrades." },
@@ -59,7 +59,7 @@ export default function RefundPolicy() {
             Refund &<br />Return Policy
           </h1>
           <p style={{ color: "#FAF9F6", fontSize: "14px", opacity: 0.8, fontWeight: "semibold" }}>
-            7-day return window on eligible items &nbsp;·&nbsp; Fair and transparent process
+            5-day return window on eligible items &nbsp;·&nbsp; Fair and transparent process
           </p>
         </div>
       </div>
@@ -69,9 +69,9 @@ export default function RefundPolicy() {
         {/* Quick summary cards */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "40px" }}>
           {[
-            { icon: "✅", title: "7-day window", desc: "Report issues within 7 days of delivery", color: "white", border: "rgba(27, 57, 49, 0.15)", text: "#0D1512" },
-            { icon: "🔄", title: "Free replacement", desc: "For defects or our errors — no questions asked", color: "white", border: "rgba(27, 57, 49, 0.15)", text: "#0D1512" },
-            { icon: "💰", title: "Full refund", desc: "For eligible items returned in original condition", color: "white", border: "rgba(27, 57, 49, 0.15)", text: "#0D1512" },
+            { icon: "✅", title: "5-day window", desc: "Report issues within 5 days of delivery", color: "white", border: "rgba(27, 57, 49, 0.15)", text: "#0D1512" },
+            { icon: "🔄", title: "Replacement", desc: "For defects or our errors — no questions asked", color: "white", border: "rgba(27, 57, 49, 0.15)", text: "#0D1512" },
+            { icon: "💰", title: "Refund ", desc: "For eligible items returned in original condition", color: "white", border: "rgba(27, 57, 49, 0.15)", text: "#0D1512" },
             { icon: "📵", title: "No digital refunds", desc: "Once downloaded, digital files cannot be refunded", color: "white", border: "rgba(27, 57, 49, 0.15)", text: "#0D1512" },
           ].map((c) => (
             <div key={c.title} style={{
@@ -109,7 +109,7 @@ export default function RefundPolicy() {
                   "Customer-submitted spelling or text errors",
                   "Change of mind after production has begun",
                   "Minor natural wood grain variations (inherent to the material)",
-                  "Items returned after 7 days of delivery",
+                  "Items returned after 5 days of delivery",
                   "Items without original packaging",
                 ],
               },

@@ -10,10 +10,8 @@ const zoneGroups = [
     flag: "🇮🇳",
     color: { bg: "white", border: "rgba(27, 57, 49, 0.15)", accent: "#0D1512" },
     countries: ["India"],
-    standardDays: "3–5 business days",
-    expressDays: "1–2 business days",
-    baseFee: "₹60",
-    freeAbove: "₹999",
+    standardDays: "5–7 business days",
+    expressDays: "3–5 business days",
     taxNote: "18% GST applicable",
   },
   {
@@ -21,10 +19,8 @@ const zoneGroups = [
     flag: "🌍",
     color: { bg: "white", border: "rgba(27, 57, 49, 0.15)", accent: "#0D1512" },
     countries: ["UAE 🇦🇪", "Saudi Arabia 🇸🇦", "Bahrain 🇧🇭", "Kuwait 🇰🇼"],
-    standardDays: "7–10 business days",
-    expressDays: "4–5 business days",
-    baseFee: "₹600–650",
-    freeAbove: "₹4,000",
+    standardDays: "8–15 business days",
+    expressDays: "7–10 business days",
     taxNote: "No additional tax",
   },
   {
@@ -32,10 +28,8 @@ const zoneGroups = [
     flag: "🌏",
     color: { bg: "white", border: "rgba(27, 57, 49, 0.15)", accent: "#0D1512" },
     countries: ["Singapore 🇸🇬", "Malaysia 🇲🇾", "Australia 🇦🇺", "New Zealand 🇳🇿"],
-    standardDays: "10–16 business days",
-    expressDays: "6–8 business days",
-    baseFee: "₹700–900",
-    freeAbove: "₹4,500–5,500",
+    standardDays: "8–15 business days",
+    expressDays: "7–10 business days",
     taxNote: "No additional tax",
   },
   {
@@ -43,10 +37,8 @@ const zoneGroups = [
     flag: "🌎",
     color: { bg: "white", border: "rgba(27, 57, 49, 0.15)", accent: "#0D1512" },
     countries: ["UK 🇬🇧", "Germany 🇩🇪", "France 👑", "Netherlands 🇳🇱", "USA 🇺🇸", "Canada 🇨🇦"],
-    standardDays: "10–14 business days",
-    expressDays: "6–8 business days",
-    baseFee: "₹800–900",
-    freeAbove: "₹5,000–5,500",
+    standardDays: "8–15 business days",
+    expressDays: "7–10 business days",
     taxNote: "No additional tax",
   },
 ];
@@ -56,7 +48,7 @@ const importantNotes = [
   { icon: "🚚", title: "Carriers", desc: "We partner with India Post, BlueDart, FedEx International, and DHL for domestic and international shipments. Carrier selection is based on your location and order size." },
   { icon: "📍", title: "Tracking", desc: "Once shipped, you will receive a tracking number via email and SMS. Use it on the carrier's website to track your order in real time." },
   { icon: "🛃", title: "Customs & Duties", desc: "For international orders, customs duties, import taxes, or handling fees may be levied by your country's customs authority. These charges are the buyer's responsibility and are not included in our shipping fee." },
-  { icon: "⏳", title: "Production time", desc: "Engraved products require 1–2 business days for production before dispatch. Total delivery time = production time + shipping time shown above." },
+  { icon: "⏳", title: "Production time", desc: "Engraved products require 4–7 business days for production before dispatch. Total delivery time = production time + shipping time shown above." },
   { icon: "📅", title: "Business days", desc: "Business days exclude weekends and public holidays in India. Orders placed on weekends are processed on the next business day." },
 ];
 
@@ -114,9 +106,9 @@ export default function ShippingPolicy() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px", marginBottom: "48px" }}>
           {[
             { value: "15", label: "Countries we ship to", icon: "🌍" },
-            { value: "3–5", label: "Days domestic delivery", icon: "🇮🇳" },
-            { value: "₹60", label: "Starting shipping fee", icon: "💰" },
-            { value: "Free", label: "Above ₹999 in India", icon: "🎁" },
+            { value: "5–7", label: "Days domestic delivery", icon: "🇮🇳" },
+            { value: "₹90", label: "Starting shipping fee", icon: "💰" },
+            { value: "Free", label: "Above 999 ", icon: "🎁" },
           ].map((s) => (
             <div key={s.label} style={{
               background: "white", border: "1px solid rgba(27, 57, 49, 0.15)",

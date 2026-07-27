@@ -78,8 +78,12 @@ export default function WhatsAppChat() {
         responseText = "Our optical acrylic pieces are polished with high precision and laser etched for crisp corporate logos or wedding blocks. I can package this requirement and route you to WhatsApp anytime.";
       } else if (lower.includes("shipping") || lower.includes("delivery") || lower.includes("days")) {
         responseText = "We ship worldwide (USA, UK, Canada, Australia, Singapore, Europe, etc.). Laser engraving takes 2-4 business days, and delivery takes about 7-14 business days. Would you like to connect with a shipping agent via WhatsApp?";
+      } else if (lower.includes("bulk") || lower.includes("corporate") || lower.includes("wholesale") || lower.includes("quantity")) {
+        responseText = "We support corporate volume orders and bulk custom engraving! You can check our personalization workflows, materials, and fill out our dedicated query form on our Engraving Solutions page (/engraving). Would you like to review that?";
+      } else if (lower.includes("engrav") || lower.includes("how it works") || lower.includes("material")) {
+        responseText = "To read all about our precision engraving specifications (Wood, Acrylic, Leather, Glass, MDF) and customization journey, feel free to visit our dedicated Engraving Solutions page (/engraving).";
       } else if (lower.includes("currency") || lower.includes("price") || lower.includes("cost")) {
-        responseText = "We display prices in local currency automatically using geo-location detection. If you are ordering in bulk, we offer special corporate discounts via WhatsApp.";
+        responseText = "We display prices in local currency automatically using geo-location detection. If you are ordering in bulk, we offer special corporate discounts via our Engraving solutions page (/engraving).";
       } else {
         // Fallback helper
         responseText = "That sounds like a beautiful creation! Let me prepare a custom craft order draft with those details. You can review this draft and tap 'Connect to Workshop' to submit it instantly.";

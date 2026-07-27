@@ -37,7 +37,7 @@ function ReviewForm({ productId, onSubmit }) {
   return (
     <div className="p-5" style={{ background: "#0f172a", border: "1px solid rgba(56,189,248,0.15)" }}>
       <h4 className="text-sm font-bold mb-4" style={{ color: "#38bdf8", fontFamily: "'Space Mono', monospace" }}>
-        // WRITE A REVIEW
+        {"// WRITE A REVIEW"}
       </h4>
       <div className="mb-3">
         <p className="text-xs mb-1" style={{ color: "#64748b" }}>Rating</p>
@@ -235,32 +235,59 @@ export default function DigitalProductDetail() {
               </div>
             )}
 
-            <div className="flex flex-col gap-2 pt-2">
+             <div className="flex flex-col gap-3 pt-2">
               <button
                 onClick={() => { addToCart({ ...product, type: "digital" }); setAdded(true); setTimeout(() => setAdded(false), 2000); }}
-                className="w-full py-3 text-sm font-bold tracking-widest transition"
+                className="w-full py-4.5 text-xs font-bold uppercase tracking-widest transition-all rounded-full cursor-pointer"
                 style={{
                   background: added ? "#0ea5e9" : "transparent",
                   color: added ? "white" : "#38bdf8",
                   border: `1.5px solid ${added ? "#0ea5e9" : "rgba(56,189,248,0.5)"}`,
+                  fontFamily: "'Space Mono', monospace"
                 }}>
                 {added ? "✓ ADDED TO CART" : "ADD TO CART"}
               </button>
               <button
-                className="w-full py-3 text-sm font-bold tracking-widest"
-                style={{ background: "#0ea5e9", color: "white" }}>
+                className="w-full py-4.5 text-xs font-bold uppercase tracking-widest transition-all rounded-full cursor-pointer"
+                style={{ background: "#0ea5e9", color: "white", border: "none", fontFamily: "'Space Mono', monospace" }}
+                onClick={() => { addToCart({ ...product, type: "digital" }); window.location.href = "/checkout"; }}
+              >
                 BUY NOW — INSTANT DOWNLOAD
               </button>
             </div>
 
+            {/* Payment Integration UI */}
+            <div className="p-4 flex flex-col gap-3 rounded-2xl" style={{ background: "#0f172a", border: "1px solid rgba(56,189,248,0.15)" }}>
+              <span className="text-[10px] font-extrabold uppercase tracking-widest block" style={{ color: "#38bdf8", fontFamily: "'Space Mono', monospace" }}>{"// SECURE CHECKOUT"}</span>
+              <p className="text-[11px]" style={{ color: "#64748b" }}>Choose gateway to authenticate payment instantly:</p>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => alert("Razorpay checkout selected. Complete your transaction securely.")}
+                  className="flex items-center justify-center gap-2 py-3 px-3 rounded-xl transition cursor-pointer text-xs font-semibold text-[#38bdf8] hover:bg-sky-500/10"
+                  style={{ background: "#020617", border: "1px solid rgba(56,189,248,0.2)" }}
+                >
+                  💳 Razorpay
+                </button>
+                <button
+                  type="button"
+                  onClick={() => alert("PayPal checkout selected. Complete your transaction securely.")}
+                  className="flex items-center justify-center gap-2 py-3 px-3 rounded-xl transition cursor-pointer text-xs font-semibold text-[#38bdf8] hover:bg-blue-500/10"
+                  style={{ background: "#020617", border: "1px solid rgba(56,189,248,0.2)" }}
+                >
+                  🅿️ PayPal
+                </button>
+              </div>
+            </div>
+
             {/* Perks */}
-            <div className="flex flex-col gap-2 text-xs"
-              style={{ borderTop: "1px solid rgba(56,189,248,0.15)", paddingTop: "1rem", color: "#64748b" }}>
+            <div className="flex flex-col gap-2.5 text-xs"
+              style={{ borderTop: "1px solid rgba(56,189,248,0.15)", paddingTop: "1.2rem", color: "#64748b" }}>
               {[
                 "⚡ Instant digital delivery after purchase",
-                "📁 All file formats included",
-                "🔁 Free updates for life",
-                "🛡️ Commercial license included",
+                "📁 All source file formats included",
+                "🔁 Free developer updates for life",
+                "🛡️ Commercial use license included",
               ].map(t => <p key={t}>{t}</p>)}
             </div>
           </div>
@@ -274,7 +301,7 @@ export default function DigitalProductDetail() {
         {/* Description */}
         <div className="mt-10 pt-8" style={{ borderTop: "1px solid rgba(56,189,248,0.1)" }}>
           <h2 className="text-sm font-bold tracking-widest mb-4" style={{ color: "#38bdf8" }}>
-            // PRODUCT DESCRIPTION
+            {"// PRODUCT DESCRIPTION"}
           </h2>
           <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: "#94a3b8" }}>
             {product.description}
@@ -284,7 +311,7 @@ export default function DigitalProductDetail() {
         {/* Reviews */}
         <div className="mt-10 pt-8" style={{ borderTop: "1px solid rgba(56,189,248,0.1)" }}>
           <h2 className="text-sm font-bold tracking-widest mb-6" style={{ color: "#38bdf8" }}>
-            // CUSTOMER REVIEWS
+            {"// CUSTOMER REVIEWS"}
           </h2>
           {reviews.length > 0 && (
             <div className="flex flex-col md:flex-row gap-8 mb-8">
@@ -350,7 +377,7 @@ export default function DigitalProductDetail() {
         {related.length > 0 && (
           <div className="mt-10 pt-8" style={{ borderTop: "1px solid rgba(56,189,248,0.1)" }}>
             <h2 className="text-sm font-bold tracking-widest mb-4" style={{ color: "#38bdf8", fontFamily: "'Space Mono', monospace" }}>
-              // CUSTOMERS ALSO VIEWED
+              {"// CUSTOMERS ALSO VIEWED"}
             </h2>
             <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin" style={{ scrollbarWidth: "thin" }}>
               {related.map(r => {

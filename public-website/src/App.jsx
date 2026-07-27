@@ -18,6 +18,7 @@ import Service from "./pages/Service";
 import Contact from "./pages/Contact";
 import Catalog from "./pages/Catalog";
 import Gallery from "./pages/Gallery";
+import Engraving from "./pages/Engraving";
 
 // ── The pages your footer links to ──
 import TermsConditions from "./pages/TermsConditions";
@@ -64,6 +65,7 @@ export default function App() {
               <Route path="/contact"            element={<Contact />} />
               <Route path="/catalog"            element={<Catalog />} />
               <Route path="/gallery"            element={<Gallery />} />
+              <Route path="/engraving"          element={<Engraving />} />
 
               {/* ── Legal & info pages ── */}
               <Route path="/terms"              element={<TermsConditions />} />
