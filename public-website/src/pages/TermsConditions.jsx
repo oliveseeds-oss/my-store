@@ -8,15 +8,15 @@ const sections = [
     id: "acceptance",
     number: "01",
     title: "Acceptance of Terms",
-    content: `By accessing or placing an order on MyStore, you confirm that you have read, understood, and agree to be bound by these Terms & Conditions. If you do not agree with any part of these terms, please refrain from using our website or services.
+    content: `By accessing or placing an order on Olive Seeds, you confirm that you have read, understood, and agree to be bound by these Terms & Conditions. If you do not agree with any part of these terms, please refrain from using our website or services.
 
-These terms apply to all visitors, users, and customers of MyStore, including those who browse, purchase physical engraved products, or download digital design products from our platform.`,
+These terms apply to all visitors, users, and customers of Olive Seeds, including those who browse, purchase physical engraved products, or download digital design products from our platform.`,
   },
   {
     id: "products",
     number: "02",
     title: "Products & Services",
-    content: `MyStore offers two categories of products:
+    content: `Olive Seeds offers two categories of products:
 
 Physical Engraved Products — Custom laser-engraved items including nameboards, keychains, mugs, photo frames, and corporate gifts. Each physical product is handcrafted and personalised to your specifications. Due to the custom nature of engraving, minor variations in wood grain, colour tone, and finish may occur and are considered part of the product's natural character.
 
@@ -28,13 +28,13 @@ All product descriptions, images, and specifications are provided in good faith.
     id: "ordering",
     number: "03",
     title: "Orders & Payments",
-    content: `When you place an order, you are making a binding offer to purchase the selected product(s) at the stated price. Your order is confirmed only upon receipt of a confirmation email from MyStore containing your unique Order ID (ORD-XXXXX) and Invoice ID (INV-XXXXX).
+    content: `When you place an order, you are making a binding offer to purchase the selected product(s) at the stated price. Your order is confirmed only upon receipt of a confirmation email from MyStore containing your unique Order ID and Invoice ID.
 
 Prices are displayed in Indian Rupees (₹) by default and may be shown in your local currency using our live conversion tool. Final billing is processed in INR. Currency conversion rates are indicative and subject to change.
 
-We accept payments via Razorpay, which supports UPI, credit cards, debit cards, and net banking. For Cash on Delivery (COD), payment is accepted only within India.
+We accept payments via Razorpay, which supports UPI, credit cards, debit cards, and net banking. For Cash on Delivery not accepted.
 
-In the event of a pricing error, we reserve the right to cancel an order and issue a full refund.`,
+In the event of a pricing error, we reserve the right to cancel an order and issue a refund.`,
   },
   {
     id: "customisation",
@@ -42,7 +42,7 @@ In the event of a pricing error, we reserve the right to cancel an order and iss
     title: "Custom Engraving & Personalisation",
     content: `You are solely responsible for the accuracy of any text, names, dates, or designs submitted for engraving. We do not proofread or validate customer-submitted content. Please review your order details carefully before submitting.
 
-MyStore reserves the right to refuse engraving of content that is offensive, unlawful, or infringes third-party intellectual property rights. In such cases, you will be contacted and offered a full refund.
+Olive Seeds reserves the right to refuse engraving of content that is offensive, unlawful, or infringes third-party intellectual property rights. In such cases, you will be contacted and offered a refund.
 
 Engraving placement and proportions may be adjusted slightly by our craftspeople to ensure the best aesthetic outcome on the chosen material. This is considered part of our standard craftsmanship process and does not constitute an error.`,
   },
@@ -50,7 +50,7 @@ Engraving placement and proportions may be adjusted slightly by our craftspeople
     id: "intellectual",
     number: "05",
     title: "Intellectual Property",
-    content: `All content on MyStore — including but not limited to website design, text, graphics, logos, photographs, and digital product files — is owned by or licensed to MyStore and is protected by applicable copyright and intellectual property laws.
+    content: `All content on Olive Seeds — including but not limited to website design, text, graphics, logos, photographs, and digital product files — is owned by or licensed to Olive Seeds and is protected by applicable copyright and intellectual property laws.
 
 Digital products purchased from MyStore are licensed for personal and commercial use by the buyer only. Resale, redistribution, sublicensing, or sharing of digital files is strictly prohibited.
 
@@ -219,13 +219,13 @@ export default function TermsConditions() {
                 Please read carefully before using our services
               </p>
               <p className="text-[#0D1512]/80 text-xs leading-relaxed font-semibold">
-                These terms govern your use of MyStore and all transactions on our platform. Questions?
+                These terms govern your use of Olive Seeds and all transactions on our platform. Questions?
                 Contact us at{" "}
                 <a 
-                  href="mailto:admin@mystore.com" 
+                  href="contact@oliveseedsdesignstudio.com" 
                   className="text-[#0D1512] font-black underline hover:opacity-85"
                 >
-                  admin@mystore.com
+                  contact@oliveseedsdesignstudio.com
                 </a>
               </p>
             </div>

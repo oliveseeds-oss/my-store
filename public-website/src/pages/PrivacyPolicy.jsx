@@ -93,8 +93,8 @@ Despite these measures, no method of transmission over the internet is 100% secu
     title: "Contact for Privacy Queries",
     content: `If you have any questions, concerns, or requests regarding this Privacy Policy or your personal data, please contact us:
 
-Email: admin@mystore.com
-Phone: +91 98765 43210
+Email: contact@oliveseedsdesignstudio.com
+Phone: +91 94 42 94 33 94
 Address: Olive Seeds Studio, India
 
 We will respond to all privacy-related requests within 30 days.`,

@@ -19,15 +19,117 @@ const FadeUp = ({ children, delay = 0, className = "", style = {} }) => (
   >
     {children}
   </motion.div>
-); const COLLECTIONS = [
-  { title: "Corporate Excellence", sub: "Elevate your brand identity", emoji: "🏆" },
-  { title: "Modern Workspace", sub: "Desk accessories & name plates", emoji: "🖊️" },
-  { title: "Wedding Collection", sub: "Timeless keepsakes for love", emoji: "💍" },
-  { title: "Business Branding", sub: "Custom branding at scale", emoji: "📦" },
+); const Icons = {
+  Trophy: ({ color = "var(--gold)", size = 24 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+      <path d="M4 22h16" />
+      <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34" />
+      <path d="M12 2a6 6 0 0 1 6 6c0 3.3-2 6-6 6S6 11.3 6 8a6 6 0 0 1 6-6z" />
+    </svg>
+  ),
+  Pen: ({ color = "var(--gold)", size = 24 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+    </svg>
+  ),
+  Rings: ({ color = "var(--gold)", size = 24 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="7.5" cy="13.5" r="5" />
+      <circle cx="16.5" cy="10.5" r="5" />
+    </svg>
+  ),
+  Box: ({ color = "var(--gold)", size = 24 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+      <path d="m3.3 7 8.7 5 8.7-5" />
+      <path d="M12 22V12" />
+    </svg>
+  ),
+  Wood: ({ color = "var(--gold)", size = 24 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <ellipse cx="12" cy="5" rx="9" ry="3" />
+      <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+      <path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3" />
+    </svg>
+  ),
+  Bolt: ({ color = "var(--gold)", size = 24 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M13 2 L3 14h9l-1 8 10-12h-9l1-8z" />
+    </svg>
+  ),
+  Art: ({ color = "var(--gold)", size = 24 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" />
+      <circle cx="8" cy="12" r="2" />
+      <circle cx="16" cy="12" r="2" />
+      <circle cx="12" cy="6" r="2" />
+      <circle cx="12" cy="18" r="2" />
+    </svg>
+  ),
+  Sparkles: ({ color = "var(--gold)", size = 24 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275Z" />
+      <path d="m5 3 1 2.5L8.5 6 6 7 5 9.5 4 7 1.5 6 4 5.5Z" opacity="0.6" />
+      <path d="m19 17 1 2.5 2.5.5-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1Z" opacity="0.6" />
+    </svg>
+  ),
+  Globe: ({ color = "var(--gold)", size = 24 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+      <path d="M2 12h20" />
+    </svg>
+  ),
+  Shield: ({ color = "var(--gold)", size = 24 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </svg>
+  ),
+  Support: ({ color = "var(--gold)", size = 24 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+    </svg>
+  ),
+  Lock: ({ color = "var(--gold)", size = 24 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  ),
+  Repeat: ({ color = "var(--gold)", size = 24 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m17 2 4 4-4 4" />
+      <path d="M3 11v-1a4 4 0 0 1 4-4h14" />
+      <path d="m7 22-4-4 4-4" />
+      <path d="M21 13v1a4 4 0 0 1-4 4H3" />
+    </svg>
+  ),
+  File: ({ color = "var(--gold)", size = 24 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+    </svg>
+  ),
+  Infinity: ({ color = "var(--gold)", size = 24 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 1 0 0-8c-2 0-4 1.33-6 4Z" />
+    </svg>
+  )
+};
+
+const COLLECTIONS = [
+  { title: "Corporate Excellence", sub: "Elevate your brand identity", icon: "Trophy" },
+  { title: "Modern Workspace", sub: "Desk accessories & name plates", icon: "Pen" },
+  { title: "Wedding Collection", sub: "Timeless keepsakes for love", icon: "Rings" },
+  { title: "Business Branding", sub: "Custom branding at scale", icon: "Box" },
 ];
 
 function CollectionCard({ col }) {
   const [hov, setHov] = useState(false);
+  const IconComponent = Icons[col.icon] || Icons.Sparkles;
   return (
     <div
       onMouseEnter={() => setHov(true)}
@@ -35,15 +137,17 @@ function CollectionCard({ col }) {
       style={{
         background: hov ? "var(--gold-soft)" : "var(--surface)",
         borderRadius: "var(--radius)",
-        border: `1px solid var(--border)`,
+        border: hov ? "1px solid var(--gold-border)" : `1px solid var(--border)`,
         padding: "36px 28px",
         cursor: "pointer",
-        transition: "all 0.35s ease",
+        transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
         boxShadow: hov ? "var(--shadow-md)" : "var(--shadow-sm)",
-        transform: hov ? "translateY(-4px)" : "translateY(0)",
+        transform: hov ? "translateY(-6px) scale(1.02)" : "translateY(0) scale(1)",
       }}
     >
-      <span style={{ fontSize: 36, display: "block", marginBottom: 16 }}>{col.emoji}</span>
+      <div style={{ marginBottom: 16, display: "inline-flex", color: "var(--gold)", transform: hov ? "scale(1.1) rotate(5deg)" : "scale(1)", transition: "transform 0.3s ease" }}>
+        <IconComponent size={36} color="var(--gold)" />
+      </div>
       <h3 style={{
         fontFamily: "'Clash Display', sans-serif",
         fontWeight: 600,
@@ -58,10 +162,183 @@ function CollectionCard({ col }) {
         marginTop: 20, display: "flex", alignItems: "center", gap: 6,
         fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 600,
         color: "var(--gold)", letterSpacing: "0.08em", textTransform: "uppercase",
+        transition: "transform 0.3s ease",
+        transform: hov ? "translateX(4px)" : "translateX(0)",
       }}>
         Explore <span style={{ fontSize: 14 }}>→</span>
       </div>
     </div>
+  );
+}
+
+function PremiumProductCard({ p, to, isDigital = false }) {
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    const factor = 8;
+    setTilt({
+      x: (x / (rect.width / 2)) * factor,
+      y: (y / (rect.height / 2)) * factor
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    setTilt({ x: 0, y: 0 });
+  };
+
+  const imgUrl = p.image_url || p.thumbnail_url;
+  
+  return (
+    <Link
+      to={to}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        display: "block",
+        background: isDigital 
+          ? (isHovered ? "rgba(255, 255, 255, 0.09)" : "rgba(255, 255, 255, 0.05)")
+          : "var(--surface)",
+        border: isHovered 
+          ? "1px solid rgba(201, 168, 106, 0.5)" 
+          : (isDigital ? "1px solid rgba(255,255,255,0.12)" : "1px solid var(--border)"),
+        borderRadius: "var(--radius)",
+        overflow: "hidden",
+        textDecoration: "none",
+        transition: "border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease",
+        boxShadow: isHovered 
+          ? (isDigital ? "0 20px 48px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(201, 168, 106, 0.15)" : "0 20px 48px rgba(15, 39, 68, 0.12), 0 0 0 1px rgba(201, 168, 106, 0.1)")
+          : "var(--shadow-sm)",
+        transform: `perspective(1000px) rotateX(${-tilt.y}deg) rotateY(${tilt.x}deg) translateY(${isHovered ? -8 : 0}px)`,
+        position: "relative",
+      }}
+    >
+      <div style={{ height: "270px", overflow: "hidden", position: "relative" }}>
+        {imgUrl ? (
+          <img 
+            src={imgUrl} 
+            alt={p.name} 
+            style={{ 
+              width: "100%", 
+              height: "100%", 
+              objectFit: "cover", 
+              transition: "transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)", 
+              transform: isHovered ? "scale(1.08)" : "scale(1)" 
+            }} 
+          />
+        ) : (
+          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: isDigital ? "rgba(255,255,255,0.03)" : "#FAF9F6" }}>
+            {isDigital ? <Icons.Bolt size={48} color="var(--gold-border)" /> : <Icons.Wood size={48} color="var(--gold-border)" />}
+          </div>
+        )}
+        
+        <div style={{
+          position: "absolute",
+          inset: 0,
+          background: "linear-gradient(to top, rgba(15, 39, 68, 0.85) 0%, rgba(15, 39, 68, 0.3) 100%)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          opacity: isHovered ? 1 : 0,
+          transition: "opacity 0.4s ease",
+          zIndex: 3,
+        }}>
+          <span className="clash" style={{
+            color: "#fff",
+            fontSize: "13px",
+            fontWeight: 600,
+            letterSpacing: "0.15em",
+            textTransform: "uppercase",
+            border: "1px solid rgba(255, 255, 255, 0.3)",
+            background: "rgba(255, 255, 255, 0.1)",
+            padding: "10px 22px",
+            borderRadius: "100px",
+            backdropFilter: "blur(8px)",
+            transform: isHovered ? "translateY(0)" : "translateY(12px)",
+            transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+          }}>
+            Explore {isDigital ? "Asset" : "Craft"} →
+          </span>
+        </div>
+
+        <span style={{
+          position: "absolute", 
+          top: "14px", 
+          left: "14px", 
+          zIndex: 2,
+          background: isDigital ? "var(--gold)" : "rgba(255, 255, 255, 0.9)", 
+          color: isDigital ? "#fff" : "var(--accent)",
+          fontSize: "9px", 
+          fontWeight: 700, 
+          letterSpacing: "0.18em", 
+          textTransform: "uppercase",
+          padding: "6px 14px", 
+          borderRadius: "100px",
+          backdropFilter: "blur(8px)",
+          border: isDigital ? "none" : "1px solid rgba(201, 168, 106, 0.2)",
+          boxShadow: "0 4px 12px rgba(15,39,68,0.08)"
+        }}>
+          {isDigital ? "Digital File" : "Premium Craft"}
+        </span>
+      </div>
+
+      <div style={{ padding: "24px" }}>
+        <div style={{ 
+          fontSize: "9px", 
+          fontWeight: 700, 
+          letterSpacing: "0.2em", 
+          textTransform: "uppercase", 
+          color: "var(--gold)", 
+          marginBottom: "8px" 
+        }}>
+          {p.category}
+        </div>
+        <h3 className="clash" style={{ 
+          fontSize: "17px", 
+          fontWeight: 600, 
+          color: isDigital ? "#ffffff" : "var(--accent)", 
+          marginBottom: "20px",
+          lineHeight: 1.3,
+          minHeight: "44px"
+        }}>
+          {p.name}
+        </h3>
+        
+        <div style={{
+          display: "flex", 
+          alignItems: "center", 
+          justifyContent: "space-between",
+          paddingTop: "16px", 
+          borderTop: isDigital ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(15, 39, 68, 0.08)",
+        }}>
+          <span className="clash" style={{ fontSize: "1.45rem", fontWeight: 700, color: isDigital ? "var(--gold)" : "var(--accent)" }}>
+            ₹{p.price}
+          </span>
+          <div style={{
+            width: "38px", 
+            height: "38px", 
+            borderRadius: "50%",
+            background: isHovered ? "var(--gold)" : (isDigital ? "rgba(255,255,255,0.1)" : "var(--accent)"),
+            display: "flex", 
+            alignItems: "center", 
+            justifyContent: "center",
+            color: isDigital ? (isHovered ? "#fff" : "var(--gold)") : "#fff", 
+            fontSize: "14px",
+            border: isDigital && !isHovered ? "1px solid rgba(255,255,255,0.2)" : "none",
+            transition: "background 0.3s ease, transform 0.3s ease, color 0.3s ease",
+            transform: isHovered ? "translateX(4px)" : "translateX(0)",
+          }}>
+            →
+          </div>
+        </div>
+      </div>
+    </Link>
   );
 }
 
@@ -134,18 +411,30 @@ export default function Home() {
           color: #fff;
           font-size: 13px;
           font-weight: 600;
-          letter-spacing: 0.02em;
-          padding: 15px 32px;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          padding: 16px 36px;
           border-radius: 100px;
-          border: none;
+          border: 1px solid rgba(255, 255, 255, 0.08);
           cursor: pointer;
           text-decoration: none;
-          transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+          box-shadow: 0 4px 12px rgba(15,39,68,0.15);
+          transition: background 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+                      transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+                      box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                      border-color 0.3s ease;
         }
         .btn-primary:hover {
           background: var(--accent-h);
-          transform: translateY(-2px);
-          box-shadow: 0 12px 36px rgba(15,39,68,0.22);
+          transform: translateY(-3px) scale(1.02);
+          box-shadow: 0 20px 40px rgba(15,39,68,0.3);
+          border-color: rgba(201,168,106,0.45);
+        }
+        .btn-primary svg {
+          transition: transform 0.3s ease;
+        }
+        .btn-primary:hover svg {
+          transform: translateX(4px);
         }
 
         .btn-gold {
@@ -156,18 +445,30 @@ export default function Home() {
           color: #fff;
           font-size: 13px;
           font-weight: 600;
-          letter-spacing: 0.02em;
-          padding: 15px 32px;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          padding: 16px 36px;
           border-radius: 100px;
-          border: none;
+          border: 1px solid rgba(255, 255, 255, 0.1);
           cursor: pointer;
           text-decoration: none;
-          transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+          box-shadow: 0 4px 12px rgba(201,168,106,0.2);
+          transition: background 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+                      transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+                      box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                      border-color 0.3s ease;
         }
         .btn-gold:hover {
           background: #b8943d;
-          transform: translateY(-2px);
-          box-shadow: 0 12px 36px rgba(201,168,106,0.35);
+          transform: translateY(-3px) scale(1.02);
+          box-shadow: 0 20px 40px rgba(201,168,106,0.5);
+          border-color: rgba(255,255,255,0.35);
+        }
+        .btn-gold svg {
+          transition: transform 0.3s ease;
+        }
+        .btn-gold:hover svg {
+          transform: translateX(4px);
         }
 
         .btn-outline {
@@ -178,18 +479,24 @@ export default function Home() {
           color: var(--accent);
           font-size: 13px;
           font-weight: 600;
-          letter-spacing: 0.02em;
-          padding: 14px 30px;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          padding: 15px 34px;
           border-radius: 100px;
           border: 1.5px solid var(--border);
           cursor: pointer;
           text-decoration: none;
-          transition: border-color 0.25s ease, background 0.25s ease, transform 0.2s ease;
+          transition: border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+                      background 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+                      transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                      color 0.3s ease;
         }
         .btn-outline:hover {
           border-color: var(--accent);
-          background: rgba(15,39,68,0.04);
-          transform: translateY(-2px);
+          background: var(--accent);
+          color: #fff;
+          transform: translateY(-3px) scale(1.02);
+          box-shadow: 0 12px 28px rgba(15,39,68,0.15);
         }
 
         /* Card hover */
@@ -597,9 +904,11 @@ export default function Home() {
                   width: "40px", height: "40px", borderRadius: "10px",
                   background: "var(--gold-soft)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "20px", flexShrink: 0,
+                  flexShrink: 0,
                   border: "1px solid var(--gold-border)",
-                }}>🪵</div>
+                }}>
+                  <Icons.Wood size={20} color="var(--gold)" />
+                </div>
                 <div>
                   <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--accent)" }}>Premium Crafted</div>
                   <div style={{ fontSize: "10px", color: "var(--gold)", letterSpacing: "0.08em", textTransform: "uppercase", marginTop: "2px" }}>Laser Engraved</div>
@@ -623,9 +932,11 @@ export default function Home() {
                   width: "40px", height: "40px", borderRadius: "10px",
                   background: "var(--gold-soft)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "20px", flexShrink: 0,
+                  flexShrink: 0,
                   border: "1px solid var(--gold-border)",
-                }}>⚡</div>
+                }}>
+                  <Icons.Bolt size={20} color="var(--gold)" />
+                </div>
                 <div>
                   <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--accent)" }}>Digital Assets</div>
                   <div style={{ fontSize: "10px", color: "var(--gold)", letterSpacing: "0.08em", textTransform: "uppercase", marginTop: "2px" }}>Web · App · AI</div>
@@ -664,7 +975,7 @@ export default function Home() {
       {/* ══════════════════════════════════════════════
           THREE CORE DIVISIONS
       ══════════════════════════════════════════════ */}
-      <section style={{ padding: "50px 0 70px", background: "var(--surface)" }}>
+      <section style={{ padding: "clamp(80px, 8vw, 140px) 0", background: "var(--surface)" }}>
         <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
           <FadeUp style={{ textAlign: "center", marginBottom: "48px" }}>
             <span className="eyebrow" style={{ justifyContent: "center" }}>What We Offer</span>
@@ -703,8 +1014,10 @@ export default function Home() {
                   width: "52px", height: "52px", borderRadius: "14px",
                   background: "var(--gold-soft)", border: "1px solid var(--gold-border)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "24px", marginBottom: "28px",
-                }}>🪵</div>
+                  marginBottom: "28px",
+                }}>
+                  <Icons.Wood size={24} color="var(--gold)" />
+                </div>
                 <h3 className="clash" style={{
                   fontSize: "1.6rem", fontWeight: 700, color: "var(--accent)",
                   letterSpacing: "-0.01em", marginBottom: "14px",
@@ -747,8 +1060,10 @@ export default function Home() {
                   width: "52px", height: "52px", borderRadius: "14px",
                   background: "var(--gold-soft)", border: "1px solid var(--gold-border)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "24px", marginBottom: "28px",
-                }}>⚡</div>
+                  marginBottom: "28px",
+                }}>
+                  <Icons.Bolt size={24} color="var(--gold)" />
+                </div>
                 <h3 className="clash" style={{
                   fontSize: "1.6rem", fontWeight: 700, color: "var(--accent)",
                   letterSpacing: "-0.01em", marginBottom: "14px",
@@ -784,8 +1099,10 @@ export default function Home() {
                   width: "52px", height: "52px", borderRadius: "14px",
                   background: "var(--gold-soft)", border: "1px solid var(--gold-border)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "24px", marginBottom: "28px",
-                }}>🎨</div>
+                  marginBottom: "28px",
+                }}>
+                  <Icons.Art size={24} color="var(--gold)" />
+                </div>
                 <h3 className="clash" style={{
                   fontSize: "1.6rem", fontWeight: 700, color: "var(--accent)",
                   letterSpacing: "-0.01em", marginBottom: "14px",
@@ -827,7 +1144,7 @@ export default function Home() {
       {/* ══════════════════════════════════════════════
           STUDIO STORY / ABOUT
       ══════════════════════════════════════════════ */}
-      <section style={{ padding: "70px 0", background: "#F4F4F1" }}>
+      <section style={{ padding: "clamp(80px, 8vw, 140px) 0", background: "#F4F4F1" }}>
         <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
           <div
             className="two-cols"
@@ -895,10 +1212,10 @@ export default function Home() {
                 style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}
               >
                 {[
-                  ["🔥", "Premium Products", "Finest woods, acrylics & precision laser calibration"],
-                  ["🎨", "Modern UI/UX", "High-performance React & sleek Figma design systems"],
-                  ["📦", "Worldwide Dispatch", "Tracked shipping & instant digital downloads"],
-                  ["✍️", "Bespoke Orders", "Personalized names, logos & custom corporate styles"],
+                  ["Sparkles", "Premium Products", "Finest woods, acrylics & precision laser calibration"],
+                  ["Art", "Modern UI/UX", "High-performance React & sleek Figma design systems"],
+                  ["Globe", "Worldwide Dispatch", "Tracked shipping & instant digital downloads"],
+                  ["Pen", "Bespoke Orders", "Personalized names, logos & custom corporate styles"],
                 ].map(([icon, title, desc]) => (
                   <div key={title} style={{
                     background: "var(--surface)",
@@ -906,7 +1223,12 @@ export default function Home() {
                     borderRadius: "var(--radius-sm)",
                     padding: "20px",
                   }}>
-                    <div style={{ fontSize: "22px", marginBottom: "10px" }}>{icon}</div>
+                    <div style={{ marginBottom: "10px", color: "var(--gold)", display: "flex" }}>
+                      {(() => {
+                        const IconComponent = Icons[icon] || Icons.Sparkles;
+                        return <IconComponent size={24} color="var(--gold)" />;
+                      })()}
+                    </div>
                     <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--accent)", marginBottom: "6px" }}>{title}</div>
                     <div style={{ fontSize: "12px", color: "var(--text-2)", lineHeight: 1.55 }}>{desc}</div>
                   </div>
@@ -920,7 +1242,7 @@ export default function Home() {
       {/* ══════════════════════════════════════════════
           PHYSICAL PRODUCTS
       ══════════════════════════════════════════════ */}
-      <section style={{ padding: "70px 0", background: "#F8F8F5" }}>
+      <section style={{ padding: "clamp(80px, 8vw, 140px) 0", background: "#F8F8F5" }}>
         <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
           {/* Header */}
           <div style={{
@@ -974,7 +1296,10 @@ export default function Home() {
                   borderRadius: "100px", padding: "7px 16px",
                   fontSize: "10px", fontWeight: 700, letterSpacing: "0.16em",
                   textTransform: "uppercase", color: "var(--gold)", marginBottom: "20px",
-                }}>🔨 Signature Craft</span>
+                }}>
+                  <Icons.Sparkles size={12} color="var(--gold)" />
+                  Signature Craft
+                </span>
                 <h3 className="clash" style={{
                   fontSize: "clamp(1.8rem, 3.5vw, 3rem)",
                   fontWeight: 700, color: "#fff",
@@ -1006,57 +1331,10 @@ export default function Home() {
 
           {/* Products grid */}
           {products.length > 0 ? (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "20px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "32px" }}>
               {products.map((p, i) => (
                 <FadeUp key={p.id} delay={i * 0.08}>
-                  <Link
-                    to={`/products/${p.id}`}
-                    className="card-lift"
-                    style={{
-                      display: "block",
-                      background: "var(--surface)",
-                      border: "1px solid var(--border)",
-                      borderRadius: "var(--radius)",
-                      overflow: "hidden",
-                      textDecoration: "none",
-                    }}
-                  >
-                    <div style={{ height: "260px", overflow: "hidden", position: "relative" }} className="img-fade">
-                      {p.image_url ? (
-                        <img src={p.image_url} alt={p.name} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease" }}
-                          onMouseEnter={e => e.currentTarget.style.transform = "scale(1.04)"}
-                          onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
-                        />
-                      ) : (
-                        <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px", background: "#F4F4F1" }}>🪵</div>
-                      )}
-                      <span style={{
-                        position: "absolute", top: "14px", left: "14px", zIndex: 2,
-                        background: "rgba(255,255,255,0.92)", color: "var(--accent)",
-                        fontSize: "9px", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase",
-                        padding: "5px 11px", borderRadius: "100px",
-                        backdropFilter: "blur(8px)",
-                      }}>Premium Craft</span>
-                    </div>
-                    <div style={{ padding: "22px" }}>
-                      <div style={{ fontSize: "10px", fontWeight: 600, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--gold)", marginBottom: "6px" }}>
-                        {p.category}
-                      </div>
-                      <div style={{ fontSize: "16px", fontWeight: 600, color: "var(--accent)", marginBottom: "18px" }}>{p.name}</div>
-                      <div style={{
-                        display: "flex", alignItems: "center", justifyContent: "space-between",
-                        paddingTop: "14px", borderTop: "1px solid var(--border)",
-                      }}>
-                        <span className="clash" style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--accent)" }}>₹{p.price}</span>
-                        <div style={{
-                          width: "36px", height: "36px", borderRadius: "50%",
-                          background: "var(--accent)",
-                          display: "flex", alignItems: "center", justifyContent: "center",
-                          color: "#fff", fontSize: "14px",
-                        }}>→</div>
-                      </div>
-                    </div>
-                  </Link>
+                  <PremiumProductCard p={p} to={`/products/${p.id}`} isDigital={false} />
                 </FadeUp>
               ))}
             </div>
@@ -1076,7 +1354,7 @@ export default function Home() {
       {/* ══════════════════════════════════════════════
           FEATURED COLLECTIONS
       ══════════════════════════════════════════════ */}
-      <section style={{ padding: "50px 24px", maxWidth: "1280px", margin: "0 auto" }}>
+      <section style={{ padding: "clamp(60px, 6vw, 100px) 24px", maxWidth: "1280px", margin: "0 auto" }}>
         <div style={{ marginBottom: 48, textAlign: "center" }}>
           <FadeUp>
             <span className="eyebrow" style={{ justifyContent: "center" }}>Featured Collections</span>
@@ -1112,7 +1390,7 @@ export default function Home() {
       {/* ══════════════════════════════════════════════
           DIGITAL PRODUCTS
       ══════════════════════════════════════════════ */}
-      <section style={{ padding: "70px 0", background: "var(--accent)" }}>
+      <section style={{ padding: "clamp(80px, 8vw, 140px) 0", background: "var(--accent)" }}>
         <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
           <FadeUp style={{ textAlign: "center", marginBottom: "64px" }}>
             <span style={{
@@ -1137,57 +1415,10 @@ export default function Home() {
           </FadeUp>
 
           {digitalProducts.length > 0 ? (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "20px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "32px" }}>
               {digitalProducts.map((p, i) => (
                 <FadeUp key={p.id} delay={i * 0.08}>
-                  <Link
-                    to={`/digital/${p.id}`}
-                    className="card-lift"
-                    style={{
-                      display: "block",
-                      background: "rgba(255,255,255,0.07)",
-                      border: "1px solid rgba(255,255,255,0.12)",
-                      borderRadius: "var(--radius)",
-                      overflow: "hidden",
-                      textDecoration: "none",
-                      backdropFilter: "blur(8px)",
-                    }}
-                  >
-                    <div style={{ height: "260px", overflow: "hidden", position: "relative" }}>
-                      {p.thumbnail_url ? (
-                        <img src={p.thumbnail_url} alt={p.name} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease" }}
-                          onMouseEnter={e => e.currentTarget.style.transform = "scale(1.04)"}
-                          onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
-                        />
-                      ) : (
-                        <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px", background: "rgba(255,255,255,0.04)" }}>📦</div>
-                      )}
-                      <span style={{
-                        position: "absolute", top: "14px", left: "14px", zIndex: 2,
-                        background: "var(--gold)", color: "#fff",
-                        fontSize: "9px", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase",
-                        padding: "5px 11px", borderRadius: "100px",
-                      }}>⚡ Digital File</span>
-                    </div>
-                    <div style={{ padding: "22px" }}>
-                      <div style={{ fontSize: "10px", fontWeight: 600, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--gold)", marginBottom: "6px" }}>
-                        {p.category}
-                      </div>
-                      <div style={{ fontSize: "16px", fontWeight: 600, color: "#fff", marginBottom: "18px" }}>{p.name}</div>
-                      <div style={{
-                        display: "flex", alignItems: "center", justifyContent: "space-between",
-                        paddingTop: "14px", borderTop: "1px solid rgba(255,255,255,0.1)",
-                      }}>
-                        <span className="clash" style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--gold)" }}>₹{p.price}</span>
-                        <div style={{
-                          width: "36px", height: "36px", borderRadius: "50%",
-                          border: "1px solid rgba(255,255,255,0.2)",
-                          display: "flex", alignItems: "center", justifyContent: "center",
-                          color: "var(--gold)", fontSize: "14px",
-                        }}>→</div>
-                      </div>
-                    </div>
-                  </Link>
+                  <PremiumProductCard p={p} to={`/digital/${p.id}`} isDigital={true} />
                 </FadeUp>
               ))}
             </div>
@@ -1209,12 +1440,12 @@ export default function Home() {
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>
           <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}>
             {[
-              { icon: "⚡", label: "Instant Download", sub: "Available immediately" },
-              { icon: "♾️", label: "Lifetime Access", sub: "Access forever" },
-              { icon: "📄", label: "Commercial License", sub: "Use in client work" },
-              { icon: "🔒", label: "Secure Checkout", sub: "256-bit encrypted" },
-              { icon: "🔄", label: "Regular Updates", sub: "Always improving" },
-              { icon: "🌐", label: "Global Access", sub: "Available worldwide" },
+              { icon: "Bolt", label: "Instant Download", sub: "Available immediately" },
+              { icon: "Infinity", label: "Lifetime Access", sub: "Access forever" },
+              { icon: "File", label: "Commercial License", sub: "Use in client work" },
+              { icon: "Lock", label: "Secure Checkout", sub: "256-bit encrypted" },
+              { icon: "Repeat", label: "Regular Updates", sub: "Always improving" },
+              { icon: "Globe", label: "Global Access", sub: "Available worldwide" },
             ].map((item, i) => (
               <FadeUp key={item.label} delay={i * 0.05} style={{ display: "flex", flex: "1 1 150px", maxWidth: "200px" }}>
                 <div style={{
@@ -1229,7 +1460,12 @@ export default function Home() {
                   width: "100%",
                   transition: "all 0.3s ease",
                 }}>
-                  <span style={{ fontSize: 28 }}>{item.icon}</span>
+                  <div style={{ color: "var(--gold)", display: "flex", justifyContent: "center", marginBottom: "4px" }}>
+                    {(() => {
+                      const IconComponent = Icons[item.icon] || Icons.Sparkles;
+                      return <IconComponent size={28} color="var(--gold)" />;
+                    })()}
+                  </div>
                   <div style={{ textAlign: "center" }}>
                     <div style={{ fontSize: 13, fontWeight: 700, color: "#F8FAFC", marginBottom: 4, fontFamily: "'Inter', sans-serif" }}>
                       {item.label}
@@ -1248,7 +1484,7 @@ export default function Home() {
       {/* ══════════════════════════════════════════════
           WHY CHOOSE OLIVE SEEDS
       ══════════════════════════════════════════════ */}
-      <section style={{ padding: "70px 0", background: "#F8F8F5" }}>
+      <section style={{ padding: "clamp(80px, 8vw, 140px) 0", background: "#F8F8F5" }}>
         <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
           <FadeUp style={{ textAlign: "center", marginBottom: "72px" }}>
             <span className="eyebrow" style={{ justifyContent: "center" }}>Why Choose Us</span>
@@ -1270,12 +1506,12 @@ export default function Home() {
             style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "24px" }}
           >
             {[
-              { icon: "🌍", title: "Worldwide Delivery", desc: "Fully tracked international shipping to 15+ countries with reliable logistics partners." },
-              { icon: "✨", title: "Premium Products", desc: "Every physical product is perfectly-finished with precision laser equipment and quality materials." },
-              { icon: "⚡", title: "Instant Downloads", desc: "Digital products delivered instantly. No waiting, no hassle — ready to use immediately." },
-              { icon: "💼", title: "Business-Focused", desc: "Tailored solutions for startups, corporates, and entrepreneurs who demand excellence." },
-              { icon: "🛡️", title: "Secure Payments", desc: "End-to-end encrypted, PCI-compliant payment processing for complete peace of mind." },
-              { icon: "🤝", title: "Dedicated Support", desc: "Responsive, expert support for every order — physical or digital, before and after purchase." },
+              { icon: "Globe", title: "Worldwide Delivery", desc: "Fully tracked international shipping to 15+ countries with reliable logistics partners." },
+              { icon: "Sparkles", title: "Premium Products", desc: "Every physical product is perfectly-finished with precision laser equipment and quality materials." },
+              { icon: "Bolt", title: "Instant Downloads", desc: "Digital products delivered instantly. No waiting, no hassle — ready to use immediately." },
+              { icon: "Trophy", title: "Business-Focused", desc: "Tailored solutions for startups, corporates, and entrepreneurs who demand excellence." },
+              { icon: "Shield", title: "Secure Payments", desc: "End-to-end encrypted, PCI-compliant payment processing for complete peace of mind." },
+              { icon: "Support", title: "Dedicated Support", desc: "Responsive, expert support for every order — physical or digital, before and after purchase." },
             ].map((s, i) => (
               <FadeUp key={s.title} delay={i * 0.07}>
                 <div style={{
@@ -1301,8 +1537,13 @@ export default function Home() {
                     width: "50px", height: "50px", borderRadius: "14px",
                     background: "var(--gold-soft)", border: "1px solid var(--gold-border)",
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: "22px", marginBottom: "20px",
-                  }}>{s.icon}</div>
+                    marginBottom: "20px",
+                  }}>
+                    {(() => {
+                      const IconComponent = Icons[s.icon] || Icons.Sparkles;
+                      return <IconComponent size={22} color="var(--gold)" />;
+                    })()}
+                  </div>
                   <h3 style={{ fontSize: "16px", fontWeight: 600, color: "var(--accent)", marginBottom: "10px" }}>{s.title}</h3>
                   <p style={{ fontSize: "13px", color: "var(--text-2)", lineHeight: 1.7 }}>{s.desc}</p>
                 </div>
@@ -1312,7 +1553,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section style={{ padding: "70px 0", background: "var(--surface)" }}>
+      <section style={{ padding: "clamp(80px, 8vw, 140px) 0", background: "var(--surface)" }}>
         <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "60px" }} className="lg-grid-cols-3">
@@ -1370,10 +1611,10 @@ export default function Home() {
             {/* Right Column (Interactive List) */}
             <div className="flex flex-col gap-6">
               {[
-                { number: "01", icon: "🎨", title: "Bespoke Art & Code", desc: "Tailored to your requirements. We design physical gifts and engineer modern web systems matching your exact specification." },
-                { number: "02", icon: "✨", title: "Impeccable Quality", desc: "Crafted with premium materials and high precision tools. We check every detail to ensure it meets our rigorous standards." },
-                { number: "03", icon: "📦", title: "Seamless Experience", desc: "From instant digital downloads to securely packaged tracked worldwide shipping, we guarantee a hassle-free journey." },
-                { number: "04", icon: "🔥", title: "Uncompromising Uniqueness", desc: "Stand out with confidence. Our custom layouts, high-end materials, and bespoke systems ensure you leave a lasting impression of quality and authenticity." },
+                { number: "01", icon: "Art", title: "Bespoke Art & Code", desc: "Tailored to your requirements. We design physical gifts and engineer modern web systems matching your exact specification." },
+                { number: "02", icon: "Sparkles", title: "Impeccable Quality", desc: "Crafted with premium materials and high precision tools. We check every detail to ensure it meets our rigorous standards." },
+                { number: "03", icon: "Box", title: "Seamless Experience", desc: "From instant digital downloads to securely packaged tracked worldwide shipping, we guarantee a hassle-free journey." },
+                { number: "04", icon: "Sparkles", title: "Uncompromising Uniqueness", desc: "Stand out with confidence. Our custom layouts, high-end materials, and bespoke systems ensure you leave a lasting impression of quality and authenticity." },
               ].map((c, i) => (
                 <FadeUp key={c.number} delay={i * 0.08}>
                   <div
@@ -1390,7 +1631,12 @@ export default function Home() {
                       fontSize: "14px", fontWeight: 700, color: "var(--gold)",
                       fontFamily: "monospace", marginTop: "4px"
                     }}>{c.number}</div>
-                    <div style={{ fontSize: "24px", marginTop: "2px" }}>{c.icon}</div>
+                    <div style={{ color: "var(--gold)", display: "flex", alignItems: "center", marginTop: "2px" }}>
+                      {(() => {
+                        const IconComponent = Icons[c.icon] || Icons.Sparkles;
+                        return <IconComponent size={24} color="var(--gold)" />;
+                      })()}
+                    </div>
                     <div>
                       <h3 style={{ fontSize: "18px", fontWeight: 600, color: "var(--accent)", marginBottom: "10px" }}>{c.title}</h3>
                       <p style={{ fontSize: "14px", color: "var(--text-2)", lineHeight: 1.65 }}>{c.desc}</p>
@@ -1405,7 +1651,7 @@ export default function Home() {
       </section>
 
       <section style={{
-        padding: "70px 0", background: "#0D1512",
+        padding: "clamp(80px, 8vw, 140px) 0", background: "#0D1512",
         borderTop: "1px solid rgba(255,255,255,0.1)",
         overflow: "hidden",
       }}>
