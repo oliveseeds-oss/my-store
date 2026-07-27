@@ -17,6 +17,7 @@ import BlogList from "./pages/BlogList";
 import Service from "./pages/Service";
 import Contact from "./pages/Contact";
 import Catalog from "./pages/Catalog";
+import CategoryCatalog from "./pages/CategoryCatalog";
 import Gallery from "./pages/Gallery";
 import Engraving from "./pages/Engraving";
 
@@ -64,6 +65,7 @@ export default function App() {
               <Route path="/service" element={<Service/>}/>
               <Route path="/contact"            element={<Contact />} />
               <Route path="/catalog"            element={<Catalog />} />
+              <Route path="/categories"         element={<CategoryCatalog />} />
               <Route path="/gallery"            element={<Gallery />} />
               <Route path="/engraving"          element={<Engraving />} />
 

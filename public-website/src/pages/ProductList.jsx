@@ -128,7 +128,7 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
       onMouseLeave={() => setHovered(false)}
       style={{
         background: T.card,
-        borderRadius: 20,
+        borderRadius: 24,
         border: `1px solid ${T.border}`,
         overflow: "hidden",
         display: "flex",
@@ -136,14 +136,14 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
         transition: "box-shadow 0.4s ease, transform 0.4s ease",
         boxShadow: hovered
           ? "0 24px 60px rgba(140,106,67,0.18)"
-          : "0 4px 24px rgba(27,27,27,0.06)",
+          : "0 4px 24px rgba(27,27,27,0.04)",
         transform: hovered ? "translateY(-6px)" : "translateY(0)",
         position: "relative",
       }}
     >
       {/* Image */}
       <Link to={`/products/${p.id}`} style={{ display: "block", position: "relative", overflow: "hidden" }}>
-        <div style={{ aspectRatio: "1/1", background: "#F0EBE3", overflow: "hidden", position: "relative" }}>
+        <div style={{ aspectRatio: "1.3/1", background: "#F0EBE3", overflow: "hidden", position: "relative" }}>
           {img ? (
             <img
               src={img}
@@ -310,13 +310,13 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
           style={{
             marginTop: 16,
             width: "100%",
-            padding: "12px 0",
-            borderRadius: 12,
+            padding: "10px 0",
+            borderRadius: 100,
             border: "none",
             cursor: "pointer",
             fontFamily: T.bodyFont,
-            fontSize: 13,
-            fontWeight: 600,
+            fontSize: 12,
+            fontWeight: 700,
             letterSpacing: "0.08em",
             textTransform: "uppercase",
             transition: "all 0.3s ease",
@@ -325,8 +325,8 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
               : `linear-gradient(135deg, ${T.accent}, ${T.hover})`,
             color: "#fff",
             boxShadow: added
-              ? "0 8px 20px rgba(34,197,94,0.25)"
-              : `0 8px 24px rgba(140,106,67,0.28)`,
+              ? "0 6px 16px rgba(34,197,94,0.25)"
+              : `0 6px 16px rgba(140,106,67,0.2)`,
           }}
         >
           {added ? "✓ Added to Cart" : "Add to Cart"}
@@ -551,7 +551,7 @@ export default function ProductList() {
       {/* ═══════════════════════════════════════════════════
           AD BANNER
       ═══════════════════════════════════════════════════ */}
-      <div style={{ maxWidth: 1280, margin: "40px auto 0", padding: "0 24px" }}>
+      <div style={{ maxWidth: 1280, margin: "40px auto 48px", padding: "0 24px" }}>
         <AdBanner placement="Horizontal Banner" />
       </div>
 
@@ -769,91 +769,100 @@ export default function ProductList() {
           NEWSLETTER — DARK LUXURY
       ═══════════════════════════════════════════════════ */}
       <section style={{
-        background: "#1B1510",
-        padding: "80px 24px",
+        background: "linear-gradient(135deg, #0F2744 0%, #071524 100%)",
+        padding: "clamp(60px, 6vw, 100px) 24px",
         position: "relative",
         overflow: "hidden",
       }}>
         <div style={{
           position: "absolute", top: -100, right: -100,
           width: 400, height: 400, borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(198,167,125,0.1), transparent 65%)",
+          background: "radial-gradient(circle, rgba(201,168,106,0.1), transparent 65%)",
           pointerEvents: "none",
         }} />
-        <div style={{ maxWidth: 620, margin: "0 auto", textAlign: "center", position: "relative", zIndex: 2 }}>
-          <p style={{ ...eyebrow(true), color: T.highlight }}>Stay Inspired</p>
-          <h2 style={{
-            fontFamily: T.headingFont, fontStyle: "italic",
-            fontWeight: 300, fontSize: "clamp(30px, 5vw, 52px)",
-            color: "#F6F3EE", lineHeight: 1.15, marginBottom: 16,
+        <div style={{ maxWidth: "680px", margin: "0 auto", textAlign: "center", position: "relative", zIndex: 2 }}>
+          <div style={{
+            background: "rgba(255,255,255,0.03)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            borderRadius: "32px",
+            padding: "48px 32px",
+            boxShadow: "0 24px 60px rgba(0,0,0,0.3)",
+            backdropFilter: "blur(20px)"
           }}>
-            Design Inspiration &amp;<br />Exclusive Launches
-          </h2>
-          <p style={{
-            fontFamily: T.bodyFont, fontSize: 15, color: "rgba(246,243,238,0.6)",
-            lineHeight: 1.7, marginBottom: 36,
-          }}>
-            Join our community of design lovers. Be first to discover new collections,
-            engraving techniques, and bespoke launch offers.
-          </p>
-          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: "28px" }}>
-            <input
-              type="email"
-              placeholder="Your email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              style={{
-                flex: "1 1 240px", maxWidth: 320,
-                padding: "14px 20px",
-                borderRadius: 50,
-                border: `1px solid rgba(198,167,125,0.3)`,
-                background: "rgba(255,255,255,0.06)",
-                color: "#F6F3EE",
-                fontFamily: T.bodyFont, fontSize: 14,
-                outline: "none",
-              }}
-            />
-            <button style={{
-              padding: "14px 28px",
-              borderRadius: 50,
-              border: "none",
-              background: T.highlight,
-              color: "#1B1510",
-              fontFamily: T.bodyFont, fontSize: 13,
-              fontWeight: 700, letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              cursor: "pointer",
-              flexShrink: 0,
+            <p style={{ ...eyebrow(true), color: "var(--gold)", marginBottom: "12px" }}>Stay Inspired</p>
+            <h2 className="clash" style={{
+              fontWeight: 400, fontSize: "clamp(28px, 4vw, 44px)",
+              color: "#FFAF3E", lineHeight: 1.15, marginBottom: "16px",
             }}>
-              Subscribe
-            </button>
-          </div>
+              Design Inspiration &amp;<br />Exclusive Launches
+            </h2>
+            <p style={{
+              fontFamily: T.bodyFont, fontSize: "14px", color: "rgba(255,255,255,0.6)",
+              lineHeight: 1.7, marginBottom: "32px",
+            }}>
+              Join our community of design lovers. Be first to discover new collections,
+              engraving techniques, and bespoke launch offers.
+            </p>
+            <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: "32px" }}>
+              <input
+                type="email"
+                placeholder="Your email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                style={{
+                  flex: "1 1 240px", maxWidth: "300px",
+                  padding: "14px 20px",
+                  borderRadius: 50,
+                  border: `1px solid rgba(201,168,106,0.3)`,
+                  background: "rgba(255,255,255,0.05)",
+                  color: "#FAF9F6",
+                  fontFamily: T.bodyFont, fontSize: 13,
+                  outline: "none",
+                }}
+              />
+              <button style={{
+                padding: "14px 28px",
+                borderRadius: 50,
+                border: "none",
+                background: "var(--gold)",
+                color: "#1B1510",
+                fontFamily: T.bodyFont, fontSize: 12,
+                fontWeight: 700, letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                cursor: "pointer",
+                flexShrink: 0,
+                boxShadow: "0 8px 24px rgba(201,168,106,0.3)"
+              }}>
+                Subscribe
+              </button>
+            </div>
 
-          <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-            <Link to="/engraving#bulk-order" className="btn-gold" style={{ cursor: "pointer", textDecoration: "none" }}>
-              Bulk Order Form
-            </Link>
-            <Link to="/engraving" style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 10,
-              background: "transparent",
-              color: "#F6F3EE",
-              fontSize: 13,
-              fontWeight: 600,
-              letterSpacing: "0.05em",
-              textTransform: "uppercase",
-              padding: "15px 34px",
-              borderRadius: 100,
-              border: `1.5px solid rgba(198,167,125,0.5)`,
-              textDecoration: "none",
-              transition: "all 0.3s ease",
-            }}
-              onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
-            >
-              Learn About Engraving
-            </Link>
+            <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", paddingTop: "24px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+              <Link to="/engraving#bulk-order" className="btn-gold" style={{ cursor: "pointer", textDecoration: "none" }}>
+                Bulk Order Form
+              </Link>
+              <Link to="/engraving" style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 10,
+                background: "transparent",
+                color: "#FAF9F6",
+                fontSize: 12,
+                fontWeight: 700,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                padding: "14px 30px",
+                borderRadius: 100,
+                border: `1.5px solid rgba(201,168,106,0.4)`,
+                textDecoration: "none",
+                transition: "all 0.3s ease",
+              }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--gold)"; e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(201,168,106,0.4)"; e.currentTarget.style.background = "transparent"; }}
+              >
+                Learn About Engraving
+              </Link>
+            </div>
           </div>
         </div>
       </section>

@@ -77,17 +77,11 @@ const GLOBAL_CSS = `
     background: rgba(110,231,249,0.06);
   }
   .vault-pill.active {
-    background: linear-gradient(90deg, rgba(110,231,249,0.18), rgba(139,124,255,0.18));
-    border-color: rgba(110,231,249,0.45);
-    color: var(--a1);
-    box-shadow: 0 0 18px rgba(110,231,249,0.15);
-  }
-
-  /* Digital card */
+    /* Digital card */
   .dcard {
     position: relative;
     overflow: hidden;
-    border-radius: 20px;
+    border-radius: 24px;
     border: 1px solid var(--bd);
     background: var(--s1);
     transition: transform 0.4s cubic-bezier(.22,.68,0,1.2),
@@ -111,10 +105,10 @@ const GLOBAL_CSS = `
     transition: opacity 0.4s ease;
   }
   .dcard:hover .dcard__glow { opacity: 1; }
-
+ 
   .dcard__img-wrap {
     position: relative;
-    aspect-ratio: 16/9;
+    aspect-ratio: 1.3/1;
     overflow: hidden;
     background: #080f1e;
   }
@@ -199,12 +193,13 @@ const GLOBAL_CSS = `
   /* Cart button */
   .cart-btn {
     width: 100%;
-    padding: 11px 0;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 13px;
+    padding: 9px 0;
+    border-radius: 100px;
+    font-weight: 750;
+    font-size: 11.5px;
     font-family: 'Inter', sans-serif;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     border: none;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -249,7 +244,7 @@ const GLOBAL_CSS = `
   /* Collection card */
   .coll-card {
     border-radius: 16px;
-    padding: 24px;
+    padding: 16px;
     border: 1px solid var(--bd);
     background: var(--s1);
     cursor: pointer;
@@ -878,7 +873,7 @@ export default function DigitalProductList() {
               Featured Collections
             </h2>
           </div>
-          <div className="collections-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 16 }}>
+          <div className="collections-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 16 }}>
             {COLLECTIONS.map((col) => (
               <div key={col.title} className="coll-card">
                 <div style={{ fontSize: 28, marginBottom: 12 }}>{col.icon}</div>

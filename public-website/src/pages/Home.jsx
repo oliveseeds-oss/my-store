@@ -690,9 +690,9 @@ export default function Home() {
         ref={heroRef}
         className="hero-section"
         style={{
-          minHeight: "80vh",
-          paddingTop: "110px",
-          paddingBottom: "80px",
+          minHeight: "72vh",
+          paddingTop: "90px",
+          paddingBottom: "60px",
           position: "relative",
           background: "#F8F8F5",
           display: "flex",
@@ -716,7 +716,6 @@ export default function Home() {
         <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px", width: "100%", position: "relative", zIndex: 1 }}>
           <div
             className="hero-grid"
-            style={{ display: "grid", gridTemplateColumns: "1fr 460px", gap: "80px", alignItems: "center" }}
           >
             {/* LEFT — copy */}
             <div>
@@ -819,10 +818,8 @@ export default function Home() {
                 <div
                   className="stats-row"
                   style={{
-                    display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
-                    gap: "0",
-                    paddingTop: "32px",
                     borderTop: "1px solid var(--border)",
+                    marginTop: "24px",
                   }}
                 >
                   {[
@@ -834,15 +831,15 @@ export default function Home() {
                     <div
                       key={label}
                       style={{
-                        paddingRight: "24px",
+                        paddingRight: "12px",
                         borderRight: i < 3 ? "1px solid var(--border)" : "none",
-                        paddingLeft: i > 0 ? "24px" : "0",
+                        paddingLeft: i > 0 ? "12px" : "0",
                       }}
                     >
-                      <div className="stat-num">{num}</div>
+                      <div className="stat-num" style={{ fontSize: "20px", fontWeight: 800 }}>{num}</div>
                       <div style={{
-                        fontSize: "11px", fontWeight: 500, color: "var(--text-2)",
-                        letterSpacing: "0.06em", marginTop: "6px",
+                        fontSize: "10px", fontWeight: 500, color: "var(--text-2)",
+                        letterSpacing: "0.06em", marginTop: "4px",
                       }}>{label}</div>
                     </div>
                   ))}
@@ -1274,7 +1271,7 @@ export default function Home() {
             <div style={{
               position: "relative", borderRadius: "var(--radius)",
               overflow: "hidden", marginBottom: "48px",
-              border: "1px solid var(--border)", height: "460px",
+              border: "1px solid var(--border)", height: "clamp(350px, 55vh, 460px)",
               boxShadow: "var(--shadow-md)",
             }}>
               <img
@@ -1284,10 +1281,10 @@ export default function Home() {
               />
               <div style={{
                 position: "absolute", inset: 0,
-                background: "linear-gradient(105deg, rgba(15,39,68,0.88) 0%, rgba(15,39,68,0.5) 55%, transparent 100%)",
+                background: "linear-gradient(to right, rgba(15,39,68,0.92) 0%, rgba(15,39,68,0.6) 60%, transparent 100%)",
               }} />
               <div style={{
-                position: "absolute", top: "50%", left: "64px",
+                position: "absolute", top: "50%", left: "clamp(20px, 6vw, 64px)", right: "clamp(20px, 6vw, 64px)",
                 transform: "translateY(-50%)", maxWidth: "520px",
               }}>
                 <span style={{
@@ -1651,17 +1648,17 @@ export default function Home() {
       </section>
 
       <section style={{
-        padding: "clamp(80px, 8vw, 140px) 0", background: "#0D1512",
+        padding: "clamp(50px, 5vw, 80px) 0", background: "#0D1512",
         borderTop: "1px solid rgba(255,255,255,0.1)",
         overflow: "hidden",
       }}>
         <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
-          <FadeUp style={{ textAlign: "center", marginBottom: "64px" }}>
+          <FadeUp style={{ textAlign: "center", marginBottom: "32px" }}>
             <span className="eyebrow" style={{ justifyContent: "center" }}>Client Stories</span>
             <h2 className="clash" style={{
-              fontSize: "clamp(2rem, 4vw, 3.6rem)",
+              fontSize: "clamp(1.8rem, 3.5vw, 2.8rem)",
               fontWeight: 700, color: "#fff",
-              marginTop: "18px", letterSpacing: "-0.02em",
+              marginTop: "12px", letterSpacing: "-0.02em",
             }}>Loved Globally</h2>
           </FadeUp>
         </div>

@@ -448,14 +448,6 @@ export default function Orders() {
               <p className="text-xs text-gray-400 font-semibold tracking-wider uppercase">Fulfillment Desk</p>
               <h2 className="text-2xl font-bold text-gray-800">Customer Orders</h2>
             </div>
-            
-            <button
-              onClick={handleCreateDemoOrder}
-              disabled={demoLoading}
-              className="bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white text-xs font-bold px-4 py-3 rounded-xl shadow-lg hover:shadow-indigo-200 transition flex items-center gap-2 disabled:opacity-50">
-              <MdAddCircleOutline className="text-lg" />
-              {demoLoading ? "Creating Demo..." : "✨ Create Demo Order"}
-            </button>
           </div>
 
           {/* Export Invoice Reports Panel (Admin Option) */}

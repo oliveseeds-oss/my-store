@@ -21,6 +21,12 @@ router.put("/:id/read", verifyAdmin, async (req, res) => {
   res.json({ message: "Marked read" });
 });
 
+router.put("/:id/status", verifyAdmin, async (req, res) => {
+  const { status } = req.body;
+  await db.query("UPDATE bulk_orders SET status = ? WHERE id = ?", [status, req.params.id]);
+  res.json({ message: "Status updated" });
+});
+
 router.delete("/:id", verifyAdmin, async (req, res) => {
   await db.query("DELETE FROM bulk_orders WHERE id = ?", [req.params.id]);
   res.json({ message: "Deleted" });

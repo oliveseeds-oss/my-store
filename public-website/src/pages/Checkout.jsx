@@ -48,7 +48,7 @@ export default function Checkout() {
     address: "",
   });
   const [placing, setPlacing] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState("online");
+  const [paymentMethod, setPaymentMethod] = useState(selected.currency_code === "INR" ? "razorpay" : "paypal");
   const [paypalLoaded, setPaypalLoaded] = useState(false);
   const [siteSettings, setSiteSettings] = useState(null);
 
@@ -59,11 +59,9 @@ export default function Checkout() {
   }, []);
 
   useEffect(() => {
-    if (!siteSettings || selected.currency_code === "INR") {
-      setPaypalLoaded(false);
-      return;
-    }
-    loadPayPalScript(siteSettings.paypal_client_id, selected.currency_code)
+    if (!siteSettings) return;
+    const paypalCurrency = selected.currency_code === "INR" ? "USD" : selected.currency_code;
+    loadPayPalScript(siteSettings.paypal_client_id, paypalCurrency)
       .then(success => {
         if (success && window.paypal) {
           setPaypalLoaded(true);
@@ -76,11 +74,14 @@ export default function Checkout() {
       document.getElementById("paypal-button-container").innerHTML = "";
       window.paypal.Buttons({
         createOrder: (data, actions) => {
-          const convertedVal = ((total + shipping) * selected.rate_to_inr).toFixed(2);
+          const isINR = selected.currency_code === "INR";
+          const currencyCode = isINR ? "USD" : selected.currency_code;
+          const rateMultiplier = isINR ? 0.012 : selected.rate_to_inr;
+          const convertedVal = ((total + shipping) * rateMultiplier).toFixed(2);
           return actions.order.create({
             purchase_units: [{
               amount: {
-                currency_code: selected.currency_code,
+                currency_code: currencyCode,
                 value: convertedVal
               }
             }]
@@ -294,8 +295,31 @@ export default function Checkout() {
                 </div>
               )}
 
+              {/* Payment Method Option Selector */}
+              <div className="mt-4 mb-4">
+                <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-2 block">Choose Payment Gateway</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("razorpay")}
+                    className={`p-3.5 rounded-xl border text-left transition-all ${paymentMethod === "razorpay" ? "border-amber-500 bg-amber-50/50 shadow-sm" : "border-stone-200 bg-white hover:bg-stone-50"}`}
+                  >
+                    <div className="font-bold text-xs text-stone-800">💳 Razorpay</div>
+                    <div className="text-[9px] text-stone-500 mt-0.5">Cards, UPI, Netbanking</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("paypal")}
+                    className={`p-3.5 rounded-xl border text-left transition-all ${paymentMethod === "paypal" ? "border-amber-500 bg-amber-50/50 shadow-sm" : "border-stone-200 bg-white hover:bg-stone-50"}`}
+                  >
+                    <div className="font-bold text-xs text-stone-800">🅿️ PayPal</div>
+                    <div className="text-[9px] text-stone-500 mt-0.5">International Wallet & Cards</div>
+                  </button>
+                </div>
+              </div>
+
               <div className="mt-2">
-                {selected.currency_code === "INR" ? (
+                {paymentMethod === "razorpay" ? (
                   <>
                     <button
                       onClick={handleRazorpayPayment}
@@ -303,7 +327,7 @@ export default function Checkout() {
                       style={{ background: "#d97706", color: "#ffffff" }}
                       className="w-full py-4 rounded-xl font-black text-xs uppercase tracking-wider shadow-lg hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
                     >
-                      {placing ? "Processing..." : `Pay ₹${total + shipping} via Razorpay`}
+                      {placing ? "Processing..." : `Pay ${convert(total + shipping)} via Razorpay`}
                     </button>
                     <p className="text-[9px] text-stone-400 text-center font-bold uppercase tracking-widest mt-1.5">
                       Secure Debit/Credit Card, UPI, Netbanking

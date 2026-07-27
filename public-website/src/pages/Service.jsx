@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import API from "../api";
 
 const SERVICES = [
   {
@@ -75,6 +77,46 @@ const PROCESS_STEPS = [
 ];
 
 export default function Service() {
+  const [form, setForm] = useState({
+    name: "",
+    company: "",
+    email: "",
+    phone: "",
+    project_type: "",
+    budget_range: "",
+    timeline: "",
+    message: ""
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!form.name || !form.company || !form.email || !form.project_type || !form.message) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await API.post("/design-inquiries", form);
+      setSuccess(true);
+      setForm({
+        name: "",
+        company: "",
+        email: "",
+        phone: "",
+        project_type: "",
+        budget_range: "",
+        timeline: "",
+        message: ""
+      });
+    } catch (err) {
+      alert("Failed to send inquiry. Please try again later.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div
       className="min-h-screen overflow-hidden"
@@ -1030,9 +1072,9 @@ export default function Service() {
           <div className="responsive-split-1-2">
             {/* Left info */}
             <div>
-              <div className="section-divider" />
-              <span className="os-label" style={{ display: "block", marginBottom: 14 }}>Start Your Project</span>
-              <h2 className="os-heading" style={{ fontSize: 40, color: "#0E1320", marginBottom: 20 }}>
+              <div className="section-divider" style={{ width: 40, height: 3, background: "#0F4C81", marginBottom: 20 }} />
+              <span className="os-label" style={{ display: "block", marginBottom: 14, fontSize: 11, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "#0F4C81" }}>Start Your Project</span>
+              <h2 className="os-heading" style={{ fontSize: 40, color: "#0E1320", marginBottom: 20, fontWeight: 800 }}>
                 Let's build something extraordinary
               </h2>
               <p style={{ fontSize: 15, color: "#667085", lineHeight: 1.8, marginBottom: 40 }}>
@@ -1067,109 +1109,144 @@ export default function Service() {
                 boxShadow: "0 20px 60px rgba(14,19,32,0.06)",
               }}
             >
-              <form className="responsive-form">
-                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: "0.02em" }}>Full Name *</label>
-                  <input type="text" placeholder="Jane Smith" className="form-input" />
+              {success ? (
+                <div style={{ textAlign: "center", padding: "40px 20px" }}>
+                  <div style={{ fontSize: "48px", marginBottom: "16px" }}>✓</div>
+                  <h3 style={{ fontSize: "20px", fontWeight: 700, color: "#0E1320", marginBottom: "10px" }}>Enquiry Received</h3>
+                  <p style={{ fontSize: "14px", color: "#667085", lineHeight: 1.6 }}>
+                    Thank you for reaching out! Our creative director will review your project details and get in touch within 24 hours.
+                  </p>
                 </div>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: "0.02em" }}>Company *</label>
-                  <input type="text" placeholder="Acme Inc." className="form-input" />
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: "0.02em" }}>Email Address *</label>
-                  <input type="email" placeholder="jane@company.com" className="form-input" />
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: "0.02em" }}>Phone Number</label>
-                  <input type="tel" placeholder="+1 (555) 000-0000" className="form-input" />
-                </div>
-
-                <div style={{ gridColumn: "span 2", display: "flex", flexDirection: "column", gap: 6 }}>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: "0.02em" }}>Project Type *</label>
-                  <select className="form-input" style={{ cursor: "pointer", appearance: "none" }}>
-                    <option value="">Select a service...</option>
-                    <option>UI / UX Design</option>
-                    <option>Website Design & Development</option>
-                    <option>Mobile App Design</option>
-                    <option>Mobile App Development</option>
-                    <option>Brand Identity</option>
-                    <option>Graphic Design</option>
-                    <option>AI Integration</option>
-                    <option>Automation / N8N</option>
-                    <option>Design System</option>
-                    <option>Startup MVP</option>
-                    <option>Other</option>
-                  </select>
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: "0.02em" }}>Budget Range</label>
-                  <select className="form-input" style={{ cursor: "pointer", appearance: "none" }}>
-                    <option value="">Select budget...</option>
-                    <option>Under $2,000</option>
-                    <option>$2,000 – $5,000</option>
-                    <option>$5,000 – $15,000</option>
-                    <option>$15,000 – $50,000</option>
-                    <option>$50,000+</option>
-                  </select>
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: "0.02em" }}>Timeline</label>
-                  <select className="form-input" style={{ cursor: "pointer", appearance: "none" }}>
-                    <option value="">Ideal timeline...</option>
-                    <option>ASAP (less than 2 weeks)</option>
-                    <option>1 – 2 months</option>
-                    <option>2 – 4 months</option>
-                    <option>4+ months</option>
-                    <option>Not sure yet</option>
-                  </select>
-                </div>
-
-                <div style={{ gridColumn: "span 2", display: "flex", flexDirection: "column", gap: 6 }}>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: "0.02em" }}>Project Details *</label>
-                  <textarea
-                    rows={5}
-                    placeholder="Tell us about your project, goals, and any specific requirements..."
-                    className="form-input"
-                    style={{ resize: "none" }}
-                  />
-                </div>
-
-                <div style={{ gridColumn: "span 2", display: "flex", flexDirection: "column", gap: 6 }}>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: "0.02em" }}>Attach Files (optional)</label>
-                  <div
-                    style={{
-                      border: "1.5px dashed #E5E7EB",
-                      borderRadius: 10,
-                      padding: "24px",
-                      textAlign: "center",
-                      cursor: "pointer",
-                      transition: "border-color 0.2s",
-                    }}
-                  >
-                    <p style={{ fontSize: 13, color: "#667085" }}>
-                      Drop files here or{" "}
-                      <span style={{ color: "#0F4C81", fontWeight: 600 }}>browse</span>
-                    </p>
-                    <p style={{ fontSize: 11, color: "#aab4c4", marginTop: 4 }}>PDF, PNG, Figma links — up to 20MB</p>
-                    <input type="file" multiple style={{ display: "none" }} />
+              ) : (
+                <form onSubmit={handleSubmit} className="responsive-form">
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: "0.02em" }}>Full Name *</label>
+                    <input
+                      type="text"
+                      placeholder="Jane Smith"
+                      className="form-input"
+                      required
+                      value={form.name}
+                      onChange={e => setForm({ ...form, name: e.target.value })}
+                    />
                   </div>
-                </div>
 
-                <button
-                  type="submit"
-                  className="btn-primary"
-                  style={{ gridColumn: "span 2", justifyContent: "center", fontSize: 15, padding: "18px 32px" }}
-                >
-                  Send Project Enquiry
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                </button>
-              </form>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: "0.02em" }}>Company *</label>
+                    <input
+                      type="text"
+                      placeholder="Acme Inc."
+                      className="form-input"
+                      required
+                      value={form.company}
+                      onChange={e => setForm({ ...form, company: e.target.value })}
+                    />
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: "0.02em" }}>Email Address *</label>
+                    <input
+                      type="email"
+                      placeholder="jane@company.com"
+                      className="form-input"
+                      required
+                      value={form.email}
+                      onChange={e => setForm({ ...form, email: e.target.value })}
+                    />
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: "0.02em" }}>Phone Number</label>
+                    <input
+                      type="tel"
+                      placeholder="+1 (555) 000-0000"
+                      className="form-input"
+                      value={form.phone}
+                      onChange={e => setForm({ ...form, phone: e.target.value })}
+                    />
+                  </div>
+
+                  <div style={{ gridColumn: "span 2", display: "flex", flexDirection: "column", gap: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: "0.02em" }}>Project Type *</label>
+                    <select
+                      className="form-input"
+                      style={{ cursor: "pointer", appearance: "none" }}
+                      required
+                      value={form.project_type}
+                      onChange={e => setForm({ ...form, project_type: e.target.value })}
+                    >
+                      <option value="">Select a service...</option>
+                      <option>UI / UX Design</option>
+                      <option>Website Design & Development</option>
+                      <option>Mobile App Design</option>
+                      <option>Mobile App Development</option>
+                      <option>Brand Identity</option>
+                      <option>Graphic Design</option>
+                      <option>AI Integration</option>
+                      <option>Automation / N8N</option>
+                      <option>Design System</option>
+                      <option>Startup MVP</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: "0.02em" }}>Budget Range</label>
+                    <select
+                      className="form-input"
+                      style={{ cursor: "pointer", appearance: "none" }}
+                      value={form.budget_range}
+                      onChange={e => setForm({ ...form, budget_range: e.target.value })}
+                    >
+                      <option value="">Select budget...</option>
+                      <option>Under $2,000</option>
+                      <option>$2,000 – $5,000</option>
+                      <option>$5,000 – $15,000</option>
+                      <option>$15,000 – $50,000</option>
+                      <option>$50,000+</option>
+                    </select>
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: "0.02em" }}>Timeline</label>
+                    <select
+                      className="form-input"
+                      style={{ cursor: "pointer", appearance: "none" }}
+                      value={form.timeline}
+                      onChange={e => setForm({ ...form, timeline: e.target.value })}
+                    >
+                      <option value="">Ideal timeline...</option>
+                      <option>ASAP (less than 2 weeks)</option>
+                      <option>1 – 2 months</option>
+                      <option>2 – 4 months</option>
+                      <option>4+ months</option>
+                      <option>Not sure yet</option>
+                    </select>
+                  </div>
+
+                  <div style={{ gridColumn: "span 2", display: "flex", flexDirection: "column", gap: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: "0.02em" }}>Project Details *</label>
+                    <textarea
+                      rows={5}
+                      placeholder="Tell us about your project, goals, and any specific requirements..."
+                      className="form-input"
+                      style={{ resize: "none" }}
+                      required
+                      value={form.message}
+                      onChange={e => setForm({ ...form, message: e.target.value })}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="btn-primary"
+                    disabled={submitting}
+                    style={{ gridColumn: "span 2", justifyContent: "center", fontSize: 15, padding: "18px 32px", cursor: "pointer" }}
+                  >
+                    {submitting ? "Sending Enquiry..." : "Send Project Enquiry"}
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  </button>
+                </form>
 
               <p style={{ fontSize: 12, color: "#aab4c4", textAlign: "center", marginTop: 16 }}>
                 By submitting you agree to our Privacy Policy. We never share your data.

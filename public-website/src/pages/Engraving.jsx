@@ -228,7 +228,7 @@ export default function Engraving() {
       <section style={{
         background: "#FFF",
         borderBottom: "1px solid var(--border)",
-        padding: "32px 24px"
+        padding: "24px 24px"
       }}>
         <div style={{
           maxWidth: "1280px", margin: "0 auto",
@@ -243,10 +243,14 @@ export default function Engraving() {
           ].map((item, i) => {
             const Icon = Icons[item.icon];
             return (
-              <div key={i} style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: "200px" }}>
+              <div key={i} style={{
+                display: "flex", alignItems: "center", gap: "14px", minWidth: "220px",
+                background: "var(--gold-soft)", padding: "12px 20px", borderRadius: "16px",
+                border: "1px solid var(--gold-border)"
+              }}>
                 <Icon size={24} color="var(--gold)" />
                 <div>
-                  <h4 style={{ fontSize: "14px", fontWeight: 700, margin: 0, color: "var(--accent)" }}>{item.title}</h4>
+                  <h4 style={{ fontSize: "13px", fontWeight: 700, margin: 0, color: "var(--accent)" }}>{item.title}</h4>
                   <p style={{ fontSize: "11px", color: "var(--text-2)", margin: 0 }}>{item.desc}</p>
                 </div>
               </div>
@@ -256,26 +260,37 @@ export default function Engraving() {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section style={{ padding: "clamp(80px, 8vw, 140px) 24px", background: "#FAF9F6" }}>
+      <section style={{ padding: "clamp(60px, 6vw, 100px) 24px", background: "#FAF9F6" }}>
         <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: "64px" }}>
+          <div style={{ textAlign: "center", marginBottom: "48px" }}>
             <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold)", display: "block", marginBottom: "8px" }}>Workflow</span>
             <h2 className="clash" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 700, color: "var(--accent)" }}>Your Customization Journey</h2>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "32px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "24px" }}>
             {STEPS.map((step, i) => (
               <FadeUp key={i} delay={i * 0.1}>
-                <div style={{ background: "#FFF", border: "1px solid var(--border)", borderRadius: "16px", padding: "32px 24px", height: "100%" }}>
+                <div style={{
+                  background: "#FFF",
+                  border: "1px solid var(--border)",
+                  borderRadius: "24px",
+                  padding: "32px 24px",
+                  height: "100%",
+                  transition: "all 0.3s ease",
+                  boxShadow: "0 8px 30px rgba(0, 0, 0, 0.02)"
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.borderColor = "var(--gold)"; e.currentTarget.style.boxShadow = "0 16px 40px rgba(201,168,106,0.08)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.boxShadow = "0 8px 30px rgba(0, 0, 0, 0.02)"; }}
+                >
                   <div style={{
                     width: "36px", height: "36px", borderRadius: "50%",
                     background: "var(--gold-soft)", border: "1px solid var(--gold-border)",
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    color: "var(--gold)", fontWeight: 700, fontSize: "14px", marginBottom: "20px"
+                    color: "var(--gold)", fontWeight: 800, fontSize: "13px", marginBottom: "20px"
                   }}>
                     {step.num}
                   </div>
-                  <h3 style={{ fontSize: "16px", fontWeight: 600, color: "var(--accent)", marginBottom: "8px" }}>{step.title}</h3>
+                  <h3 style={{ fontSize: "16px", fontWeight: 700, color: "var(--accent)", marginBottom: "8px" }}>{step.title}</h3>
                   <p style={{ fontSize: "13px", color: "var(--text-2)", lineHeight: 1.6, margin: 0 }}>{step.desc}</p>
                 </div>
               </FadeUp>
@@ -285,27 +300,34 @@ export default function Engraving() {
       </section>
 
       {/* ── OUR MATERIALS ── */}
-      <section style={{ padding: "clamp(80px, 8vw, 140px) 24px", background: "#FFF", borderTop: "1px solid var(--border)" }}>
+      <section style={{ padding: "clamp(60px, 6vw, 100px) 24px", background: "#FFF", borderTop: "1px solid var(--border)" }}>
         <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: "64px" }}>
+          <div style={{ textAlign: "center", marginBottom: "48px" }}>
             <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold)", display: "block", marginBottom: "8px" }}>Quality Standards</span>
             <h2 className="clash" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 700, color: "var(--accent)", marginBottom: "16px" }}>Tactile. Premium. Lasting.</h2>
-            <p style={{ fontSize: "15px", color: "var(--text-2)", maxWidth: "540px", margin: "0 auto", lineHeight: 1.7 }}>
+            <p style={{ fontSize: "14px", color: "var(--text-2)", maxWidth: "540px", margin: "0 auto", lineHeight: 1.7 }}>
               Every material is selected for its engraving quality, durability, and luxurious appearance.
             </p>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "24px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "20px" }}>
             {MATERIALS.map((mat, i) => {
               const Icon = Icons[mat.icon] || Icons.Sparkles;
               return (
                 <FadeUp key={i} delay={i * 0.08}>
-                  <div style={{ display: "flex", gap: "20px", alignItems: "flex-start", padding: "24px", background: "#FAF9F6", borderRadius: "16px", border: "1px solid var(--border)" }}>
+                  <div style={{
+                    display: "flex", gap: "20px", alignItems: "flex-start", padding: "20px",
+                    background: "#FAF9F6", borderRadius: "24px", border: "1px solid var(--border)",
+                    transition: "all 0.3s ease",
+                  }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.borderColor = "var(--gold)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "var(--border)"; }}
+                  >
                     <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "var(--gold-soft)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                       <Icon size={22} color="var(--gold)" />
                     </div>
                     <div>
-                      <h4 style={{ fontSize: "16px", fontWeight: 600, color: "var(--accent)", marginBottom: "6px" }}>{mat.name}</h4>
+                      <h4 style={{ fontSize: "16px", fontWeight: 700, color: "var(--accent)", marginBottom: "6px" }}>{mat.name}</h4>
                       <p style={{ fontSize: "13px", color: "var(--text-2)", lineHeight: 1.5, margin: 0 }}>{mat.desc}</p>
                     </div>
                   </div>
@@ -317,24 +339,31 @@ export default function Engraving() {
       </section>
 
       {/* ── WHY OLIVE SEEDS ── */}
-      <section style={{ padding: "clamp(80px, 8vw, 140px) 24px", background: "#FAF9F6", borderTop: "1px solid var(--border)" }}>
+      <section style={{ padding: "clamp(60px, 6vw, 100px) 24px", background: "#FAF9F6", borderTop: "1px solid var(--border)" }}>
         <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: "64px" }}>
+          <div style={{ textAlign: "center", marginBottom: "48px" }}>
             <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold)", display: "block", marginBottom: "8px" }}>Why Olive Seeds</span>
             <h2 className="clash" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 700, color: "var(--accent)" }}>Craftsmanship You Can Trust</h2>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" }}>
             {WHY_US.map((item, i) => {
               const Icon = Icons[item.icon] || Icons.Sparkles;
               return (
                 <FadeUp key={i} delay={i * 0.08}>
-                  <div style={{ display: "flex", gap: "16px", padding: "24px", background: "#FFF", borderRadius: "16px", border: "1px solid var(--border)" }}>
+                  <div style={{
+                    display: "flex", gap: "16px", padding: "20px",
+                    background: "#FFF", borderRadius: "24px", border: "1px solid var(--border)",
+                    transition: "all 0.3s ease",
+                  }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.borderColor = "var(--gold)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "var(--border)"; }}
+                  >
                     <div style={{ width: "44px", height: "44px", borderRadius: "10px", background: "var(--gold-soft)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                       <Icon size={20} color="var(--gold)" />
                     </div>
                     <div>
-                      <h4 style={{ fontSize: "15px", fontWeight: 600, color: "var(--accent)", marginBottom: "4px" }}>{item.title}</h4>
+                      <h4 style={{ fontSize: "15px", fontWeight: 700, color: "var(--accent)", marginBottom: "4px" }}>{item.title}</h4>
                       <p style={{ fontSize: "13px", color: "var(--text-2)", lineHeight: 1.5, margin: 0 }}>{item.desc}</p>
                     </div>
                   </div>

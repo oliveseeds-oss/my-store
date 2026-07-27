@@ -76,3 +76,66 @@ a, button, select, input, textarea {
     flex: 0 0 170px !important;
   }
 }
+
+/* ─── Premium Layout Upgrades ─── */
+.hero-grid {
+  display: grid !important;
+  grid-template-columns: 1.15fr 0.85fr !important;
+  gap: clamp(32px, 5vw, 64px) !important;
+  align-items: center;
+}
+@media (max-width: 1024px) {
+  .hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+    text-align: center;
+  }
+  .hero-grid > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.stats-row {
+  display: flex !important;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(27, 57, 49, 0.08);
+  border-radius: 20px;
+  padding: 16px 12px !important;
+  gap: 16px;
+}
+.stats-row > div {
+  flex: 1 1 100px;
+  text-align: center;
+}
+
+/* Stories Marquee card size reduction */
+.story-card {
+  width: 290px !important;
+  padding: 24px 20px !important;
+  border-radius: 20px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;
+  margin-right: 18px !important;
+}
+.story-card p {
+  font-size: 12.5px !important;
+  line-height: 1.6 !important;
+}
+
+/* Categories page & details helper rules */
+.category-card {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(27, 57, 49, 0.08);
+  background: #FFF;
+}
+.category-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 36px rgba(13, 21, 18, 0.06);
+  border-color: var(--gold);
+}
