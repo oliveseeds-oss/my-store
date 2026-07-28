@@ -131,10 +131,13 @@ function CollectionCard({ col }) {
   const [hov, setHov] = useState(false);
   const IconComponent = Icons[col.icon] || Icons.Sparkles;
   return (
-    <div
+    <Link
+      to="/catalog"
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
+        display: "block",
+        textDecoration: "none",
         background: hov ? "var(--gold-soft)" : "var(--surface)",
         borderRadius: "var(--radius)",
         border: hov ? "1px solid var(--gold-border)" : `1px solid var(--border)`,
@@ -167,7 +170,7 @@ function CollectionCard({ col }) {
       }}>
         Explore <span style={{ fontSize: 14 }}>→</span>
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -692,7 +695,37 @@ export default function Home() {
           .four-cols   { grid-template-columns: repeat(2, 1fr) !important; }
         }
         @media (max-width: 540px) {
-          .stats-row { grid-template-columns: repeat(2, 1fr) !important; }
+          .hero-section {
+            padding-top: 50px !important;
+            padding-bottom: 24px !important;
+            min-height: auto !important;
+          }
+          .hero-grid {
+            text-align: left !important;
+            gap: 24px !important;
+          }
+          .hero-grid > div {
+            align-items: flex-start !important;
+          }
+          .stats-row {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 16px !important;
+            padding: 16px !important;
+            border-radius: 16px !important;
+          }
+          .stats-row > div {
+            border-right: none !important;
+            border-left: none !important;
+            padding-right: 0 !important;
+            padding-left: 0 !important;
+            align-items: flex-start !important;
+            text-align: left !important;
+          }
+          .stats-row > div:nth-child(1),
+          .stats-row > div:nth-child(2) {
+            border-bottom: 1px solid var(--border) !important;
+            padding-bottom: 12px !important;
+          }
           .four-cols { grid-template-columns: 1fr !important; }
         }
       `}</style>
@@ -1303,7 +1336,7 @@ export default function Home() {
                 marginTop: "14px", letterSpacing: "-0.02em", lineHeight: 1.08,
               }}>Physical Masterpieces</h2>
             </FadeUp>
-            <Link to="/catalog" style={{
+            <Link to="/categoryCatelog" style={{
               fontSize: "12px", fontWeight: 600, letterSpacing: "0.1em",
               textTransform: "uppercase", color: "var(--gold)",
               textDecoration: "none",
@@ -1903,7 +1936,7 @@ export default function Home() {
             </p>
             <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap" }}>
               <Link to="/contact" className="btn-gold">
-                Start Custom Project
+                Let's Talk 
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
               </Link>
               <Link to="/gallery" style={{
