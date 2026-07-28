@@ -18,6 +18,8 @@ import Reports from "./pages/Reports";
 import Transactions from "./pages/Transactions";
 import SeoSettings from "./pages/SeoSettings";
 import GalleryAdmin from "./pages/GalleryAdmin";
+import CatalogAdmin from "./pages/CatalogAdmin";
+import PortfolioAdmin from "./pages/PortfolioAdmin";
 
 const P = ({ children }) => <ProtectedRoute>{children}</ProtectedRoute>;
 
@@ -29,7 +31,9 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<P><Dashboard /></P>} />
           <Route path="/categories" element={<P><Categories /></P>} />
+          <Route path="/catalog" element={<P><CatalogAdmin /></P>} />
           <Route path="/gallery" element={<P><GalleryAdmin /></P>} />
+          <Route path="/portfolio" element={<P><PortfolioAdmin /></P>} />
           <Route path="/products" element={<P><Products /></P>} />
           <Route path="/digital-products" element={<P><DigitalProducts /></P>} />
           <Route path="/orders" element={<P><Orders /></P>} />

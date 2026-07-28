@@ -243,22 +243,22 @@ export default function Dashboard() {
           )}
 
           {/* Combined Top Summary */}
-          <div className="bg-gradient-to-r from-stone-850 to-stone-900 text-white rounded-3xl p-6 shadow-md flex justify-between items-center flex-wrap gap-4">
+          <div className="bg-gradient-to-r from-slate-900 to-slate-850 text-white rounded-3xl p-6 shadow-lg flex justify-between items-center flex-wrap gap-4">
             <div>
-              <p className="text-stone-300 text-xs font-bold uppercase tracking-wider">Total Combined Platform Revenue</p>
-              <h2 className="text-4xl font-black tracking-tight mt-1">
+              <p className="text-slate-300 text-xs font-bold uppercase tracking-wider">Total Combined Platform Revenue</p>
+              <h2 className="text-4xl font-black tracking-tight mt-1 text-white">
                 {formatAdminPrice(totalRevenueCombined)}
               </h2>
             </div>
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 flex gap-6 text-xs text-stone-200">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 flex gap-6 text-xs text-white">
               <div>
-                <p className="font-semibold opacity-70">Physical Share</p>
-                <p className="font-bold text-sm text-amber-300 mt-0.5">{((totalPhysRevenue / (totalRevenueCombined || 1)) * 100).toFixed(0)}%</p>
+                <p className="font-semibold text-slate-300">Physical Share</p>
+                <p className="font-bold text-base text-amber-300 mt-0.5">{((totalPhysRevenue / (totalRevenueCombined || 1)) * 100).toFixed(0)}%</p>
               </div>
-              <div className="border-l border-white/10" />
+              <div className="border-l border-white/20" />
               <div>
-                <p className="font-semibold opacity-70">Digital Share</p>
-                <p className="font-bold text-sm text-sky-300 mt-0.5">{((totalDigiRevenue / (totalRevenueCombined || 1)) * 100).toFixed(0)}%</p>
+                <p className="font-semibold text-slate-300">Digital Share</p>
+                <p className="font-bold text-base text-sky-300 mt-0.5">{((totalDigiRevenue / (totalRevenueCombined || 1)) * 100).toFixed(0)}%</p>
               </div>
             </div>
           </div>

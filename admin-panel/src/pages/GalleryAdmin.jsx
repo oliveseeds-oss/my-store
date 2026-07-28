@@ -107,10 +107,10 @@ export default function GalleryAdmin() {
                 <div className="p-3 flex flex-col gap-1.5 flex-1">
                   <p className="font-bold text-xs text-gray-800 line-clamp-1">{i.title || "Untitled"}</p>
                   <div className="flex flex-wrap gap-1 mt-auto">
-                    {i.style && <span className="bg-indigo-50 text-indigo-750 text-[9px] px-1.5 py-0.5 rounded font-black">{i.style}</span>}
-                    {i.category && <span className="bg-amber-50 text-amber-750 text-[9px] px-1.5 py-0.5 rounded font-black">{i.category}</span>}
-                    {i.industry && <span className="bg-emerald-50 text-emerald-750 text-[9px] px-1.5 py-0.5 rounded font-black">{i.industry}</span>}
-                    {i.material && <span className="bg-stone-50 text-stone-750 text-[9px] px-1.5 py-0.5 rounded font-black">{i.material}</span>}
+                    {i.style && <span className="bg-indigo-50 text-indigo-800 text-[9px] px-1.5 py-0.5 rounded font-bold">{i.style}</span>}
+                    {i.category && <span className="bg-amber-50 text-amber-800 text-[9px] px-1.5 py-0.5 rounded font-bold">{i.category}</span>}
+                    {i.industry && <span className="bg-emerald-50 text-emerald-800 text-[9px] px-1.5 py-0.5 rounded font-bold">{i.industry}</span>}
+                    {i.material && <span className="bg-stone-100 text-stone-800 text-[9px] px-1.5 py-0.5 rounded font-bold">{i.material}</span>}
                   </div>
                 </div>
               </div>

@@ -57,6 +57,16 @@ export default function MemberLogin() {
     }
   }, [gsiLoaded]);
 
+  // OTP Verification States
+  const [showOtp, setShowOtp] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
+  const [otpPurpose, setOtpPurpose] = useState("registration"); // "registration" or "password_reset"
+  const [otpEmail, setOtpEmail] = useState("");
+
+  // Forgot Password Steps: 0 = not forgot, 1 = enter email, 2 = enter otp (uses showOtp), 3 = enter new password
+  const [forgotStep, setForgotStep] = useState(0);
+  const [newPassword, setNewPassword] = useState("");
+
   // Tab state listener: we need to re-render the google login button because switching tabs unmounts and remounts the element.
   useEffect(() => {
     const btn = document.getElementById("google-signin-btn");
@@ -67,16 +77,6 @@ export default function MemberLogin() {
       );
     }
   }, [gsiLoaded, tab, showOtp, forgotStep]);
-
-  // OTP Verification States
-  const [showOtp, setShowOtp] = useState(false);
-  const [otpCode, setOtpCode] = useState("");
-  const [otpPurpose, setOtpPurpose] = useState("registration"); // "registration" or "password_reset"
-  const [otpEmail, setOtpEmail] = useState("");
-
-  // Forgot Password Steps: 0 = not forgot, 1 = enter email, 2 = enter otp (uses showOtp), 3 = enter new password
-  const [forgotStep, setForgotStep] = useState(0);
-  const [newPassword, setNewPassword] = useState("");
 
   const handleSubmit = async () => {
     setError("");

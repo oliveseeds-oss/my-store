@@ -54,7 +54,7 @@ export default function Catalog() {
 
   const loadCatalog = () => {
     setLoading(true);
-    API.get("/categories?type=physical")
+    API.get("/catalog?type=physical")
       .then((res) => {
         setCategories(res.data);
         setLoading(false);

@@ -35,6 +35,8 @@ app.use("/api/wishlist", require("./routes/wishlist"));
 app.use("/api/transactions", require("./routes/transactions"));
 app.use("/api/seo", require("./routes/seo"));
 app.use("/api/gallery", require("./routes/gallery"));
+app.use("/api/catalog", require("./routes/catalog"));
+app.use("/api/portfolio", require("./routes/portfolio"));
 
 app.get("/", (req, res) => res.send("API running ✓"));
 app.listen(process.env.PORT || 5000, () =>

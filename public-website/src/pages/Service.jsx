@@ -752,14 +752,9 @@ export default function Service() {
                      <div style={{ height: "100%", width: w, background: color, borderRadius: 4 }} />
                   </div>
                   <div style={{ height: 8, borderRadius: 4, background: "var(--bg)", width: "65%" }} />
-                  <div style={{ height: 8, borderRadius: 4, background: "var(--bg)", width: "85%" }} />
                 </div>
               ))}
-              <div style={{ gridColumn: "span 3", display: "flex", gap: 10, marginTop: 8, flexWrap: "wrap" }}>
-                {["UI/UX Design", "Web Dev", "Brand Identity", "AI Integration"].map((t, i) => (
-                  <span key={i} style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.05em", padding: "6px 14px", borderRadius: 8, background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text-2)" }}>{t}</span>
-                ))}
-              </div>
+              {/* Badges panel removed per user request */}
             </div>
           </FadeUp>
         </div>

@@ -49,7 +49,7 @@ export default function Portfolio() {
 
   const loadGallery = () => {
     setLoading(true);
-    API.get("/gallery")
+    API.get("/portfolio")
       .then((res) => {
         setItems(res.data);
         setLoading(false);

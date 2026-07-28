@@ -90,6 +90,28 @@ poolPromise.query(`
     )
   `);
 }).then(() => {
+  return poolPromise.query(`
+    CREATE TABLE IF NOT EXISTS catalog (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      description TEXT,
+      image_url TEXT,
+      type VARCHAR(50) DEFAULT 'physical',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+}).then(() => {
+  return poolPromise.query(`
+    CREATE TABLE IF NOT EXISTS portfolio (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      image_url TEXT NOT NULL,
+      title VARCHAR(255) NOT NULL,
+      description TEXT,
+      category VARCHAR(255),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+}).then(() => {
   const defaults = [
     ['home', 'Premium Engraving & Digital Studio | Olive Seeds', 'Premium laser engraved luxury gifts, wood carvings, personalized wedding frames, custom design templates, Notion trackers, React apps and brand UI design.', 'laser engraving, custom engravings, personalized gifts, Notion templates, Figma kits, React developers, web design, Olive Seeds', 'Olive Seeds Creative Studio', 'Handcrafted engraved products & templates', '', 'Designers crafting engravings in Olive Seeds studio workshop'],
     ['products', 'Luxury Laser Engraved Masterpieces | Olive Seeds', 'Browse premium custom-engraved wooden frames, acrylic wedding blocks, corporate luxury keepsakes and hand-finished laser gifts at Olive Seeds.', 'wood engraving, personalized gifts, custom keepsakes, corporate premium gifts, wedding acrylic blocks', 'Luxury Custom Engravings', 'Elegant keepsakes hand-finished at Olive Seeds', '', 'Precision custom wood engraving using high-end laser technology'],
@@ -120,6 +142,10 @@ poolPromise.query(`
   poolPromise.query("ALTER TABLE contact_messages ADD COLUMN status VARCHAR(50) DEFAULT 'Pending'").catch(() => {});
   poolPromise.query("ALTER TABLE bulk_orders ADD COLUMN status VARCHAR(50) DEFAULT 'Pending'").catch(() => {});
   poolPromise.query("ALTER TABLE design_inquiries ADD COLUMN status VARCHAR(50) DEFAULT 'Pending'").catch(() => {});
+  
+  // Seed new catalog and portfolio tables with existing database entries to ensure continuity
+  poolPromise.query("INSERT INTO catalog (name, description, image_url, type) SELECT name, description, image_url, type FROM categories").catch(() => {});
+  poolPromise.query("INSERT INTO portfolio (image_url, title, description, category) SELECT image_url, title, style, category FROM gallery").catch(() => {});
 }).catch(err => {
   console.error("❌ SEO Schema initialization failed. Config:", {
     host: process.env.DB_HOST,
