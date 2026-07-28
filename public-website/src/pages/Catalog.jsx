@@ -47,19 +47,10 @@ const Icons = {
   )
 };
 
-const INIT_FORM = { name: "", type: "physical", description: "", image_url: "" };
-
 export default function Catalog() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  
-  // Admin Panel States
-  const [showAdmin, setShowAdmin] = useState(false);
-  const [form, setForm] = useState(INIT_FORM);
-  const [editId, setEditId] = useState(null);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
 
   const loadCatalog = () => {
     setLoading(true);
@@ -84,73 +75,6 @@ export default function Catalog() {
     (c.description && c.description.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
-  // Form Handlers
-  const handleEditClick = (c) => {
-    setForm({
-      name: c.name,
-      type: c.type || "physical",
-      description: c.description || "",
-      image_url: c.image_url || ""
-    });
-    setEditId(c.id);
-    setErrorMsg("");
-    setSuccessMsg("");
-  };
-
-  const handleCancelEdit = () => {
-    setForm(INIT_FORM);
-    setEditId(null);
-    setErrorMsg("");
-  };
-
-  const handleSave = async (e) => {
-    e.preventDefault();
-    if (!form.name.trim()) {
-      setErrorMsg("Category name is required.");
-      return;
-    }
-
-    try {
-      if (editId) {
-        await API.put(`/categories/${editId}`, form);
-        setSuccessMsg("Category updated successfully!");
-      } else {
-        await API.post("/categories", form);
-        setSuccessMsg("Category created successfully!");
-      }
-      
-      // Reset form and reload
-      setForm(INIT_FORM);
-      setEditId(null);
-      setErrorMsg("");
-      loadCatalog();
-      
-      // Auto-clear success message
-      setTimeout(() => setSuccessMsg(""), 3000);
-    } catch (err) {
-      console.error(err);
-      setErrorMsg(err.response?.data?.message || "Failed to save category. Admin authentication required.");
-    }
-  };
-
-  const handleDelete = async (id, name) => {
-    if (!window.confirm(`Are you sure you want to delete "${name}"? Products under this category will become unassigned.`)) {
-      return;
-    }
-
-    try {
-      await API.delete(`/categories/${id}`);
-      setSuccessMsg("Category deleted successfully!");
-      loadCatalog();
-      if (editId === id) {
-        handleCancelEdit();
-      }
-      setTimeout(() => setSuccessMsg(""), 3000);
-    } catch (err) {
-      setErrorMsg("Failed to delete category. Admin token required.");
-    }
-  };
-
   return (
     <div style={{ background: "#F6F3EE", minHeight: "100vh", fontFamily: "'Inter', sans-serif" }}>
       <SEO 
@@ -172,7 +96,7 @@ export default function Catalog() {
             Browse our creative collection by category. Click any template to inspect custom materials, styles, and options, or place personalized orders.
           </p>
 
-          {/* Search Engine and Admin Controls row */}
+          {/* Search Engine row */}
           <div className="max-w-xl mx-auto flex flex-col sm:flex-row gap-3 items-center justify-center">
             {/* Search Field */}
             <div className="relative w-full flex-1">
@@ -195,15 +119,6 @@ export default function Catalog() {
                 </button>
               )}
             </div>
-
-            {/* Admin Side Panel Toggle Button */}
-            <button 
-              onClick={() => setShowAdmin(true)}
-              className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-stone-950 font-semibold px-6 py-3.5 rounded-full text-sm transition-all shadow-md shadow-amber-500/10 cursor-pointer whitespace-nowrap"
-            >
-              <Icons.Settings size={18} />
-              Admin Controls
-            </button>
           </div>
         </div>
       </section>
@@ -268,156 +183,6 @@ export default function Catalog() {
           </div>
         )}
       </main>
-
-      {/* ADMIN CONTROL SIDE PANEL */}
-      <div 
-        className={`fixed inset-0 z-50 flex justify-end transition-opacity duration-300 ${showAdmin ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
-        style={{ background: "rgba(15, 23, 42, 0.4)", backdropFilter: "blur(4px)" }}
-      >
-        {/* Panel Container */}
-        <div 
-          className={`w-full max-w-md bg-stone-900 text-stone-100 h-full shadow-2xl flex flex-col transition-transform duration-300 transform ${showAdmin ? "translate-x-0" : "translate-x-full"}`}
-        >
-          {/* Panel Header */}
-          <div className="p-6 border-b border-stone-800 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Icons.Settings size={20} className="text-amber-400" />
-              <h2 className="text-lg font-semibold text-white">Catalog Admin Controls</h2>
-            </div>
-            <button 
-              onClick={() => setShowAdmin(false)}
-              className="text-stone-400 hover:text-stone-100 p-1 rounded-lg transition-colors cursor-pointer"
-            >
-              <Icons.Close size={20} />
-            </button>
-          </div>
-
-          {/* Panel Contents - Scrollable */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-8">
-            {/* Status alerts */}
-            {successMsg && (
-              <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 p-4 rounded-xl text-xs font-semibold animate-fade-in">
-                {successMsg}
-              </div>
-            )}
-            {errorMsg && (
-              <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-4 rounded-xl text-xs font-semibold animate-fade-in">
-                {errorMsg}
-              </div>
-            )}
-
-            {/* Category Form */}
-            <form onSubmit={handleSave} className="space-y-4 bg-stone-950 p-5 rounded-2xl border border-stone-800/80">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-amber-400">
-                {editId ? "Edit Category Details" : "Create New Category"}
-              </h3>
-              
-              <div className="space-y-1">
-                <label className="text-[10px] uppercase font-bold text-stone-400">Category Name</label>
-                <input 
-                  type="text" 
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  placeholder="e.g. Backlit Acrylic Panels"
-                  className="w-full bg-stone-900 border border-stone-800 focus:border-amber-500 rounded-xl px-4 py-2.5 text-sm text-stone-100 placeholder-stone-600 outline-none transition-all"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[10px] uppercase font-bold text-stone-400">Category Type</label>
-                <select 
-                  value={form.type}
-                  onChange={(e) => setForm({ ...form, type: e.target.value })}
-                  className="w-full bg-stone-900 border border-stone-800 focus:border-amber-500 rounded-xl px-4 py-2.5 text-sm text-stone-100 outline-none transition-all cursor-pointer"
-                >
-                  <option value="physical">Physical Crafts</option>
-                  <option value="digital">Digital Assets</option>
-                  <option value="both">Both Types</option>
-                </select>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[10px] uppercase font-bold text-stone-400">Image URL</label>
-                <input 
-                  type="text" 
-                  value={form.image_url}
-                  onChange={(e) => setForm({ ...form, image_url: e.target.value })}
-                  placeholder="e.g. https://images.unsplash.com/..."
-                  className="w-full bg-stone-900 border border-stone-800 focus:border-amber-500 rounded-xl px-4 py-2.5 text-sm text-stone-100 placeholder-stone-600 outline-none transition-all"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[10px] uppercase font-bold text-stone-400">Short Description</label>
-                <textarea 
-                  value={form.description}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  placeholder="Describe materials, designs, and styles..."
-                  rows="3"
-                  className="w-full bg-stone-900 border border-stone-800 focus:border-amber-500 rounded-xl px-4 py-2.5 text-sm text-stone-100 placeholder-stone-600 outline-none transition-all resize-none"
-                />
-              </div>
-
-              <div className="flex gap-2 pt-2">
-                <button 
-                  type="submit" 
-                  className="flex-1 bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-colors cursor-pointer"
-                >
-                  {editId ? "Update Category" : "Add Category"}
-                </button>
-                {editId && (
-                  <button 
-                    type="button"
-                    onClick={handleCancelEdit}
-                    className="bg-stone-800 hover:bg-stone-700 text-stone-300 font-bold px-4 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-colors cursor-pointer"
-                  >
-                    Cancel
-                  </button>
-                )}
-              </div>
-            </form>
-
-            {/* List of existing categories inside the side panel */}
-            <div className="space-y-3">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-stone-400">Manage Collections</h3>
-              <div className="space-y-2">
-                {categories.map((c) => (
-                  <div key={c.id} className="flex items-center justify-between p-3 bg-stone-950 border border-stone-800/80 rounded-xl gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      {c.image_url ? (
-                        <img src={c.image_url} alt={c.name} className="w-10 height-10 rounded-lg object-cover flex-shrink-0" style={{ height: "40px", width: "40px" }} />
-                      ) : (
-                        <div className="w-10 h-10 bg-stone-900 border border-stone-800 rounded-lg flex items-center justify-center text-sm flex-shrink-0">🪵</div>
-                      )}
-                      <div className="min-w-0">
-                        <p className="text-xs font-semibold text-white truncate">{c.name}</p>
-                        <span className="text-[9px] uppercase tracking-wider text-amber-500/85 font-medium">{c.type || "physical"}</span>
-                      </div>
-                    </div>
-                    {/* Action buttons */}
-                    <div className="flex items-center gap-1.5 flex-shrink-0">
-                      <button 
-                        onClick={() => handleEditClick(c)}
-                        className="text-stone-400 hover:text-amber-500 p-1.5 hover:bg-amber-500/10 rounded-lg transition-all cursor-pointer"
-                        title="Edit"
-                      >
-                        <Icons.Edit size={15} />
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(c.id, c.name)}
-                        className="text-stone-400 hover:text-rose-500 p-1.5 hover:bg-rose-500/10 rounded-lg transition-all cursor-pointer"
-                        title="Delete"
-                      >
-                        <Icons.Trash size={15} />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <Footer />
     </div>

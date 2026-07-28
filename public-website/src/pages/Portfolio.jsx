@@ -41,19 +41,11 @@ const Icons = {
   )
 };
 
-const INIT_FORM = { title: "", image_url: "", category: "", style: "", industry: "", material: "" };
-
 export default function Portfolio() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("All");
   const [activeItem, setActiveItem] = useState(null);
-
-  // Admin Side Panel States
-  const [showAdmin, setShowAdmin] = useState(false);
-  const [form, setForm] = useState(INIT_FORM);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
 
   const loadGallery = () => {
     setLoading(true);
@@ -79,42 +71,6 @@ export default function Portfolio() {
   const filteredItems = filter === "All" 
     ? items 
     : items.filter(item => item.category === filter);
-
-  // Form Handlers
-  const handleSave = async (e) => {
-    e.preventDefault();
-    if (!form.image_url.trim() || !form.title.trim()) {
-      setErrorMsg("Title and Image URL are required.");
-      return;
-    }
-
-    try {
-      await API.post("/gallery", form);
-      setSuccessMsg("Showcase project added to gallery!");
-      setForm(INIT_FORM);
-      setErrorMsg("");
-      loadGallery();
-      setTimeout(() => setSuccessMsg(""), 3000);
-    } catch (err) {
-      console.error(err);
-      setErrorMsg("Failed to add project. Admin authentication token required.");
-    }
-  };
-
-  const handleDelete = async (id, title) => {
-    if (!window.confirm(`Are you sure you want to remove "${title}" from the showcase?`)) {
-      return;
-    }
-
-    try {
-      await API.delete(`/gallery/${id}`);
-      setSuccessMsg("Showcase project deleted successfully!");
-      loadGallery();
-      setTimeout(() => setSuccessMsg(""), 3000);
-    } catch (err) {
-      setErrorMsg("Failed to delete showcase project. Admin token required.");
-    }
-  };
 
   return (
     <div style={{ background: "#060913", color: "#F8FAFC", minHeight: "100vh", fontFamily: "'Inter', sans-serif" }}>
@@ -145,31 +101,6 @@ export default function Portfolio() {
             <p style={{ fontSize: "16px", color: "#94A3B8", maxWidth: "600px", margin: "0 auto 36px", lineHeight: 1.7 }}>
               Browse through our actual workshop creations and design mockups. High-fidelity layouts, premium material combinations, and client works.
             </p>
-
-            <button 
-              onClick={() => setShowAdmin(true)}
-              style={{
-                background: "rgba(255, 255, 255, 0.04)",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
-                color: "#FFFFFF",
-                fontSize: "12px",
-                fontWeight: 600,
-                textTransform: "uppercase",
-                letterSpacing: "0.08em",
-                padding: "10px 24px",
-                borderRadius: "100px",
-                cursor: "pointer",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "8px",
-                transition: "all 0.3s ease",
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.08)"}
-              onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.04)"}
-            >
-              <Icons.Settings size={16} />
-              Portfolio Admin Panel
-            </button>
           </div>
 
           {/* Dynamic Categories filter bar */}
@@ -356,147 +287,6 @@ export default function Portfolio() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* PORTFOLIO ADMIN CONTROL PANEL */}
-      <div 
-        className={`fixed inset-0 z-50 flex justify-end transition-opacity duration-300 ${showAdmin ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
-        style={{ background: "rgba(6, 9, 19, 0.5)", backdropFilter: "blur(4px)" }}
-      >
-        <div 
-          className={`w-full max-w-md bg-[#0C1123] text-stone-100 h-full shadow-2xl flex flex-col transition-transform duration-300 transform ${showAdmin ? "translate-x-0" : "translate-x-full"}`}
-        >
-          {/* Header */}
-          <div className="p-6 border-b border-stone-800/80 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Icons.Settings size={20} className="text-cyan-400" />
-              <h2 className="text-lg font-semibold text-white">Portfolio Admin</h2>
-            </div>
-            <button 
-              onClick={() => setShowAdmin(false)}
-              className="text-stone-400 hover:text-stone-100 p-1 rounded-lg transition-colors cursor-pointer"
-            >
-              <Icons.Close size={20} />
-            </button>
-          </div>
-
-          {/* Scrollable Contents */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
-            {successMsg && (
-              <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 p-4 rounded-xl text-xs font-semibold">
-                {successMsg}
-              </div>
-            )}
-            {errorMsg && (
-              <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-4 rounded-xl text-xs font-semibold">
-                {errorMsg}
-              </div>
-            )}
-
-            {/* Form */}
-            <form onSubmit={handleSave} className="space-y-4 bg-[#080B17] p-5 rounded-2xl border border-stone-800/60">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-cyan-400">Add Showcase Design</h3>
-              
-              <div className="space-y-1">
-                <label className="text-[10px] uppercase font-bold text-stone-400">Project Title</label>
-                <input 
-                  type="text" 
-                  value={form.title}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  placeholder="e.g. Bespoke Teakwood Nameboard"
-                  className="w-full bg-[#0E142B] border border-stone-800/80 focus:border-cyan-500 rounded-xl px-4 py-2 text-sm text-stone-100 outline-none transition-all"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[10px] uppercase font-bold text-stone-400">Image URL</label>
-                <input 
-                  type="text" 
-                  value={form.image_url}
-                  onChange={(e) => setForm({ ...form, image_url: e.target.value })}
-                  placeholder="e.g. https://images.unsplash.com/..."
-                  className="w-full bg-[#0E142B] border border-stone-800/80 focus:border-cyan-500 rounded-xl px-4 py-2 text-sm text-stone-100 outline-none transition-all"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[10px] uppercase font-bold text-stone-400">Category</label>
-                <input 
-                  type="text" 
-                  value={form.category}
-                  onChange={(e) => setForm({ ...form, category: e.target.value })}
-                  placeholder="e.g. Wooden Engravings"
-                  className="w-full bg-[#0E142B] border border-stone-800/80 focus:border-cyan-500 rounded-xl px-4 py-2 text-sm text-stone-100 outline-none transition-all"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[10px] uppercase font-bold text-stone-400">Description / Concept</label>
-                <textarea 
-                  value={form.style}
-                  onChange={(e) => setForm({ ...form, style: e.target.value })}
-                  placeholder="Tell the story of how this physical masterpiece or digital project was engineered..."
-                  rows="3"
-                  className="w-full bg-[#0E142B] border border-stone-800/80 focus:border-cyan-500 rounded-xl px-4 py-2 text-sm text-stone-100 outline-none transition-all resize-none"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[10px] uppercase font-bold text-stone-400">Materials Used (Optional)</label>
-                <input 
-                  type="text" 
-                  value={form.material}
-                  onChange={(e) => setForm({ ...form, material: e.target.value })}
-                  placeholder="e.g. Teakwood, Gold Acrylic"
-                  className="w-full bg-[#0E142B] border border-stone-800/80 focus:border-cyan-500 rounded-xl px-4 py-2 text-sm text-stone-100 outline-none transition-all"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[10px] uppercase font-bold text-stone-400">Industry / Sector (Optional)</label>
-                <input 
-                  type="text" 
-                  value={form.industry}
-                  onChange={(e) => setForm({ ...form, industry: e.target.value })}
-                  placeholder="e.g. Hospitality, Commercial"
-                  className="w-full bg-[#0E142B] border border-stone-800/80 focus:border-cyan-500 rounded-xl px-4 py-2 text-sm text-stone-100 outline-none transition-all"
-                />
-              </div>
-
-              <button 
-                type="submit" 
-                className="w-full bg-cyan-500 hover:bg-cyan-600 text-stone-950 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-colors cursor-pointer"
-              >
-                Add Showcase Project
-              </button>
-            </form>
-
-            {/* List and Remove */}
-            <div className="space-y-3">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-stone-400 font-serif">Remove Projects</h3>
-              <div className="space-y-2">
-                {items.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between p-3 bg-[#080B17] border border-stone-800/80 rounded-xl gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <img src={item.image_url} alt={item.title} className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
-                      <div className="min-w-0">
-                        <p className="text-xs font-semibold text-white truncate">{item.title}</p>
-                        <span className="text-[9px] uppercase tracking-wider text-cyan-400 font-medium">{item.category || "Showcase"}</span>
-                      </div>
-                    </div>
-                    <button 
-                      onClick={() => handleDelete(item.id, item.title)}
-                      className="text-stone-400 hover:text-rose-500 p-1.5 hover:bg-rose-500/10 rounded-lg transition-all cursor-pointer"
-                      title="Delete"
-                    >
-                      <Icons.Trash size={15} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <Footer />
     </div>
