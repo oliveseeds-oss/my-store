@@ -626,7 +626,7 @@ export default function DigitalProductList() {
     }
     setSubmitting(true);
     try {
-      await API.post("/design-inquiries", form);
+      await API.post("/digital-inquiries", form);
       setSuccess(true);
       setForm({
         name: "",

@@ -7,7 +7,8 @@ import { MdMail, MdMailOutline, MdClose } from "react-icons/md";
 const TABS = [
   { key: "contact", label: "General Contacts", endpoint: "/contact" },
   { key: "bulk", label: "Bulk Engravings", endpoint: "/bulk-orders" },
-  { key: "design", label: "Design Inquiries", endpoint: "/design-inquiries" }
+  { key: "design", label: "Design Inquiries", endpoint: "/design-inquiries" },
+  { key: "digital", label: "Digital Inquiries", endpoint: "/digital-inquiries" }
 ];
 
 const STATUSES = ["Pending", "Reviewed", "Processed", "Rejected"];

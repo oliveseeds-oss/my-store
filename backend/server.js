@@ -20,6 +20,7 @@ app.use("/api/blogs", require("./routes/blogs"));
 app.use("/api/contact", require("./routes/contact"));
 app.use("/api/bulk-orders", require("./routes/bulkOrders"));
 app.use("/api/design-inquiries", require("./routes/designInquiries"));
+app.use("/api/digital-inquiries", require("./routes/digitalInquiries"));
 app.use("/api/ads", require("./routes/ads"));
 app.use("/api/analytics", require("./routes/analytics"));
 app.use("/api/settings", require("./routes/settings"));
