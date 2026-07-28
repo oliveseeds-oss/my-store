@@ -44,40 +44,7 @@ const SORT_OPTIONS = [
 ];
 
 
-const TRUST_ITEMS = [
-  { icon: "✈️", label: "Worldwide Shipping" },
-  { icon: "🔒", label: "Secure Payments" },
-  { icon: "🪵", label: "Premium Materials" },
-  { icon: "✂️", label: "Made To Order" },
-  { icon: "🔏", label: "Custom Engraving" },
-  { icon: "🎁", label: "Gift Ready Packaging" },
-];
 
-const MATERIALS = [
-  { name: "Wood", desc: "Natural grain, warm tones", emoji: "🪵" },
-  { name: "Acrylic", desc: "Crystal clarity, bold finish", emoji: "💠" },
-  { name: "Leather", desc: "Rich texture, lasting luxury", emoji: "🧶" },
-  { name: "Glass", desc: "Precision-cut, timeless shine", emoji: "⚙️" },
-  { name: "Premium MDF", desc: "Smooth surface, perfect engraving", emoji: "📐" },
-];
-
-
-
-const WHY_US = [
-  { icon: "🪵", title: "Premium Materials", desc: "Only the finest wood, acrylic, metal and MDF." },
-  { icon: "🔏", title: "Precision Engraving", desc: "Laser-cut to micron accuracy every time." },
-  { icon: "✈️", title: "Worldwide Shipping", desc: "Fast, insured delivery to your doorstep." },
-  { icon: "🎁", title: "Gift Ready Packaging", desc: "Luxury packaging that makes unboxing special." },
-  { icon: "💬", title: "Dedicated Support", desc: "Expert guidance from order to delivery." },
-  { icon: "🏢", title: "Business Orders", desc: "Bulk corporate gifting with volume pricing." },
-];
-
-const STEPS = [
-  { num: "01", title: "Choose Product", desc: "Browse our curated collection of premium engravables." },
-  { num: "02", title: "Add Personalization", desc: "Upload your name, logo or message for engraving." },
-  { num: "03", title: "Review Design", desc: "We send a digital proof before production begins." },
-  { num: "04", title: "Worldwide Delivery", desc: "Gift-packaged and shipped straight to your door." },
-];
 
 /* ─── Star Rating (unchanged logic) ──────────────────────────────────── */
 function StarRating({ rating, count }) {
@@ -387,28 +354,6 @@ export default function ProductList() {
     setFilters((f) => ({ ...f, [key]: value }));
 
   const ratingOptions = [4, 3, 2, 1];
-
-  /* ─── helper styles ─────────────────────────────────── */
-  const sectionHeading = (centered = false) => ({
-    fontFamily: T.headingFont,
-    fontStyle: "italic",
-    fontWeight: 300,
-    fontSize: "clamp(32px, 5vw, 52px)",
-    color: T.text,
-    lineHeight: 1.15,
-    textAlign: centered ? "center" : "left",
-    marginBottom: 8,
-  });
-
-  const sectionSub = (centered = false) => ({
-    fontFamily: T.bodyFont,
-    fontSize: 15,
-    color: T.textSec,
-    lineHeight: 1.7,
-    textAlign: centered ? "center" : "left",
-    maxWidth: 540,
-    margin: centered ? "0 auto" : undefined,
-  });
 
   const eyebrow = (centered = false) => ({
     fontFamily: T.bodyFont,

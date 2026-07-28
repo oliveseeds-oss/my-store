@@ -848,14 +848,14 @@ export default function DigitalProductList() {
 
 
       {/* ── Ad Banner ── */}
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "32px 24px 0", position: "relative", zIndex: 2 }}>
+      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "32px 24px 24px", position: "relative", zIndex: 2 }}>
         <AdBanner placement="Horizontal Banner" />
       </div>
 
 
 
       {/* ── Main Products Section ── */}
-      <section style={{ padding: "0 24px 80px", position: "relative", zIndex: 2 }}>
+      <section style={{ padding: "32px 24px 80px", position: "relative", zIndex: 2 }}>
         <div style={{ maxWidth: 1280, margin: "0 auto", display: "flex", gap: 28 }}>
 
           {/* ── Sidebar ── */}

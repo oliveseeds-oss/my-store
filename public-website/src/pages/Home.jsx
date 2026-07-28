@@ -407,34 +407,34 @@ export default function Home() {
           display: inline-flex;
           align-items: center;
           gap: 10px;
-          background: var(--accent);
+          background: linear-gradient(135deg, var(--accent) 0%, var(--accent-h) 100%);
           color: #fff;
           font-size: 13px;
           font-weight: 600;
-          letter-spacing: 0.05em;
+          letter-spacing: 0.08em;
           text-transform: uppercase;
           padding: 16px 36px;
           border-radius: 100px;
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(201, 168, 106, 0.3);
           cursor: pointer;
           text-decoration: none;
-          box-shadow: 0 4px 12px rgba(15,39,68,0.15);
-          transition: background 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
-                      transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
-                      box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                      border-color 0.3s ease;
+          box-shadow: 0 4px 20px rgba(15,39,68,0.15), inset 0 1px 1px rgba(255,255,255,0.1);
+          transition: background 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                      transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                      box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                      border-color 0.35s ease;
         }
         .btn-primary:hover {
-          background: var(--accent-h);
-          transform: translateY(-3px) scale(1.02);
-          box-shadow: 0 20px 40px rgba(15,39,68,0.3);
-          border-color: rgba(201,168,106,0.45);
+          background: linear-gradient(135deg, var(--accent-h) 0%, #1e3a5f 100%);
+          transform: translateY(-4px) scale(1.03);
+          box-shadow: 0 20px 40px rgba(15,39,68,0.25), 0 0 0 3px rgba(201,168,106,0.3);
+          border-color: rgba(201,168,106,0.7);
         }
         .btn-primary svg {
           transition: transform 0.3s ease;
         }
         .btn-primary:hover svg {
-          transform: translateX(4px);
+          transform: translateX(6px);
         }
 
         .btn-gold {
@@ -475,28 +475,50 @@ export default function Home() {
           display: inline-flex;
           align-items: center;
           gap: 10px;
-          background: transparent;
+          background: rgba(255, 255, 255, 0.4);
           color: var(--accent);
           font-size: 13px;
           font-weight: 600;
-          letter-spacing: 0.05em;
+          letter-spacing: 0.08em;
           text-transform: uppercase;
           padding: 15px 34px;
           border-radius: 100px;
           border: 1.5px solid var(--border);
           cursor: pointer;
           text-decoration: none;
-          transition: border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
-                      background 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
-                      transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                      color 0.3s ease;
+          backdrop-filter: blur(8px);
+          transition: border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                      background 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                      transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                      color 0.35s ease,
+                      box-shadow 0.35s ease;
         }
         .btn-outline:hover {
-          border-color: var(--accent);
-          background: var(--accent);
-          color: #fff;
-          transform: translateY(-3px) scale(1.02);
-          box-shadow: 0 12px 28px rgba(15,39,68,0.15);
+          border-color: var(--gold);
+          background: var(--surface);
+          color: var(--gold);
+          transform: translateY(-4px) scale(1.03);
+          box-shadow: 0 16px 32px rgba(201,168,106,0.12), 0 0 0 2px rgba(201,168,106,0.15);
+        }
+
+        /* Stats Row Modern Grid Overrides */
+        .stats-row {
+          display: grid !important;
+          grid-template-columns: repeat(4, 1fr) !important;
+          background: rgba(255, 255, 255, 0.5) !important;
+          backdrop-filter: blur(16px);
+          border: 1px solid rgba(201, 168, 106, 0.15) !important;
+          border-radius: 24px !important;
+          padding: 24px 16px !important;
+          gap: 12px !important;
+          box-shadow: 0 10px 30px rgba(15,39,68,0.04);
+        }
+        @media (max-width: 768px) {
+          .stats-row {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 24px 12px !important;
+            padding: 20px 12px !important;
+          }
         }
 
         /* Card hover */
@@ -718,27 +740,31 @@ export default function Home() {
             className="hero-grid"
           >
             {/* LEFT — copy */}
-            <div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
               {/* Eyebrow pill */}
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                style={{ marginBottom: "32px" }}
+                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                style={{ marginBottom: "8px" }}
               >
                 <span style={{
-                  display: "inline-flex", alignItems: "center", gap: "8px",
-                  background: "rgba(15,39,68,0.07)",
-                  border: "1px solid rgba(15,39,68,0.12)",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  background: "linear-gradient(135deg, rgba(15,39,68,0.04) 0%, rgba(201,168,106,0.08) 100%)",
+                  border: "1px solid rgba(201,168,106,0.25)",
                   borderRadius: "100px",
-                  padding: "8px 18px",
-                  fontSize: "11px", fontWeight: 600, letterSpacing: "0.12em",
-                  textTransform: "uppercase", color: "var(--accent)",
+                  padding: "10px 22px",
+                  fontSize: "11.5px",
+                  fontWeight: 600,
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "var(--accent)",
+                  boxShadow: "0 4px 20px rgba(201,168,106,0.06)",
+                  backdropFilter: "blur(8px)",
                 }}>
-                  <span style={{
-                    width: 7, height: 7, borderRadius: "50%",
-                    background: "var(--gold)", display: "inline-block", flexShrink: 0,
-                  }} />
+                  <Icons.Sparkles size={14} color="var(--gold)" />
                   Olive Seeds Premium Crafted & Digital Design Studio
                 </span>
               </motion.div>
@@ -750,18 +776,18 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
                 style={{
-                  fontSize: "clamp(2rem, 4.5vw, 4rem)",
+                  fontSize: "clamp(2.2rem, 4.8vw, 4.2rem)",
                   fontWeight: 700,
-                  lineHeight: 1.08,
+                  lineHeight: 1.12,
                   color: "var(--accent)",
-                  letterSpacing: "-0.02em",
-                  marginBottom: "0",
+                  letterSpacing: "-0.025em",
+                  margin: "0",
                 }}
               >
                 Premium Engraved
                 <br />
                 <span style={{
-                  background: "linear-gradient(135deg, var(--gold) 0%, #a87c3a 100%)",
+                  background: "linear-gradient(135deg, var(--gold) 0%, #b8943d 50%, var(--accent) 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
@@ -772,7 +798,7 @@ export default function Home() {
                 <br />
                 Templates &amp; Design
                 <br />
-                Services <span style={{ fontWeight: 400, color: "var(--text-2)", fontSize: "70%" }}>— Worldwide</span>
+                Services <span style={{ fontWeight: 400, color: "var(--text-2)", fontSize: "65%", letterSpacing: "0.02em" }}>— Worldwide</span>
               </motion.h1>
 
               <motion.p
@@ -781,10 +807,10 @@ export default function Home() {
                 transition={{ duration: 0.8, delay: 0.3 }}
                 style={{
                   color: "var(--text-2)",
-                  fontSize: "15px",
-                  lineHeight: 1.65,
-                  maxWidth: "500px",
-                  margin: "18px 0 32px",
+                  fontSize: "15.5px",
+                  lineHeight: 1.7,
+                  maxWidth: "520px",
+                  margin: "0",
                   fontWeight: 400,
                 }}
               >
@@ -795,16 +821,16 @@ export default function Home() {
 
               {/* CTAs */}
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.45 }}
-                style={{ display: "flex", gap: "12px", flexWrap: "wrap", marginBottom: "40px" }}
+                style={{ display: "flex", gap: "16px", flexWrap: "wrap", margin: "10px 0" }}
               >
-                <Link to="/products" className="btn-primary" style={{ padding: "12px 24px", fontSize: "13px" }}>
+                <Link to="/products" className="btn-primary" style={{ padding: "16px 36px", fontSize: "13.5px" }}>
                   Shop Gifts
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: "4px" }}><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: "6px" }}><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                 </Link>
-                <Link to="/digital" className="btn-outline" style={{ padding: "12px 24px", fontSize: "13px" }}>
+                <Link to="/digital" className="btn-outline" style={{ padding: "16px 36px", fontSize: "13.5px" }}>
                   Explore Digital Studio
                 </Link>
               </motion.div>
@@ -813,35 +839,57 @@ export default function Home() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.68 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
               >
                 <div
                   className="stats-row"
                   style={{
                     borderTop: "1px solid var(--border)",
-                    marginTop: "24px",
+                    paddingTop: "24px",
+                    marginTop: "16px",
                   }}
                 >
                   {[
-                    ["500+", "Crafts Delivered"],
-                    ["120+", "Digital Packs"],
-                    ["15+", "Countries"],
-                    ["99%", "Happy Clients"],
-                  ].map(([num, label], i) => (
-                    <div
+                    ["500+", "Crafts Delivered", <Icons.Box size={18} color="var(--gold)" />],
+                    ["120+", "Digital Packs", <Icons.Bolt size={18} color="var(--gold)" />],
+                    ["15+", "Countries", <Icons.Globe size={18} color="var(--gold)" />],
+                    ["99%", "Happy Clients", <Icons.Sparkles size={18} color="var(--gold)" />],
+                  ].map(([num, label, icon], i) => (
+                    <motion.div
                       key={label}
+                      whileHover={{ y: -5, scale: 1.05 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 15 }}
                       style={{
-                        paddingRight: "12px",
+                        paddingRight: "16px",
                         borderRight: i < 3 ? "1px solid var(--border)" : "none",
-                        paddingLeft: i > 0 ? "12px" : "0",
+                        paddingLeft: i > 0 ? "16px" : "0",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        textAlign: "center",
+                        gap: "6px",
+                        cursor: "default",
                       }}
                     >
-                      <div className="stat-num" style={{ fontSize: "20px", fontWeight: 800 }}>{num}</div>
                       <div style={{
-                        fontSize: "10px", fontWeight: 500, color: "var(--text-2)",
-                        letterSpacing: "0.06em", marginTop: "4px",
+                        width: "36px",
+                        height: "36px",
+                        borderRadius: "50%",
+                        background: "var(--gold-soft)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginBottom: "2px",
+                        border: "1px solid var(--gold-border)",
+                      }}>
+                        {icon}
+                      </div>
+                      <div className="stat-num" style={{ fontSize: "22px", fontWeight: 800, color: "var(--accent)" }}>{num}</div>
+                      <div style={{
+                        fontSize: "10.5px", fontWeight: 600, color: "var(--text-2)",
+                        letterSpacing: "0.08em", textTransform: "uppercase",
                       }}>{label}</div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </motion.div>

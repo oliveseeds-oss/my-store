@@ -19,6 +19,7 @@ import Contact from "./pages/Contact";
 import Catalog from "./pages/Catalog";
 import CategoryCatalog from "./pages/CategoryCatalog";
 import Gallery from "./pages/Gallery";
+import Portfolio from "./pages/Portfolio";
 import Engraving from "./pages/Engraving";
 
 // ── The pages your footer links to ──
@@ -67,7 +68,7 @@ export default function App() {
               <Route path="/catalog"            element={<Catalog />} />
               <Route path="/categories"         element={<CategoryCatalog />} />
               <Route path="/gallery"            element={<Gallery />} />
-              <Route path="/portfolio"          element={<Gallery />} />
+              <Route path="/portfolio"          element={<Portfolio />} />
               <Route path="/engraving"          element={<Engraving />} />
 
               {/* ── Legal & info pages ── */}
