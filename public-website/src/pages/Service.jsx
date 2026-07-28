@@ -742,21 +742,7 @@ export default function Service() {
             </div>
           </FadeUp>
 
-          {/* Hero visual – abstract dashboard mockup */}
-          <FadeUp delay={0.4}>
-            <div className="responsive-hero-mockup service-hero-mockup-animate" style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "var(--shadow-lg)" }}>
-              {/* Mockup bar rows */}
-              {[["var(--accent)", "75%"], ["var(--gold)", "60%"], ["#14B87A", "90%"]].map(([color, w], i) => (
-                <div key={i} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  <div style={{ height: 8, borderRadius: 4, background: "var(--bg)", overflow: "hidden" }}>
-                     <div style={{ height: "100%", width: w, background: color, borderRadius: 4 }} />
-                  </div>
-                  <div style={{ height: 8, borderRadius: 4, background: "var(--bg)", width: "65%" }} />
-                </div>
-              ))}
-              {/* Badges panel removed per user request */}
-            </div>
-          </FadeUp>
+          {/* Hero visual mockup removed per user request */}
         </div>
       </section>
 

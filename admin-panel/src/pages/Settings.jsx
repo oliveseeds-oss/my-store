@@ -1,74 +1,133 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
+import API from "../api";
 import { MdSave, MdCheck } from "react-icons/md";
 
 export default function Settings() {
   const [saved, setSaved] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const [settings, setSettings] = useState({
-    siteName: "My Engraving Store",
-    siteEmail: "admin@mystore.com",
-    phone: "+91 98765 43210",
-    address: "12, Main Street, Coimbatore, Tamil Nadu",
+    site_name: "",
+    site_email: "",
+    phone: "",
+    address: "",
     currency: "INR",
-    shippingFee: "60",
-    freeShippingAbove: "999",
-    razorpayKey: "",
-    adminPassword: "",
-    newPassword: "",
+    shipping_fee: "60",
+    free_shipping_above: "999",
+    razorpay_key: "",
+    paypal_client_id: "",
+    admin_password: "",
+    new_password: "",
   });
+
+  const loadSettings = () => {
+    API.get("/settings")
+      .then((res) => {
+        setSettings({
+          site_name: res.data.site_name || "",
+          site_email: res.data.site_email || "",
+          phone: res.data.phone || "",
+          address: res.data.address || "",
+          currency: res.data.currency || "INR",
+          shipping_fee: String(res.data.shipping_fee || "0"),
+          free_shipping_above: String(res.data.free_shipping_above || "0"),
+          razorpay_key: res.data.razorpay_key || "",
+          paypal_client_id: res.data.paypal_client_id || "",
+          admin_password: "",
+          new_password: "",
+        });
+      })
+      .catch((err) => console.error("Failed to load settings", err));
+  };
+
+  useEffect(() => {
+    loadSettings();
+  }, []);
 
   const update = (key, value) => setSettings({ ...settings, [key]: value });
 
-  const save = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+  const save = async () => {
+    setErrorMsg("");
+    setSaved(false);
+    try {
+      const payload = {
+        site_name: settings.site_name,
+        site_email: settings.site_email,
+        phone: settings.phone,
+        address: settings.address,
+        currency: settings.currency,
+        shipping_fee: parseFloat(settings.shipping_fee) || 0,
+        free_shipping_above: parseFloat(settings.free_shipping_above) || 0,
+        razorpay_key: settings.razorpay_key,
+        paypal_client_id: settings.paypal_client_id,
+      };
+
+      if (settings.new_password) {
+        if (!settings.admin_password) {
+          setErrorMsg("Please enter current admin password to update password.");
+          return;
+        }
+        payload.admin_password = settings.new_password;
+      }
+
+      await API.put("/settings", payload);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+      setSettings(prev => ({ ...prev, admin_password: "", new_password: "" }));
+    } catch (err) {
+      console.error(err);
+      setErrorMsg("Failed to save settings. Please verify authorization.");
+    }
   };
 
   const Field = ({ label, fieldKey, type = "text", placeholder = "" }) => (
     <div>
-      <label className="text-xs text-gray-500 mb-1 block">{label}</label>
+      <label className="text-xs text-gray-500 mb-1 block font-semibold">{label}</label>
       <input
         type={type}
         value={settings[fieldKey]}
         onChange={(e) => update(fieldKey, e.target.value)}
         placeholder={placeholder}
-        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm
-                   focus:outline-none focus:ring-2 focus:ring-indigo-200"
+        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200"
       />
     </div>
   );
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-gray-50/50">
       <Sidebar />
       <div className="flex-1 flex flex-col">
-        <Topbar title="Settings" />
-        <main className="p-6 flex flex-col gap-5 max-w-2xl">
+        <Topbar title="Store Settings Manager" />
+        <main className="p-6 flex flex-col gap-5 max-w-2xl w-full mx-auto">
 
           {saved && (
-            <div className="flex items-center gap-2 bg-green-50 border border-green-200
-                            text-green-700 text-sm px-4 py-3 rounded-xl">
+            <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-xl shadow-sm">
               <MdCheck className="text-lg" /> Settings saved successfully
             </div>
           )}
 
+          {errorMsg && (
+            <div className="flex items-center gap-2 bg-rose-50 border border-rose-200 text-rose-700 text-sm px-4 py-3 rounded-xl shadow-sm">
+              {errorMsg}
+            </div>
+          )}
+
           {/* General settings */}
-          <div className="bg-white rounded-xl border border-gray-100 p-5 flex flex-col gap-4">
-            <h3 className="text-sm font-semibold text-gray-700 pb-2 border-b border-gray-50">
-              General info
+          <div className="bg-white rounded-2xl border border-gray-100 p-5 flex flex-col gap-4 shadow-sm">
+            <h3 className="text-sm font-bold text-gray-700 pb-2 border-b border-gray-100 uppercase tracking-wider text-xs">
+              General Information
             </h3>
-            <Field label="Store name" fieldKey="siteName" placeholder="My Engraving Store" />
-            <Field label="Contact email" fieldKey="siteEmail" type="email" placeholder="admin@mystore.com" />
-            <Field label="Phone number" fieldKey="phone" placeholder="+91 98765 43210" />
-            <Field label="Business address" fieldKey="address" placeholder="Street, City, State" />
+            <Field label="Store Name" fieldKey="site_name" placeholder="My Engraving Store" />
+            <Field label="Contact Email" fieldKey="site_email" type="email" placeholder="admin@mystore.com" />
+            <Field label="Phone Number" fieldKey="phone" placeholder="+91 98765 43210" />
+            <Field label="Business Address" fieldKey="address" placeholder="Street, City, State" />
             <div>
-              <label className="text-xs text-gray-500 mb-1 block">Currency</label>
+              <label className="text-xs text-gray-500 mb-1 block font-semibold">Default Base Currency</label>
               <select
                 value={settings.currency}
                 onChange={(e) => update("currency", e.target.value)}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm
-                           focus:outline-none focus:ring-2 focus:ring-indigo-200">
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-white cursor-pointer">
                 <option value="INR">INR (₹) — Indian Rupee</option>
                 <option value="USD">USD ($) — US Dollar</option>
                 <option value="EUR">EUR (€) — Euro</option>
@@ -78,50 +137,69 @@ export default function Settings() {
           </div>
 
           {/* Shipping settings */}
-          <div className="bg-white rounded-xl border border-gray-100 p-5 flex flex-col gap-4">
-            <h3 className="text-sm font-semibold text-gray-700 pb-2 border-b border-gray-50">
-              Shipping
+          <div className="bg-white rounded-2xl border border-gray-100 p-5 flex flex-col gap-4 shadow-sm">
+            <h3 className="text-sm font-bold text-gray-700 pb-2 border-b border-gray-100 uppercase tracking-wider text-xs">
+              Shipping & Delivery Thresholds
             </h3>
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Default shipping fee (₹)" fieldKey="shippingFee" placeholder="60" />
-              <Field label="Free shipping above (₹)" fieldKey="freeShippingAbove" placeholder="999" />
+              <Field label="Default Shipping Fee (₹)" fieldKey="shipping_fee" placeholder="60" />
+              <Field label="Free Shipping Above Threshold (₹)" fieldKey="free_shipping_above" placeholder="999" />
             </div>
           </div>
 
           {/* Payment settings */}
-          <div className="bg-white rounded-xl border border-gray-100 p-5 flex flex-col gap-4">
-            <h3 className="text-sm font-semibold text-gray-700 pb-2 border-b border-gray-50">
-              Payment (Razorpay)
+          <div className="bg-white rounded-2xl border border-gray-100 p-5 flex flex-col gap-5 shadow-sm">
+            <h3 className="text-sm font-bold text-gray-700 pb-2 border-b border-gray-100 uppercase tracking-wider text-xs">
+              Payment Gateway Credentials
             </h3>
-            <Field
-              label="Razorpay API key"
-              fieldKey="razorpayKey"
-              placeholder="rzp_live_xxxxxxxxxx"
-            />
-            <p className="text-xs text-gray-400">
-              Get your key from{" "}
-              <a href="https://dashboard.razorpay.com"
-                target="_blank" rel="noreferrer"
-                className="text-indigo-500 underline">
-                Razorpay dashboard
-              </a>
-            </p>
+            
+            {/* Razorpay connection */}
+            <div className="flex flex-col gap-3">
+              <h4 className="text-xs font-bold text-stone-600 uppercase tracking-wider">Razorpay Connection</h4>
+              <Field
+                label="Razorpay API Key (Key ID)"
+                fieldKey="razorpay_key"
+                placeholder="rzp_live_xxxxxxxxxx"
+              />
+              <p className="text-[10px] text-gray-400">
+                Enter your live key API token from the{" "}
+                <a href="https://dashboard.razorpay.com" target="_blank" rel="noreferrer" className="text-indigo-500 underline">
+                  Razorpay Dashboard
+                </a>.
+              </p>
+            </div>
+
+            <div className="border-t border-gray-100 my-2" />
+
+            {/* Paypal connection */}
+            <div className="flex flex-col gap-3">
+              <h4 className="text-xs font-bold text-stone-600 uppercase tracking-wider">PayPal Connection</h4>
+              <Field
+                label="PayPal Client ID"
+                fieldKey="paypal_client_id"
+                placeholder="AbcDe123... (Standard Live Client ID)"
+              />
+              <p className="text-[10px] text-gray-400">
+                Enter your Live Rest API Client ID from the{" "}
+                <a href="https://developer.paypal.com" target="_blank" rel="noreferrer" className="text-indigo-500 underline">
+                  PayPal Developer Dashboard
+                </a>.
+              </p>
+            </div>
           </div>
 
           {/* Change password */}
-          <div className="bg-white rounded-xl border border-gray-100 p-5 flex flex-col gap-4">
-            <h3 className="text-sm font-semibold text-gray-700 pb-2 border-b border-gray-50">
-              Change admin password
+          <div className="bg-white rounded-2xl border border-gray-100 p-5 flex flex-col gap-4 shadow-sm">
+            <h3 className="text-sm font-bold text-gray-700 pb-2 border-b border-gray-100 uppercase tracking-wider text-xs">
+              Change Security Password
             </h3>
-            <Field label="Current password" fieldKey="adminPassword" type="password" placeholder="••••••••" />
-            <Field label="New password" fieldKey="newPassword" type="password" placeholder="••••••••" />
+            <Field label="Current Admin Password" fieldKey="admin_password" type="password" placeholder="••••••••" />
+            <Field label="New Secure Password" fieldKey="new_password" type="password" placeholder="••••••••" />
           </div>
 
           <button onClick={save}
-            className="flex items-center justify-center gap-2 bg-indigo-600
-                       hover:bg-indigo-700 text-white rounded-xl py-3 text-sm
-                       font-medium transition">
-            <MdSave /> Save all settings
+            className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl py-3.5 text-sm font-bold transition shadow-md cursor-pointer">
+            <MdSave className="text-lg" /> Save Configuration Settings
           </button>
         </main>
       </div>
