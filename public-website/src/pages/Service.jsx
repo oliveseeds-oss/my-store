@@ -602,6 +602,63 @@ export default function Service() {
             padding: 60px 20px;
           }
         }
+
+        /* Service Page Hero Overrides (Desktop & Tablet) */
+        .service-hero-section {
+          position: relative;
+          overflow: hidden;
+        }
+        
+        @keyframes slowGlow {
+          0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.7; }
+          50% { transform: scale(1.2) translate(-30px, 30px); opacity: 0.9; }
+        }
+        @keyframes floatMockup {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-15px); }
+        }
+
+        @media (min-width: 769px) {
+          .service-hero-section {
+            background: linear-gradient(135deg, #0A1424 0%, #050A12 100%) !important;
+            padding-top: 150px !important;
+            padding-bottom: 140px !important;
+          }
+          .service-hero-section .os-heading {
+            color: #ffffff !important;
+          }
+          .service-hero-section p {
+            color: rgba(255, 255, 255, 0.72) !important;
+          }
+          .service-hero-section .btn-secondary {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+          }
+          .service-hero-section .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.16) !important;
+            border-color: var(--gold) !important;
+            color: var(--gold) !important;
+          }
+          .service-hero-section .responsive-hero-mockup {
+            background: rgba(255, 255, 255, 0.04) !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+            backdrop-filter: blur(24px) !important;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5) !important;
+          }
+          .service-hero-section .responsive-hero-mockup span {
+            background: rgba(255, 255, 255, 0.06) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            color: rgba(255, 255, 255, 0.8) !important;
+          }
+          .service-hero-glow {
+            background: radial-gradient(circle, rgba(201, 168, 106, 0.16) 0%, transparent 70%) !important;
+            animation: slowGlow 12s ease-in-out infinite;
+          }
+          .service-hero-mockup-animate {
+            animation: floatMockup 7s ease-in-out infinite;
+          }
+        }
       `}</style>
 
       <Navbar />
@@ -610,11 +667,12 @@ export default function Service() {
           HERO
       ══════════════════════════════ */}
       <section
-        className="hero-grid relative"
+        className="service-hero-section relative"
         style={{ paddingTop: "120px", paddingBottom: "120px", background: "var(--bg)" }}
       >
         {/* Subtle top-left accent */}
         <div
+          className="service-hero-glow"
           style={{
             position: "absolute",
             top: 0, left: 0,
@@ -686,12 +744,12 @@ export default function Service() {
 
           {/* Hero visual – abstract dashboard mockup */}
           <FadeUp delay={0.4}>
-            <div className="responsive-hero-mockup" style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "var(--shadow-lg)" }}>
+            <div className="responsive-hero-mockup service-hero-mockup-animate" style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "var(--shadow-lg)" }}>
               {/* Mockup bar rows */}
               {[["var(--accent)", "75%"], ["var(--gold)", "60%"], ["#14B87A", "90%"]].map(([color, w], i) => (
                 <div key={i} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   <div style={{ height: 8, borderRadius: 4, background: "var(--bg)", overflow: "hidden" }}>
-                    <div style={{ height: "100%", width: w, background: color, borderRadius: 4 }} />
+                     <div style={{ height: "100%", width: w, background: color, borderRadius: 4 }} />
                   </div>
                   <div style={{ height: 8, borderRadius: 4, background: "var(--bg)", width: "65%" }} />
                   <div style={{ height: 8, borderRadius: 4, background: "var(--bg)", width: "85%" }} />

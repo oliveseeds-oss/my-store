@@ -605,6 +605,46 @@ export default function DigitalProductList() {
 
   const setFilter = (key, val) => setFilters((f) => ({ ...f, [key]: val }));
 
+  const [form, setForm] = useState({
+    name: "",
+    company: "",
+    email: "",
+    phone: "",
+    project_type: "",
+    budget_range: "",
+    timeline: "",
+    message: ""
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!form.name || !form.company || !form.email || !form.project_type || !form.message) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await API.post("/design-inquiries", form);
+      setSuccess(true);
+      setForm({
+        name: "",
+        company: "",
+        email: "",
+        phone: "",
+        project_type: "",
+        budget_range: "",
+        timeline: "",
+        message: ""
+      });
+    } catch (err) {
+      alert("Failed to send inquiry. Please try again later.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div
       className="inter"
@@ -743,6 +783,10 @@ export default function DigitalProductList() {
 
               <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
                 <button
+                  onClick={() => {
+                    const el = document.getElementById("products-section");
+                    if (el) el.scrollIntoView({ behavior: "smooth" });
+                  }}
                   style={{
                     padding: "14px 30px",
                     borderRadius: 12,
@@ -769,6 +813,10 @@ export default function DigitalProductList() {
                   Explore Assets
                 </button>
                 <button
+                  onClick={() => {
+                    const el = document.getElementById("contact-section");
+                    if (el) el.scrollIntoView({ behavior: "smooth" });
+                  }}
                   style={{
                     padding: "14px 30px",
                     borderRadius: 12,
@@ -791,7 +839,7 @@ export default function DigitalProductList() {
                     e.currentTarget.style.background = "transparent";
                   }}
                 >
-                  View Best Sellers
+                  Custom Project
                 </button>
               </div>
             </div>
@@ -855,7 +903,7 @@ export default function DigitalProductList() {
 
 
       {/* ── Main Products Section ── */}
-      <section style={{ padding: "32px 24px 80px", position: "relative", zIndex: 2 }}>
+      <section id="products-section" style={{ padding: "32px 24px 80px", position: "relative", zIndex: 2 }}>
         <div style={{ maxWidth: 1280, margin: "0 auto", display: "flex", gap: 28 }}>
 
           {/* ── Sidebar ── */}
@@ -1300,6 +1348,215 @@ export default function DigitalProductList() {
           </div>
         </div>
       )}
+
+      {/* ── Contact Section ── */}
+      <section id="contact-section" style={{ padding: "80px 24px", position: "relative", zIndex: 2, background: "rgba(18, 25, 45, 0.4)", borderTop: `1px solid ${T.border}` }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "60px" }} className="responsive-split-1-2">
+            {/* Left Column */}
+            <div>
+              <div style={{ width: 44, height: 3, background: "linear-gradient(90deg, #6EE7F9, #8B7CFF)", marginBottom: 20, borderRadius: 2 }} />
+              <span className="sora" style={{ display: "block", marginBottom: 14, fontSize: 11, fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: T.accent1 }}>Start Your Project</span>
+              <h2 className="clash" style={{ fontSize: 36, color: T.textPrimary, marginBottom: 20, fontWeight: 700, lineHeight: 1.15 }}>
+                Let's build something extraordinary
+              </h2>
+              <p style={{ fontSize: 15.5, color: T.textSecondary, lineHeight: 1.8, marginBottom: 40 }}>
+                Fill out the brief and our senior design director will review your project specifications and respond within 24 hours.
+              </p>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                {[
+                  { icon: "⏱", title: "24-hour response", desc: "Every inquiry reviewed personally" },
+                  { icon: "🔒", title: "Strict confidentiality", desc: "NDA available on request" },
+                  { icon: "💬", title: "Free consultation", desc: "30-minute strategy call included" },
+                ].map((item, i) => (
+                  <div key={i} style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
+                    <span style={{ fontSize: 20, flexShrink: 0, lineHeight: 1 }}>{item.icon}</span>
+                    <div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: T.textPrimary }}>{item.title}</div>
+                      <div style={{ fontSize: 13, color: T.textSecondary, marginTop: 2 }}>{item.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right Column Form */}
+            <div
+              style={{
+                background: T.surface1,
+                border: `1px solid ${T.border}`,
+                borderRadius: 24,
+                padding: "36px",
+                boxShadow: "0 15px 40px rgba(0,0,0,0.3)",
+              }}
+            >
+              {success ? (
+                <div style={{ textAlign: "center", padding: "40px 20px" }}>
+                  <div style={{ fontSize: "48px", color: T.accent1, marginBottom: "16px" }}>✓</div>
+                  <h3 style={{ fontSize: "20px", fontWeight: 700, color: T.textPrimary, marginBottom: "10px" }}>Enquiry Received</h3>
+                  <p style={{ fontSize: "14.5px", color: T.textSecondary, lineHeight: 1.6 }}>
+                    Thank you for reaching out! Our creative director will review your project details and get in touch within 24 hours.
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }} className="responsive-form">
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary }}>Full Name *</label>
+                    <input
+                      type="text"
+                      placeholder="Jane Smith"
+                      required
+                      value={form.name}
+                      onChange={e => setForm({ ...form, name: e.target.value })}
+                      style={{
+                        padding: "12px 16px", borderRadius: 12, border: `1px solid ${T.border}`,
+                        background: T.surface2, color: T.textPrimary, outline: "none", fontSize: 14
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary }}>Company *</label>
+                    <input
+                      type="text"
+                      placeholder="Acme Inc."
+                      required
+                      value={form.company}
+                      onChange={e => setForm({ ...form, company: e.target.value })}
+                      style={{
+                        padding: "12px 16px", borderRadius: 12, border: `1px solid ${T.border}`,
+                        background: T.surface2, color: T.textPrimary, outline: "none", fontSize: 14
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary }}>Email Address *</label>
+                    <input
+                      type="email"
+                      placeholder="jane@company.com"
+                      required
+                      value={form.email}
+                      onChange={e => setForm({ ...form, email: e.target.value })}
+                      style={{
+                        padding: "12px 16px", borderRadius: 12, border: `1px solid ${T.border}`,
+                        background: T.surface2, color: T.textPrimary, outline: "none", fontSize: 14
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary }}>Phone Number</label>
+                    <input
+                      type="tel"
+                      placeholder="+1 (555) 000-0000"
+                      value={form.phone}
+                      onChange={e => setForm({ ...form, phone: e.target.value })}
+                      style={{
+                        padding: "12px 16px", borderRadius: 12, border: `1px solid ${T.border}`,
+                        background: T.surface2, color: T.textPrimary, outline: "none", fontSize: 14
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ gridColumn: "span 2", display: "flex", flexDirection: "column", gap: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary }}>Project Type *</label>
+                    <select
+                      required
+                      value={form.project_type}
+                      onChange={e => setForm({ ...form, project_type: e.target.value })}
+                      style={{
+                        padding: "12px 16px", borderRadius: 12, border: `1px solid ${T.border}`,
+                        background: T.surface2, color: T.textPrimary, outline: "none", fontSize: 14, cursor: "pointer"
+                      }}
+                    >
+                      <option value="">Select a service...</option>
+                      <option>UI / UX Design</option>
+                      <option>Website Design & Development</option>
+                      <option>Mobile App Design</option>
+                      <option>Mobile App Development</option>
+                      <option>Brand Identity</option>
+                      <option>Graphic Design</option>
+                      <option>AI Integration</option>
+                      <option>Automation / N8N</option>
+                      <option>Design System</option>
+                      <option>Startup MVP</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary }}>Budget Range</label>
+                    <select
+                      value={form.budget_range}
+                      onChange={e => setForm({ ...form, budget_range: e.target.value })}
+                      style={{
+                        padding: "12px 16px", borderRadius: 12, border: `1px solid ${T.border}`,
+                        background: T.surface2, color: T.textPrimary, outline: "none", fontSize: 14, cursor: "pointer"
+                      }}
+                    >
+                      <option value="">Select budget...</option>
+                      <option>Under $2,000</option>
+                      <option>$2,000 – $5,000</option>
+                      <option>$5,000 – $15,000</option>
+                      <option>$15,000 – $50,000</option>
+                      <option>$50,000+</option>
+                    </select>
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary }}>Timeline</label>
+                    <select
+                      value={form.timeline}
+                      onChange={e => setForm({ ...form, timeline: e.target.value })}
+                      style={{
+                        padding: "12px 16px", borderRadius: 12, border: `1px solid ${T.border}`,
+                        background: T.surface2, color: T.textPrimary, outline: "none", fontSize: 14, cursor: "pointer"
+                      }}
+                    >
+                      <option value="">Ideal timeline...</option>
+                      <option>ASAP (less than 2 weeks)</option>
+                      <option>1 – 2 months</option>
+                      <option>2 – 4 months</option>
+                      <option>4+ months</option>
+                      <option>Not sure yet</option>
+                    </select>
+                  </div>
+
+                  <div style={{ gridColumn: "span 2", display: "flex", flexDirection: "column", gap: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary }}>Project Details *</label>
+                    <textarea
+                      rows={4}
+                      placeholder="Tell us about your project, goals, and any specific requirements..."
+                      required
+                      value={form.message}
+                      onChange={e => setForm({ ...form, message: e.target.value })}
+                      style={{
+                        padding: "12px 16px", borderRadius: 12, border: `1px solid ${T.border}`,
+                        background: T.surface2, color: T.textPrimary, outline: "none", fontSize: 14, resize: "none"
+                      }}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    style={{
+                      gridColumn: "span 2", padding: "14px", borderRadius: 12, border: "none",
+                      background: `linear-gradient(135deg, ${T.accent1}, ${T.accent2})`,
+                      color: T.bg, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em",
+                      cursor: submitting ? "not-allowed" : "pointer", fontSize: 13, marginTop: 10
+                    }}
+                  >
+                    {submitting ? "Sending..." : "Submit Inquiry"}
+                  </button>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ── Footer ── */}
       <div style={{ position: "relative", zIndex: 2 }}>

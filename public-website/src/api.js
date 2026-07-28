@@ -4,7 +4,11 @@ const API = axios.create({ baseURL: "http://200.141.2.131:5000/api" });
 
 API.interceptors.request.use((config) => {
   const member = JSON.parse(localStorage.getItem("member") || "{}");
-  if (member.token) config.headers.Authorization = `Bearer ${member.token}`;
+  const admin = JSON.parse(localStorage.getItem("admin") || "{}");
+  const token = member.token || admin.token || (typeof admin === "string" ? admin : null);
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 });
 

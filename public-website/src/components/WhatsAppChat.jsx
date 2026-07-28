@@ -69,24 +69,31 @@ export default function WhatsAppChat() {
     setLoading(true);
     try {
       // Direct call to search catalog or products matching user text
-      const lower = userText.toLowerCase();
+      const lower = userText.toLowerCase().trim();
       let responseText = "";
 
-      if (lower.includes("wood") || lower.includes("teak") || lower.includes("plaque")) {
+      if (lower.includes("hi") || lower.includes("hello") || lower.includes("hey") || lower.includes("greetings")) {
+        responseText = "Hello there! I'm your Olive Seeds design assistant. How can I help you customize your physical crafts or digital systems today?";
+      } else if (lower.includes("wood") || lower.includes("teak") || lower.includes("plaque")) {
         responseText = "We specialize in custom wood engravings! We craft custom Teakwood nameplates, wedding keepsake frames, and customized plaques. Would you like me to prepare an inquiry to send directly to our WhatsApp workshop team?";
       } else if (lower.includes("acrylic") || lower.includes("glass")) {
         responseText = "Our optical acrylic pieces are polished with high precision and laser etched for crisp corporate logos or wedding blocks. I can package this requirement and route you to WhatsApp anytime.";
-      } else if (lower.includes("shipping") || lower.includes("delivery") || lower.includes("days")) {
+      } else if (lower.includes("shipping") || lower.includes("delivery") || lower.includes("days") || lower.includes("time")) {
         responseText = "We ship worldwide (USA, UK, Canada, Australia, Singapore, Europe, etc.). Laser engraving takes 2-4 business days, and delivery takes about 7-14 business days. Would you like to connect with a shipping agent via WhatsApp?";
       } else if (lower.includes("bulk") || lower.includes("corporate") || lower.includes("wholesale") || lower.includes("quantity")) {
         responseText = "We support corporate volume orders and bulk custom engraving! You can check our personalization workflows, materials, and fill out our dedicated query form on our Engraving Solutions page (/engraving). Would you like to review that?";
       } else if (lower.includes("engrav") || lower.includes("how it works") || lower.includes("material")) {
         responseText = "To read all about our precision engraving specifications (Wood, Acrylic, Leather, Glass, MDF) and customization journey, feel free to visit our dedicated Engraving Solutions page (/engraving).";
-      } else if (lower.includes("currency") || lower.includes("price") || lower.includes("cost")) {
-        responseText = "We display prices in local currency automatically using geo-location detection. If you are ordering in bulk, we offer special corporate discounts via our Engraving solutions page (/engraving).";
+      } else if (lower.includes("currency") || lower.includes("price") || lower.includes("cost") || lower.includes("how much")) {
+        responseText = "We display prices in local currency automatically using geo-location detection. Physical nameplates start at ₹1,299, acrylic designs at ₹1,999, and digital assets start at ₹499. Do you have a specific product in mind?";
+      } else if (lower.includes("who are you") || lower.includes("name") || lower.includes("bot")) {
+        responseText = "I'm the Olive Seeds Design Studio AI assistant! I'm here to guide you through our collections and help prepare customization drafts.";
+      } else if (lower.includes("refund") || lower.includes("return") || lower.includes("cancel")) {
+        responseText = "For custom engraved physical items, returns aren't supported once processed, but we share a design mockup proof with you before engraving. Digital products are instant downloads and non-refundable.";
       } else {
-        // Fallback helper
-        responseText = "That sounds like a beautiful creation! Let me prepare a custom craft order draft with those details. You can review this draft and tap 'Connect to Workshop' to submit it instantly.";
+        // Highly contextual fallback helper to avoid repetition
+        const sanitized = userText.length > 50 ? userText.slice(0, 47) + "..." : userText;
+        responseText = `I'd love to assist you with "${sanitized}"! Could you clarify if you are interested in a custom physical engraving (like wood or acrylic nameplates) or one of our digital workspace templates? I can also package this directly as a WhatsApp draft.`;
       }
 
       setTimeout(() => {

@@ -1336,7 +1336,7 @@ export default function Home() {
                 marginTop: "14px", letterSpacing: "-0.02em", lineHeight: 1.08,
               }}>Physical Masterpieces</h2>
             </FadeUp>
-            <Link to="/categoryCatelog" style={{
+            <Link to="/categories" style={{
               fontSize: "12px", fontWeight: 600, letterSpacing: "0.1em",
               textTransform: "uppercase", color: "var(--gold)",
               textDecoration: "none",
