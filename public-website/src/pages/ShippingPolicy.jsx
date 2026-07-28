@@ -21,7 +21,7 @@ const zoneGroups = [
     countries: ["UAE 🇦🇪", "Saudi Arabia 🇸🇦", "Bahrain 🇧🇭", "Kuwait 🇰🇼"],
     standardDays: "8–15 business days",
     expressDays: "7–10 business days",
-    taxNote: "No additional tax",
+    taxNote: "Country of Origin",
   },
   {
     zone: "Southeast Asia & Pacific",
@@ -30,7 +30,7 @@ const zoneGroups = [
     countries: ["Singapore 🇸🇬", "Malaysia 🇲🇾", "Australia 🇦🇺", "New Zealand 🇳🇿"],
     standardDays: "8–15 business days",
     expressDays: "7–10 business days",
-    taxNote: "No additional tax",
+    taxNote: "Country of Origin",
   },
   {
     zone: "Europe & North America",
@@ -39,7 +39,7 @@ const zoneGroups = [
     countries: ["UK 🇬🇧", "Germany 🇩🇪", "France 👑", "Netherlands 🇳🇱", "USA 🇺🇸", "Canada 🇨🇦"],
     standardDays: "8–15 business days",
     expressDays: "7–10 business days",
-    taxNote: "No additional tax",
+    taxNote: "Country of Origin",
   },
 ];
 

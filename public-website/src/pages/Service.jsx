@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
@@ -28,9 +28,7 @@ const Icons = {
   ),
   Graphic: ({ color = "var(--gold)", size = 22 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 2L2 7l10 5 10-5-10-5z" />
-      <path d="M2 17l10 5 10-5" />
-      <path d="M2 12l10 5 10-5" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
     </svg>
   ),
   Brand: ({ color = "var(--gold)", size = 22 }) => (
@@ -94,20 +92,20 @@ const SERVICES = [
   {
     title: "Graphic Design",
     iconKey: "Graphic",
-    desc: "Luxury brand visuals, social media creatives, packaging, print assets and premium marketing materials.",
-    tag: "Visual",
+    desc: "Bespoke print collateral, high-end pitch decks, visual presentation assets and brand style books.",
+    tag: "Visual Design",
   },
   {
     title: "Brand Identity",
     iconKey: "Brand",
-    desc: "Complete branding systems including logo design, typography, color systems and brand strategy.",
+    desc: "Crafting foundational identities — color frameworks, guidelines, logomarks, typography structures.",
     tag: "Branding",
   },
   {
     title: "AI Integration",
     iconKey: "AI",
-    desc: "AI-powered workflows, automation systems, chatbot integration and intelligent business solutions.",
-    tag: "Automation",
+    desc: "Deploying automated intelligence, fine-tuning custom prompts, LLM endpoints and smart service wrappers.",
+    tag: "Intelligence",
   },
 ];
 
@@ -115,7 +113,7 @@ const PROCESS_STEPS = [
   {
     num: "01",
     title: "Discovery",
-    desc: "Deep-dive into your business goals, audience needs, and competitive landscape to build a clear foundation.",
+    desc: "Deep research, client alignment, project analysis, and establishing a core design thesis for your business.",
   },
   {
     num: "02",
@@ -145,6 +143,17 @@ const PROCESS_STEPS = [
 ];
 
 export default function Service() {
+  useEffect(() => {
+    if (window.location.hash) {
+      const el = document.getElementById(window.location.hash.substring(1));
+      if (el) {
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: "smooth" });
+        }, 150);
+      }
+    }
+  }, []);
+
   const [form, setForm] = useState({
     name: "",
     company: "",
@@ -237,9 +246,9 @@ export default function Service() {
         /* HERO GRID LINES */
         .hero-grid {
           background-image:
-            linear-gradient(rgba(201,168,106,0.06) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(201,168,106,0.06) 1px, transparent 1px);
-          background-size: 64px 64px;
+            linear-gradient(rgba(201,168,106,0.14) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(201,168,106,0.14) 1px, transparent 1px);
+          background-size: 60px 60px;
         }
 
         /* SERVICE CARD */
@@ -616,10 +625,10 @@ export default function Service() {
           }}
         />
 
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 32px", position: "relative", zIndex: 1 }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 32px", position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
           {/* Label */}
           <FadeUp>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 28 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 28 }}>
               <Icons.Sparkles size={14} color="var(--gold)" />
               <span className="os-label">Digital Design & Technology Studio</span>
             </div>
@@ -629,9 +638,10 @@ export default function Service() {
           <FadeUp delay={0.1}>
             <h1
               className="os-heading os-hero-h1"
-              style={{ fontSize: 64, color: "var(--accent)", maxWidth: 840, marginBottom: 28, lineHeight: 1.1 }}
+              style={{ fontSize: 64, color: "var(--accent)", maxWidth: 880, margin: "0 auto 28px", lineHeight: 1.12 }}
             >
               Professional Digital Design Services —{" "}
+              <br />
               <span style={{
                 background: "linear-gradient(135deg, var(--gold) 0%, #b8943d 100%)",
                 WebkitBackgroundClip: "text",
@@ -648,9 +658,9 @@ export default function Service() {
               style={{
                 fontSize: 18,
                 color: "var(--text-2)",
-                maxWidth: 620,
+                maxWidth: 680,
                 lineHeight: 1.8,
-                marginBottom: 44,
+                margin: "0 auto 44px",
                 fontWeight: 400,
               }}
             >
@@ -661,7 +671,7 @@ export default function Service() {
 
           {/* CTAs */}
           <FadeUp delay={0.3}>
-            <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center", marginBottom: "20px" }}>
               <a href="#contact" className="btn-primary" style={{ padding: "16px 36px" }}>
                 Start Your Project
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">

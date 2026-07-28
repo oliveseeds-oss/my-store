@@ -1171,7 +1171,7 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-                <Link to="/contact" className="btn-outline" style={{ fontSize: "12px", padding: "12px 24px" }}>
+                <Link to="/service#contact" className="btn-outline" style={{ fontSize: "12px", padding: "12px 24px" }}>
                   Request a Quote →
                 </Link>
               </div>
