@@ -7,17 +7,17 @@ import SEO from "../components/SEO";
 
 const FadeUp = ({ children, delay = 0 }) => (
   <motion.div
-    initial={{ opacity: 0, y: 40 }}
+    initial={{ opacity: 0, y: 30 }}
     whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, margin: "-60px" }}
-    transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
+    viewport={{ once: true, margin: "-40px" }}
+    transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
   >
     {children}
   </motion.div>
 );
 
 const Icons = {
-  Trophy: ({ color = "var(--gold)", size = 24 }) => (
+  Trophy: ({ color = "#c9a86a", size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
       <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
       <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
@@ -26,77 +26,50 @@ const Icons = {
       <path d="M12 2a6 6 0 0 1 6 6c0 3.3-2 6-6 6S6 11.3 6 8a6 6 0 0 1 6-6z" />
     </svg>
   ),
-  Pen: ({ color = "var(--gold)", size = 24 }) => (
+  Pen: ({ color = "#c9a86a", size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 20h9" />
       <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
     </svg>
   ),
-  Rings: ({ color = "var(--gold)", size = 24 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="7.5" cy="13.5" r="5" />
-      <circle cx="16.5" cy="10.5" r="5" />
-    </svg>
-  ),
-  Box: ({ color = "var(--gold)", size = 24 }) => (
+  Box: ({ color = "#c9a86a", size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
       <path d="m3.3 7 8.7 5 8.7-5" />
       <path d="M12 22V12" />
     </svg>
   ),
-  Wood: ({ color = "var(--gold)", size = 24 }) => (
+  Wood: ({ color = "#c9a86a", size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
       <ellipse cx="12" cy="5" rx="9" ry="3" />
       <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
       <path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3" />
     </svg>
   ),
-  Bolt: ({ color = "var(--gold)", size = 24 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M13 2 L3 14h9l-1 8 10-12h-9l1-8z" />
-    </svg>
-  ),
-  Art: ({ color = "var(--gold)", size = 24 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" />
-      <circle cx="8" cy="12" r="2" />
-      <circle cx="16" cy="12" r="2" />
-      <circle cx="12" cy="6" r="2" />
-      <circle cx="12" cy="18" r="2" />
-    </svg>
-  ),
-  Sparkles: ({ color = "var(--gold)", size = 24 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275Z" />
-      <path d="m5 3 1 2.5L8.5 6 6 7 5 9.5 4 7 1.5 6 4 5.5Z" opacity="0.6" />
-      <path d="m19 17 1 2.5 2.5.5-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1Z" opacity="0.6" />
-    </svg>
-  ),
-  Globe: ({ color = "var(--gold)", size = 24 }) => (
+  Globe: ({ color = "#c9a86a", size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="10" />
       <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
       <path d="M2 12h20" />
     </svg>
   ),
-  Shield: ({ color = "var(--gold)", size = 24 }) => (
+  Sparkles: ({ color = "#c9a86a", size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275Z" />
     </svg>
   ),
-  Support: ({ color = "var(--gold)", size = 24 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-    </svg>
-  ),
-  Lock: ({ color = "var(--gold)", size = 24 }) => (
+  Lock: ({ color = "#c9a86a", size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
     </svg>
   ),
-  Repeat: ({ color = "var(--gold)", size = 24 }) => (
+  Support: ({ color = "#c9a86a", size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+    </svg>
+  ),
+  Repeat: ({ color = "#c9a86a", size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
       <path d="m17 2 4 4-4 4" />
       <path d="M3 11v-1a4 4 0 0 1 4-4h14" />
@@ -107,27 +80,52 @@ const Icons = {
 };
 
 const MATERIALS = [
-  { icon: "Wood", name: "Wood", desc: "Natural grain, warm tones" },
-  { icon: "Sparkles", name: "Acrylic", desc: "Crystal clarity, bold finish" },
-  { icon: "Pen", name: "Leather", desc: "Rich texture, lasting luxury" },
-  { icon: "Globe", name: "Glass", desc: "Precision-cut, timeless shine" },
-  { icon: "Box", name: "Premium MDF", desc: "Smooth surface, perfect engraving" },
+  { 
+    icon: "Wood", 
+    name: "Teak & Maple Wood", 
+    desc: "Organic grains custom-finished to a warm, rich glow. Ideal for corporate nameplates and keepsakes.",
+    img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop" 
+  },
+  { 
+    icon: "Sparkles", 
+    name: "Frosted & Clear Acrylic", 
+    desc: "Sleek, glass-like transparency with safe polished edges. Popular for signage and modern awards.",
+    img: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=800&auto=format&fit=crop" 
+  },
+  { 
+    icon: "Pen", 
+    name: "Genuine Leather", 
+    desc: "High-contrast tactile burns on rich leather skins. Excellent for bespoke tech sleeves & notebooks.",
+    img: "https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?q=80&w=800&auto=format&fit=crop" 
+  },
+  { 
+    icon: "Globe", 
+    name: "Tempered Glass & Crystal", 
+    desc: "Frost-engraved patterns refracting light at high clarity. Premium choice for executive awards.",
+    img: "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?q=80&w=800&auto=format&fit=crop" 
+  },
+  { 
+    icon: "Box", 
+    name: "Premium Finished MDF", 
+    desc: "Ultra-smooth density cores carved with laser precision. Excellent for geometric wall decors.",
+    img: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?q=80&w=800&auto=format&fit=crop" 
+  },
 ];
 
 const WHY_US = [
-  { icon: "Wood", title: "Premium Materials", desc: "Only the finest wood, acrylic, metal and MDF." },
-  { icon: "Sparkles", title: "Precision Engraving", desc: "Laser-cut to micron accuracy every time." },
-  { icon: "Globe", title: "Worldwide Shipping", desc: "Fast, insured delivery to your doorstep." },
-  { icon: "Box", title: "Gift Ready Packaging", desc: "Luxury packaging that makes unboxing special." },
-  { icon: "Support", title: "Dedicated Support", desc: "Expert guidance from order to delivery." },
-  { icon: "Trophy", title: "Business Orders", desc: "Bulk corporate gifting with volume pricing." },
+  { icon: "Wood", title: "Micro-Precision Cutting", desc: "Advanced CO2 and Fiber lasers calibrated for micron accuracy." },
+  { icon: "Sparkles", title: "Premium Finished Wood", desc: "Strictly select organic Teakwood, Bamboo and high-grade Acrylic panels." },
+  { icon: "Globe", title: "Worldwide Shipping", desc: "Insured safe box deliveries globally across 25+ target regions." },
+  { icon: "Box", title: "Pre-Production Approvals", desc: "We coordinate and share detailed design mockup blueprints before engraving." },
+  { icon: "Support", title: "Enterprise Pricing", desc: "Dedicated managers and custom volume discounts for corporate events." },
+  { icon: "Trophy", title: "Bespoke Engraving Art", desc: "Expert craft team ensuring high contrast and clean edges on every piece." },
 ];
 
 const STEPS = [
-  { num: "01", title: "Choose Product", desc: "Browse our curated collection of premium engravables." },
-  { num: "02", title: "Add Personalization", desc: "Upload your name, logo or message for engraving." },
-  { num: "03", title: "Review Design", desc: "We send a digital proof before production begins." },
-  { num: "04", title: "Worldwide Delivery", desc: "Gift-packaged and shipped straight to your door." },
+  { num: "01", title: "Share Design & Spec", desc: "Provide your dimensions, select materials, and upload vector artwork/logos." },
+  { num: "02", title: "Mockup Approval", desc: "Our craft designers render a digital preview proof file for your confirmation." },
+  { num: "03", title: "Laser Calibrations", desc: "We run deep-relief engravings with precision laser machines in our studio." },
+  { num: "04", title: "Insured Delivery", desc: "Every unit is hand-polished, packaged in protective crates, and dispatched." },
 ];
 
 export default function Engraving() {
@@ -153,7 +151,7 @@ export default function Engraving() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.quantity < 10) {
-      alert("Minimum bulk quantity is 10 units.");
+      alert("Minimum order quantity for customization/bulk is 10 units.");
       return;
     }
     setSubmitting(true);
@@ -170,14 +168,14 @@ export default function Engraving() {
         message: ""
       });
     } catch (err) {
-      alert("Failed to submit bulk order request. Please try again.");
+      alert("Failed to submit inquiry. Please try again.");
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div style={{ background: "#FAF9F6", color: "#111", minHeight: "100vh", fontFamily: "'Inter', sans-serif" }}>
+    <div style={{ background: "#FAF9F6", color: "#1E2522", minHeight: "100vh", fontFamily: "'Outfit', sans-serif" }}>
       <SEO
         title="Custom Laser Engraving Solutions & Bulk Orders | Olive Seeds"
         description="Learn about our high-precision laser engraving customization journey, tactile materials, and request a personalized or bulk corporate order quote."
@@ -186,148 +184,214 @@ export default function Engraving() {
 
       <Navbar />
 
+      <style>{`
+        /* Custom layout classes for styling & responsive */
+        .engraving-hero {
+          display: grid;
+          grid-template-columns: 1.2fr 1fr;
+          gap: 48px;
+          align-items: center;
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 24px;
+          position: relative;
+          z-index: 5;
+        }
+        @media (max-width: 991px) {
+          .engraving-hero {
+            grid-template-columns: 1fr;
+            text-align: center;
+            gap: 40px;
+          }
+        }
+        
+        .materials-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 28px;
+        }
+        @media (max-width: 991px) {
+          .materials-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+        @media (max-width: 576px) {
+          .materials-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        .responsive-form-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 24px;
+        }
+        @media (max-width: 768px) {
+          .responsive-form-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+          }
+        }
+
+        .hero-img-box {
+          position: relative;
+          border-radius: 32px;
+          overflow: hidden;
+          box-shadow: 0 30px 60px rgba(0,0,0,0.25);
+          aspect-ratio: 4/3;
+        }
+        @media (max-width: 576px) {
+          .hero-img-box {
+            border-radius: 20px;
+          }
+        }
+      `}</style>
+
       {/* ── HERO BANNER ── */}
       <section style={{
-        background: "linear-gradient(135deg, #0F2744 0%, #0A1B30 100%)",
-        padding: "clamp(100px, 12vw, 160px) 24px clamp(80px, 10vw, 120px)",
+        background: "linear-gradient(135deg, #0A1424 0%, #050A12 100%)",
+        padding: "clamp(120px, 15vw, 180px) 0 clamp(80px, 12vw, 130px)",
         color: "#fff",
-        textAlign: "center",
         position: "relative",
         overflow: "hidden"
       }}>
+        {/* Glow effect */}
         <div style={{
-          position: "absolute", top: "-10%", left: "-10%",
-          width: "50%", height: "50%", borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(201,168,106,0.1) 0%, transparent 70%)"
+          position: "absolute", top: "-10%", right: "-10%",
+          width: "600px", height: "600px", borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(201,168,106,0.12) 0%, transparent 70%)",
+          pointerEvents: "none"
         }} />
-        <div style={{ maxWidth: "800px", margin: "0 auto", position: "relative", zIndex: 2 }}>
-          <span style={{
-            display: "inline-flex", alignItems: "center", gap: "8px",
-            background: "rgba(201,168,106,0.15)", border: "1px solid rgba(201,168,106,0.3)",
-            borderRadius: "100px", padding: "8px 18px",
-            fontSize: "11px", fontWeight: 700, letterSpacing: "0.14em",
-            textTransform: "uppercase", color: "var(--gold)", marginBottom: "28px"
-          }}>
-            Bespoke Laser Artistry
-          </span>
-          <h1 className="clash" style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)", fontWeight: 700, lineHeight: 1.08, marginBottom: "24px" }}>
-            High-Precision Custom <br />
-            <span style={{ background: "linear-gradient(135deg, var(--gold) 0%, #e0b96a 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Engraving Services</span>
-          </h1>
-          <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "17px", lineHeight: 1.7, maxWidth: "600px", margin: "0 auto 40px" }}>
-            From corporate branding and signature trophies to highly personalized keepsakes. Experience tactile luxury crafted to last forever.
-          </p>
-          <a href="#bulk-order" className="btn-gold" style={{ cursor: "pointer" }}>
-            Get Bulk Quote →
-          </a>
+
+        <div className="engraving-hero">
+          {/* Left info */}
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+            <span style={{
+              display: "inline-flex", alignItems: "center", gap: "8px",
+              background: "rgba(201,168,106,0.12)", border: "1px solid rgba(201,168,106,0.25)",
+              borderRadius: "100px", padding: "8px 18px",
+              fontSize: "10px", fontWeight: 850, letterSpacing: "0.2em",
+              textTransform: "uppercase", color: "var(--gold)", marginBottom: "28px",
+              marginInline: "auto"
+            }} className="mx-auto lg:ml-0">
+              ⚡ High-Precision Laser Studio
+            </span>
+            <h1 className="clash" style={{ fontSize: "clamp(2.4rem, 4.5vw, 4rem)", fontWeight: 700, lineHeight: 1.15, marginBottom: "24px", width: "100%" }}>
+              Bespoke Custom <br />
+              <span style={{ background: "linear-gradient(135deg, var(--gold) 0%, #f0cd84 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Engraving Services</span>
+            </h1>
+            <p style={{ color: "rgba(255,255,255,0.72)", fontSize: "16px", lineHeight: 1.7, maxWidth: "560px", marginBottom: "40px" }}>
+              Transform organic teakwood, premium acrylic blocks, custom leather, and tempered crystal trophies into masterfully engraved luxury keepsakes. Trusted by global brands and events.
+            </p>
+            <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", width: "100%", justifyContent: "center" }} className="lg:justify-start">
+              <a href="#bulk-order" className="btn-gold" style={{ padding: "16px 32px" }}>
+                Request Custom Quote
+              </a>
+              <a href="#materials" className="btn-secondary" style={{ padding: "16px 32px", borderColor: "rgba(255,255,255,0.2)", color: "#fff" }}>
+                Explore Materials
+              </a>
+            </div>
+          </div>
+
+          {/* Right graphics mockup */}
+          <div className="hero-img-box">
+            <img 
+              src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop" 
+              alt="Laser engraving machine calibrating depth on solid teakwood template"
+              style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+            />
+            {/* Glass badge */}
+            <div style={{
+              position: "absolute", bottom: "24px", left: "24px",
+              background: "rgba(10, 20, 36, 0.7)", border: "1px solid rgba(255,255,255,0.15)",
+              backdropFilter: "blur(16px)", padding: "16px 20px", borderRadius: "18px",
+              display: "flex", gap: "16px"
+            }}>
+              <div>
+                <p style={{ fontSize: "10px", textTransform: "uppercase", color: "rgba(255,255,255,0.6)", fontWeight: 700, margin: 0 }}>Calibration</p>
+                <p style={{ fontSize: "16px", fontWeight: 800, color: "var(--gold)", margin: "4px 0 0" }}>0.01 mm</p>
+              </div>
+              <div style={{ borderLeft: "1px solid rgba(255,255,255,0.15)" }} />
+              <div>
+                <p style={{ fontSize: "10px", textTransform: "uppercase", color: "rgba(255,255,255,0.6)", fontWeight: 700, margin: 0 }}>Materials</p>
+                <p style={{ fontSize: "16px", fontWeight: 800, color: "#fff", margin: "4px 0 0" }}>Premium Core</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ── TRUST BAR ── */}
-      <section style={{
-        background: "#FFF",
-        borderBottom: "1px solid var(--border)",
-        padding: "24px 24px"
-      }}>
-        <div style={{
-          maxWidth: "1280px", margin: "0 auto",
-          display: "flex", justifyContent: "space-around",
-          flexWrap: "wrap", gap: "24px"
-        }}>
-          {[
-            { icon: "Globe", title: "Worldwide Shipping", desc: "Insured door delivery" },
-            { icon: "Lock", title: "Secure Checkout", desc: "Razorpay & PayPal integrated" },
-            { icon: "Wood", title: "Premium Materials", desc: "Solid teak, acrylic, MDF" },
-            { icon: "Repeat", title: "Made To Order", desc: "Micron-accurate laser cuts" }
-          ].map((item, i) => {
-            const Icon = Icons[item.icon];
-            return (
-              <div key={i} style={{
-                display: "flex", alignItems: "center", gap: "14px", minWidth: "220px",
-                background: "var(--gold-soft)", padding: "12px 20px", borderRadius: "16px",
-                border: "1px solid var(--gold-border)"
-              }}>
-                <Icon size={24} color="var(--gold)" />
-                <div>
-                  <h4 style={{ fontSize: "13px", fontWeight: 700, margin: 0, color: "var(--accent)" }}>{item.title}</h4>
-                  <p style={{ fontSize: "11px", color: "var(--text-2)", margin: 0 }}>{item.desc}</p>
+      {/* ── INTRO / IMAGES SECTION ── */}
+      <section style={{ padding: "80px 24px", background: "#FFF" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "32px", alignItems: "center" }}>
+            <div style={{ position: "relative", borderRadius: "24px", overflow: "hidden", boxShadow: "0 20px 40px rgba(0,0,0,0.06)", height: "380px" }}>
+              <img 
+                src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=800&auto=format&fit=crop" 
+                alt="Personalized laser engraved gift boxes ready for dispatch" 
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+            </div>
+            <div style={{ padding: "20px" }}>
+              <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold)", display: "block", marginBottom: "12px" }}>Artisan Studio</span>
+              <h2 className="clash" style={{ fontSize: "clamp(2rem, 3.5vw, 2.6rem)", fontWeight: 700, color: "#0A1424", marginBottom: "20px", lineHeight: 1.25 }}>Exceptional Contrast & Crisp Tactile Finishes</h2>
+              <p style={{ color: "#666", fontSize: "15px", lineHeight: 1.7, marginBottom: "24px" }}>
+                Laser engraving is not just about burning surfaces—it is an art of speed, power, and focal calibrations. Our state-of-the-art machines carefully carve custom vector graphics, high-end typography, and complex brand logo signatures with zero fraying or rough margins.
+              </p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                <div style={{ borderLeft: "3.5px solid var(--gold)", paddingLeft: "14px" }}>
+                  <p style={{ fontWeight: 800, fontSize: "14px", margin: 0, color: "#0A1424" }}>Teakwood nameplates</p>
+                  <p style={{ fontSize: "12px", color: "#666", margin: "4px 0 0" }}>Deep 3D tactile burns</p>
+                </div>
+                <div style={{ borderLeft: "3.5px solid var(--gold)", paddingLeft: "14px" }}>
+                  <p style={{ fontWeight: 800, fontSize: "14px", margin: 0, color: "#0A1424" }}>Frosted acrylic blocks</p>
+                  <p style={{ fontSize: "12px", color: "#666", margin: "4px 0 0" }}>Clean ice-like glow</p>
                 </div>
               </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* ── HOW IT WORKS ── */}
-      <section style={{ padding: "clamp(60px, 6vw, 100px) 24px", background: "#FAF9F6" }}>
-        <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: "48px" }}>
-            <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold)", display: "block", marginBottom: "8px" }}>Workflow</span>
-            <h2 className="clash" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 700, color: "var(--accent)" }}>Your Customization Journey</h2>
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "24px" }}>
-            {STEPS.map((step, i) => (
-              <FadeUp key={i} delay={i * 0.1}>
-                <div style={{
-                  background: "#FFF",
-                  border: "1px solid var(--border)",
-                  borderRadius: "24px",
-                  padding: "32px 24px",
-                  height: "100%",
-                  transition: "all 0.3s ease",
-                  boxShadow: "0 8px 30px rgba(0, 0, 0, 0.02)"
-                }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.borderColor = "var(--gold)"; e.currentTarget.style.boxShadow = "0 16px 40px rgba(201,168,106,0.08)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.boxShadow = "0 8px 30px rgba(0, 0, 0, 0.02)"; }}
-                >
-                  <div style={{
-                    width: "36px", height: "36px", borderRadius: "50%",
-                    background: "var(--gold-soft)", border: "1px solid var(--gold-border)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    color: "var(--gold)", fontWeight: 800, fontSize: "13px", marginBottom: "20px"
-                  }}>
-                    {step.num}
-                  </div>
-                  <h3 style={{ fontSize: "16px", fontWeight: 700, color: "var(--accent)", marginBottom: "8px" }}>{step.title}</h3>
-                  <p style={{ fontSize: "13px", color: "var(--text-2)", lineHeight: 1.6, margin: 0 }}>{step.desc}</p>
-                </div>
-              </FadeUp>
-            ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ── OUR MATERIALS ── */}
-      <section style={{ padding: "clamp(60px, 6vw, 100px) 24px", background: "#FFF", borderTop: "1px solid var(--border)" }}>
-        <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: "48px" }}>
-            <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold)", display: "block", marginBottom: "8px" }}>Quality Standards</span>
-            <h2 className="clash" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 700, color: "var(--accent)", marginBottom: "16px" }}>Tactile. Premium. Lasting.</h2>
-            <p style={{ fontSize: "14px", color: "var(--text-2)", maxWidth: "540px", margin: "0 auto", lineHeight: 1.7 }}>
-              Every material is selected for its engraving quality, durability, and luxurious appearance.
+      {/* ── MATERIAL CARDS WITH IMAGES ── */}
+      <section id="materials" style={{ padding: "clamp(60px, 8vw, 100px) 24px", background: "#FAF9F6", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: "60px" }}>
+            <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold)", display: "block", marginBottom: "8px" }}>Selected Materials</span>
+            <h2 className="clash" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 700, color: "#0A1424", marginBottom: "16px" }}>Explore Engravable Media</h2>
+            <p style={{ fontSize: "15px", color: "#666", maxWidth: "560px", margin: "0 auto", lineHeight: 1.7 }}>
+              We handpick and finish every raw panel to ensure optimal density, structure, and high contrast vector responses.
             </p>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "20px" }}>
+          <div className="materials-grid">
             {MATERIALS.map((mat, i) => {
               const Icon = Icons[mat.icon] || Icons.Sparkles;
               return (
                 <FadeUp key={i} delay={i * 0.08}>
                   <div style={{
-                    display: "flex", gap: "20px", alignItems: "flex-start", padding: "20px",
-                    background: "#FAF9F6", borderRadius: "24px", border: "1px solid var(--border)",
-                    transition: "all 0.3s ease",
+                    background: "#FFF",
+                    borderRadius: "28px",
+                    overflow: "hidden",
+                    border: "1px solid var(--border)",
+                    boxShadow: "0 8px 30px rgba(0,0,0,0.02)",
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    transition: "transform 0.3s ease, border-color 0.3s ease"
                   }}
-                    onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.borderColor = "var(--gold)"; }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.borderColor = "var(--gold)"; }}
                     onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "var(--border)"; }}
                   >
-                    <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "var(--gold-soft)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                      <Icon size={22} color="var(--gold)" />
+                    <div style={{ height: "200px", overflow: "hidden", position: "relative" }}>
+                      <img src={mat.img} alt={mat.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      <div style={{ position: "absolute", top: "16px", left: "16px", background: "#FFF", padding: "10px", borderRadius: "12px", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", display: "flex" }}>
+                        <Icon size={18} color="var(--gold)" />
+                      </div>
                     </div>
-                    <div>
-                      <h4 style={{ fontSize: "16px", fontWeight: 700, color: "var(--accent)", marginBottom: "6px" }}>{mat.name}</h4>
-                      <p style={{ fontSize: "13px", color: "var(--text-2)", lineHeight: 1.5, margin: 0 }}>{mat.desc}</p>
+                    <div style={{ padding: "24px", flex: 1, display: "flex", flexDirection: "column" }}>
+                      <h4 style={{ fontSize: "17px", fontWeight: 750, color: "#0A1424", marginBottom: "8px" }}>{mat.name}</h4>
+                      <p style={{ fontSize: "13px", color: "#666", lineHeight: 1.6, margin: 0 }}>{mat.desc}</p>
                     </div>
                   </div>
                 </FadeUp>
@@ -337,36 +401,55 @@ export default function Engraving() {
         </div>
       </section>
 
-      {/* ── WHY OLIVE SEEDS ── */}
-      <section style={{ padding: "clamp(60px, 6vw, 100px) 24px", background: "#FAF9F6", borderTop: "1px solid var(--border)" }}>
+      {/* ── WORKFLOW STEPS ── */}
+      <section style={{ padding: "80px 24px", background: "#FFF" }}>
         <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: "48px" }}>
-            <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold)", display: "block", marginBottom: "8px" }}>Why Olive Seeds</span>
-            <h2 className="clash" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 700, color: "var(--accent)" }}>Craftsmanship You Can Trust</h2>
+          <div style={{ textAlign: "center", marginBottom: "52px" }}>
+            <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold)", display: "block", marginBottom: "8px" }}>Seamless Workflow</span>
+            <h2 className="clash" style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.5rem)", fontWeight: 700, color: "#0A1424" }}>Our Production Pipeline</h2>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "24px" }}>
+            {STEPS.map((step, i) => (
+              <div key={i} style={{
+                background: "#FAF9F6",
+                border: "1px solid var(--border)",
+                borderRadius: "24px",
+                padding: "28px 24px",
+              }}>
+                <span style={{ fontSize: "32px", fontWeight: 900, color: "rgba(201,168,106,0.22)", display: "block", marginBottom: "16px" }}>{step.num}</span>
+                <h4 style={{ fontSize: "16px", fontWeight: 750, color: "#0A1424", marginBottom: "8px" }}>{step.title}</h4>
+                <p style={{ fontSize: "13px", color: "#666", lineHeight: 1.6, margin: 0 }}>{step.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── WHY OLIVE SEEDS ── */}
+      <section style={{ padding: "80px 24px", background: "#FAF9F6", borderTop: "1px solid var(--border)" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: "52px" }}>
+            <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold)", display: "block", marginBottom: "8px" }}>Studio Guarantee</span>
+            <h2 className="clash" style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.5rem)", fontWeight: 700, color: "#0A1424" }}>High Standards, No Compromise</h2>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
             {WHY_US.map((item, i) => {
               const Icon = Icons[item.icon] || Icons.Sparkles;
               return (
-                <FadeUp key={i} delay={i * 0.08}>
-                  <div style={{
-                    display: "flex", gap: "16px", padding: "20px",
-                    background: "#FFF", borderRadius: "24px", border: "1px solid var(--border)",
-                    transition: "all 0.3s ease",
-                  }}
-                    onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.borderColor = "var(--gold)"; }}
-                    onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "var(--border)"; }}
-                  >
-                    <div style={{ width: "44px", height: "44px", borderRadius: "10px", background: "var(--gold-soft)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                      <Icon size={20} color="var(--gold)" />
-                    </div>
-                    <div>
-                      <h4 style={{ fontSize: "15px", fontWeight: 700, color: "var(--accent)", marginBottom: "4px" }}>{item.title}</h4>
-                      <p style={{ fontSize: "13px", color: "var(--text-2)", lineHeight: 1.5, margin: 0 }}>{item.desc}</p>
-                    </div>
+                <div key={i} style={{
+                  display: "flex", gap: "16px", padding: "24px",
+                  background: "#FFF", borderRadius: "24px", border: "1px solid var(--border)",
+                }}>
+                  <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: "var(--gold-soft)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <Icon size={18} color="var(--gold)" />
                   </div>
-                </FadeUp>
+                  <div>
+                    <h4 style={{ fontSize: "15px", fontWeight: 750, color: "#0A1424", marginBottom: "6px" }}>{item.title}</h4>
+                    <p style={{ fontSize: "13px", color: "#666", lineHeight: 1.5, margin: 0 }}>{item.desc}</p>
+                  </div>
+                </div>
               );
             })}
           </div>
@@ -374,21 +457,21 @@ export default function Engraving() {
       </section>
 
       {/* ── BULK ORDER FORM ── */}
-      <section id="bulk-order" style={{ padding: "clamp(80px, 8vw, 140px) 24px", background: "#0F2744", color: "#fff", position: "relative" }}>
-        <div style={{ maxWidth: "680px", margin: "0 auto", position: "relative", zIndex: 2 }}>
+      <section id="bulk-order" style={{ padding: "clamp(80px, 10vw, 130px) 24px", background: "#0A1424", color: "#fff", position: "relative" }}>
+        <div style={{ maxWidth: "720px", margin: "0 auto", position: "relative", zIndex: 2 }}>
           <div style={{ textAlign: "center", marginBottom: "48px" }}>
             <span style={{
               display: "inline-flex", alignItems: "center", gap: "8px",
-              background: "rgba(201,168,106,0.15)", border: "1px solid rgba(201,168,106,0.3)",
+              background: "rgba(201,168,106,0.12)", border: "1px solid rgba(201,168,106,0.25)",
               borderRadius: "100px", padding: "6px 14px",
-              fontSize: "10px", fontWeight: 700, letterSpacing: "0.14em",
+              fontSize: "10px", fontWeight: 700, letterSpacing: "0.15em",
               textTransform: "uppercase", color: "var(--gold)", marginBottom: "16px"
             }}>
-              Custom &amp; Volume Requests
+              Custom Consultation
             </span>
-            <h2 className="clash" style={{ fontSize: "clamp(2rem, 4vw, 3.2rem)", fontWeight: 700 }}>Request a Bulk Engraving Quote</h2>
-            <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "14px", marginTop: "12px" }}>
-              Ordering for an event, corporate retreat, or rebranding? Submit your customization specifications. Min order 10 units.
+            <h2 className="clash" style={{ fontSize: "clamp(2rem, 3.5vw, 2.8rem)", fontWeight: 700 }}>Request a Bulk Engraving Quote</h2>
+            <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "14px", marginTop: "12px", lineHeight: 1.6 }}>
+              Ordering customized nameplates, plaques, gifts or signage for your office or events? Fill out the brief below. (Minimum bulk volume: 10 units)
             </p>
           </div>
 
@@ -398,27 +481,24 @@ export default function Engraving() {
               animate={{ scale: 1, opacity: 1 }}
               style={{
                 background: "rgba(201,168,106,0.12)", border: "1px solid var(--gold-border)",
-                borderRadius: "20px", padding: "48px 32px", textAlign: "center"
+                borderRadius: "24px", padding: "48px 32px", textAlign: "center"
               }}
             >
-              <h3 className="clash" style={{ fontSize: "24px", color: "var(--gold)", marginBottom: "12px" }}>✓ Proposal Received</h3>
+              <h3 className="clash" style={{ fontSize: "22px", color: "var(--gold)", marginBottom: "12px" }}>✓ Specs Received</h3>
               <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.8)", lineHeight: 1.6, margin: 0 }}>
                 Thank you! Our design director will review your specifications and get in touch within 24 hours with design drafts and bulk price adjustments.
               </p>
             </motion.div>
           ) : (
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
                 <style>{`
-                  @media (max-width: 600px) {
-                    .grid-mobile-1col { grid-template-columns: 1fr !important; }
-                  }
                   .bulk-input {
                     width: 100%;
-                    background: rgba(255,255,255,0.04);
-                    border: 1.5px solid rgba(201,168,106,0.3);
-                    border-radius: 12px;
-                    padding: 14px 20px;
-                    color: #FAF9F6;
+                    background: rgba(255,255,255,0.03);
+                    border: 1px solid rgba(255,255,255,0.12);
+                    border-radius: 14px;
+                    padding: 14px 18px;
+                    color: #FFF;
                     font-size: 13.5px;
                     font-family: 'Inter', sans-serif;
                     outline: none;
@@ -426,22 +506,21 @@ export default function Engraving() {
                   }
                   .bulk-input:focus {
                     border-color: var(--gold);
-                    background: rgba(255,255,255,0.08);
-                    box-shadow: 0 0 12px rgba(201,168,106,0.15);
+                    background: rgba(255,255,255,0.06);
                   }
                   .bulk-label {
                     display: block;
-                    font-size: 11.5px;
+                    font-size: 10.5px;
                     font-weight: 700;
                     text-transform: uppercase;
-                    letter-spacing: 0.12em;
-                    color: rgba(255,255,255,0.85);
+                    letter-spacing: 0.15em;
+                    color: rgba(255,255,255,0.8);
                     margin-bottom: 8px;
                   }
                 `}</style>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }} className="grid-mobile-1col">
+              <div className="responsive-form-grid">
                 <div>
-                  <label className="bulk-label">Full Name</label>
+                  <label className="bulk-label">Full Name *</label>
                   <input
                     type="text"
                     required
@@ -451,7 +530,7 @@ export default function Engraving() {
                   />
                 </div>
                 <div>
-                  <label className="bulk-label">Work Email</label>
+                  <label className="bulk-label">Work Email *</label>
                   <input
                     type="email"
                     required
@@ -462,11 +541,12 @@ export default function Engraving() {
                 </div>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }} className="grid-mobile-1col">
+              <div className="responsive-form-grid">
                 <div>
-                  <label className="bulk-label">Phone Number</label>
+                  <label className="bulk-label">Phone Number *</label>
                   <input
                     type="tel"
+                    required
                     className="bulk-input"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -483,23 +563,23 @@ export default function Engraving() {
                 </div>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }} className="grid-mobile-1col">
+              <div className="responsive-form-grid">
                 <div>
-                  <label className="bulk-label">Product Category</label>
+                  <label className="bulk-label">Material / Product Type</label>
                   <select
                     className="bulk-input"
-                    style={{ appearance: "none" }}
+                    style={{ appearance: "none", background: "#0A1424" }}
                     value={formData.product_type}
                     onChange={(e) => setFormData({ ...formData, product_type: e.target.value })}
                   >
-                    <option value="Wooden Plaques" style={{ color: "#333" }}>Wooden Plaques &amp; Name Plates</option>
-                    <option value="Acrylic Products" style={{ color: "#333" }}>Acrylic Blocks &amp; Keepsakes</option>
-                    <option value="Leather Items" style={{ color: "#333" }}>Leather Coasters &amp; Sleeves</option>
-                    <option value="Other Crafts" style={{ color: "#333" }}>Custom Laser Material Cuts</option>
+                    <option value="Wooden Plaques">Wooden Plaques &amp; Signs</option>
+                    <option value="Acrylic Products">Acrylic Blocks &amp; Keepsakes</option>
+                    <option value="Leather Items">Leather Coasters &amp; Sleeves</option>
+                    <option value="Other Crafts">Other Material Cutting</option>
                   </select>
                 </div>
                 <div>
-                  <label className="bulk-label">Quantity Required (Min 10)</label>
+                  <label className="bulk-label">Quantity Required *</label>
                   <input
                     type="number"
                     min="10"
@@ -512,10 +592,11 @@ export default function Engraving() {
               </div>
 
               <div>
-                <label className="bulk-label">Personalization &amp; Engraving Details</label>
+                <label className="bulk-label">Project Brief &amp; Text to Engrave *</label>
                 <textarea
                   rows="4"
-                  placeholder="Tell us what you want to engrave. Include text details, approximate size, design style preference, or any special wood/acrylic finish request."
+                  required
+                  placeholder="Tell us what you want to engrave. Include text details, size limits, logo assets availability, or specialized finishes..."
                   className="bulk-input"
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
@@ -527,11 +608,11 @@ export default function Engraving() {
                 disabled={submitting}
                 className="btn-gold"
                 style={{
-                  marginTop: "12px", width: "100%", justifyContent: "center", cursor: "pointer",
-                  opacity: submitting ? 0.7 : 1
+                  marginTop: "8px", width: "100%", justifyContent: "center", cursor: "pointer",
+                  opacity: submitting ? 0.7 : 1, padding: "16px 0"
                 }}
               >
-                {submitting ? "Submitting Request..." : "Submit Proposal Draft →"}
+                {submitting ? "Submitting Inquiry..." : "Submit Inquiry Brief"}
               </button>
             </form>
           )}

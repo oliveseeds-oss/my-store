@@ -908,7 +908,22 @@ export default function DigitalProductList() {
 
           {/* ── Sidebar ── */}
           <aside style={{ width: 240, flexShrink: 0, display: "none" }} className="vault-sidebar">
-            <style>{`@media(min-width:1024px){.vault-sidebar{display:block!important;}}`}</style>
+            <style>{`
+              @media(min-width:1024px){.vault-sidebar{display:block!important;}}
+              @media(max-width:768px){
+                .responsive-split-1-2 {
+                  grid-template-columns: 1fr !important;
+                  gap: 40px !important;
+                }
+                .responsive-form {
+                  grid-template-columns: 1fr !important;
+                  gap: 12px !important;
+                }
+                .responsive-form > div {
+                  grid-column: span 1 !important;
+                }
+              }
+            `}</style>
             <div style={{
               position: "sticky",
               top: 72,

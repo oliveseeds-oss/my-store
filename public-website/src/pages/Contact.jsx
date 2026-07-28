@@ -20,22 +20,25 @@ export default function Contact() {
   });
 
   const countryCodes = [
-    "+1 USA",
-    "+44 UK",
-    "+91 India",
     "+61 Australia",
-    "+81 Japan",
-    "+49 Germany",
+    "+973 Bahrain",
+    "+32 Belgium",
+    "+1 Canada",
     "+33 France",
-    "+971 UAE",
-    "+86 China",
+    "+49 Germany",
+    "+91 India",
+    "+965 Kuwait",
+    "+60 Malaysia",
+    "+31 Netherlands",
+    "+64 New Zealand",
+    "+47 Norway",
+    "+974 Qatar",
+    "+966 Saudi Arabia",
     "+65 Singapore",
-    "+94 Sri Lanka",
-    "+880 Bangladesh",
-    "+92 Pakistan",
-    "+7 Russia",
-    "+39 Italy",
-    "+34 Spain",
+    "+41 Switzerland",
+    "+971 United Arab Emirates",
+    "+44 United Kingdom",
+    "+1 United States",
   ];
 
   const submit = async () => {
@@ -76,15 +79,15 @@ export default function Contact() {
 
   return (
     <div style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }} className="min-h-screen overflow-hidden">
-      <SEO 
-        title="Contact Our Studio" 
-        description="Reach out to the Olive Seeds creative team for corporate luxury engraving quotes, brand identity commissions, or digital asset customization." 
+      <SEO
+        title="Contact Our Studio"
+        description="Reach out to the Olive Seeds creative team for corporate luxury engraving quotes, brand identity commissions, or digital asset customization."
         keywords="contact us, custom order request, corporate premium quotes, customer care"
       />
       <Navbar />
 
       {/* Hero Section */}
-      <section 
+      <section
         style={{
           background: "linear-gradient(135deg, #0D1512 0%, #0d1a16 100%)",
           color: "#FAF9F6"
@@ -94,14 +97,14 @@ export default function Contact() {
         {/* Luxury glowing mesh blurs */}
         <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-[#FAF9F6]/10 rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute -bottom-10 left-10 w-72 h-72 bg-emerald-500/10 rounded-full blur-[80px] pointer-events-none" />
-        
+
         <div className="absolute inset-0 bg-white/5 opacity-5 pointer-events-none" />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            
+
             {/* Left Side Content */}
             <div className="flex flex-col gap-6">
-              <div 
+              <div
                 style={{ background: "rgba(255, 248, 222, 0.1)", borderColor: "rgba(255, 248, 222, 0.2)" }}
                 className="inline-flex items-center gap-2 border px-4 py-2 rounded-full backdrop-blur-md w-fit"
               >
@@ -111,7 +114,7 @@ export default function Contact() {
                 </span>
               </div>
 
-              <h1 
+              <h1
                 style={{ fontFamily: "'Outfit', sans-serif" }}
                 className="text-4xl md:text-6xl font-black leading-tight text-white tracking-tight"
               >
@@ -119,16 +122,16 @@ export default function Contact() {
               </h1>
 
               <p className="text-sm md:text-base leading-relaxed text-white/80 max-w-xl">
-                Premium custom wooden engravings, acrylic keepsakes, ecommerce portals, UI/UX design and professional corporate identity solutions crafted with extreme precision.
+                Premium custom engraving products, ecommerce portals, UI/UX design and professional corporate identity solutions crafted with extreme precision.
               </p>
 
               {/* Grid Features */}
               <div className="grid grid-cols-2 gap-4 mt-6">
                 {[
                   "Fast Response",
-                  "Premium UI/UX",
-                  "SEO Optimized",
-                  "Mobile Friendly",
+                  "Premium Products",
+                  "Digital Solution",
+                  "Trusted Partner",
                 ].map((item) => (
                   <div
                     key={item}
@@ -143,7 +146,7 @@ export default function Contact() {
 
             {/* Right Side Form Card */}
             <div className="w-full">
-              <div 
+              <div
                 style={{ background: "#FAF9F6", border: "1px solid rgba(27, 57, 49, 0.15)", color: "#0D1512" }}
                 className="rounded-3xl p-6 md:p-8 shadow-xl"
               >
@@ -163,7 +166,7 @@ export default function Contact() {
                     </div>
 
                     <div className="flex flex-col gap-4">
-                      
+
                       {/* Name fields */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
@@ -286,16 +289,16 @@ export default function Contact() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { title: "Bespoke Engraving", desc: "Hand-finished premium wood, bamboo, and acrylic gifts." },
-              { title: "Dynamic Agency Tools", desc: "Modern ecommerce platforms, React architectures and UI packs." },
-              { title: "Dedicated Support", desc: "Consistent guidance from discovery to doorstep shipment." }
+              { title: "Bespoke Engraving", desc: "Premium -finished best quality wood, mfd, bamboo, acryli and etc." },
+              { title: "Dynamic Agency Tools", desc: "Modern ecommerce platforms, React architectures, AI Agents and more." },
+              { title: "Dedicated Support", desc: "Consistent guidance from discovery to fulfillment." }
             ].map((item) => (
-              <div 
+              <div
                 key={item.title}
                 style={{ border: "1px solid rgba(27, 57, 49, 0.1)", background: "white" }}
                 className="rounded-3xl p-8 hover:-translate-y-1 transition-all duration-300"
               >
-                <div 
+                <div
                   style={{ background: "#0D1512", color: "#FAF9F6" }}
                   className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold mb-5"
                 >
