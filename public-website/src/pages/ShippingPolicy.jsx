@@ -107,8 +107,6 @@ export default function ShippingPolicy() {
           {[
             { value: "15", label: "Countries we ship to", icon: "🌍" },
             { value: "5–7", label: "Days domestic delivery", icon: "🇮🇳" },
-            { value: "₹90", label: "Starting shipping fee", icon: "💰" },
-            { value: "Free", label: "Above 999 ", icon: "🎁" },
           ].map((s) => (
             <div key={s.label} style={{
               background: "white", border: "1px solid rgba(27, 57, 49, 0.15)",
@@ -156,13 +154,11 @@ export default function ShippingPolicy() {
                     {[
                       { label: "Countries", value: zone.countries.join(", ") },
                       { label: "Standard delivery", value: zone.standardDays },
-                      { label: "Shipping fee", value: zone.baseFee },
-                      { label: "Free shipping above", value: zone.freeAbove },
                       { label: "Tax", value: zone.taxNote },
                     ].map((row, i) => (
                       <div key={i} style={{
                         padding: "20px",
-                        borderRight: i < 4 ? `1px solid ${c.border}` : "none",
+                        borderRight: i < 2 ? `1px solid ${c.border}` : "none",
                       }}>
                         <p style={{ fontSize: "10px", letterSpacing: "1.5px", textTransform: "uppercase", color: c.accent, opacity: 0.6, marginBottom: "6px", fontWeight: "bold" }}>
                           {row.label}

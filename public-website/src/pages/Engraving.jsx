@@ -409,35 +409,38 @@ export default function Engraving() {
             </motion.div>
           ) : (
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }} className="grid-mobile-1col">
                 <style>{`
                   @media (max-width: 600px) {
                     .grid-mobile-1col { grid-template-columns: 1fr !important; }
                   }
                   .bulk-input {
                     width: 100%;
-                    background: rgba(255,255,255,0.06);
-                    border: 1px solid rgba(255,255,255,0.15);
-                    border-radius: 8px;
-                    padding: 12px 16px;
-                    color: #fff;
-                    font-size: 14px;
+                    background: rgba(255,255,255,0.04);
+                    border: 1.5px solid rgba(201,168,106,0.3);
+                    border-radius: 12px;
+                    padding: 14px 20px;
+                    color: #FAF9F6;
+                    font-size: 13.5px;
+                    font-family: 'Inter', sans-serif;
                     outline: none;
-                    transition: border-color 0.3s;
+                    transition: all 0.3s ease;
                   }
                   .bulk-input:focus {
                     border-color: var(--gold);
+                    background: rgba(255,255,255,0.08);
+                    box-shadow: 0 0 12px rgba(201,168,106,0.15);
                   }
                   .bulk-label {
                     display: block;
-                    font-size: 11px;
-                    font-weight: 600;
+                    font-size: 11.5px;
+                    font-weight: 700;
                     text-transform: uppercase;
-                    letter-spacing: 0.08em;
-                    color: rgba(255,255,255,0.6);
-                    marginBottom: 6px;
+                    letter-spacing: 0.12em;
+                    color: rgba(255,255,255,0.85);
+                    margin-bottom: 8px;
                   }
                 `}</style>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }} className="grid-mobile-1col">
                 <div>
                   <label className="bulk-label">Full Name</label>
                   <input

@@ -53,7 +53,7 @@ Shipping partners — receive your name and delivery address to fulfil physical 
 
 Our technical infrastructure (server hosting, database) — your data is stored on secured servers with restricted access.
 
-We may disclose your information if required by law, court order, or to protect the rights and safety of MyStore or its customers.`,
+We may disclose your information if required by law, court order, or to protect the rights and safety of Olive Seeds or its customers.`,
   },
   {
     id: "retention",

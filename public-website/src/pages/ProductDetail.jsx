@@ -634,18 +634,18 @@ export default function ProductDetail() {
             )}
 
             {/* CTAs */}
-            <div className="flex flex-col gap-3 pt-2">
+            <div className="flex flex-col gap-3 pt-4">
               <button onClick={handleAddToCart}
                 disabled={product.stock === 0}
-                className={`w-full py-4.5 font-bold text-xs uppercase tracking-widest transition-all shadow-sm rounded-full cursor-pointer
+                className={`w-full py-4 font-bold text-xs uppercase tracking-widest transition-all shadow-md rounded-full cursor-pointer
                   ${added ? "bg-emerald-700 text-white"
                     : product.stock === 0 ? "bg-stone-200 text-stone-400 cursor-not-allowed"
-                      : "bg-amber-500 hover:bg-amber-600 text-white"}`}
+                      : "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white"}`}
                 style={{ fontFamily: "'Outfit', sans-serif" }}>
                 {added ? "✓ Added to Cart" : "Add to Cart"}
               </button>
               <button
-                className="w-full py-4.5 font-bold text-xs uppercase tracking-widest bg-stone-900 hover:bg-stone-800 text-white transition-all shadow-md rounded-full cursor-pointer"
+                className="w-full py-4 font-bold text-xs uppercase tracking-widest bg-stone-950 hover:bg-stone-900 text-white transition-all shadow-lg rounded-full cursor-pointer"
                 style={{ fontFamily: "'Outfit', sans-serif" }}
                 onClick={() => { handleAddToCart(); window.location.href = "/checkout"; }}>
                 Buy Now — Secure Checkout
@@ -653,21 +653,21 @@ export default function ProductDetail() {
             </div>
 
             {/* Payment Integration UI */}
-            <div className="border border-stone-200 bg-white p-4 flex flex-col gap-3 rounded-2xl shadow-sm">
-              <span className="text-[10px] text-amber-700 font-extrabold uppercase tracking-widest block" style={{ fontFamily: "'Outfit', sans-serif" }}>🔒 SECURE CHECKOUT OPTIONS</span>
-              <p className="text-[11px] text-stone-500">Select payment partner to complete transaction securely:</p>
+            <div className="border border-stone-200/60 bg-white p-5 flex flex-col gap-3.5 rounded-2xl shadow-sm mt-3">
+              <span className="text-[10px] text-amber-700 font-extrabold uppercase tracking-widest block" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: "0.12em" }}>🔒 SECURE CHECKOUT OPTIONS</span>
+              <p className="text-[11.5px] text-stone-500 leading-normal">Select payment partner to complete transaction securely:</p>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => alert("Razorpay checkout selected. You can proceed with Card/UPI/NetBanking at checkout.")}
-                  className="flex items-center justify-center gap-2 py-3 px-3 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50/50 transition cursor-pointer text-xs font-semibold text-stone-700"
+                  className="flex items-center justify-center gap-2 py-3 px-3 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50/50 transition cursor-pointer text-xs font-bold text-stone-700"
                 >
                   💳 Razorpay
                 </button>
                 <button
                   type="button"
                   onClick={() => alert("PayPal checkout selected. You can proceed with International cards/PayPal at checkout.")}
-                  className="flex items-center justify-center gap-2 py-3 px-3 border border-stone-200 rounded-xl hover:border-blue-500 hover:bg-blue-50/50 transition cursor-pointer text-xs font-semibold text-stone-700"
+                  className="flex items-center justify-center gap-2 py-3 px-3 border border-stone-200 rounded-xl hover:border-blue-500 hover:bg-blue-50/50 transition cursor-pointer text-xs font-bold text-stone-700"
                 >
                   🅿️ PayPal
                 </button>
@@ -675,7 +675,7 @@ export default function ProductDetail() {
             </div>
 
             {/* Perks */}
-            <div className="border border-stone-200 bg-white p-4 flex flex-col gap-2.5 rounded-2xl shadow-sm">
+            <div className="border border-stone-200/60 bg-white p-5 flex flex-col gap-3 rounded-2xl shadow-sm mt-1">
               {[
                 ["🚚", "Free delivery above ₹999"],
                 ["🔄", "7-day easy returns policy"],

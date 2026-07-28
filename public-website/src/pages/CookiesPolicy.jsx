@@ -141,7 +141,7 @@ export default function CookiesPolicy() {
               What are cookies?
             </h2>
             <p style={{ color: "#0D1512", fontSize: "14px", lineHeight: 1.85, fontWeight: 500 }}>
-              Cookies are small text files stored on your device when you visit a website. They help the site remember your preferences, keep you logged in, and understand how you use the site. MyStore uses cookies to provide you with a seamless shopping experience — from remembering your cart to showing prices in your local currency.
+              Cookies are small text files stored on your device when you visit a website. They help the site remember your preferences, keep you logged in, and understand how you use the site. Olive Seeds uses cookies to provide you with a seamless shopping experience — from remembering your cart to showing prices in your local currency.
             </p>
             <p style={{ color: "#0D1512", opacity: 0.9, fontSize: "14px", lineHeight: 1.85, marginTop: "12px", fontWeight: 500 }}>
               You can control your cookie preferences below. Note that disabling certain cookies may affect your experience on our site.

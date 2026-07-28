@@ -533,7 +533,7 @@ export default function Service() {
             <a href="#contact" className="btn-primary">
               Start Your Project
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </a>
             <a href="#services" className="btn-secondary">
@@ -544,7 +544,7 @@ export default function Service() {
           {/* Hero visual – abstract dashboard mockup */}
           <div className="responsive-hero-mockup">
             {/* Mockup bar rows */}
-            {[["#0F4C81","72%"],["#2563EB","58%"],["#14B87A","89%"]].map(([color, w], i) => (
+            {[["#0F4C81", "72%"], ["#2563EB", "58%"], ["#14B87A", "89%"]].map(([color, w], i) => (
               <div key={i} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 <div style={{ height: 8, borderRadius: 4, background: "#F7F8FA", overflow: "hidden" }}>
                   <div style={{ height: "100%", width: w, background: color, borderRadius: 4 }} />
@@ -554,7 +554,7 @@ export default function Service() {
               </div>
             ))}
             <div style={{ gridColumn: "span 3", display: "flex", gap: 10, marginTop: 8 }}>
-              {["UI/UX Design","Web Dev","Brand Identity","AI Integration"].map((t,i) => (
+              {["UI/UX Design", "Web Dev", "Brand Identity", "AI Integration"].map((t, i) => (
                 <span key={i} style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.05em", padding: "5px 12px", borderRadius: 6, background: "#F7F8FA", border: "1px solid #E5E7EB", color: "#667085" }}>{t}</span>
               ))}
             </div>
@@ -660,7 +660,7 @@ export default function Service() {
                 ].map((problem, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
                     <div style={{ width: 20, height: 20, borderRadius: "50%", background: "rgba(239,68,68,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 2 }}>
-                      <svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 2l6 6M8 2L2 8" stroke="#EF4444" strokeWidth="1.75" strokeLinecap="round"/></svg>
+                      <svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 2l6 6M8 2L2 8" stroke="#EF4444" strokeWidth="1.75" strokeLinecap="round" /></svg>
                     </div>
                     <span style={{ fontSize: 14, color: "#374151", lineHeight: 1.6 }}>{problem}</span>
                   </div>
@@ -695,7 +695,7 @@ export default function Service() {
                     ].map(([title, desc], i) => (
                       <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
                         <div style={{ width: 20, height: 20, borderRadius: "50%", background: "rgba(20,184,122,0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 2 }}>
-                          <svg width="10" height="8" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#14B87A" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                          <svg width="10" height="8" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#14B87A" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" /></svg>
                         </div>
                         <div>
                           <span style={{ fontSize: 13, fontWeight: 700, color: "#ffffff" }}>{title}</span>
@@ -707,7 +707,7 @@ export default function Service() {
 
                   <a href="#contact" className="btn-primary" style={{ marginTop: 32, display: "inline-flex" }}>
                     Discuss Your Project
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </a>
                 </div>
               </div>
@@ -773,16 +773,9 @@ export default function Service() {
                   {s.title}
                 </h3>
 
-                <p style={{ fontSize: 14, color: "#667085", lineHeight: 1.8, marginBottom: 24 }}>
+                <p style={{ fontSize: 14, color: "#667085", lineHeight: 1.8, marginBottom: 0 }}>
                   {s.desc}
                 </p>
-
-                <button
-                  style={{ fontSize: 13, fontWeight: 600, color: "#0F4C81", background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, padding: 0 }}
-                >
-                  Learn More
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7h9M8 3.5l3.5 3.5L8 10.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                </button>
               </div>
             ))}
           </div>
@@ -806,60 +799,65 @@ export default function Service() {
             {/* Featured large card */}
             <div
               style={{
-                background: "#0E1320",
-                borderRadius: 20,
+                backgroundImage: "url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80')",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                borderRadius: 24,
                 overflow: "hidden",
                 padding: "48px",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "flex-end",
-                minHeight: 360,
+                minHeight: 400,
                 position: "relative",
+                boxShadow: "0 12px 30px rgba(14,19,32,0.08)"
               }}
             >
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, rgba(15,76,129,0.6), rgba(37,99,235,0.3))", zIndex: 0 }} />
-              {/* Abstract mockup lines */}
-              <div style={{ position: "absolute", top: 32, left: 32, right: 32, zIndex: 1, opacity: 0.3 }}>
-                {[1,0.7,0.5,0.3].map((w,i) => (
-                  <div key={i} style={{ height: 6, background: "#fff", borderRadius: 3, marginBottom: 8, width: `${w * 100}%` }} />
-                ))}
-              </div>
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(14,19,32,0.92) 0%, rgba(14,19,32,0.3) 60%, transparent 100%)", zIndex: 1 }} />
               <div style={{ position: "relative", zIndex: 2 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#14B87A", marginBottom: 10, display: "block" }}>SaaS Dashboard</span>
+                <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", color: "#14B87A", marginBottom: 10, display: "block" }}>SaaS Dashboard</span>
                 <h3 style={{ fontSize: 24, fontWeight: 700, color: "#ffffff", letterSpacing: "-0.03em" }}>Enterprise Analytics Platform</h3>
-                <p style={{ fontSize: 13, color: "rgba(255,255,255,0.6)", marginTop: 8 }}>UI/UX Design · Web Development · Design System</p>
+                <p style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", marginTop: 8 }}>UI/UX Design · Web Development · Design System</p>
               </div>
             </div>
 
             {/* Two smaller cards */}
             <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
               {[
-                { bg: "#F0F6FF", accent: "#0F4C81", label: "Mobile App", title: "FinTech iOS & Android App", sub: "App Design · Prototyping · Branding" },
-                { bg: "#F0FDF4", accent: "#14B87A", label: "Brand Identity", title: "B2B SaaS Rebrand System", sub: "Logo · Typography · Brand Guidelines" },
+                { img: "https://images.unsplash.com/photo-1555774698-0b77e0d5fa6a?auto=format&fit=crop&w=600&q=80", accent: "#6EE7F9", label: "Mobile App", title: "FinTech iOS & Android App", sub: "App Design · Prototyping · Branding" },
+                { img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80", accent: "#C9A86A", label: "Brand Identity", title: "B2B SaaS Rebrand System", sub: "Logo · Typography · Brand Guidelines" },
               ].map((item, i) => (
                 <div
                   key={i}
                   style={{
-                    background: item.bg,
-                    borderRadius: 20,
+                    backgroundImage: `url('${item.img}')`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    borderRadius: 24,
                     padding: "36px",
-                    border: "1px solid #E5E7EB",
                     flex: 1,
                     position: "relative",
                     overflow: "hidden",
+                    minHeight: 188,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "flex-end",
+                    boxShadow: "0 10px 25px rgba(14,19,32,0.06)"
                   }}
                 >
-                  <div style={{ position: "absolute", top: 20, right: 20, width: 80, height: 80, borderRadius: "50%", background: item.accent, opacity: 0.08 }} />
-                  <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: item.accent, marginBottom: 10, display: "block" }}>{item.label}</span>
-                  <h3 style={{ fontSize: 20, fontWeight: 700, color: "#0E1320", letterSpacing: "-0.02em", marginBottom: 8 }}>{item.title}</h3>
-                  <p style={{ fontSize: 12, color: "#667085" }}>{item.sub}</p>
+                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(14,19,32,0.92) 0%, rgba(14,19,32,0.3) 70%, transparent 100%)", zIndex: 1 }} />
+                  <div style={{ position: "relative", zIndex: 2 }}>
+                    <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", color: item.accent, marginBottom: 8, display: "block" }}>{item.label}</span>
+                    <h3 style={{ fontSize: 19, fontWeight: 700, color: "#ffffff", letterSpacing: "-0.02em", marginBottom: 6 }}>{item.title}</h3>
+                    <p style={{ fontSize: 12.5, color: "rgba(255,255,255,0.7)" }}>{item.sub}</p>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
           <div style={{ textAlign: "center", marginTop: 48 }}>
-            <a href="#contact" className="btn-secondary">View Full Portfolio</a>
+            <Link to="/portfolio" className="btn-secondary">View Full Portfolio</Link>
           </div>
         </div>
       </section>
@@ -998,7 +996,7 @@ export default function Service() {
           </div>
 
           <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center" }}>
-            {["Figma","Framer","React","Next.js","Flutter","WordPress","N8N","OpenAI","Tailwind CSS","TypeScript","Node.js","Supabase"].map((tech, i) => (
+            {["Figma", "Framer", "React", "Next.js", "Flutter", "WordPress", "N8N", "OpenAI", "Tailwind CSS", "TypeScript", "Node.js", "More"].map((tech, i) => (
               <span key={i} className="tech-badge">{tech}</span>
             ))}
           </div>
@@ -1041,7 +1039,7 @@ export default function Service() {
                 {/* Stars */}
                 <div style={{ display: "flex", gap: 3, marginBottom: 20 }}>
                   {[...Array(5)].map((_, j) => (
-                    <svg key={j} width="14" height="14" viewBox="0 0 14 14" fill="#F59E0B"><path d="M7 1l1.5 4h4l-3.3 2.4 1.3 4L7 9 3.5 11.4l1.3-4L1.5 5H5.5z"/></svg>
+                    <svg key={j} width="14" height="14" viewBox="0 0 14 14" fill="#F59E0B"><path d="M7 1l1.5 4h4l-3.3 2.4 1.3 4L7 9 3.5 11.4l1.3-4L1.5 5H5.5z" /></svg>
                   ))}
                 </div>
 
@@ -1244,7 +1242,7 @@ export default function Service() {
                     style={{ gridColumn: "span 2", justifyContent: "center", fontSize: 15, padding: "18px 32px", cursor: "pointer" }}
                   >
                     {submitting ? "Sending Enquiry..." : "Send Project Enquiry"}
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </button>
                 </form>
               )}
@@ -1283,7 +1281,7 @@ export default function Service() {
                 style={{ background: "#ffffff", color: "#0E1320", fontSize: 15 }}
               >
                 Start Your Project
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </a>
             </div>
           </div>

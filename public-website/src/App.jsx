@@ -67,6 +67,7 @@ export default function App() {
               <Route path="/catalog"            element={<Catalog />} />
               <Route path="/categories"         element={<CategoryCatalog />} />
               <Route path="/gallery"            element={<Gallery />} />
+              <Route path="/portfolio"          element={<Gallery />} />
               <Route path="/engraving"          element={<Engraving />} />
 
               {/* ── Legal & info pages ── */}

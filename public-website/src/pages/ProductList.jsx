@@ -782,22 +782,22 @@ export default function ProductList() {
         }} />
         <div style={{ maxWidth: "680px", margin: "0 auto", textAlign: "center", position: "relative", zIndex: 2 }}>
           <div style={{
-            background: "rgba(255,255,255,0.03)",
-            border: "1px solid rgba(255,255,255,0.08)",
+            background: "#081322",
+            border: "2px solid #C9A86A",
             borderRadius: "32px",
             padding: "48px 32px",
-            boxShadow: "0 24px 60px rgba(0,0,0,0.3)",
+            boxShadow: "0 24px 60px rgba(0,0,0,0.5)",
             backdropFilter: "blur(20px)"
           }}>
-            <p style={{ ...eyebrow(true), color: "var(--gold)", marginBottom: "12px" }}>Stay Inspired</p>
+            <p style={{ ...eyebrow(true), color: "#C9A86A", marginBottom: "12px" }}>Stay Inspired</p>
             <h2 className="clash" style={{
               fontWeight: 400, fontSize: "clamp(28px, 4vw, 44px)",
-              color: "#FFAF3E", lineHeight: 1.15, marginBottom: "16px",
+              color: "#ffffff", lineHeight: 1.15, marginBottom: "16px",
             }}>
               Design Inspiration &amp;<br />Exclusive Launches
             </h2>
             <p style={{
-              fontFamily: T.bodyFont, fontSize: "14px", color: "rgba(255,255,255,0.6)",
+              fontFamily: T.bodyFont, fontSize: "14px", color: "rgba(255,255,255,0.8)",
               lineHeight: 1.7, marginBottom: "32px",
             }}>
               Join our community of design lovers. Be first to discover new collections,
@@ -813,9 +813,9 @@ export default function ProductList() {
                   flex: "1 1 240px", maxWidth: "300px",
                   padding: "14px 20px",
                   borderRadius: 50,
-                  border: `1px solid rgba(201,168,106,0.3)`,
-                  background: "rgba(255,255,255,0.05)",
-                  color: "#FAF9F6",
+                  border: `1px solid #C9A86A`,
+                  background: "rgba(255,255,255,0.06)",
+                  color: "#ffffff",
                   fontFamily: T.bodyFont, fontSize: 13,
                   outline: "none",
                 }}
@@ -824,10 +824,10 @@ export default function ProductList() {
                 padding: "14px 28px",
                 borderRadius: 50,
                 border: "none",
-                background: "var(--gold)",
-                color: "#1B1510",
+                background: "linear-gradient(135deg, #C9A86A 0%, #a87c3a 100%)",
+                color: "#081322",
                 fontFamily: T.bodyFont, fontSize: 12,
-                fontWeight: 700, letterSpacing: "0.1em",
+                fontWeight: 750, letterSpacing: "0.1em",
                 textTransform: "uppercase",
                 cursor: "pointer",
                 flexShrink: 0,
@@ -838,27 +838,41 @@ export default function ProductList() {
             </div>
 
             <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", paddingTop: "24px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-              <Link to="/engraving#bulk-order" className="btn-gold" style={{ cursor: "pointer", textDecoration: "none" }}>
+              <Link to="/engraving#bulk-order" style={{
+                display: "inline-flex",
+                alignItems: "center",
+                background: "linear-gradient(135deg, #C9A86A 0%, #a87c3a 100%)",
+                color: "#081322",
+                fontSize: 12,
+                fontWeight: 750,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                padding: "14px 30px",
+                borderRadius: 100,
+                textDecoration: "none",
+                boxShadow: "0 6px 20px rgba(201,168,106,0.25)",
+                transition: "all 0.3s ease",
+              }}>
                 Bulk Order Form
               </Link>
               <Link to="/engraving" style={{
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 10,
-                background: "transparent",
-                color: "#FAF9F6",
+                background: "rgba(255,255,255,0.08)",
+                color: "#ffffff",
                 fontSize: 12,
-                fontWeight: 700,
+                fontWeight: 750,
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",
                 padding: "14px 30px",
                 borderRadius: 100,
-                border: `1.5px solid rgba(201,168,106,0.4)`,
+                border: `1.5px solid #C9A86A`,
                 textDecoration: "none",
                 transition: "all 0.3s ease",
               }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--gold)"; e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(201,168,106,0.4)"; e.currentTarget.style.background = "transparent"; }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = "#ffffff"; e.currentTarget.style.background = "rgba(255,255,255,0.12)"; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = "#C9A86A"; e.currentTarget.style.background = "rgba(255,255,255,0.08)"; }}
               >
                 Learn About Engraving
               </Link>

@@ -28,7 +28,7 @@ All product descriptions, images, and specifications are provided in good faith.
     id: "ordering",
     number: "03",
     title: "Orders & Payments",
-    content: `When you place an order, you are making a binding offer to purchase the selected product(s) at the stated price. Your order is confirmed only upon receipt of a confirmation email from MyStore containing your unique Order ID and Invoice ID.
+    content: `When you place an order, you are making a binding offer to purchase the selected product(s) at the stated price. Your order is confirmed only upon receipt of a confirmation email from Olive Seeds containing your unique Order ID and Invoice ID.
 
 Prices are displayed in Indian Rupees (₹) by default and may be shown in your local currency using our live conversion tool. Final billing is processed in INR. Currency conversion rates are indicative and subject to change.
 
@@ -52,7 +52,7 @@ Engraving placement and proportions may be adjusted slightly by our craftspeople
     title: "Intellectual Property",
     content: `All content on Olive Seeds — including but not limited to website design, text, graphics, logos, photographs, and digital product files — is owned by or licensed to Olive Seeds and is protected by applicable copyright and intellectual property laws.
 
-Digital products purchased from MyStore are licensed for personal and commercial use by the buyer only. Resale, redistribution, sublicensing, or sharing of digital files is strictly prohibited.
+Digital products purchased from Olive Seeds are licensed for personal and commercial use by the buyer only. Resale, redistribution, sublicensing, or sharing of digital files is strictly prohibited.
 
 By submitting your own designs or text for engraving, you confirm that you hold the necessary rights or permissions for that content and that its use does not infringe any third-party rights.`,
   },
@@ -60,7 +60,7 @@ By submitting your own designs or text for engraving, you confirm that you hold 
     id: "liability",
     number: "06",
     title: "Limitation of Liability",
-    content: `To the fullest extent permitted by law, MyStore shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of our products or website.
+    content: `To the fullest extent permitted by law, Olive Seeds shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of our products or website.
 
 Our total liability for any claim arising under these terms shall not exceed the amount you paid for the specific order giving rise to the claim.
 
@@ -80,7 +80,7 @@ If any provision of these terms is found to be unenforceable, the remaining prov
     title: "Changes to Terms",
     content: `We may update these Terms & Conditions from time to time to reflect changes in our practices or for legal, regulatory, or operational reasons. The updated terms will be posted on this page with a revised effective date.
 
-Your continued use of MyStore after any such changes constitutes your acceptance of the new terms. We encourage you to review these terms periodically.`,
+Your continued use of Olive Seeds after any such changes constitutes your acceptance of the new terms. We encourage you to review these terms periodically.`,
   },
 ];
 

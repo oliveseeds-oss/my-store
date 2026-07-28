@@ -746,13 +746,13 @@ export default function Home() {
               {/* H1 */}
               <motion.h1
                 className="clash"
-                initial={{ opacity: 0, y: 56 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1.0, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.8, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
                 style={{
-                  fontSize: "clamp(3rem, 5.5vw, 6rem)",
+                  fontSize: "clamp(2rem, 4.5vw, 4rem)",
                   fontWeight: 700,
-                  lineHeight: 1.0,
+                  lineHeight: 1.08,
                   color: "var(--accent)",
                   letterSpacing: "-0.02em",
                   marginBottom: "0",
@@ -772,23 +772,23 @@ export default function Home() {
                 <br />
                 Templates &amp; Design
                 <br />
-                Services <span style={{ fontWeight: 400, color: "var(--text-2)", fontSize: "75%" }}>— Worldwide</span>
+                Services <span style={{ fontWeight: 400, color: "var(--text-2)", fontSize: "70%" }}>— Worldwide</span>
               </motion.h1>
 
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.9, delay: 0.38 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
                 style={{
                   color: "var(--text-2)",
-                  fontSize: "17px",
-                  lineHeight: 1.75,
-                  maxWidth: "520px",
-                  margin: "28px 0 44px",
+                  fontSize: "15px",
+                  lineHeight: 1.65,
+                  maxWidth: "500px",
+                  margin: "18px 0 32px",
                   fontWeight: 400,
                 }}
               >
-                Bespoke laser-acrylic & wooden engraved gifts, personalized arts,  &amp; interior products keepsakes —
+                Bespoke laser-acrylic & wooden engraved gifts, personalized arts, &amp; interior products keepsakes —
                 paired with premium Notion workspaces, Figma systems, and React web engineering,
                 all crafted from our design studio.
               </motion.p>
@@ -797,14 +797,14 @@ export default function Home() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.52 }}
-                style={{ display: "flex", gap: "14px", flexWrap: "wrap", marginBottom: "72px" }}
+                transition={{ duration: 0.8, delay: 0.45 }}
+                style={{ display: "flex", gap: "12px", flexWrap: "wrap", marginBottom: "40px" }}
               >
-                <Link to="/products" className="btn-primary">
+                <Link to="/products" className="btn-primary" style={{ padding: "12px 24px", fontSize: "13px" }}>
                   Shop Gifts
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: "4px" }}><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                 </Link>
-                <Link to="/digital" className="btn-outline">
+                <Link to="/digital" className="btn-outline" style={{ padding: "12px 24px", fontSize: "13px" }}>
                   Explore Digital Studio
                 </Link>
               </motion.div>
@@ -849,6 +849,7 @@ export default function Home() {
 
             {/* RIGHT — ad panel + floating badges */}
             <motion.div
+              className="hero-right-panel"
               initial={{ opacity: 0, x: 40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1.0, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
@@ -1648,17 +1649,17 @@ export default function Home() {
       </section>
 
       <section style={{
-        padding: "clamp(50px, 5vw, 80px) 0", background: "#0D1512",
+        padding: "48px 0", background: "#0D1512",
         borderTop: "1px solid rgba(255,255,255,0.1)",
         overflow: "hidden",
       }}>
         <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
-          <FadeUp style={{ textAlign: "center", marginBottom: "32px" }}>
+          <FadeUp style={{ textAlign: "center", marginBottom: "24px" }}>
             <span className="eyebrow" style={{ justifyContent: "center" }}>Client Stories</span>
             <h2 className="clash" style={{
-              fontSize: "clamp(1.8rem, 3.5vw, 2.8rem)",
+              fontSize: "clamp(1.6rem, 3vw, 2.4rem)",
               fontWeight: 700, color: "#fff",
-              marginTop: "12px", letterSpacing: "-0.02em",
+              marginTop: "8px", letterSpacing: "-0.02em",
             }}>Loved Globally</h2>
           </FadeUp>
         </div>
@@ -1688,31 +1689,31 @@ export default function Home() {
               animation-play-state: paused;
             }
             .story-card {
-              width: 380px;
+              width: 310px;
               flex-shrink: 0;
               background: rgba(255, 255, 255, 0.03);
               border: 1px solid rgba(255, 255, 255, 0.08);
-              border-radius: var(--radius);
-              padding: 36px 32px;
+              border-radius: 16px;
+              padding: 24px 20px;
               display: flex;
               flex-direction: column;
               justify-content: space-between;
-              box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
+              box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
               transition: all 0.3s ease;
               color: #fff;
-              margin-right: 24px;
+              margin-right: 20px;
             }
             .story-card:hover {
-              transform: translateY(-6px);
-              background: rgba(255, 255, 255, 0.07);
+              transform: translateY(-4px);
+              background: rgba(255, 255, 255, 0.06);
               border-color: var(--gold);
-              box-shadow: 0 12px 40px rgba(201, 168, 106, 0.15);
+              box-shadow: 0 10px 30px rgba(201, 168, 106, 0.12);
             }
             @media (max-width: 640px) {
               .story-card {
-                width: 300px;
-                padding: 28px 24px;
-                margin-right: 16px;
+                width: 260px;
+                padding: 18px 16px;
+                margin-right: 14px;
               }
             }
           `}</style>
@@ -1736,29 +1737,29 @@ export default function Home() {
                 <div key={`${t.name}-loop-1-${index}`} className="story-card">
                   <div>
                     <span className="quote-mark" style={{ color: "var(--gold)", opacity: 0.35 }}>"</span>
-                    <div style={{ display: "flex", gap: "3px", marginBottom: "16px", marginTop: "8px" }}>
+                    <div style={{ display: "flex", gap: "3px", marginBottom: "12px", marginTop: "4px" }}>
                       {[...Array(5)].map((_, si) => (
-                        <svg key={si} width="14" height="14" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                        <svg key={si} width="12" height="12" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
                       ))}
                     </div>
-                    <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.8)", lineHeight: 1.7, fontStyle: "italic" }}>
+                    <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.8)", lineHeight: 1.65, fontStyle: "italic" }}>
                       "{t.text}"
                     </p>
                   </div>
 
-                  <div style={{ display: "flex", alignItems: "center", gap: "14px", marginTop: "28px", paddingTop: "22px", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px", marginTop: "18px", paddingTop: "14px", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
                     <div style={{
-                      width: "44px", height: "44px", borderRadius: "50%",
+                      width: "38px", height: "38px", borderRadius: "50%",
                       background: "var(--gold-soft)", border: "1px solid var(--gold-border)",
                       display: "flex", alignItems: "center", justifyContent: "center",
-                      color: "var(--gold)", fontSize: "13px", fontWeight: 700,
+                      color: "var(--gold)", fontSize: "12px", fontWeight: 700,
                       letterSpacing: "0.02em", flexShrink: 0,
                     }}>
                       {t.name.split(" ").map(w => w[0]).join("")}
                     </div>
                     <div>
-                      <div style={{ fontSize: "14px", fontWeight: 600, color: "#fff" }}>{t.name}</div>
-                      <div style={{ fontSize: "11px", color: "var(--gold)", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: "2px" }}>{t.role}</div>
+                      <div style={{ fontSize: "13px", fontWeight: 600, color: "#fff" }}>{t.name}</div>
+                      <div style={{ fontSize: "10.5px", color: "var(--gold)", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: "1px" }}>{t.role}</div>
                     </div>
                   </div>
                 </div>
@@ -1780,29 +1781,29 @@ export default function Home() {
                 <div key={`${t.name}-loop-2-${index}`} className="story-card">
                   <div>
                     <span className="quote-mark" style={{ color: "var(--gold)", opacity: 0.35 }}>"</span>
-                    <div style={{ display: "flex", gap: "3px", marginBottom: "16px", marginTop: "8px" }}>
+                    <div style={{ display: "flex", gap: "3px", marginBottom: "12px", marginTop: "4px" }}>
                       {[...Array(5)].map((_, si) => (
-                        <svg key={si} width="14" height="14" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                        <svg key={si} width="12" height="12" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
                       ))}
                     </div>
-                    <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.8)", lineHeight: 1.7, fontStyle: "italic" }}>
+                    <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.8)", lineHeight: 1.65, fontStyle: "italic" }}>
                       "{t.text}"
                     </p>
                   </div>
 
-                  <div style={{ display: "flex", alignItems: "center", gap: "14px", marginTop: "28px", paddingTop: "22px", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px", marginTop: "18px", paddingTop: "14px", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
                     <div style={{
-                      width: "44px", height: "44px", borderRadius: "50%",
+                      width: "38px", height: "38px", borderRadius: "50%",
                       background: "var(--gold-soft)", border: "1px solid var(--gold-border)",
                       display: "flex", alignItems: "center", justifyContent: "center",
-                      color: "var(--gold)", fontSize: "13px", fontWeight: 700,
+                      color: "var(--gold)", fontSize: "12px", fontWeight: 700,
                       letterSpacing: "0.02em", flexShrink: 0,
                     }}>
                       {t.name.split(" ").map(w => w[0]).join("")}
                     </div>
                     <div>
-                      <div style={{ fontSize: "14px", fontWeight: 600, color: "#fff" }}>{t.name}</div>
-                      <div style={{ fontSize: "11px", color: "var(--gold)", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: "2px" }}>{t.role}</div>
+                      <div style={{ fontSize: "13px", fontWeight: 600, color: "#fff" }}>{t.name}</div>
+                      <div style={{ fontSize: "10.5px", color: "var(--gold)", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: "1px" }}>{t.role}</div>
                     </div>
                   </div>
                 </div>

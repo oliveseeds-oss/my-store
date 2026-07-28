@@ -77,7 +77,11 @@ const GLOBAL_CSS = `
     background: rgba(110,231,249,0.06);
   }
   .vault-pill.active {
-    /* Digital card */
+    border-color: var(--a1);
+    color: var(--bg);
+    background: var(--a1);
+    box-shadow: 0 4px 20px rgba(110,231,249,0.3);
+  }
   .dcard {
     position: relative;
     overflow: hidden;
@@ -848,47 +852,7 @@ export default function DigitalProductList() {
         <AdBanner placement="Horizontal Banner" />
       </div>
 
-      {/* ── Featured Collections ── */}
-      <section style={{ padding: "64px 24px 48px", position: "relative", zIndex: 2 }}>
-        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-          <div style={{ marginBottom: 32 }}>
-            <p style={{
-              fontFamily: "Inter, sans-serif",
-              fontSize: 11,
-              fontWeight: 700,
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-              color: T.accent2,
-              marginBottom: 10,
-            }}>
-              Curated Vaults
-            </p>
-            <h2 className="sora" style={{
-              fontSize: "clamp(22px, 3vw, 32px)",
-              fontWeight: 800,
-              color: T.textPrimary,
-              letterSpacing: "-1px",
-              margin: 0,
-            }}>
-              Featured Collections
-            </h2>
-          </div>
-          <div className="collections-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 16 }}>
-            {COLLECTIONS.map((col) => (
-              <div key={col.title} className="coll-card">
-                <div style={{ fontSize: 28, marginBottom: 12 }}>{col.icon}</div>
-                <h3 className="sora" style={{ fontSize: 14, fontWeight: 700, color: T.textPrimary, margin: "0 0 6px", letterSpacing: "-0.3px" }}>
-                  {col.title}
-                </h3>
-                <p style={{ fontFamily: "Inter, sans-serif", fontSize: 12.5, color: T.textSecondary, margin: "0 0 14px", lineHeight: 1.5 }}>
-                  {col.desc}
-                </p>
-                <div style={{ height: 2, borderRadius: 2, background: `linear-gradient(90deg, ${col.accent}, transparent)`, width: "60%" }} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       {/* ── Main Products Section ── */}
       <section style={{ padding: "0 24px 80px", position: "relative", zIndex: 2 }}>
@@ -1070,6 +1034,48 @@ export default function DigitalProductList() {
                 ))}
               </div>
             )}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Featured Collections ── */}
+      <section style={{ padding: "48px 24px 72px", position: "relative", zIndex: 2, borderTop: `1px solid ${T.border}` }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+          <div style={{ marginBottom: 24, textAlign: "center" }}>
+            <p style={{
+              fontFamily: "Inter, sans-serif",
+              fontSize: 10,
+              fontWeight: 700,
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              color: T.accent2,
+              marginBottom: 8,
+            }}>
+              Curated Vaults
+            </p>
+            <h2 className="sora" style={{
+              fontSize: "clamp(20px, 2.5vw, 28px)",
+              fontWeight: 800,
+              color: T.textPrimary,
+              letterSpacing: "-0.5px",
+              margin: 0,
+            }}>
+              Featured Collections
+            </h2>
+          </div>
+          <div className="collections-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 20 }}>
+            {COLLECTIONS.map((col) => (
+              <div key={col.title} className="coll-card" style={{ padding: "20px", borderRadius: "18px" }}>
+                <div style={{ fontSize: 24, marginBottom: 10 }}>{col.icon}</div>
+                <h3 className="sora" style={{ fontSize: 13.5, fontWeight: 700, color: T.textPrimary, margin: "0 0 6px", letterSpacing: "-0.2px" }}>
+                  {col.title}
+                </h3>
+                <p style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: T.textSecondary, margin: "0 0 14px", lineHeight: 1.5 }}>
+                  {col.desc}
+                </p>
+                <div style={{ height: 2, borderRadius: 2, background: `linear-gradient(90deg, ${col.accent}, transparent)`, width: "40%" }} />
+              </div>
+            ))}
           </div>
         </div>
       </section>

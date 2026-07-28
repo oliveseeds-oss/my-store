@@ -30,7 +30,7 @@ const MOCK_POSTS = [
   { 
     id: 3, 
     title: "Sustainable Materials We Love and Design With", 
-    content: "Sustainability is at the core of MyStore. We source our natural wood, organic bamboo, and recycled acrylic from certified, responsible local suppliers. We believe that creating beautiful, permanent physical products shouldn't cost the earth. Read about our eco-friendly packaging and circular design philosophy.", 
+    content: "Sustainability is at the core of Olive Seeds. We source our natural wood, organic bamboo, and recycled acrylic from certified, responsible local suppliers. We believe that creating beautiful, permanent physical products shouldn't cost the earth. Read about our eco-friendly packaging and circular design philosophy.", 
     image_url: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?q=80&w=800&auto=format&fit=crop", 
     category: "Sustainability", 
     author: "Priya Natarajan", 
