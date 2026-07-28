@@ -1247,6 +1247,7 @@ export default function Service() {
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/></svg>
                   </button>
                 </form>
+              )}
 
               <p style={{ fontSize: 12, color: "#aab4c4", textAlign: "center", marginTop: 16 }}>
                 By submitting you agree to our Privacy Policy. We never share your data.
