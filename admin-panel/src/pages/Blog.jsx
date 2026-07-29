@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
+import API from "../api";
 import { 
   MdAdd, MdEdit, MdDelete, MdClose, MdArticle, 
   MdFormatBold, MdFormatItalic, MdFormatQuote, 
@@ -22,16 +23,36 @@ const INIT = {
 };
 
 export default function Blog() {
-  const [posts, setPosts] = useState([
-    { id: 1, title: "How we engrave your design with precision", content: "At our studio, every engraving is done with laser precision...", image: "", imageAlt: "", category: "Behind the scenes", author: "Admin", date: "2024-05-20", metaTitle: "", metaDescription: "", slug: "" },
-    { id: 2, title: "Top 5 gift ideas for corporate clients", content: "Looking for memorable gifts for your clients? Here are our picks...", image: "", imageAlt: "", category: "Gift ideas", author: "Admin", date: "2024-05-15", metaTitle: "", metaDescription: "", slug: "" },
-     ]);
+  const [posts, setPosts] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(INIT);
   const [editId, setEditId] = useState(null);
   const [preview, setPreview] = useState(null);
   const [activeTab, setActiveTab] = useState("content"); // ✅ Tab state
   const contentRef = useRef(null);
+
+  const fetchBlogs = () => {
+    API.get("/blogs")
+      .then((res) => {
+        const formatted = res.data.map(p => ({
+          ...p,
+          id: p.id,
+          title: p.title || "",
+          content: p.content || "",
+          image: p.image_url || "",
+          imageAlt: "",
+          category: p.category || "",
+          author: p.author || "Admin",
+          date: p.created_at ? p.created_at.split("T")[0] : new Date().toISOString().split("T")[0]
+        }));
+        setPosts(formatted);
+      })
+      .catch((err) => console.error("Failed to fetch blogs:", err));
+  };
+
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
 
   const openAdd = () => { 
     setForm(INIT); 
@@ -53,22 +74,44 @@ export default function Blog() {
     setShowForm(true); 
   };
   
-  const save = () => {
+  const save = async () => {
     if (!form.title || !form.content) return;
-    const today = new Date().toISOString().split("T")[0];
     
-    // Auto-generate slug if empty
-    const slug = form.slug || form.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const payload = {
+      title: form.title,
+      content: form.content,
+      category: form.category || "General",
+      author: form.author || "Admin",
+      image_url: form.image || ""
+    };
     
-    if (editId) {
-      setPosts(posts.map((p) => (p.id === editId ? { ...form, id: editId, date: p.date, slug } : p)));
-    } else {
-      setPosts([...posts, { ...form, id: Date.now(), date: today, slug }]);
+    try {
+      if (editId) {
+        await API.put(`/blogs/${editId}`, payload);
+      } else {
+        await API.post("/blogs", payload);
+      }
+      setShowForm(false);
+      fetchBlogs();
+    } catch (err) {
+      console.error("Failed to save blog:", err);
+      alert("Failed to save blog. Please check connection and try again.");
     }
-    setShowForm(false);
   };
   
-  const remove = (id) => setPosts(posts.filter((p) => p.id !== id));
+  const remove = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this blog post?")) return;
+    try {
+      await API.delete(`/blogs/${id}`);
+      fetchBlogs();
+      if (preview && preview.id === id) {
+        setPreview(null);
+      }
+    } catch (err) {
+      console.error("Failed to delete blog:", err);
+      alert("Failed to delete blog. Please try again.");
+    }
+  };
 
   // ✅ Rich text formatting helpers
   const insertFormatting = (prefix, suffix = prefix) => {
