@@ -23,9 +23,7 @@ const INIT = {
 
 export default function Blog() {
   const [posts, setPosts] = useState([
-    { id: 1, title: "How we engrave your design with precision", content: "At our studio, every engraving is done with laser precision...", image: "", imageAlt: "", category: "Behind the scenes", author: "Admin", date: "2024-05-20", metaTitle: "", metaDescription: "", slug: "" },
-    { id: 2, title: "Top 5 gift ideas for corporate clients", content: "Looking for memorable gifts for your clients? Here are our picks...", image: "", imageAlt: "", category: "Gift ideas", author: "Admin", date: "2024-05-15", metaTitle: "", metaDescription: "", slug: "" },
-  ]);
+     ]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(INIT);
   const [editId, setEditId] = useState(null);
