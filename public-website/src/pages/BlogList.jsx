@@ -6,6 +6,49 @@ import Footer from "../components/Footer";
 import SEO from "../components/SEO";
 import AdBanner from "../components/AdBanner";
 
+const MOCK_POSTS = [
+  {
+    id: 1,
+    title: "How We Engrave Your Design with Precision",
+    content: "At our studio, every engraving is done with laser precision. In this article, we dive deep into the science of fiber and CO2 lasers, how focal lengths affect engraving depth, and the meticulous process of calibrating speed and power for different materials like premium teakwood, slate, and crystal-clear acrylics. We believe that true luxury lies in the millimetres.",
+    image_url: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop",
+    category: "Behind the Scenes",
+    author: "Arjun Krishnamurthy",
+    created_at: "2026-05-20",
+    views: 1245
+  },
+  {
+    id: 2,
+    title: "Top 5 Gift Ideas for Corporate Clients & Executives",
+    content: "Looking for memorable, premium gifts for your high-value clients? Standard corporate merchandising often ends up in a drawer. Discover our top picks for highly personalized, hand-finished keepsakes—ranging from custom engraved desk organizers to modern executive walnut boxes—that leave a lasting impression of thoughtfulness and luxury.",
+    image_url: "https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=800&auto=format&fit=crop",
+    category: "Gift Ideas",
+    author: "Ravi Subramaniam",
+    created_at: "2026-05-15",
+    views: 894
+  },
+  {
+    id: 3,
+    title: "Sustainable Materials We Love and Design With",
+    content: "Sustainability is at the core of Olive Seeds. We source our natural wood, organic bamboo, and recycled acrylic from certified, responsible local suppliers. We believe that creating beautiful, permanent physical products shouldn't cost the earth. Read about our eco-friendly packaging and circular design philosophy.",
+    image_url: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?q=80&w=800&auto=format&fit=crop",
+    category: "Sustainability",
+    author: "Priya Natarajan",
+    created_at: "2026-05-10",
+    views: 732
+  },
+  {
+    id: 4,
+    title: "Personalization and Craftsmanship Trends for 2026",
+    content: "The world of custom gifts is evolving rapidly. From tactile, deep-relief 3D wood engraving to sleek, minimal frosted glass styles, personalization is shifting away from simple name prints towards high-end bespoke art. Explore the design aesthetics and production techniques shaping the custom-crafted landscape this year.",
+    image_url: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=800&auto=format&fit=crop",
+    category: "Design Trends",
+    author: "Priya Natarajan",
+    created_at: "2026-05-05",
+    views: 561
+  }
+];
+
 
 export default function BlogList() {
   const [posts, setPosts] = useState(MOCK_POSTS);
