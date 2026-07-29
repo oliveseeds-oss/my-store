@@ -56,11 +56,6 @@ CREATE TABLE `blogs` (
 --
 -- Dumping data for table `blogs`
 --
-
-INSERT INTO `blogs` (`id`, `title`, `content`, `category`, `author`, `image_url`, `created_at`) VALUES
-(1, 'How we engrave your design with precision', 'Every engraving starts with your idea. We use CO2 lasers calibrated to 0.01mm precision...', 'Behind the scenes', 'Admin', NULL, '2026-05-19 06:43:18'),
-(2, 'Top 5 gift ideas for corporate clients', 'Personalised gifts leave a lasting impression. Here are our top picks...', 'Gift ideas', 'Admin', NULL, '2026-05-19 06:43:18');
-
 -- --------------------------------------------------------
 
 --
@@ -80,43 +75,6 @@ CREATE TABLE `categories` (
 -- Dumping data for table `categories`
 --
 
-INSERT INTO `categories` (`id`, `name`, `type`, `description`, `created_at`, `image_url`) VALUES
-(1, 'Nameboard', 'physical', 'Custom name and house number boards', '2026-05-19 06:06:26', NULL),
-(2, 'Keychains', 'physical', 'Personalised laser-engraved keychains', '2026-05-19 06:06:26', NULL),
-(3, 'Mugs & Drinkware', 'physical', 'Engraved mugs, tumblers and bottles', '2026-05-19 06:06:26', NULL),
-(4, 'Photo Frames', 'physical', 'Custom engraved photo frames', '2026-05-19 06:06:26', NULL),
-(5, 'Corporate Gifts', 'physical', 'Bulk corporate gifting items', '2026-05-19 06:06:26', NULL),
-(6, 'Logo Kits', 'digital', 'Complete brand logo design packages', '2026-05-19 06:06:26', NULL),
-(7, 'Templates', 'digital', 'Ready-to-use editable design templates', '2026-05-19 06:06:26', NULL),
-(8, 'Social Media Packs', 'digital', 'Instagram, Facebook content packs', '2026-05-19 06:06:26', NULL),
-(9, 'Nameboard', 'physical', 'Custom name and house number boards', '2026-05-19 06:25:43', NULL),
-(10, 'Keychains', 'physical', 'Personalised laser-engraved keychains', '2026-05-19 06:25:43', NULL),
-(11, 'Mugs & Drinkware', 'physical', 'Engraved mugs, tumblers and bottles', '2026-05-19 06:25:43', NULL),
-(12, 'Photo Frames', 'physical', 'Custom engraved photo frames', '2026-05-19 06:25:43', NULL),
-(14, 'Logo Kits', 'digital', 'Complete brand logo design packages', '2026-05-19 06:25:43', NULL),
-(15, 'Templates', 'digital', 'Ready-to-use editable design templates', '2026-05-19 06:25:43', NULL),
-(16, 'Social Media Packs', 'digital', 'Instagram, Facebook content packs', '2026-05-19 06:25:43', NULL),
-(17, 'Nameboard', 'physical', 'Custom name and house number boards', '2026-05-19 06:26:45', NULL),
-(18, 'Keychains', 'physical', 'Personalised laser-engraved keychains', '2026-05-19 06:26:45', NULL),
-(19, 'Mugs & Drinkware', 'physical', 'Engraved mugs, tumblers and bottles', '2026-05-19 06:26:45', NULL),
-(20, 'Photo Frames', 'physical', 'Custom engraved photo frames', '2026-05-19 06:26:45', NULL),
-(22, 'Logo Kits', 'digital', 'Complete brand logo design packages', '2026-05-19 06:26:45', NULL),
-(23, 'Templates', 'digital', 'Ready-to-use editable design templates', '2026-05-19 06:26:45', NULL),
-(24, 'Social Media Packs', 'digital', 'Instagram, Facebook content packs', '2026-05-19 06:26:45', NULL),
-(25, 'Nameboard', 'physical', 'Custom name and house number boards', '2026-05-19 06:34:17', NULL),
-(26, 'Keychains', 'physical', 'Personalised laser-engraved keychains', '2026-05-19 06:34:17', NULL),
-(27, 'Mugs & Drinkware', 'physical', 'Engraved mugs, tumblers and bottles', '2026-05-19 06:34:17', NULL),
-(28, 'Photo Frames', 'physical', 'Custom engraved photo frames', '2026-05-19 06:34:17', NULL),
-(30, 'Logo Kits', 'digital', 'Complete brand logo design packages', '2026-05-19 06:34:17', NULL),
-(31, 'Templates', 'digital', 'Ready-to-use editable design templates', '2026-05-19 06:34:17', NULL),
-(32, 'Social Media Packs', 'digital', 'Instagram, Facebook content packs', '2026-05-19 06:34:17', NULL),
-(33, 'Nameboard', 'physical', 'Custom name and house number boards', '2026-05-19 06:43:18', NULL),
-(34, 'Keychains', 'physical', 'Personalised laser-engraved keychains', '2026-05-19 06:43:18', NULL),
-(35, 'Mugs & Drinkware', 'physical', 'Engraved mugs, tumblers and bottles', '2026-05-19 06:43:18', NULL),
-(36, 'Photo Frames', 'physical', 'Custom engraved photo frames', '2026-05-19 06:43:18', NULL),
-(38, 'Logo Kits', 'digital', 'Complete brand logo design packages', '2026-05-19 06:43:18', NULL),
-(39, 'Templates', 'digital', 'Ready-to-use editable design templates', '2026-05-19 06:43:18', NULL),
-(40, 'Social Media Packs', 'digital', 'Instagram, Facebook content packs', '2026-05-19 06:43:18', NULL);
 
 -- --------------------------------------------------------
 
@@ -253,9 +211,6 @@ CREATE TABLE `digital_products` (
 -- Dumping data for table `digital_products`
 --
 
-INSERT INTO `digital_products` (`id`, `product_uid`, `name`, `description`, `price`, `discount_price`, `category_id`, `file_url`, `thumbnail_url`, `images`, `tags`, `file_size`, `file_format`, `tax_rate`, `rating`, `review_count`, `is_active`, `created_at`) VALUES
-(1, 'DPD-LG-000001', 'Complete Logo Design Kit', 'Full brand identity kit — logo in AI, EPS, PNG, SVG formats. Light + dark variants. Fully editable.', 299.00, 199.00, 6, 'https://example.com/logo-kit.zip', NULL, NULL, '[\"Best Seller\",\"Trending\"]', '45 MB', 'AI, EPS, PNG, SVG', 18.00, 0.00, 0, 1, '2026-05-19 06:44:11'),
-(2, 'DPD-TP-000001', 'Business Card Template Pack', '10 premium editable business card templates in PSD and PDF. Print-ready.', 149.00, 49.00, 7, 'https://example.com/biz-card.zip', NULL, '[]', '[\"Top Rated\",\"New Arrival\"]', '28 MB', 'PSD, PDF', 18.00, 0.00, 0, 1, '2026-05-19 06:44:11');
 
 -- --------------------------------------------------------
 
@@ -278,13 +233,6 @@ CREATE TABLE `gallery` (
 -- Dumping data for table `gallery`
 --
 
-INSERT INTO `gallery` (`id`, `image_url`, `title`, `style`, `category`, `industry`, `material`, `created_at`) VALUES
-(1, 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=800&q=80', 'Teakwood Engraved Doorplate', 'Classic', 'Signage', 'Residential', 'Teak Wood', '2026-07-01 07:51:55'),
-(2, 'https://images.unsplash.com/photo-1449247700740-e4403cd261fe?auto=format&fit=crop&w=800&q=80', 'Minimalist Office Desk Nameplate', 'Modern', 'Nameplate', 'Corporate', 'Acrylic & Teak', '2026-07-01 07:51:55'),
-(3, 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80', 'Acrylic Backlit Logo Sign', 'Backlit', 'Logo Signs', 'Commercial', 'Frosted Acrylic', '2026-07-01 07:51:55'),
-(4, 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80', 'Laser Engraved Wooden Restaurant Menu', 'Rustic', 'Menus', 'Hospitality', 'Pine Wood', '2026-07-01 07:51:55'),
-(5, 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80', 'Brass Inlay Teak Wall Clock', 'Vintage', 'Clocks', 'Interior Design', 'Premium Teak & Brass', '2026-07-01 07:51:55');
-
 -- --------------------------------------------------------
 
 --
@@ -305,10 +253,6 @@ CREATE TABLE `members` (
 --
 -- Dumping data for table `members`
 --
-
-INSERT INTO `members` (`id`, `member_uid`, `name`, `email`, `password`, `phone`, `status`, `created_at`) VALUES
-(1, 'MBR-2026-000001', 'tdey', 'hariyo8056@gmail.com', '$2b$10$/eNwgVdUKN7cQ/tApHRD4uUY8xKkbJ5c6OwCDE9Iy85XwCbEg0pIC', '+919361177237', 'Active', '2026-05-23 05:57:30'),
-(2, 'MBR-2026-000002', 'demo', 'demo@gmail.com', '$2b$10$dSmssww89cOrhO2yrSz68Og0eyJIGatmP0ROAWH/GvG4E4lIn/iNO', '12345678901', 'Active', '2026-06-30 12:20:39');
 
 -- --------------------------------------------------------
 
@@ -351,11 +295,6 @@ CREATE TABLE `member_profiles` (
 --
 -- Dumping data for table `member_profiles`
 --
-
-INSERT INTO `member_profiles` (`id`, `member_uid`, `full_name`, `street_address`, `apt_suite`, `city`, `state`, `country`, `pincode`, `phone`, `email`, `updated_at`) VALUES
-(1, 'MBR-2026-000001', 'tdey', '112, stree', 'united', 'state', 'kansas', 'america', '620001', '+919361177237', 'hariyo8056@gmail.com', '2026-05-23 08:39:25'),
-(2, 'MBR-2026-000002', 'demo', NULL, NULL, NULL, NULL, NULL, NULL, '12345678901', 'demo@gmail.com', '2026-06-30 12:20:39');
-
 -- --------------------------------------------------------
 
 --
@@ -375,137 +314,6 @@ CREATE TABLE `notifications` (
 --
 -- Dumping data for table `notifications`
 --
-
-INSERT INTO `notifications` (`id`, `type`, `title`, `message`, `link`, `is_read`, `created_at`) VALUES
-(1, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-19 10:49:06'),
-(2, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-19 10:49:08'),
-(3, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-22 06:27:47'),
-(4, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-22 06:27:47'),
-(5, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /contact', NULL, 0, '2026-05-22 09:02:35'),
-(6, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /contact', NULL, 0, '2026-05-22 09:02:35'),
-(7, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-22 14:15:32'),
-(8, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-22 14:15:32'),
-(9, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /contact', NULL, 0, '2026-05-22 14:48:50'),
-(10, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /contact', NULL, 0, '2026-05-22 14:48:50'),
-(11, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /privacypolicy', NULL, 0, '2026-05-22 16:01:39'),
-(12, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /privacypolicy', NULL, 0, '2026-05-22 16:01:40'),
-(13, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-23 05:54:02'),
-(14, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-23 05:54:02'),
-(15, 'new_member', 'New member registered', 'tdey (hariyo8056@gmail.com) just created an account', '/members', 0, '2026-05-23 05:57:31'),
-(16, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-23 06:38:42'),
-(17, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /service', NULL, 0, '2026-05-23 07:14:38'),
-(18, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /service', NULL, 0, '2026-05-23 07:14:38'),
-(19, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /profile', NULL, 0, '2026-05-23 07:58:18'),
-(20, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /profile', NULL, 0, '2026-05-23 07:58:18'),
-(21, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /profile', NULL, 0, '2026-05-23 08:38:14'),
-(22, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /profile', NULL, 0, '2026-05-23 08:38:14'),
-(23, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /cart', NULL, 0, '2026-05-23 09:18:31'),
-(24, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /cart', NULL, 0, '2026-05-23 09:18:31'),
-(25, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /profile', NULL, 0, '2026-05-23 10:46:47'),
-(26, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /profile', NULL, 0, '2026-05-23 10:46:47'),
-(27, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /profile', NULL, 0, '2026-05-23 14:37:04'),
-(28, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-25 04:32:40'),
-(29, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-25 04:32:40'),
-(30, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-25 05:16:30'),
-(31, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-25 05:16:30'),
-(32, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-25 11:19:23'),
-(33, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-25 11:19:23'),
-(34, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-25 12:13:58'),
-(35, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-25 12:13:58'),
-(36, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-26 09:30:08'),
-(37, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-26 09:30:08'),
-(38, 'new_order', 'New physical order', 'ORD-P-000001 — ₹589 from Demo Customer (Digital)', '/orders', 0, '2026-05-26 10:36:56'),
-(39, 'new_order', 'New physical order', 'ORD-P-000002 — ₹589 from Demo Customer (Digital)', '/orders', 0, '2026-05-26 10:37:04'),
-(40, 'new_order', 'New physical order', 'ORD-P-000003 — ₹589 from Demo Customer (Digital)', '/orders', 0, '2026-05-26 10:42:31'),
-(41, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-26 10:44:05'),
-(42, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-26 10:44:05'),
-(43, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-26 11:19:26'),
-(44, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-26 11:19:26'),
-(45, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /digital', NULL, 0, '2026-05-26 12:58:45'),
-(46, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /digital', NULL, 0, '2026-05-26 12:58:45'),
-(47, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-26 12:58:45'),
-(48, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-26 12:58:45'),
-(49, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /products', NULL, 0, '2026-05-26 13:44:57'),
-(50, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /products', NULL, 0, '2026-05-26 13:44:57'),
-(51, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /products', NULL, 0, '2026-05-26 15:55:02'),
-(52, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /products', NULL, 0, '2026-05-26 15:55:02'),
-(53, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /service', NULL, 0, '2026-05-27 06:46:53'),
-(54, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /service', NULL, 0, '2026-05-27 06:46:53'),
-(55, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-27 10:27:18'),
-(56, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-27 10:27:18'),
-(57, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-27 14:06:28'),
-(58, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-27 14:06:28'),
-(59, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-27 14:51:56'),
-(60, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-27 14:51:55'),
-(61, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-27 15:57:11'),
-(62, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-05-27 15:57:12'),
-(63, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-01 07:48:56'),
-(64, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-01 07:48:56'),
-(65, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-01 08:38:25'),
-(66, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-01 08:38:25'),
-(67, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-01 14:10:28'),
-(68, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-01 14:10:28'),
-(69, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /products', NULL, 0, '2026-06-03 06:01:27'),
-(70, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /products', NULL, 0, '2026-06-03 06:01:27'),
-(71, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /products', NULL, 0, '2026-06-03 08:15:54'),
-(72, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /products', NULL, 0, '2026-06-03 08:15:54'),
-(73, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-06 14:17:54'),
-(74, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-06 14:17:54'),
-(75, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-10 09:19:19'),
-(76, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-10 09:19:19'),
-(77, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-11 07:04:50'),
-(78, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-11 07:04:50'),
-(79, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-11 07:50:19'),
-(80, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-11 07:50:19'),
-(81, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-11 08:27:15'),
-(82, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-11 08:27:15'),
-(83, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-11 09:02:48'),
-(84, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-11 09:02:48'),
-(85, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-11 09:39:16'),
-(86, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-11 09:39:16'),
-(87, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-11 10:18:59'),
-(88, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-11 10:18:59'),
-(89, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-11 11:35:04'),
-(90, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-11 11:35:04'),
-(91, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-11 12:14:48'),
-(92, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-11 12:14:48'),
-(93, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-27 13:59:04'),
-(94, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-27 13:59:04'),
-(95, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /service', NULL, 0, '2026-06-27 15:01:01'),
-(96, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /service', NULL, 0, '2026-06-27 15:01:01'),
-(97, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-29 08:56:30'),
-(98, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-29 08:56:30'),
-(99, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-29 11:01:26'),
-(100, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-29 11:01:26'),
-(101, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-30 07:50:57'),
-(102, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-30 07:50:57'),
-(103, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /products', NULL, 0, '2026-06-30 09:02:52'),
-(104, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /products', NULL, 0, '2026-06-30 09:02:52'),
-(105, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-30 11:56:57'),
-(106, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-06-30 11:56:57'),
-(107, 'new_member', 'New member registered (Pending OTP)', 'demo (demo@gmail.com) created account - pending OTP', '/members', 0, '2026-06-30 12:20:40'),
-(108, 'new_member', 'Member verified account', 'Member account activated: demo@gmail.com', '/members', 0, '2026-06-30 12:21:04'),
-(109, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /products/1', NULL, 0, '2026-06-30 12:31:44'),
-(110, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /products/1', NULL, 0, '2026-06-30 12:31:44'),
-(111, 'new_order', 'New physical order', 'ORD-P-000004 — ₹1593 from Demo Customer (Physical)', '/orders', 0, '2026-06-30 12:56:45'),
-(112, 'new_order', 'New physical order', 'ORD-P-000005 — ₹1593 from Demo Customer (Physical)', '/orders', 0, '2026-06-30 14:23:53'),
-(113, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /products/5', NULL, 0, '2026-06-30 14:30:45'),
-(114, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /products/5', NULL, 0, '2026-06-30 14:30:45'),
-(115, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-07-01 06:04:49'),
-(116, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-07-01 06:04:56'),
-(117, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-07-01 07:05:46'),
-(118, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-07-02 16:41:00'),
-(119, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-07-02 16:41:00'),
-(120, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-07-03 04:36:33'),
-(121, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-07-03 04:36:33'),
-(122, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-07-03 09:45:25'),
-(123, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-07-03 09:45:27'),
-(124, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /profile', NULL, 0, '2026-07-03 10:16:34'),
-(125, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /profile', NULL, 0, '2026-07-03 10:16:34'),
-(126, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-07-03 10:53:04'),
-(127, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-07-03 10:53:05'),
-(128, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-07-03 13:56:04'),
-(129, 'visitor', 'New website visitor', 'Visitor from ::1 on page: /', NULL, 0, '2026-07-03 13:56:04');
 
 -- --------------------------------------------------------
 
@@ -543,12 +351,7 @@ CREATE TABLE `otp_verifications` (
 
 --
 -- Dumping data for table `otp_verifications`
---
-
-INSERT INTO `otp_verifications` (`id`, `email`, `otp_code`, `purpose`, `is_verified`, `expires_at`, `created_at`) VALUES
-(1, 'demo@gmail.com', '219390', 'registration', 1, '2026-06-30 12:21:04', '2026-06-30 12:20:40');
-
--- --------------------------------------------------------
+---- --------------------------------------------------------
 
 --
 -- Table structure for table `physical_orders`
@@ -591,9 +394,6 @@ CREATE TABLE `physical_orders` (
 -- Dumping data for table `physical_orders`
 --
 
-INSERT INTO `physical_orders` (`id`, `order_uid`, `invoice_uid`, `member_uid`, `guest_name`, `guest_email`, `guest_phone`, `delivery_name`, `delivery_street`, `delivery_apt`, `delivery_city`, `delivery_state`, `delivery_country`, `delivery_pincode`, `subtotal`, `tax_amount`, `shipping_fee`, `total`, `currency_code`, `currency_rate`, `payment_mode`, `transaction_id`, `transaction_at`, `payment_status`, `status`, `tracking_number`, `invoice_date`, `updated_at`, `production_notes`, `production_status`) VALUES
-(5, 'ORD-P-000004', 'INV-P-000004', NULL, 'Demo Customer (Physical)', 'demo_1782824201828@example.com', '9876543210', 'Demo Customer (Physical)', '123 Innovation Street', 'Technopark', 'Chennai', 'Tamil Nadu', 'India', '600001', 1299.00, 234.00, 60.00, 1593.00, 'INR', 1.0000, 'COD', NULL, NULL, 'Pending', 'Processing', NULL, '2026-06-30 12:56:42', '2026-06-30 12:56:42', NULL, 'Pending'),
-(8, 'ORD-P-000005', 'INV-P-000005', NULL, 'Demo Customer (Physical)', 'demo_1782829432900@example.com', '9876543210', 'Demo Customer (Physical)', '123 Innovation Street', 'Technopark', 'Chennai', 'Tamil Nadu', 'India', '600001', 1299.00, 234.00, 60.00, 1593.00, 'INR', 1.0000, 'COD', NULL, NULL, 'Pending', 'Processing', NULL, '2026-06-30 14:23:53', '2026-06-30 14:23:53', NULL, 'Pending');
 
 -- --------------------------------------------------------
 
@@ -615,10 +415,6 @@ CREATE TABLE `physical_order_items` (
 --
 -- Dumping data for table `physical_order_items`
 --
-
-INSERT INTO `physical_order_items` (`id`, `order_uid`, `product_uid`, `product_name`, `selected_size`, `price`, `qty`, `tax_rate`) VALUES
-(5, 'ORD-P-000004', 'PRD-MOCK-101', 'Premium Engraved Wood Frame', 'A4 Size', 1299.00, 1, 18.00),
-(8, 'ORD-P-000005', 'PRD-MOCK-101', 'Premium Engraved Wood Frame', 'A4 Size', 1299.00, 1, 18.00);
 
 -- --------------------------------------------------------
 
@@ -652,13 +448,6 @@ CREATE TABLE `products` (
 -- Dumping data for table `products`
 --
 
-INSERT INTO `products` (`id`, `product_uid`, `name`, `description`, `price`, `discount_price`, `category_id`, `stock`, `image_url`, `images`, `sizes`, `tags`, `tax_rate`, `rating`, `review_count`, `is_active`, `created_at`, `enable_personalization`, `allow_multiple_templates`) VALUES
-(1, 'PRD-NB-000001', 'Wooden Circle Nameboard Dark Gold', 'Premium laser-engraved circular wooden nameboard with gold-finish lettering. Perfect for home entrance.', 799.00, 599.00, 1, 25, NULL, '[]', '[\"Small 6inch\",\"Medium 8inch\",\"Large 10inch\",\"XL 12inch\"]', '[\"Best Seller\",\"New Arrival\"]', 18.00, 0.00, 0, 1, '2026-05-19 06:43:50', 1, 0),
-(2, 'PRD-KC-000001', 'Personalised Name Keychain', 'Custom laser-engraved keychain in premium acrylic or wood. Your name or any message.', 199.00, 99.00, 2, 50, NULL, '[]', '[\"Standard size\"]', '[\"Best Seller\",\"New Arrival\"]', 18.00, 0.00, 0, 1, '2026-05-19 06:43:50', 1, 1),
-(3, 'PRD-MG-000001', 'Engraved Wooden Travel Mug', 'Double-wall wooden travel mug with your custom engraving on the side.', 499.00, 399.00, 3, 15, NULL, '[]', '[\"320ml\",\"450ml\"]', '[\"Top Rated\",\"New Arrival\"]', 18.00, 0.00, 0, 1, '2026-05-19 06:43:50', 0, 0),
-(5, 'gggggg', 'demo', '', 9999.00, NULL, 18, 777, '', '[]', '[]', '[]', 18.00, 0.00, 0, 1, '2026-06-30 12:19:29', 1, 0);
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `product_personalization_fields`
@@ -695,12 +484,6 @@ CREATE TABLE `product_personalization_fields` (
 -- Dumping data for table `product_personalization_fields`
 --
 
-INSERT INTO `product_personalization_fields` (`id`, `template_id`, `label`, `field_key`, `type`, `is_required`, `placeholder`, `help_text`, `min_chars`, `max_chars`, `default_value`, `sort_order`, `status`, `options`, `x_pos`, `y_pos`, `font_family`, `font_size`, `font_color`, `text_align`, `max_width`, `rotation`, `created_at`, `updated_at`) VALUES
-(3, 2, 'Dog', 'field_1', 'text', 1, 'Buddy', NULL, 3, 7, '', 0, 'active', '[]', NULL, NULL, 'sans-serif', 16, '#000000', 'left', NULL, NULL, '2026-06-30 12:18:34', '2026-06-30 12:18:34'),
-(4, 2, 'New Field', 'field_2', 'text', 0, NULL, NULL, NULL, NULL, '', 1, 'active', '[]', NULL, NULL, 'sans-serif', 16, '#000000', 'left', NULL, NULL, '2026-06-30 12:18:34', '2026-06-30 12:18:34'),
-(5, 4, 'New Field', 'field_1', 'text', 0, NULL, NULL, NULL, NULL, '', 0, 'active', '[]', NULL, NULL, 'sans-serif', 16, '#000000', 'left', NULL, NULL, '2026-06-30 12:42:51', '2026-06-30 12:42:51'),
-(6, 9, 'New Field', 'field_1', 'text', 0, NULL, NULL, NULL, NULL, '', 0, 'active', '[]', NULL, NULL, 'sans-serif', 16, '#000000', 'left', NULL, NULL, '2026-06-30 12:45:00', '2026-06-30 12:45:00'),
-(7, 9, 'New Field', 'field_2', 'image', 0, NULL, NULL, NULL, NULL, '', 1, 'active', '[]', NULL, NULL, 'sans-serif', 16, '#000000', 'left', NULL, NULL, '2026-06-30 12:45:00', '2026-06-30 12:45:00');
 
 -- --------------------------------------------------------
 
@@ -723,12 +506,6 @@ CREATE TABLE `product_templates` (
 --
 -- Dumping data for table `product_templates`
 --
-
-INSERT INTO `product_templates` (`id`, `product_id`, `name`, `preview_image`, `background_image`, `is_active`, `sort_order`, `created_at`, `updated_at`) VALUES
-(2, 2, 'Template 1', '', NULL, 1, 2, '2026-06-30 12:18:34', '2026-06-30 12:18:34'),
-(4, 1, 'God ', '', NULL, 1, 1, '2026-06-30 12:42:51', '2026-06-30 12:42:51'),
-(9, 5, 'Template 1', '', NULL, 1, 0, '2026-06-30 12:45:00', '2026-06-30 12:45:00');
-
 -- --------------------------------------------------------
 
 --
@@ -832,15 +609,6 @@ CREATE TABLE `settings` (
 
 --
 -- Dumping data for table `settings`
---
-
-INSERT INTO `settings` (`id`, `site_name`, `site_email`, `phone`, `address`, `default_currency`, `default_tax_rate`, `razorpay_key`, `razorpay_secret`, `admin_password`, `member_uid_counter`, `order_p_counter`, `order_d_counter`, `currency`, `shipping_fee`, `free_shipping_above`) VALUES
-(1, 'My Engraving Store', 'admin@mystore.com', '+91 98765 43210', 'Coimbatore, Tamil Nadu', 'INR', 18.00, NULL, NULL, '$2b$12$LoS1P3ZaKhMkcg1lEd1yuu3i/DuOh/P69jZLvvV4j6Bo10s8r7mu2', 2, 5, 0, 'INR', 60.00, 999.00),
-(2, 'My Engraving Store', 'admin@mystore.com', '+91 98765 43210', 'Coimbatore, Tamil Nadu', 'INR', 18.00, NULL, NULL, 'admin123', 0, 0, 0, 'INR', 60.00, 999.00),
-(3, 'My Engraving Store', 'admin@mystore.com', '+91 98765 43210', 'Coimbatore, Tamil Nadu', 'INR', 18.00, NULL, NULL, 'admin123', 0, 0, 0, 'INR', 60.00, 999.00),
-(4, 'My Engraving Store', 'admin@mystore.com', '+91 98765 43210', 'Coimbatore, Tamil Nadu', 'INR', 18.00, NULL, NULL, 'admin123', 0, 0, 0, 'INR', 60.00, 999.00),
-(5, 'My Engraving Store', 'admin@mystore.com', '+91 98765 43210', 'Coimbatore, Tamil Nadu', 'INR', 18.00, NULL, NULL, 'admin123', 0, 0, 0, 'INR', 60.00, 999.00);
-
 -- --------------------------------------------------------
 
 --
@@ -893,85 +661,6 @@ CREATE TABLE `shipping_rules` (
 --
 -- Dumping data for table `shipping_rules`
 --
-
-INSERT INTO `shipping_rules` (`id`, `country_code`, `base_fee_inr`, `free_above_inr`, `tax_percent`, `estimated_days`) VALUES
-(1, 'IN', 60.00, 999.00, 18.00, '3-5 business days'),
-(2, 'US', 800.00, 5000.00, 0.00, '10-14 business days'),
-(3, 'GB', 900.00, 5500.00, 0.00, '10-14 business days'),
-(4, 'AE', 600.00, 4000.00, 0.00, '7-10 business days'),
-(5, 'SA', 650.00, 4000.00, 0.00, '7-10 business days'),
-(6, 'SG', 700.00, 4500.00, 0.00, '7-10 business days'),
-(7, 'MY', 650.00, 4000.00, 0.00, '7-10 business days'),
-(8, 'AU', 850.00, 5500.00, 0.00, '12-16 business days'),
-(9, 'CA', 850.00, 5500.00, 0.00, '12-16 business days'),
-(10, 'DE', 900.00, 5500.00, 0.00, '10-14 business days'),
-(11, 'FR', 900.00, 5500.00, 0.00, '10-14 business days'),
-(12, 'NL', 900.00, 5500.00, 0.00, '10-14 business days'),
-(13, 'NZ', 900.00, 5500.00, 0.00, '12-16 business days'),
-(14, 'BH', 600.00, 4000.00, 0.00, '7-10 business days'),
-(15, 'KW', 600.00, 4000.00, 0.00, '7-10 business days'),
-(16, 'IN', 60.00, 999.00, 18.00, '3-5 business days'),
-(17, 'US', 800.00, 5000.00, 0.00, '10-14 business days'),
-(18, 'GB', 900.00, 5500.00, 0.00, '10-14 business days'),
-(19, 'AE', 600.00, 4000.00, 0.00, '7-10 business days'),
-(20, 'SA', 650.00, 4000.00, 0.00, '7-10 business days'),
-(21, 'SG', 700.00, 4500.00, 0.00, '7-10 business days'),
-(22, 'MY', 650.00, 4000.00, 0.00, '7-10 business days'),
-(23, 'AU', 850.00, 5500.00, 0.00, '12-16 business days'),
-(24, 'CA', 850.00, 5500.00, 0.00, '12-16 business days'),
-(25, 'DE', 900.00, 5500.00, 0.00, '10-14 business days'),
-(26, 'FR', 900.00, 5500.00, 0.00, '10-14 business days'),
-(27, 'NL', 900.00, 5500.00, 0.00, '10-14 business days'),
-(28, 'NZ', 900.00, 5500.00, 0.00, '12-16 business days'),
-(29, 'BH', 600.00, 4000.00, 0.00, '7-10 business days'),
-(30, 'KW', 600.00, 4000.00, 0.00, '7-10 business days'),
-(31, 'IN', 60.00, 999.00, 18.00, '3-5 business days'),
-(32, 'US', 800.00, 5000.00, 0.00, '10-14 business days'),
-(33, 'GB', 900.00, 5500.00, 0.00, '10-14 business days'),
-(34, 'AE', 600.00, 4000.00, 0.00, '7-10 business days'),
-(35, 'SA', 650.00, 4000.00, 0.00, '7-10 business days'),
-(36, 'SG', 700.00, 4500.00, 0.00, '7-10 business days'),
-(37, 'MY', 650.00, 4000.00, 0.00, '7-10 business days'),
-(38, 'AU', 850.00, 5500.00, 0.00, '12-16 business days'),
-(39, 'CA', 850.00, 5500.00, 0.00, '12-16 business days'),
-(40, 'DE', 900.00, 5500.00, 0.00, '10-14 business days'),
-(41, 'FR', 900.00, 5500.00, 0.00, '10-14 business days'),
-(42, 'NL', 900.00, 5500.00, 0.00, '10-14 business days'),
-(43, 'NZ', 900.00, 5500.00, 0.00, '12-16 business days'),
-(44, 'BH', 600.00, 4000.00, 0.00, '7-10 business days'),
-(45, 'KW', 600.00, 4000.00, 0.00, '7-10 business days'),
-(46, 'IN', 60.00, 999.00, 18.00, '3-5 business days'),
-(47, 'US', 800.00, 5000.00, 0.00, '10-14 business days'),
-(48, 'GB', 900.00, 5500.00, 0.00, '10-14 business days'),
-(49, 'AE', 600.00, 4000.00, 0.00, '7-10 business days'),
-(50, 'SA', 650.00, 4000.00, 0.00, '7-10 business days'),
-(51, 'SG', 700.00, 4500.00, 0.00, '7-10 business days'),
-(52, 'MY', 650.00, 4000.00, 0.00, '7-10 business days'),
-(53, 'AU', 850.00, 5500.00, 0.00, '12-16 business days'),
-(54, 'CA', 850.00, 5500.00, 0.00, '12-16 business days'),
-(55, 'DE', 900.00, 5500.00, 0.00, '10-14 business days'),
-(56, 'FR', 900.00, 5500.00, 0.00, '10-14 business days'),
-(57, 'NL', 900.00, 5500.00, 0.00, '10-14 business days'),
-(58, 'NZ', 900.00, 5500.00, 0.00, '12-16 business days'),
-(59, 'BH', 600.00, 4000.00, 0.00, '7-10 business days'),
-(60, 'KW', 600.00, 4000.00, 0.00, '7-10 business days'),
-(61, 'IN', 60.00, 999.00, 18.00, '3-5 business days'),
-(62, 'US', 800.00, 5000.00, 0.00, '10-14 business days'),
-(63, 'GB', 900.00, 5500.00, 0.00, '10-14 business days'),
-(64, 'AE', 600.00, 4000.00, 0.00, '7-10 business days'),
-(65, 'SA', 650.00, 4000.00, 0.00, '7-10 business days'),
-(66, 'SG', 700.00, 4500.00, 0.00, '7-10 business days'),
-(67, 'MY', 650.00, 4000.00, 0.00, '7-10 business days'),
-(68, 'AU', 850.00, 5500.00, 0.00, '12-16 business days'),
-(69, 'CA', 850.00, 5500.00, 0.00, '12-16 business days'),
-(70, 'DE', 900.00, 5500.00, 0.00, '10-14 business days'),
-(71, 'FR', 900.00, 5500.00, 0.00, '10-14 business days'),
-(72, 'NL', 900.00, 5500.00, 0.00, '10-14 business days'),
-(73, 'NZ', 900.00, 5500.00, 0.00, '12-16 business days'),
-(74, 'BH', 600.00, 4000.00, 0.00, '7-10 business days'),
-(75, 'KW', 600.00, 4000.00, 0.00, '7-10 business days');
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `visitor_logs`
