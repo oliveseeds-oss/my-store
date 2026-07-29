@@ -22,7 +22,7 @@ export default function Footer({ settings = {}, dark = false }) {
               className="text-xl md:text-2xl font-black tracking-tight"
               style={{ fontFamily: "'Outfit', sans-serif", color: "#0D1512" }}
             >
-              🌱 {settings.site_name || "Olive Seeds"}
+              🌱 Olive Seeds
             </p>
             <p className="text-xs md:text-sm leading-relaxed text-[#0D1512]/70">
               Personalized luxury laser engraved masterpieces and premium downloadable digital assets created by designers crafting in the Olive Seeds studio.
@@ -116,7 +116,7 @@ export default function Footer({ settings = {}, dark = false }) {
           className="pt-6 md:pt-8 flex flex-col md:flex-row justify-between items-center gap-3 text-[11px] md:text-xs text-[#0D1512]/50"
           style={{ borderTop: "1px solid rgba(27, 57, 49, 0.1)" }}
         >
-          <p>© {new Date().getFullYear()} {settings.site_name || "Olive Seeds"}. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Olive Seeds. All rights reserved.</p>
           <p className="flex items-center gap-1">
             Made with ❤️ by Olive Seeds
           </p>

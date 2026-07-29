@@ -796,8 +796,8 @@ export default function Service() {
           <div className="trust-indicators-grid">
             {[
               ["120+", "Projects Delivered", "Across 12 industries"],
-              ["98%", "Client Satisfaction", "Measured post-launch"],
-              ["25+", "Countries Served", "Global client base"],
+              ["99%", "Client Satisfaction", "Measured post-launch"],
+              ["25+", "Brands Served", "Global client base"],
               ["5+", "Years of Experience", "Since 2019"],
             ].map(([num, label, sub], i) => (
               <div key={i} className="trust-indicator-item">

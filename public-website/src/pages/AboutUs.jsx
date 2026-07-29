@@ -83,10 +83,10 @@ export default function AboutUs() {
         <div className="max-w-5xl mx-auto px-6 py-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
-              { value: 15000, suffix: "+", label: "Orders crafted" },
-              { value: 15, suffix: "", label: "Countries shipped to" },
+              { value: 500, suffix: "+", label: "Products crafted & custom" },
+              { value: 15, suffix: "+", label: "Countries Expanding" },
               { value: 6, suffix: " yrs", label: "In business" },
-              { value: 98, suffix: "%", label: "Happy customers" },
+              { value: 99, suffix: "%", label: "Happy customers" },
             ].map((s) => (
               <div key={s.label} className="text-center p-4">
                 <p
@@ -245,10 +245,10 @@ export default function AboutUs() {
             style={{ fontFamily: "'Outfit', sans-serif" }}
             className="text-3xl md:text-5xl font-black text-center mb-16 tracking-tight"
           >
-            Meet our partners
+            Meet our Partners
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
             {team.map((member) => (
               <div
                 key={member.name}

@@ -661,6 +661,33 @@ export default function DigitalProductList() {
         keywords="buy Figma templates online, instant download design templates, UI kit download for designers, website template instant download, printable design assets download, n8n automation workflow template, 3D model files instant download, branding kit download, social media template pack, Figma UI components download, web design templates purchase"
       />
 
+      <style>{`
+        /* Contact Section Responsive Adjustments for Mobile */
+        @media (max-width: 768px) {
+          #contact-section {
+            padding: 48px 16px !important;
+          }
+          .responsive-split-1-2 {
+            grid-template-columns: 1fr !important;
+            gap: 40px !important;
+          }
+          .contact-form-card {
+            padding: 24px 16px !important;
+            border-radius: 16px !important;
+          }
+          .responsive-form {
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
+          }
+          .responsive-form > div {
+            grid-column: span 1 !important;
+          }
+          .responsive-form > button {
+            grid-column: span 1 !important;
+          }
+        }
+      `}</style>
+
       {/* ── Ambient background orbs ── */}
       <div style={{ position: "fixed", inset: 0, pointerEvents: "none", overflow: "hidden", zIndex: 0 }}>
         <div
@@ -910,19 +937,6 @@ export default function DigitalProductList() {
           <aside style={{ width: 240, flexShrink: 0, display: "none" }} className="vault-sidebar">
             <style>{`
               @media(min-width:1024px){.vault-sidebar{display:block!important;}}
-              @media(max-width:768px){
-                .responsive-split-1-2 {
-                  grid-template-columns: 1fr !important;
-                  gap: 40px !important;
-                }
-                .responsive-form {
-                  grid-template-columns: 1fr !important;
-                  gap: 12px !important;
-                }
-                .responsive-form > div {
-                  grid-column: span 1 !important;
-                }
-              }
             `}</style>
             <div style={{
               position: "sticky",
@@ -1398,6 +1412,7 @@ export default function DigitalProductList() {
 
             {/* Right Column Form */}
             <div
+              className="contact-form-card"
               style={{
                 background: T.surface1,
                 border: `1px solid ${T.border}`,
