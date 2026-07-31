@@ -227,6 +227,7 @@ export default function Settings() {
                 Enter your registered Shiprocket credentials to automatically book and assign shipments.
               </p>
             </div>
+          </div>
 
           {/* Change password */}
           <div className="bg-white rounded-2xl border border-gray-100 p-5 flex flex-col gap-4 shadow-sm">

@@ -376,6 +376,8 @@ export default function Orders() {
     } catch (e) {
       alert("❌ Failed to update shipping details: " + (e.response?.data?.error || e.message));
     }
+  };
+
   const handleShiprocketAutoShip = async (orderId) => {
     if (!window.confirm("Are you sure you want to book this order and generate AWB via Shiprocket?")) return;
     try {
