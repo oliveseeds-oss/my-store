@@ -143,6 +143,11 @@ poolPromise.query(`
   poolPromise.query("ALTER TABLE bulk_orders ADD COLUMN status VARCHAR(50) DEFAULT 'Pending'").catch(() => {});
   poolPromise.query("ALTER TABLE design_inquiries ADD COLUMN status VARCHAR(50) DEFAULT 'Pending'").catch(() => {});
   poolPromise.query("ALTER TABLE settings ADD COLUMN paypal_client_id VARCHAR(255) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE settings ADD COLUMN razorpay_secret VARCHAR(255) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE settings ADD COLUMN shiprocket_email VARCHAR(255) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE settings ADD COLUMN shiprocket_password VARCHAR(255) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE settings ADD COLUMN shiprocket_token TEXT DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE settings ADD COLUMN shiprocket_token_expires TIMESTAMP NULL DEFAULT NULL").catch(() => {});
   
   // Seed new catalog and portfolio tables with existing database entries to ensure continuity
   poolPromise.query("INSERT INTO catalog (name, description, image_url, type) SELECT name, description, image_url, type FROM categories").catch(() => {});

@@ -376,6 +376,15 @@ export default function Orders() {
     } catch (e) {
       alert("❌ Failed to update shipping details: " + (e.response?.data?.error || e.message));
     }
+  const handleShiprocketAutoShip = async (orderId) => {
+    if (!window.confirm("Are you sure you want to book this order and generate AWB via Shiprocket?")) return;
+    try {
+      const res = await API.post(`/orders/admin/engraved/${orderId}/shiprocket`);
+      alert(`✅ Shipment created successfully via Shiprocket!\nAWB: ${res.data.tracking_number}\nCourier: ${res.data.courier_name}`);
+      loadEngraved();
+    } catch (e) {
+      alert("❌ Failed to book shipment with Shiprocket: " + (e.response?.data?.error || e.message));
+    }
   };
 
   const updateDigitalStatus = async (id, payment_status, delivery_status) => {
@@ -792,11 +801,18 @@ export default function Orders() {
                             />
                           </div>
 
-                          <button
-                            onClick={() => handleUpdateShippingInfo(o.order_id, trackingVal, courierVal, o.delivery_status)}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow-sm transition whitespace-nowrap w-full md:w-auto">
-                            Update Shipping
-                          </button>
+                           <div className="flex gap-2 w-full md:w-auto">
+                            <button
+                              onClick={() => handleUpdateShippingInfo(o.order_id, trackingVal, courierVal, o.delivery_status)}
+                              className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow-sm transition whitespace-nowrap flex-1 md:flex-none">
+                              Update Shipping
+                            </button>
+                            <button
+                              onClick={() => handleShiprocketAutoShip(o.order_id)}
+                              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow-sm transition whitespace-nowrap flex-1 md:flex-none">
+                              🚢 Ship via Shiprocket
+                            </button>
+                          </div>
                         </div>
                       )}
 

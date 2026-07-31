@@ -16,7 +16,10 @@ export default function Settings() {
     shipping_fee: "60",
     free_shipping_above: "999",
     razorpay_key: "",
+    razorpay_secret: "",
     paypal_client_id: "",
+    shiprocket_email: "",
+    shiprocket_password: "",
     admin_password: "",
     new_password: "",
   });
@@ -33,7 +36,10 @@ export default function Settings() {
           shipping_fee: String(res.data.shipping_fee || "0"),
           free_shipping_above: String(res.data.free_shipping_above || "0"),
           razorpay_key: res.data.razorpay_key || "",
+          razorpay_secret: res.data.razorpay_secret || "",
           paypal_client_id: res.data.paypal_client_id || "",
+          shiprocket_email: res.data.shiprocket_email || "",
+          shiprocket_password: res.data.shiprocket_password || "",
           admin_password: "",
           new_password: "",
         });
@@ -60,7 +66,10 @@ export default function Settings() {
         shipping_fee: parseFloat(settings.shipping_fee) || 0,
         free_shipping_above: parseFloat(settings.free_shipping_above) || 0,
         razorpay_key: settings.razorpay_key,
+        razorpay_secret: settings.razorpay_secret,
         paypal_client_id: settings.paypal_client_id,
+        shiprocket_email: settings.shiprocket_email,
+        shiprocket_password: settings.shiprocket_password,
       };
 
       if (settings.new_password) {
@@ -161,8 +170,14 @@ export default function Settings() {
                 fieldKey="razorpay_key"
                 placeholder="rzp_live_xxxxxxxxxx"
               />
+              <Field
+                label="Razorpay API Key Secret"
+                fieldKey="razorpay_secret"
+                type="password"
+                placeholder="••••••••••••••••••••••••"
+              />
               <p className="text-[10px] text-gray-400">
-                Enter your live key API token from the{" "}
+                Enter your live key API token and secret from the{" "}
                 <a href="https://dashboard.razorpay.com" target="_blank" rel="noreferrer" className="text-indigo-500 underline">
                   Razorpay Dashboard
                 </a>.
@@ -187,6 +202,31 @@ export default function Settings() {
               </p>
             </div>
           </div>
+
+          {/* Shiprocket settings */}
+          <div className="bg-white rounded-2xl border border-gray-100 p-5 flex flex-col gap-5 shadow-sm">
+            <h3 className="text-sm font-bold text-gray-700 pb-2 border-b border-gray-100 uppercase tracking-wider text-xs">
+              Shipping Partner Credentials
+            </h3>
+            
+            <div className="flex flex-col gap-3">
+              <h4 className="text-xs font-bold text-stone-600 uppercase tracking-wider">Shiprocket Connection</h4>
+              <Field
+                label="Shiprocket Registered Email"
+                fieldKey="shiprocket_email"
+                type="email"
+                placeholder="user@example.com"
+              />
+              <Field
+                label="Shiprocket Password"
+                fieldKey="shiprocket_password"
+                type="password"
+                placeholder="••••••••"
+              />
+              <p className="text-[10px] text-gray-400">
+                Enter your registered Shiprocket credentials to automatically book and assign shipments.
+              </p>
+            </div>
 
           {/* Change password */}
           <div className="bg-white rounded-2xl border border-gray-100 p-5 flex flex-col gap-4 shadow-sm">

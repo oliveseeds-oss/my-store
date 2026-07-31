@@ -8,7 +8,8 @@ const { verifyAdmin, verifyMember } = require("../middleware/auth");
 router.post("/", async (req, res) => {
   const {
     member_id, guest_name, guest_email, guest_phone,
-    items, address_line, shipping_fee
+    items, address_line, shipping_fee,
+    payment_mode, transaction_id, currency_code, currency_rate
   } = req.body;
 
   try {
@@ -99,7 +100,8 @@ router.post("/", async (req, res) => {
           order_uid, invoice_uid, member_uid, guest_name || "Guest", guest_email || "", guest_phone || "",
           guest_name || "Guest", delivery_street, delivery_apt, delivery_city, delivery_state,
           delivery_country, delivery_pincode, subtotal, tax_amount, ship_fee, total,
-          "INR", 1.0, "COD", null, "Pending", "Processing"
+          currency_code || "INR", parseFloat(currency_rate) || 1.0, payment_mode || "COD", transaction_id || null,
+          (payment_mode && payment_mode !== "COD" && transaction_id) ? "Paid" : "Pending", "Processing"
         ]
       );
 
@@ -164,8 +166,9 @@ router.post("/", async (req, res) => {
          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
         [
           order_uid, invoice_uid, member_uid, guest_name || "Guest", guest_email || "",
-          subtotal, tax_amount, total, "INR", 1.0,
-          "Online", null, "Pending", "Completed"
+          subtotal, tax_amount, total, currency_code || "INR", parseFloat(currency_rate) || 1.0,
+          payment_mode || "Online", transaction_id || null,
+          (payment_mode && payment_mode !== "COD" && transaction_id) ? "Paid" : "Pending", "Completed"
         ]
       );
 
@@ -478,6 +481,69 @@ router.put("/admin/engraved/:uid/status", verifyAdmin, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to update order status" });
+  }
+});
+
+// AUTOMATE Shiprocket Shipment Creation
+router.post("/admin/engraved/:uid/shiprocket", verifyAdmin, async (req, res) => {
+  try {
+    const { shipOrderWithShiprocket } = require("../utils/shiprocket");
+
+    // 1. Get physical order
+    const [orders] = await db.query("SELECT * FROM physical_orders WHERE order_uid = ?", [req.params.uid]);
+    if (!orders.length) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+    const order = orders[0];
+
+    // 2. Get order items
+    const [items] = await db.query("SELECT * FROM physical_order_items WHERE order_uid = ?", [order.order_uid]);
+
+    // 3. Ship with Shiprocket
+    const result = await shipOrderWithShiprocket(order, items);
+
+    // 4. Update order status and tracking details in db
+    await db.query(
+      `UPDATE physical_orders SET status = 'Shipped', tracking_number = ?, updated_at = NOW() WHERE order_uid = ?`,
+      [result.awb_code, order.order_uid]
+    );
+
+    // Sync to shipments table
+    const [existingShipment] = await db.query("SELECT id FROM shipments WHERE order_id = ?", [order.id]);
+    if (existingShipment.length) {
+      await db.query(
+        "UPDATE shipments SET partner = 'shiprocket', tracking_number = ?, status = 'In Transit', updated_at = NOW() WHERE order_id = ?",
+        [result.awb_code, order.id]
+      );
+    } else {
+      await db.query(
+        "INSERT INTO shipments (order_id, partner, tracking_number, status, created_at, updated_at) VALUES (?, 'shiprocket', ?, 'In Transit', NOW(), NOW())",
+        [order.id, result.awb_code]
+      );
+    }
+
+    // Member Notification
+    if (order.member_uid) {
+      await db.query(
+        "INSERT INTO member_notifications (member_id, type, title, message, created_at) VALUES ((SELECT id FROM members WHERE member_uid = ?), 'shipping', 'Your order is shipped via Shiprocket!', ?, NOW())",
+        [order.member_uid, `Order #${order.order_uid} is on the way. Tracking: ${result.awb_code}`]
+      );
+    }
+
+    // Admin Notification
+    await db.query(
+      "INSERT INTO notifications (type, title, message, link) VALUES ('shipping', 'Shiprocket Shipment Created', ?, '/orders')",
+      [`Order #${order.order_uid} shipped via Shiprocket. AWB: ${result.awb_code}`]
+    );
+
+    res.json({
+      message: "Shipment created successfully via Shiprocket",
+      tracking_number: result.awb_code,
+      courier_name: result.courier_name
+    });
+  } catch (error) {
+    console.error("Shiprocket automation failed:", error);
+    res.status(500).json({ error: error.message || "Failed to create Shiprocket shipment" });
   }
 });
 

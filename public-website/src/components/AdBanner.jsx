@@ -51,7 +51,7 @@ export default function AdBanner({ placement }) {
   } else if (type === "Square Tile") {
     layoutClasses = "w-full max-w-[300px] aspect-square mx-auto";
   } else if (type === "Large Panel") {
-    layoutClasses = "w-full h-64 md:h-[350px]";
+    layoutClasses = "w-full h-full";
   }
 
   return (
