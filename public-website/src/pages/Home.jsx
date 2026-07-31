@@ -771,6 +771,7 @@ export default function Home() {
         <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px", width: "100%", position: "relative", zIndex: 1 }}>
           <div
             className="hero-grid"
+            style={{ display: "grid", gridTemplateColumns: "1fr 460px", gap: "80px", alignItems: "center" }}
           >
             {/* LEFT — copy */}
             <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
