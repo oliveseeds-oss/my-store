@@ -148,6 +148,12 @@ poolPromise.query(`
   poolPromise.query("ALTER TABLE settings ADD COLUMN shiprocket_password VARCHAR(255) DEFAULT NULL").catch(() => {});
   poolPromise.query("ALTER TABLE settings ADD COLUMN shiprocket_token TEXT DEFAULT NULL").catch(() => {});
   poolPromise.query("ALTER TABLE settings ADD COLUMN shiprocket_token_expires TIMESTAMP NULL DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE shipments ADD COLUMN shiprocket_order_id VARCHAR(100) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE shipments ADD COLUMN shiprocket_shipment_id VARCHAR(100) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE shipments ADD COLUMN courier_name VARCHAR(100) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE shipments ADD COLUMN tracking_url TEXT DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE shipments ADD COLUMN last_tracking_update TIMESTAMP NULL DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE shipments ADD COLUMN delivered_at TIMESTAMP NULL DEFAULT NULL").catch(() => {});
   
   // Seed new catalog and portfolio tables with existing database entries to ensure continuity
   poolPromise.query("INSERT INTO catalog (name, description, image_url, type) SELECT name, description, image_url, type FROM categories").catch(() => {});

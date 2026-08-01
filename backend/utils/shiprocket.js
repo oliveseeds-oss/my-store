@@ -1,10 +1,54 @@
 const https = require("https");
+const crypto = require("crypto");
 const db = require("../db");
 
-// Simple native https request promise wrapper
+const ENCRYPTION_KEY = process.env.SHIPROCKET_ENCRYPTION_KEY || process.env.JWT_SECRET || "OliveSeeds_2026_SuperSecret_ChangeOSS";
+
+// AES-256-GCM Encryption Helpers
+function encrypt(text) {
+  if (!text) return "";
+  const key = crypto.createHash("sha256").update(String(ENCRYPTION_KEY)).digest();
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
+  let encrypted = cipher.update(text, "utf8", "hex");
+  encrypted += cipher.final("hex");
+  const authTag = cipher.getAuthTag().toString("hex");
+  return `${iv.toString("hex")}:${authTag}:${encrypted}`;
+}
+
+function decrypt(encryptedText) {
+  if (!encryptedText) return "";
+  const parts = encryptedText.split(":");
+  if (parts.length !== 3) {
+    // Return plaintext if it's legacy/unencrypted
+    return encryptedText;
+  }
+  const [ivHex, authTagHex, encryptedHex] = parts;
+  try {
+    const key = crypto.createHash("sha256").update(String(ENCRYPTION_KEY)).digest();
+    const iv = Buffer.from(ivHex, "hex");
+    const authTag = Buffer.from(authTagHex, "hex");
+    const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
+    decipher.setAuthTag(authTag);
+    let decrypted = decipher.update(encryptedHex, "hex", "utf8");
+    decrypted += decipher.final("utf8");
+    return decrypted;
+  } catch (err) {
+    console.error("Decryption failed, returning original value:", err.message);
+    return encryptedText;
+  }
+}
+
+// Simple native https request promise wrapper with timeout handling
 function request(url, options = {}, body = null) {
   return new Promise((resolve, reject) => {
-    const req = https.request(url, options, (res) => {
+    const timeoutMs = options.timeout || 10000; // 10s default timeout
+    
+    // Ensure timeout parameter isn't passed down as options directly to https.request
+    const reqOptions = { ...options };
+    delete reqOptions.timeout;
+
+    const req = https.request(url, reqOptions, (res) => {
       let data = "";
       res.on("data", (chunk) => {
         data += chunk;
@@ -31,6 +75,10 @@ function request(url, options = {}, body = null) {
       reject(err);
     });
 
+    req.setTimeout(timeoutMs, () => {
+      req.destroy(new Error(`Connection timed out after ${timeoutMs}ms`));
+    });
+
     if (body) {
       req.write(typeof body === "string" ? body : JSON.stringify(body));
     }
@@ -49,7 +97,8 @@ async function getShiprocketToken() {
   const settings = rows[0];
 
   const email = settings.shiprocket_email;
-  const password = settings.shiprocket_password;
+  // Decrypt password securely
+  const password = decrypt(settings.shiprocket_password);
 
   if (!email || !password) {
     throw new Error("Shiprocket email or password not configured in store settings.");
@@ -64,11 +113,10 @@ async function getShiprocketToken() {
     return settings.shiprocket_token;
   }
 
-  // Get new token
   console.log("Fetching new Shiprocket API token...");
   try {
     const res = await request(
-      "https://apiv2.shiprocket.in/v2/console/api/login",
+      "https://apiv2.shiprocket.in/v1/external/auth/login",
       {
         method: "POST",
         headers: {
@@ -139,17 +187,17 @@ async function shipOrderWithShiprocket(order, items) {
     order_items: shiprocketItems,
     payment_method: paymentMethod,
     sub_total: parseFloat(order.subtotal) || 0,
-    length: 10,  // default parcel size cm
+    length: 10,  // default parcel size cm (Missing from DB products schema)
     breadth: 10,
     height: 10,
-    weight: 0.5   // default parcel weight kg
+    weight: 0.5   // default parcel weight kg (Missing from DB products schema)
   };
 
   console.log("Sending adhoc order to Shiprocket:", JSON.stringify(payload, null, 2));
 
   // 1. Create order
   const orderRes = await request(
-    "https://apiv2.shiprocket.in/v2/console/api/orders/create/adhoc",
+    "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
     {
       method: "POST",
       headers: {
@@ -165,11 +213,12 @@ async function shipOrderWithShiprocket(order, items) {
   }
 
   const shipmentId = orderRes.shipment_id;
-  console.log(`Created Shiprocket order successfully. Shipment ID: ${shipmentId}`);
+  const shiprocketOrderId = orderRes.order_id;
+  console.log(`Created Shiprocket order successfully. Shipment ID: ${shipmentId}, Order ID: ${shiprocketOrderId}`);
 
   // 2. Assign AWB tracking number
   const awbRes = await request(
-    "https://apiv2.shiprocket.in/v2/console/api/courier/assign/awb",
+    "https://apiv2.shiprocket.in/v1/external/courier/assign/awb",
     {
       method: "POST",
       headers: {
@@ -190,12 +239,16 @@ async function shipOrderWithShiprocket(order, items) {
   console.log(`Assigned Shiprocket AWB: ${awbCode}`);
   return {
     shipment_id: shipmentId,
+    shiprocket_order_id: shiprocketOrderId,
     awb_code: awbCode,
     courier_name: responseInfo.data?.courier_name || "Shiprocket Partner"
   };
 }
 
 module.exports = {
+  encrypt,
+  decrypt,
+  request,
   getShiprocketToken,
   shipOrderWithShiprocket
 };

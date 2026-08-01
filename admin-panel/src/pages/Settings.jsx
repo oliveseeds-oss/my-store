@@ -6,6 +6,7 @@ import { MdSave, MdCheck } from "react-icons/md";
 
 export default function Settings() {
   const [saved, setSaved] = useState(false);
+  const [testingConnection, setTestingConnection] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [settings, setSettings] = useState({
     site_name: "",
@@ -87,6 +88,25 @@ export default function Settings() {
     } catch (err) {
       console.error(err);
       setErrorMsg("Failed to save settings. Please verify authorization.");
+    }
+  };
+
+  const handleTestShiprocket = async () => {
+    setTestingConnection(true);
+    try {
+      const res = await API.post("/settings/test-shiprocket", {
+        shiprocket_email: settings.shiprocket_email,
+        shiprocket_password: settings.shiprocket_password
+      });
+      if (res.data.success) {
+        alert("✅ " + res.data.message);
+      } else {
+        alert("❌ " + res.data.message);
+      }
+    } catch (e) {
+      alert("❌ Request failed: " + (e.response?.data?.error || e.message));
+    } finally {
+      setTestingConnection(false);
     }
   };
 
@@ -223,6 +243,14 @@ export default function Settings() {
                 type="password"
                 placeholder="••••••••"
               />
+              <button
+                type="button"
+                onClick={handleTestShiprocket}
+                disabled={testingConnection}
+                className="mt-2 bg-stone-100 hover:bg-stone-200 disabled:opacity-50 text-stone-700 text-xs font-bold py-2 px-4 rounded-lg transition"
+              >
+                {testingConnection ? "Testing Connection..." : "🔌 Test Shiprocket Connection"}
+              </button>
               <p className="text-[10px] text-gray-400">
                 Enter your registered Shiprocket credentials to automatically book and assign shipments.
               </p>

@@ -28,6 +28,49 @@ const STEPS_MAP = {
   "Cancelled": "Failed"
 };
 
+// Helper to fetch tracking events from Shiprocket if applicable
+async function fetchTrackingEvents(trackingNumber, partner, defaultEvents, currentStatus) {
+  let events = [...defaultEvents];
+  let trackingStatus = currentStatus;
+  const partnerInfo = SHIPPING_PARTNERS[partner] || SHIPPING_PARTNERS.delhivery;
+  let trackingUrl = `${partnerInfo.trackUrl}${trackingNumber}`;
+  let courierName = partnerInfo.name;
+
+  if (partner === "shiprocket") {
+    try {
+      const { getShiprocketToken, request } = require("../utils/shiprocket");
+      const token = await getShiprocketToken();
+      const resData = await request(
+        `https://apiv2.shiprocket.in/v1/external/courier/track/awb/${trackingNumber}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      if (resData && resData.tracking_data && resData.tracking_data.track_status === 1) {
+        const shipInfo = resData.tracking_data.shipment_track[0] || {};
+        trackingStatus = shipInfo.current_status || trackingStatus;
+        trackingUrl = shipInfo.tracking_url || trackingUrl;
+        courierName = shipInfo.courier_name || courierName;
+        if (shipInfo.scans && Array.isArray(shipInfo.scans) && shipInfo.scans.length) {
+          events = shipInfo.scans.map(s => ({
+            status: s.activity || s.status,
+            location: s.location || "In Transit",
+            event_time: s.date || s.timestamp,
+            description: s.activity || ""
+          }));
+        }
+      }
+    } catch (trackErr) {
+      console.error("Failed to query Shiprocket tracking API:", trackErr.message);
+    }
+  }
+
+  return { events, trackingStatus, trackingUrl, courierName };
+}
+
 // POST /api/shipping/calculate
 router.post("/calculate", async (req, res) => {
   const { origin_pincode, dest_pincode, weight_kg, declared_value, items } = req.body;
@@ -85,7 +128,6 @@ router.post("/create", verifyAdmin, async (req, res) => {
   }
 
   try {
-    // Check if order exists (using order_uid or id)
     const [orders] = await db.query(
       "SELECT id, order_uid, member_uid, guest_name FROM physical_orders WHERE order_uid = ? OR id = ?",
       [order_id, order_id]
@@ -97,13 +139,11 @@ router.post("/create", verifyAdmin, async (req, res) => {
 
     const order = orders[0];
 
-    // Update physical order status and tracking
     await db.query(
       "UPDATE physical_orders SET status = 'Shipped', tracking_number = ?, updated_at = NOW() WHERE id = ?",
       [tracking_number, order.id]
     );
 
-    // Write to legacy shipments table if exists to be safe
     const [existingShipment] = await db.query("SELECT id FROM shipments WHERE order_id = ?", [order.id]);
     if (existingShipment.length) {
       await db.query(
@@ -117,7 +157,6 @@ router.post("/create", verifyAdmin, async (req, res) => {
       );
     }
 
-    // Insert Member Notification
     if (order.member_uid) {
       await db.query(
         "INSERT INTO member_notifications (member_id, type, title, message, created_at) VALUES ((SELECT id FROM members WHERE member_uid = ?), 'shipping', 'Your order has been shipped!', ?, NOW())",
@@ -125,7 +164,6 @@ router.post("/create", verifyAdmin, async (req, res) => {
       );
     }
 
-    // Admin Notification
     await db.query(
       "INSERT INTO notifications (type, title, message, link, created_at) VALUES ('shipping', 'Shipment Created', ?, '/orders', NOW())",
       [`Order #${order.order_uid} shipped via ${partner || 'Delhivery'}. AWB: ${tracking_number}`]
@@ -156,10 +194,12 @@ router.get("/track/:tracking_number", async (req, res) => {
     }
 
     const order = orders[0];
-    const partner = "delhivery";
-    const partnerInfo = SHIPPING_PARTNERS[partner];
+    
+    // Fetch actual partner info
+    const [shipmentRows] = await db.query("SELECT partner FROM shipments WHERE order_id = ?", [order.id]);
+    const partner = (shipmentRows.length && shipmentRows[0].partner) || "delhivery";
+    const partnerInfo = SHIPPING_PARTNERS[partner] || SHIPPING_PARTNERS.delhivery;
 
-    // Map order status to tracking timeline status
     let trackingStatus = STEPS_MAP[order.status] || "Picked Up";
 
     const customerAddress = [
@@ -171,8 +211,7 @@ router.get("/track/:tracking_number", async (req, res) => {
       order.delivery_pincode
     ].filter(Boolean).join(", ");
 
-    // Synthesize history events
-    const events = [
+    const defaultEvents = [
       {
         status: "Order Placed",
         location: "Online",
@@ -182,13 +221,13 @@ router.get("/track/:tracking_number", async (req, res) => {
     ];
 
     if (order.status === "Shipped" || order.status === "Delivered") {
-      events.unshift({
+      defaultEvents.unshift({
         status: "Picked Up",
         location: "Warehouse",
         event_time: order.updated_at || order.invoice_date,
         description: "Package picked up by courier partner."
       });
-      events.unshift({
+      defaultEvents.unshift({
         status: "In Transit",
         location: "Hub",
         event_time: order.updated_at || order.invoice_date,
@@ -197,7 +236,7 @@ router.get("/track/:tracking_number", async (req, res) => {
     }
 
     if (order.status === "Delivered") {
-      events.unshift({
+      defaultEvents.unshift({
         status: "Delivered",
         location: "Destination",
         event_time: order.updated_at,
@@ -205,18 +244,21 @@ router.get("/track/:tracking_number", async (req, res) => {
       });
     }
 
+    // Load actual tracker data
+    const trackingDetails = await fetchTrackingEvents(tracking_number, partner, defaultEvents, trackingStatus);
+
     res.json({
       tracking_number,
       partner,
-      partner_name: partnerInfo.name,
-      partner_track_url: `${partnerInfo.trackUrl}${tracking_number}`,
+      partner_name: trackingDetails.courierName,
+      partner_track_url: trackingDetails.trackingUrl,
       order_id: order.order_uid,
-      status: trackingStatus,
+      status: trackingDetails.trackingStatus,
       estimated_delivery: null,
       order_date: order.invoice_date,
       recipient: order.delivery_name || order.guest_name || "Guest",
       delivery_address: customerAddress,
-      events
+      events: trackingDetails.events
     });
 
   } catch (error) {
@@ -225,7 +267,7 @@ router.get("/track/:tracking_number", async (req, res) => {
   }
 });
 
-// PUT /api/shipping/:id/status (Admin)
+// PUT /api/shipping/:id/status (Admin manual update)
 router.put("/:id/status", verifyAdmin, async (req, res) => {
   const { status } = req.body;
   const { id } = req.params;
@@ -257,8 +299,9 @@ router.get("/admin/all", verifyAdmin, async (req, res) => {
   try {
     const [rows] = await db.query(
       `SELECT o.id, o.order_uid, o.tracking_number, o.status, o.total, o.delivery_name as guest_name, o.guest_email,
-              CONCAT(o.delivery_street, ', ', o.delivery_city) as address_line, 'delhivery' as partner, o.updated_at as created_at
+              CONCAT(o.delivery_street, ', ', o.delivery_city) as address_line, COALESCE(s.partner, 'delhivery') as partner, o.updated_at as created_at
        FROM physical_orders o
+       LEFT JOIN shipments s ON o.id = s.order_id
        WHERE o.tracking_number IS NOT NULL
        ORDER BY o.updated_at DESC`
     );
@@ -292,8 +335,8 @@ router.get("/order/:order_id", async (req, res) => {
       return res.json({ status: "Not yet shipped", order_id: order.order_uid });
     }
 
-    const partner = "delhivery";
-    const partnerInfo = SHIPPING_PARTNERS[partner];
+    const [shipmentRows] = await db.query("SELECT partner FROM shipments WHERE order_id = ?", [order.id]);
+    const partner = (shipmentRows.length && shipmentRows[0].partner) || "delhivery";
 
     let trackingStatus = STEPS_MAP[order.status] || "Picked Up";
 
@@ -306,7 +349,7 @@ router.get("/order/:order_id", async (req, res) => {
       order.delivery_pincode
     ].filter(Boolean).join(", ");
 
-    const events = [
+    const defaultEvents = [
       {
         status: "Order Placed",
         location: "Online",
@@ -316,13 +359,13 @@ router.get("/order/:order_id", async (req, res) => {
     ];
 
     if (order.status === "Shipped" || order.status === "Delivered") {
-      events.unshift({
+      defaultEvents.unshift({
         status: "Picked Up",
         location: "Warehouse",
         event_time: order.updated_at || order.invoice_date,
         description: "Package picked up by courier partner."
       });
-      events.unshift({
+      defaultEvents.unshift({
         status: "In Transit",
         location: "Hub",
         event_time: order.updated_at || order.invoice_date,
@@ -331,7 +374,7 @@ router.get("/order/:order_id", async (req, res) => {
     }
 
     if (order.status === "Delivered") {
-      events.unshift({
+      defaultEvents.unshift({
         status: "Delivered",
         location: "Destination",
         event_time: order.updated_at,
@@ -339,23 +382,104 @@ router.get("/order/:order_id", async (req, res) => {
       });
     }
 
+    const trackingDetails = await fetchTrackingEvents(order.tracking_number, partner, defaultEvents, trackingStatus);
+
     res.json({
       tracking_number: order.tracking_number,
       partner,
-      partner_name: partnerInfo.name,
-      partner_track_url: `${partnerInfo.trackUrl}${order.tracking_number}`,
+      partner_name: trackingDetails.courierName,
+      partner_track_url: trackingDetails.trackingUrl,
       order_id: order.order_uid,
-      status: trackingStatus,
+      status: trackingDetails.trackingStatus,
       estimated_delivery: null,
       order_date: order.invoice_date,
       recipient: order.delivery_name || order.guest_name || "Guest",
       delivery_address: customerAddress,
-      events
+      events: trackingDetails.events
     });
 
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to get shipment for order" });
+  }
+});
+
+// POST /api/shipping/webhook/shiprocket
+router.post("/webhook/shiprocket", async (req, res) => {
+  const signature = req.headers["x-shiprocket-signature"];
+  const token = process.env.SHIPROCKET_WEBHOOK_TOKEN;
+
+  if (token && signature) {
+    const crypto = require("crypto");
+    const hmac = crypto.createHmac("sha256", token);
+    const hash = hmac.update(JSON.stringify(req.body)).digest("hex");
+    if (hash !== signature) {
+      return res.status(401).json({ error: "Invalid signature" });
+    }
+  }
+
+  const { awb, current_status, shipment_id, courier_name } = req.body;
+  if (!awb) {
+    return res.status(400).json({ error: "AWB code is required" });
+  }
+
+  try {
+    let orderStatus = "Shipped";
+    let shipmentStatus = "In Transit";
+
+    const normalizedStatus = String(current_status).toLowerCase().trim();
+    if (normalizedStatus.includes("deliver")) {
+      orderStatus = "Delivered";
+      shipmentStatus = "Delivered";
+    } else if (normalizedStatus.includes("return") || normalizedStatus.includes("rto")) {
+      orderStatus = "Cancelled";
+      shipmentStatus = "Returned";
+    } else if (normalizedStatus.includes("fail") || normalizedStatus.includes("cancel")) {
+      orderStatus = "Cancelled";
+      shipmentStatus = "Failed";
+    } else if (normalizedStatus.includes("out for delivery")) {
+      shipmentStatus = "Out for Delivery";
+    } else if (normalizedStatus.includes("pick")) {
+      shipmentStatus = "Picked Up";
+    }
+
+    const [shipmentRows] = await db.query(
+      "SELECT id, order_id FROM shipments WHERE tracking_number = ? OR shiprocket_shipment_id = ?",
+      [awb, shipment_id]
+    );
+
+    if (!shipmentRows.length) {
+      return res.status(404).json({ error: "Shipment not found in local database." });
+    }
+
+    const shipment = shipmentRows[0];
+
+    const updateParams = [shipmentStatus, current_status, courier_name];
+    let updateQuery = "UPDATE shipments SET status = ?, notes = ?, courier_name = COALESCE(?, courier_name), last_tracking_update = NOW()";
+    
+    if (shipmentStatus === "Delivered") {
+      updateQuery += ", delivered_at = NOW()";
+    }
+    updateQuery += " WHERE id = ?";
+    updateParams.push(shipment.id);
+
+    await db.query(updateQuery, updateParams);
+
+    await db.query(
+      "UPDATE physical_orders SET status = ?, updated_at = NOW() WHERE id = ?",
+      [orderStatus, shipment.order_id]
+    );
+
+    // Save event to history events log table
+    await db.query(
+      "INSERT INTO shipment_events (shipment_id, status, description, event_time) VALUES (?, ?, ?, NOW())",
+      [shipment.id, shipmentStatus, `Webhook update: ${current_status}`]
+    );
+
+    return res.status(200).json({ success: true, message: "Status updated successfully." });
+  } catch (error) {
+    console.error("Webhook processing error:", error.message);
+    return res.status(500).json({ error: error.message });
   }
 });
 

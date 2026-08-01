@@ -496,29 +496,41 @@ router.post("/admin/engraved/:uid/shiprocket", verifyAdmin, async (req, res) => 
     }
     const order = orders[0];
 
+    // Check payment safety (Priority 8)
+    const isPaid = order.payment_status === "Paid";
+    const isCOD = order.payment_mode === "COD";
+    if (!isPaid && !isCOD) {
+      return res.status(400).json({ error: "Cannot ship unpaid orders. Payment status must be Paid or payment mode must be COD." });
+    }
+
+    // Check duplicate booking (Priority 7)
+    const [existingShipment] = await db.query("SELECT id, tracking_number, shiprocket_shipment_id FROM shipments WHERE order_id = ?", [order.id]);
+    if (order.tracking_number || (existingShipment.length && (existingShipment[0].tracking_number || existingShipment[0].shiprocket_shipment_id))) {
+      return res.status(400).json({ error: "Shipment has already been created/booked for this order." });
+    }
+
     // 2. Get order items
     const [items] = await db.query("SELECT * FROM physical_order_items WHERE order_uid = ?", [order.order_uid]);
 
     // 3. Ship with Shiprocket
     const result = await shipOrderWithShiprocket(order, items);
 
-    // 4. Update order status and tracking details in db
+    // 4. Update order status and tracking details in db (Priority 6)
     await db.query(
       `UPDATE physical_orders SET status = 'Shipped', tracking_number = ?, updated_at = NOW() WHERE order_uid = ?`,
       [result.awb_code, order.order_uid]
     );
 
-    // Sync to shipments table
-    const [existingShipment] = await db.query("SELECT id FROM shipments WHERE order_id = ?", [order.id]);
+    // Sync to shipments table storing returned IDs
     if (existingShipment.length) {
       await db.query(
-        "UPDATE shipments SET partner = 'shiprocket', tracking_number = ?, status = 'In Transit', updated_at = NOW() WHERE order_id = ?",
-        [result.awb_code, order.id]
+        "UPDATE shipments SET partner = 'shiprocket', tracking_number = ?, shiprocket_order_id = ?, shiprocket_shipment_id = ?, courier_name = ?, status = 'In Transit', updated_at = NOW() WHERE order_id = ?",
+        [result.awb_code, result.shiprocket_order_id, result.shipment_id, result.courier_name, order.id]
       );
     } else {
       await db.query(
-        "INSERT INTO shipments (order_id, partner, tracking_number, status, created_at, updated_at) VALUES (?, 'shiprocket', ?, 'In Transit', NOW(), NOW())",
-        [order.id, result.awb_code]
+        "INSERT INTO shipments (order_id, partner, tracking_number, shiprocket_order_id, shiprocket_shipment_id, courier_name, status, created_at, updated_at) VALUES (?, 'shiprocket', ?, ?, ?, ?, 'In Transit', NOW(), NOW())",
+        [order.id, result.awb_code, result.shiprocket_order_id, result.shipment_id, result.courier_name]
       );
     }
 
