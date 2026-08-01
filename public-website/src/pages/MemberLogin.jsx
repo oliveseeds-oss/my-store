@@ -19,6 +19,19 @@ export default function MemberLogin() {
   const [showGoogleModal, setShowGoogleModal] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [gsiLoaded, setGsiLoaded] = useState(false);
+  const [googleClientId, setGoogleClientId] = useState("874744414734-mockclientid.apps.googleusercontent.com");
+  
+  useEffect(() => {
+    API.get("/settings")
+      .then((res) => {
+        if (res.data.google_client_id) {
+          setGoogleClientId(res.data.google_client_id);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to load settings:", err);
+      });
+  }, []);
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -32,30 +45,13 @@ export default function MemberLogin() {
   useEffect(() => {
     if (gsiLoaded && window.google) {
       window.google.accounts.id.initialize({
-        client_id: "874744414734-mockclientid.apps.googleusercontent.com",
+        client_id: googleClientId,
         callback: (response) => {
-          try {
-            const base64Url = response.credential.split(".")[1];
-            const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-            const jsonPayload = decodeURIComponent(
-              atob(base64)
-                .split("")
-                .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-                .join("")
-            );
-            const googleProfile = JSON.parse(jsonPayload);
-            handleGoogleSSOLogin({
-              email: googleProfile.email,
-              name: googleProfile.name,
-              sub: googleProfile.sub || googleProfile.id
-            });
-          } catch (err) {
-            console.error("JWT decoding failed", err);
-          }
+          handleGoogleSSOLogin(response.credential);
         }
       });
     }
-  }, [gsiLoaded]);
+  }, [gsiLoaded, googleClientId]);
 
   // OTP Verification States
   const [showOtp, setShowOtp] = useState(false);
@@ -194,15 +190,13 @@ export default function MemberLogin() {
     }
   };
 
-  const handleGoogleSSOLogin = async (googleProfile) => {
+  const handleGoogleSSOLogin = async (idToken) => {
     setGoogleLoading(true);
     setError("");
     setSuccess("");
     try {
       const res = await API.post("/members/google-sso", {
-        email: googleProfile.email,
-        name: googleProfile.name,
-        google_id: googleProfile.sub
+        idToken: idToken
       });
       
       login(res.data);

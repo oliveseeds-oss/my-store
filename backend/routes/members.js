@@ -243,20 +243,52 @@ router.post("/login", loginLimiter, async (req, res) => {
 
 // PUBLIC — Google SSO Auto-registration/Login
 router.post("/google-sso", async (req, res) => {
-  const { email, name, google_id } = req.body;
-  if (!email || !name) {
-    return res.status(400).json({ error: "Google email and name are required" });
+  const { idToken } = req.body;
+  if (!idToken) {
+    return res.status(400).json({ error: "Google ID Token is required" });
   }
 
   try {
-    // 1. Check if member already exists
+    const crypto = require("crypto");
+    const { request } = require("../utils/shiprocket");
+
+    // 1. Verify token with Google's API (Priority 7)
+    const googleRes = await request(
+      `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(idToken)}`,
+      { method: "GET" }
+    );
+
+    if (!googleRes || googleRes.error) {
+      return res.status(400).json({ error: "Invalid Google token." });
+    }
+
+    const { email, name, email_verified, aud, iss } = googleRes;
+
+    // Validate email verification status
+    if (email_verified !== "true" && email_verified !== true) {
+      return res.status(400).json({ error: "Google account email is not verified." });
+    }
+
+    // Verify audience matches our Client ID (from process.env.GOOGLE_CLIENT_ID or defaults)
+    const expectedClientId = process.env.GOOGLE_CLIENT_ID || "874744414734-mockclientid.apps.googleusercontent.com";
+    if (aud !== expectedClientId) {
+      return res.status(400).json({ error: "Audience client ID mismatch." });
+    }
+
+    // Verify Issuer
+    const allowedIssuers = ["https://accounts.google.com", "accounts.google.com"];
+    if (!allowedIssuers.includes(iss)) {
+      return res.status(400).json({ error: "Invalid token issuer." });
+    }
+
+    // 2. Check if member already exists
     let [rows] = await db.query("SELECT * FROM members WHERE email = ?", [email]);
     let member;
 
     if (!rows.length) {
-      // 2. Auto-Register new Google OAuth user
+      // 3. Auto-Register new Google OAuth user
       const member_uid = await generateMemberUid();
-      const randomPassword = Math.random().toString(36).slice(-12) + "OAuth!9";
+      const randomPassword = crypto.randomBytes(16).toString("hex") + "OAuth!9";
       const hash = await bcrypt.hash(randomPassword, 10);
 
       const [insertResult] = await db.query(
@@ -284,7 +316,7 @@ router.post("/google-sso", async (req, res) => {
       }
     }
 
-    // 3. Issue Token
+    // 4. Issue Token
     const token = jwt.sign(
       { id: member.id, member_uid: member.member_uid, email: member.email },
       process.env.JWT_SECRET,
@@ -296,8 +328,8 @@ router.post("/google-sso", async (req, res) => {
       member: { id: member.id, member_uid: member.member_uid, name: member.name, email: member.email }
     });
   } catch (error) {
-    console.error("Google SSO SSO Error:", error);
-    res.status(500).json({ error: "Google SSO authentication failed" });
+    console.error("Google Token Verification Error:", error.message);
+    res.status(500).json({ error: "Google SSO verification failed" });
   }
 });
 

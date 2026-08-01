@@ -17,7 +17,8 @@ router.get("/", async (req, res) => {
   
   res.json({
     ...settings,
-    paypal_client_id: settings.paypal_client_id || process.env.PAYPAL_CLIENT_ID || "sb"
+    paypal_client_id: settings.paypal_client_id || process.env.PAYPAL_CLIENT_ID || "sb",
+    google_client_id: process.env.GOOGLE_CLIENT_ID || "874744414734-mockclientid.apps.googleusercontent.com"
   });
 });
 
