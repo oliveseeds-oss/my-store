@@ -3,8 +3,8 @@ import axios from "axios";
 const getBaseURL = () => {
   if (typeof window !== "undefined") {
     const hostname = window.location.hostname;
-    if (hostname !== "localhost" && !/^[0-9.]+$/.test(hostname)) {
-      return `${window.location.origin}/api`;
+    if (hostname.endsWith("oliveseedsdesignstudio.com")) {
+      return `${window.location.protocol}//apiosspanel.oliveseedsdesignstudio.com/api`;
     }
   }
   return "http://200.141.2.131:5000/api";
