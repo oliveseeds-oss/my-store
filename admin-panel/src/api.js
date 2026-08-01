@@ -1,6 +1,16 @@
 import axios from "axios";
 
-const API = axios.create({ baseURL: "http://200.141.2.131:5000/api" });
+const getBaseURL = () => {
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    if (hostname !== "localhost" && !/^[0-9.]+$/.test(hostname)) {
+      return `${window.location.origin}/api`;
+    }
+  }
+  return "http://200.141.2.131:5000/api";
+};
+
+const API = axios.create({ baseURL: getBaseURL() });
 
 // Attach token to every request
 API.interceptors.request.use((config) => {
