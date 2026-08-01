@@ -2,8 +2,11 @@ const router = require("express").Router();
 const db = require("../db");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const { createRateLimiter } = require("../middleware/rateLimiter");
 
-router.post("/login", async (req, res) => {
+const loginLimiter = createRateLimiter(5, 15 * 60 * 1000); // 5 attempts max per 15 minutes
+
+router.post("/login", loginLimiter, async (req, res) => {
   try {
     const { username, password } = req.body;
     const [rows] = await db.query("SELECT * FROM settings WHERE id = 1");

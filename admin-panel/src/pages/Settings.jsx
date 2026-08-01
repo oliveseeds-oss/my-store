@@ -7,6 +7,7 @@ import { MdSave, MdCheck } from "react-icons/md";
 export default function Settings() {
   const [saved, setSaved] = useState(false);
   const [testingConnection, setTestingConnection] = useState(false);
+  const [testingRazorpay, setTestingRazorpay] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [settings, setSettings] = useState({
     site_name: "",
@@ -110,6 +111,25 @@ export default function Settings() {
     }
   };
 
+  const handleTestRazorpay = async () => {
+    setTestingRazorpay(true);
+    try {
+      const res = await API.post("/settings/test-razorpay", {
+        razorpay_key: settings.razorpay_key,
+        razorpay_secret: settings.razorpay_secret
+      });
+      if (res.data.success) {
+        alert("✅ " + res.data.message);
+      } else {
+        alert("❌ " + res.data.message);
+      }
+    } catch (e) {
+      alert("❌ Request failed: " + (e.response?.data?.error || e.message));
+    } finally {
+      setTestingRazorpay(false);
+    }
+  };
+
   const Field = ({ label, fieldKey, type = "text", placeholder = "" }) => (
     <div>
       <label className="text-xs text-gray-500 mb-1 block font-semibold">{label}</label>
@@ -196,6 +216,14 @@ export default function Settings() {
                 type="password"
                 placeholder="••••••••••••••••••••••••"
               />
+              <button
+                type="button"
+                onClick={handleTestRazorpay}
+                disabled={testingRazorpay}
+                className="mt-2 bg-stone-100 hover:bg-stone-200 disabled:opacity-50 text-stone-700 text-xs font-bold py-2 px-4 rounded-lg transition self-start"
+              >
+                {testingRazorpay ? "Testing Connection..." : "🔌 Test Razorpay Connection"}
+              </button>
               <p className="text-[10px] text-gray-400">
                 Enter your live key API token and secret from the{" "}
                 <a href="https://dashboard.razorpay.com" target="_blank" rel="noreferrer" className="text-indigo-500 underline">

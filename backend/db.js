@@ -155,9 +155,32 @@ poolPromise.query(`
   poolPromise.query("ALTER TABLE shipments ADD COLUMN last_tracking_update TIMESTAMP NULL DEFAULT NULL").catch(() => {});
   poolPromise.query("ALTER TABLE shipments ADD COLUMN delivered_at TIMESTAMP NULL DEFAULT NULL").catch(() => {});
   
+  // Razorpay physical_orders columns
+  poolPromise.query("ALTER TABLE physical_orders ADD COLUMN razorpay_order_id VARCHAR(255) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE physical_orders ADD COLUMN razorpay_payment_id VARCHAR(255) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE physical_orders ADD COLUMN razorpay_signature VARCHAR(255) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE physical_orders ADD COLUMN payment_verified_at TIMESTAMP NULL DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE physical_orders ADD COLUMN refund_id VARCHAR(255) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE physical_orders ADD COLUMN refund_amount DECIMAL(10,2) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE physical_orders ADD COLUMN refund_status VARCHAR(100) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE physical_orders ADD COLUMN refund_at TIMESTAMP NULL DEFAULT NULL").catch(() => {});
+
+  // Razorpay digital_orders columns
+  poolPromise.query("ALTER TABLE digital_orders ADD COLUMN razorpay_order_id VARCHAR(255) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE digital_orders ADD COLUMN razorpay_payment_id VARCHAR(255) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE digital_orders ADD COLUMN razorpay_signature VARCHAR(255) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE digital_orders ADD COLUMN payment_verified_at TIMESTAMP NULL DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE digital_orders ADD COLUMN refund_id VARCHAR(255) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE digital_orders ADD COLUMN refund_amount DECIMAL(10,2) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE digital_orders ADD COLUMN refund_status VARCHAR(100) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE digital_orders ADD COLUMN refund_at TIMESTAMP NULL DEFAULT NULL").catch(() => {});
+  
   // Seed new catalog and portfolio tables with existing database entries to ensure continuity
   poolPromise.query("INSERT INTO catalog (name, description, image_url, type) SELECT name, description, image_url, type FROM categories").catch(() => {});
   poolPromise.query("INSERT INTO portfolio (image_url, title, description, category) SELECT image_url, title, style, category FROM gallery").catch(() => {});
+  
+  // Index Optimization (Priority 5)
+  poolPromise.query("ALTER TABLE visitor_logs ADD INDEX idx_visited_at (visited_at)").catch(() => {});
 }).catch(err => {
   console.error("❌ SEO Schema initialization failed. Config:", {
     host: process.env.DB_HOST,

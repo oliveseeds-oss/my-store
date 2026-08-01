@@ -156,18 +156,54 @@ export default function Checkout() {
     }
 
     try {
-      const amountInINR = Math.round((total + shipping) * 100);
+      const orderPayload = {
+        member_id: user?.id || null,
+        guest_name: form.name,
+        guest_email: form.email,
+        guest_phone: form.phone,
+        items: cart.map(i => ({
+          product_id: i.id,
+          product_uid: i.product_uid,
+          product_name: i.name,
+          price: i.price,
+          qty: i.qty,
+          type: i.type,
+          selected_size: i.selectedSize || null,
+          customizations: i.customizations || []
+        })),
+        address_line: form.address,
+        currency_code: selected.currency_code || "INR",
+        shipping_fee: shipping
+      };
+
+      const createRes = await API.post("/payments/orders/create", orderPayload);
+      const { razorpay_order_id, amount, currency, key_id, order_id } = createRes.data;
+
       const options = {
-        key: siteSettings?.razorpay_key,
-        amount: amountInINR,
-        currency: "INR",
+        key: key_id,
+        amount: amount,
+        currency: currency,
         name: siteSettings?.site_name || "Oliveseeds Customs",
         description: "Secure Order Payment",
+        order_id: razorpay_order_id,
         handler: async function (response) {
-          await placeOrder({
-            mode: "Razorpay",
-            transactionId: response.razorpay_payment_id
-          });
+          try {
+            const verifyRes = await API.post("/payments/verify", {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature
+            });
+            if (verifyRes.data.success) {
+              clearCart();
+              navigate(`/order-success?id=${order_id}`);
+            } else {
+              alert("Payment verification failed. Please contact support.");
+            }
+          } catch (verifyErr) {
+            alert("Verification request failed: " + (verifyErr.response?.data?.error || verifyErr.message));
+          } finally {
+            setPlacing(false);
+          }
         },
         prefill: {
           name: form.name,
@@ -186,7 +222,7 @@ export default function Checkout() {
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (err) {
-      alert("Razorpay checkout failed to initialize: " + err.message);
+      alert("Razorpay checkout failed to initialize: " + (err.response?.data?.error || err.message));
       setPlacing(false);
     }
   };

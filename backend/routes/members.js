@@ -4,6 +4,10 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { generateMemberUid } = require("../utils/generateUid");
 const { verifyAdmin, verifyMember } = require("../middleware/auth");
+const { createRateLimiter } = require("../middleware/rateLimiter");
+
+const loginLimiter = createRateLimiter(5, 15 * 60 * 1000); // 5 attempts per 15 minutes
+const forgotPasswordLimiter = createRateLimiter(3, 15 * 60 * 1000); // 3 attempts per 15 minutes
 
 // PUBLIC — register
 router.post("/register", async (req, res) => {
@@ -138,7 +142,7 @@ Expires In: 15 minutes
 });
 
 // PUBLIC — forgot password
-router.post("/forgot-password", async (req, res) => {
+router.post("/forgot-password", forgotPasswordLimiter, async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ error: "Email is required" });
 
@@ -209,7 +213,7 @@ router.post("/reset-password", async (req, res) => {
 });
 
 // PUBLIC — login
-router.post("/login", async (req, res) => {
+router.post("/login", loginLimiter, async (req, res) => {
   const { email, password } = req.body;
   const [rows] = await db.query("SELECT * FROM members WHERE email = ?", [email]);
   if (!rows.length) return res.status(404).json({ error: "Email not found" });
