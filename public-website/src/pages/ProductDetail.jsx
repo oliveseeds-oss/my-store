@@ -129,6 +129,48 @@ export default function ProductDetail() {
     window.scrollTo(0, 0);
   }, [load]);
 
+  useEffect(() => {
+    if (product) {
+      document.title = `${product.name} | Custom Engravings | Oliveseeds Studio`;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) {
+        metaDesc.setAttribute("content", `${product.name} at Oliveseeds Studio. ${product.description || ""}`);
+      }
+
+      // Inject JSON-LD Structured Data
+      let script = document.getElementById("jsonld-product");
+      if (!script) {
+        script = document.createElement("script");
+        script.id = "jsonld-product";
+        script.type = "application/ld+json";
+        document.head.appendChild(script);
+      }
+      
+      const structuredData = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": product.name,
+        "image": product.image_url ? [`https://www.oliveseedsdesignstudio.com${product.image_url}`] : [],
+        "description": product.description || "",
+        "sku": product.product_uid || `PROD-${product.id}`,
+        "offers": {
+          "@type": "Offer",
+          "url": `https://www.oliveseedsdesignstudio.com/products/${id}`,
+          "priceCurrency": "INR",
+          "price": product.price,
+          "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+        }
+      };
+      
+      script.innerHTML = JSON.stringify(structuredData);
+    }
+
+    return () => {
+      const script = document.getElementById("jsonld-product");
+      if (script) script.remove();
+    };
+  }, [product, id]);
+
   const handleTemplateChange = (idx) => {
     setSelectedTemplateIdx(idx);
     const template = product.templates[idx];

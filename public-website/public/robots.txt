@@ -1,5 +1,32 @@
-# https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /admin/
+Disallow: /member/
+Disallow: /checkout
+Disallow: /cart
+Disallow: /api/
 
-Sitemap: https://oliveseeds.com/sitemap.xml
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /member/
+Disallow: /checkout
+Disallow: /cart
+Disallow: /api/
+
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /member/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /admin/
+Disallow: /member/
+
+User-agent: GPTBot
+Allow: /
+Disallow: /admin/
+Disallow: /member/
+
+Sitemap: https://www.oliveseedsdesignstudio.com/sitemap.xml

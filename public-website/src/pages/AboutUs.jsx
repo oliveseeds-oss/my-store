@@ -42,6 +42,14 @@ function CountUp({ end, suffix = "" }) {
 }
 
 export default function AboutUs() {
+  useEffect(() => {
+    document.title = "About Us | Oliveseeds Creative Studio";
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute("content", "Learn about Oliveseeds Studio's mission, milestones, leadership, and our design and manufacturing processes.");
+    }
+  }, []);
+
   return (
     <div style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }} className="min-h-screen">
       <Navbar />

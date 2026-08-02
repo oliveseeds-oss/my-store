@@ -1,0 +1,18 @@
+# Oliveseeds Creative Studio
+
+Oliveseeds Creative Studio is a premium design and manufacturing studio specializing in two main areas:
+
+## 1. Physical Custom Products
+- Customized Laser Engravings (Acrylic panels, wooden keepsakes, metal keyrings)
+- Personalised Gifting Solutions (Corporate gifts, custom carvings, luxury plaques)
+- Precision wood and acrylic crafting
+
+## 2. Digital & Creative Services
+- Brand Identity & Graphic Design
+- Website Development & UI/UX Systems (Vite, React, next.js projects)
+- Figma UI Kits, Design Packs, and Etsy templates
+
+## Technology Stack
+- Frontend: React SPA served with dynamic metadata injection
+- Backend: Express API + MySQL database
+- Integrations: Razorpay (India), PayPal (International), Shiprocket (Logistics)

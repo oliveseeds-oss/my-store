@@ -352,6 +352,13 @@ export default function Home() {
   const heroRef = useRef(null);
 
   useEffect(() => {
+    // Dynamic SEO Metadata Injection
+    document.title = "Oliveseeds Creative Studio | Premium Custom Engravings & UI/UX Services";
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute("content", "Oliveseeds Creative Studio offers premium personalized laser engravings, custom gifts, acrylic and wood keepsakes, alongside professional UI/UX design systems.");
+    }
+
     API.get("/products")
       .then((r) => setProducts(Array.isArray(r.data) ? r.data.slice(0, 4) : []))
       .catch(() => setProducts([]));

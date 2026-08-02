@@ -92,6 +92,48 @@ export default function DigitalProductDetail() {
   }, [id]);
   useEffect(() => { load(); window.scrollTo(0,0); }, [load]);
 
+  useEffect(() => {
+    if (product) {
+      document.title = `${product.name} | Creative Assets | Oliveseeds Studio`;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) {
+        metaDesc.setAttribute("content", `${product.name} template by Oliveseeds Studio. ${product.description || ""}`);
+      }
+
+      // Inject JSON-LD Structured Data
+      let script = document.getElementById("jsonld-digital");
+      if (!script) {
+        script = document.createElement("script");
+        script.id = "jsonld-digital";
+        script.type = "application/ld+json";
+        document.head.appendChild(script);
+      }
+      
+      const structuredData = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": product.name,
+        "image": product.thumbnail_url ? [`https://www.oliveseedsdesignstudio.com${product.thumbnail_url}`] : [],
+        "description": product.description || "",
+        "sku": product.product_uid || `DIGITAL-${product.id}`,
+        "offers": {
+          "@type": "Offer",
+          "url": `https://www.oliveseedsdesignstudio.com/digital/${id}`,
+          "priceCurrency": "INR",
+          "price": product.price,
+          "availability": "https://schema.org/InStock"
+        }
+      };
+      
+      script.innerHTML = JSON.stringify(structuredData);
+    }
+
+    return () => {
+      const script = document.getElementById("jsonld-digital");
+      if (script) script.remove();
+    };
+  }, [product, id]);
+
   if (!product) return (
     <div className="min-h-screen flex items-center justify-center" style={{ background: "#020617" }}>
       <div style={{ color: "#38bdf8", fontFamily: "monospace" }}>Loading...</div>
