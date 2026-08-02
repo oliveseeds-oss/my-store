@@ -26,7 +26,8 @@ services:
     ports:
       - "5000:5000"
     env_file:
-      - ./backend/.env
+      - path: ./backend/.env
+        required: false
     environment:
       DB_HOST: mysql
       DB_USER: root
