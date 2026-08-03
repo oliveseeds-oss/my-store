@@ -157,7 +157,7 @@ export default function Checkout() {
 
     try {
       const orderPayload = {
-        member_id: user?.id || null,
+        member_id: member?.id || null,
         guest_name: form.name,
         guest_email: form.email,
         guest_phone: form.phone,
