@@ -96,7 +96,7 @@ a, button, select, input, textarea {
     align-items: center;
   }
   .hero-right-panel {
-    display: none !important;
+    display: flex !important;
   }
 }
 

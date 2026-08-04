@@ -1247,7 +1247,7 @@ export default function Home() {
                   pointerEvents: "none", zIndex: 0,
                 }} />
                 <img
-                  src="https://images.unsplash.com/photo-1540206351-d6465b3ac5c1?q=80&w=900&auto=format&fit=crop"
+                  src="/home_story.jpg"
                   alt="Artisan laser engraving wood craftsmanship design studio"
                   style={{
                     width: "100%", height: "400px", objectFit: "cover",
@@ -1366,7 +1366,7 @@ export default function Home() {
               boxShadow: "var(--shadow-md)",
             }}>
               <img
-                src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=1400&auto=format&fit=crop"
+                src="/home_workshop.jpg"
                 alt="Custom laser wood engraving high end personalized gifts"
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 loading="lazy"
