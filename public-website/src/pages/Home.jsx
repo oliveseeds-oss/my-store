@@ -971,7 +971,7 @@ export default function Home() {
                 position: "relative",
                 boxShadow: "var(--shadow-lg)",
               }}>
-                <AdBanner placement="Large Panel" />
+                <AdBanner placement="Large Panel" priority="high" />
               </div>
 
               {/* Floating badge — Physical */}
@@ -1256,6 +1256,7 @@ export default function Home() {
                     display: "block", position: "relative", zIndex: 1,
                     boxShadow: "var(--shadow-md)",
                   }}
+                  loading="lazy"
                 />
                 {/* Pill badge */}
                 <div style={{
@@ -1368,6 +1369,7 @@ export default function Home() {
                 src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=1400&auto=format&fit=crop"
                 alt="Custom laser wood engraving high end personalized gifts"
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                loading="lazy"
               />
               <div style={{
                 position: "absolute", inset: 0,

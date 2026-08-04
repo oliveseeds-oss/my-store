@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import API from "../api";
 import { motion } from "framer-motion";
 
-export default function AdBanner({ placement }) {
+export default function AdBanner({ placement, priority }) {
   const [ad, setAd] = useState(null);
 
   useEffect(() => {
@@ -66,6 +66,8 @@ export default function AdBanner({ placement }) {
         src={currentAd.image_url}
         alt={`Ad Campaign Promo - ${type}`}
         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+        loading={priority === "high" ? "eager" : "lazy"}
+        fetchpriority={priority === "high" ? "high" : "auto"}
       />
     </motion.a>
   );
