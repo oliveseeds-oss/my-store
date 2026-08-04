@@ -1,6 +1,14 @@
 # Oliveseeds Creative Studio
 
-Oliveseeds Creative Studio is a premium design and manufacturing studio specializing in two main areas:
+Oliveseeds Creative Studio is a premium design and manufacturing studio specializing in physical custom products and digital creative services.
+
+## Key Pages
+- [Home](https://www.oliveseedsdesignstudio.com/)
+- [Physical Products Catalog](https://www.oliveseedsdesignstudio.com/products)
+- [Digital Assets Catalog](https://www.oliveseedsdesignstudio.com/digital)
+- [Creative Services](https://www.oliveseedsdesignstudio.com/service)
+- [About the Studio](https://www.oliveseedsdesignstudio.com/about)
+- [Contact Us](https://www.oliveseedsdesignstudio.com/contact)
 
 ## 1. Physical Custom Products
 - Customized Laser Engravings (Acrylic panels, wooden keepsakes, metal keyrings)
