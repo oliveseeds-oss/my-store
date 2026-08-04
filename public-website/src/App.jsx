@@ -1,38 +1,36 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { lazy, Suspense, useEffect } from "react";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import WhatsAppChat from "./components/WhatsAppChat";
 import { CartProvider } from "./context/CartContext";
 import { MemberProvider } from "./context/MemberContext";
 import { CurrencyProvider } from "./context/CurrencyContext";
 
-import Home from "./pages/Home";
-import ProductList from "./pages/ProductList";
-import ProductDetail from "./pages/ProductDetail";
-import DigitalProductList from "./pages/DigitalProductList";
-import DigitalProductDetail from "./pages/DigitalProductDetail";
-import Cart from "./pages/Cart";
-import Checkout from "./pages/Checkout";
-import OrderSuccess from "./pages/OrderSuccess";
-import MemberLogin from "./pages/MemberLogin";
-import Profile from "./pages/Profile";
-import BlogList from "./pages/BlogList";
-import Service from "./pages/Service";
-import Contact from "./pages/Contact";
-import Catalog from "./pages/Catalog";
-import CategoryCatalog from "./pages/CategoryCatalog";
-import Gallery from "./pages/Gallery";
-import Portfolio from "./pages/Portfolio";
-import Engraving from "./pages/Engraving";
+const Home = lazy(() => import("./pages/Home"));
+const ProductList = lazy(() => import("./pages/ProductList"));
+const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const DigitalProductList = lazy(() => import("./pages/DigitalProductList"));
+const DigitalProductDetail = lazy(() => import("./pages/DigitalProductDetail"));
+const Cart = lazy(() => import("./pages/Cart"));
+const Checkout = lazy(() => import("./pages/Checkout"));
+const OrderSuccess = lazy(() => import("./pages/OrderSuccess"));
+const MemberLogin = lazy(() => import("./pages/MemberLogin"));
+const Profile = lazy(() => import("./pages/Profile"));
+const BlogList = lazy(() => import("./pages/BlogList"));
+const Service = lazy(() => import("./pages/Service"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Catalog = lazy(() => import("./pages/Catalog"));
+const CategoryCatalog = lazy(() => import("./pages/CategoryCatalog"));
+const Gallery = lazy(() => import("./pages/Gallery"));
+const Portfolio = lazy(() => import("./pages/Portfolio"));
+const Engraving = lazy(() => import("./pages/Engraving"));
 
 // ── The pages your footer links to ──
-import TermsConditions from "./pages/TermsConditions";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import RefundPolicy from "./pages/RefundPolicy";
-import ShippingPolicy from "./pages/ShippingPolicy";
-import CookiesPolicy from "./pages/CookiesPolicy";
-import AboutUs from "./pages/AboutUs";
-
-import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import WhatsAppChat from "./components/WhatsAppChat";
+const TermsConditions = lazy(() => import("./pages/TermsConditions"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const RefundPolicy = lazy(() => import("./pages/RefundPolicy"));
+const ShippingPolicy = lazy(() => import("./pages/ShippingPolicy"));
+const CookiesPolicy = lazy(() => import("./pages/CookiesPolicy"));
+const AboutUs = lazy(() => import("./pages/AboutUs"));
 
 // ── Scroll to Top on Route Change ──
 function ScrollToTop() {
@@ -51,34 +49,38 @@ export default function App() {
           <BrowserRouter>
             <ScrollToTop />
             <WhatsAppChat />
-            <Routes>
-              <Route path="/"                   element={<Home />} />
-              <Route path="/products"           element={<ProductList />} />
-              <Route path="/products/:id"       element={<ProductDetail />} />
-              <Route path="/digital"            element={<DigitalProductList />} />
-              <Route path="/digital/:id"        element={<DigitalProductDetail />} />
-              <Route path="/cart"               element={<Cart />} />
-              <Route path="/checkout"           element={<Checkout />} />
-              <Route path="/order-success"      element={<OrderSuccess />} />
-              <Route path="/login"              element={<MemberLogin />} />
-              <Route path="/profile"            element={<Profile />} />
-              <Route path="/blog"               element={<BlogList />} />
-              <Route path="/service" element={<Service/>}/>
-              <Route path="/contact"            element={<Contact />} />
-              <Route path="/catalog"            element={<Catalog />} />
-              <Route path="/categories"         element={<CategoryCatalog />} />
-              <Route path="/gallery"            element={<Gallery />} />
-              <Route path="/portfolio"          element={<Portfolio />} />
-              <Route path="/engraving"          element={<Engraving />} />
+            <Suspense fallback={<div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>Loading...</div>}>
+              <main>
+                <Routes>
+                  <Route path="/"                   element={<Home />} />
+                  <Route path="/products"           element={<ProductList />} />
+                  <Route path="/products/:id"       element={<ProductDetail />} />
+                  <Route path="/digital"            element={<DigitalProductList />} />
+                  <Route path="/digital/:id"        element={<DigitalProductDetail />} />
+                  <Route path="/cart"               element={<Cart />} />
+                  <Route path="/checkout"           element={<Checkout />} />
+                  <Route path="/order-success"      element={<OrderSuccess />} />
+                  <Route path="/login"              element={<MemberLogin />} />
+                  <Route path="/profile"            element={<Profile />} />
+                  <Route path="/blog"               element={<BlogList />} />
+                  <Route path="/service" element={<Service/>}/>
+                  <Route path="/contact"            element={<Contact />} />
+                  <Route path="/catalog"            element={<Catalog />} />
+                  <Route path="/categories"         element={<CategoryCatalog />} />
+                  <Route path="/gallery"            element={<Gallery />} />
+                  <Route path="/portfolio"          element={<Portfolio />} />
+                  <Route path="/engraving"          element={<Engraving />} />
 
-              {/* ── Legal & info pages ── */}
-              <Route path="/terms"              element={<TermsConditions />} />
-              <Route path="/privacy"            element={<PrivacyPolicy />} />
-              <Route path="/refund"             element={<RefundPolicy />} />
-              <Route path="/shipping"           element={<ShippingPolicy />} />
-              <Route path="/cookies"            element={<CookiesPolicy />} />
-              <Route path="/about"              element={<AboutUs />} />
-            </Routes>
+                  {/* ── Legal & info pages ── */}
+                  <Route path="/terms"              element={<TermsConditions />} />
+                  <Route path="/privacy"            element={<PrivacyPolicy />} />
+                  <Route path="/refund"             element={<RefundPolicy />} />
+                  <Route path="/shipping"           element={<ShippingPolicy />} />
+                  <Route path="/cookies"            element={<CookiesPolicy />} />
+                  <Route path="/about"              element={<AboutUs />} />
+                </Routes>
+              </main>
+            </Suspense>
           </BrowserRouter>
         </CartProvider>
       </CurrencyProvider>

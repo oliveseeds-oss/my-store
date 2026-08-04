@@ -39,6 +39,7 @@ export default function Footer({ settings = {}, dark = false }) {
                   key={s.label}
                   className="w-9 h-9 rounded-xl bg-[#0D1512]/5 border border-[#0D1512]/10 hover:border-[#0D1512]/30 hover:bg-[#0D1512]/10 active:scale-95 transition flex items-center justify-center text-base"
                   title={s.label}
+                  aria-label={s.label}
                 >
                   {s.icon}
                 </button>

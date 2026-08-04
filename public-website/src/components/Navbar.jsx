@@ -41,7 +41,7 @@ export default function Navbar() {
 
         <div className="flex items-center gap-1 xs:gap-1.5 sm:gap-2">
           <CurrencySelector />
-          <Link to="/cart" className="relative p-1.5 sm:p-2 hover:bg-[#0D1512]/10 rounded-xl transition text-[#0D1512]">
+          <Link to="/cart" aria-label="Shopping Cart" className="relative p-1.5 sm:p-2 hover:bg-[#0D1512]/10 rounded-xl transition text-[#0D1512]">
             <MdShoppingCart className="text-lg sm:text-xl" />
             {count > 0 && (
               <span style={{ background: "#0D1512", color: "#FAF9F6" }} className="absolute -top-0.5 -right-0.5 text-[9px]
@@ -51,6 +51,7 @@ export default function Navbar() {
             )}
           </Link>
           <Link to="/login"
+            aria-label="User Profile"
             title={member ? `Profile: ${member.name}` : "Login / Register"}
             className="flex items-center justify-center text-[#0D1512] hover:bg-[#0D1512]/10
                        p-2 rounded-xl transition">
