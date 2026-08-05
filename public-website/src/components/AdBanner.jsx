@@ -34,7 +34,7 @@ export default function AdBanner({ placement, priority }) {
       link_url: "/products"
     },
     "Large Panel": {
-      image_url: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=800&auto=format&fit=crop&h=400",
+      image_url: "/home_story.jpg",
       link_url: "/digital"
     }
   };
