@@ -1247,7 +1247,7 @@ export default function Home() {
                   pointerEvents: "none", zIndex: 0,
                 }} />
                 <img
-                  src="https://images.unsplash.com/photo-1540206351-d6465b3ac5c1?q=80&w=900&auto=format&fit=crop"
+                  src="/home_swimming_replacement.jpg"
                   alt="Artisan laser engraving wood craftsmanship design studio"
                   style={{
                     width: "100%", height: "400px", objectFit: "cover",
