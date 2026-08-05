@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import WhatsAppChat from "./components/WhatsAppChat";
+import CuteLoader from "./components/CuteLoader";
 import { CartProvider } from "./context/CartContext";
 import { MemberProvider } from "./context/MemberContext";
 import { CurrencyProvider } from "./context/CurrencyContext";
@@ -49,23 +50,7 @@ export default function App() {
           <BrowserRouter>
             <ScrollToTop />
             <WhatsAppChat />
-            <Suspense fallback={
-              <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg, #f9fbf9)" }}>
-                <div style={{
-                  width: "24px", height: "40px",
-                  borderRadius: "50% 50% 50% 50% / 60% 60% 40% 40%",
-                  background: "linear-gradient(135deg, var(--gold, #e3c08d), var(--gold-dark, #b38b59))",
-                  animation: "pulseSeed 1.5s infinite ease-in-out alternate"
-                }}>
-                  <style>{`
-                    @keyframes pulseSeed {
-                      0% { transform: scale(0.9); opacity: 0.6; box-shadow: 0 0 10px rgba(227, 192, 141, 0.2); }
-                      100% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 25px rgba(227, 192, 141, 0.6); }
-                    }
-                  `}</style>
-                </div>
-              </div>
-            }>
+            <Suspense fallback={<CuteLoader />}>
               <main>
                 <Routes>
                   <Route path="/"                   element={<Home />} />

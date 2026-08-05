@@ -7,6 +7,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SEO from "../components/SEO";
 import AdBanner from "../components/AdBanner";
+import CuteLoader from "../components/CuteLoader";
 
 function ReviewForm({ productId, onSubmit }) {
   const { member } = useMember();
@@ -134,11 +135,7 @@ export default function DigitalProductDetail() {
     };
   }, [product, id]);
 
-  if (!product) return (
-    <div className="min-h-screen flex items-center justify-center" style={{ background: "#020617" }}>
-      <div style={{ color: "#38bdf8", fontFamily: "monospace" }}>Loading...</div>
-    </div>
-  );
+  if (!product) return <CuteLoader />;
 
   const allImages = [
     ...(product.thumbnail_url ? [product.thumbnail_url] : []),

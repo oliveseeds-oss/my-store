@@ -1250,7 +1250,7 @@ export default function Home() {
                   src="/home_story.jpg"
                   alt="Artisan laser engraving wood craftsmanship design studio"
                   style={{
-                    width: "100%", height: "auto",
+                    width: "100%", height: "400px", objectFit: "cover",
                     borderRadius: "var(--radius)",
                     border: "1px solid var(--border)",
                     display: "block", position: "relative", zIndex: 1,
