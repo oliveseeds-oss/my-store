@@ -2,15 +2,22 @@ const router = require("express").Router();
 const db = require("../db");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const { generateMemberUid } = require("../utils/generateUid");
 const { verifyAdmin, verifyMember } = require("../middleware/auth");
 const { createRateLimiter } = require("../middleware/rateLimiter");
+const { sendMail } = require("../utils/mailer");
+
+// Run schema extensions
+db.query("ALTER TABLE members ADD COLUMN failed_otp_attempts INT DEFAULT 0").catch(() => {});
+db.query("ALTER TABLE members ADD COLUMN locked_until DATETIME DEFAULT NULL").catch(() => {});
 
 const loginLimiter = createRateLimiter(5, 15 * 60 * 1000); // 5 attempts per 15 minutes
 const forgotPasswordLimiter = createRateLimiter(3, 15 * 60 * 1000); // 3 attempts per 15 minutes
+const otpRateLimiter = createRateLimiter(5, 60 * 60 * 1000); // Max 5 requests per hour
 
 // PUBLIC — register
-router.post("/register", async (req, res) => {
+router.post("/register", otpRateLimiter, async (req, res) => {
   const { name, email, password, phone } = req.body;
   if (!name || !email || !password)
     return res.status(400).json({ error: "Name, email and password are required" });
@@ -31,23 +38,32 @@ router.post("/register", async (req, res) => {
     );
     
     // Generate secure 6-digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = crypto.randomInt(100000, 1000000).toString();
     await db.query(
-      "INSERT INTO otp_verifications (email, otp_code, purpose, expires_at) VALUES (?, ?, 'registration', DATE_ADD(NOW(), INTERVAL 15 MINUTE))",
+      "INSERT INTO otp_verifications (email, otp_code, purpose, expires_at) VALUES (?, ?, 'registration', DATE_ADD(NOW(), INTERVAL 10 MINUTE))",
       [email, otp]
     );
 
-    // Print beautiful OTP box to console
-    console.log(`
-===================================================
-🔒 OTP SECURITY SERVICE - ACTION REQUIRED
-===================================================
-Type:       Account Registration Verification
-Email:      ${email}
-OTP Code:   ${otp}
-Expires In: 15 minutes
-===================================================
-    `);
+    // Send real registration OTP email
+    console.log(`✉️ Sending Account registration OTP to ${email}: ${otp}`);
+    await sendMail({
+      to: email,
+      subject: "Verify your Olive Seeds account - OTP Code",
+      text: `Welcome to Olive Seeds Studio! Use verification code ${otp} to activate your account. Code is valid for 10 minutes.`,
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e5e5; border-radius: 16px; background-color: #FAF9F6; color: #0D1512;">
+          <h2 style="text-align: center; color: #0D1512; font-family: sans-serif; font-weight: 800;">Verify Your Account</h2>
+          <p style="font-size: 14px; line-height: 1.5;">Hello ${name},</p>
+          <p style="font-size: 14px; line-height: 1.5;">Thank you for registering at <strong>Olive Seeds Studio</strong>. To activate your account and access your dashboard, please verify your email using the secure 6-digit code below:</p>
+          <div style="background-color: #ffffff; padding: 20px; text-align: center; border-radius: 12px; margin: 25px 0; border: 1px solid rgba(27,57,49,0.15);">
+            <span style="font-size: 32px; font-weight: 900; letter-spacing: 6px; color: #d97706;">${otp}</span>
+          </div>
+          <p style="font-size: 12px; color: #78716c; text-align: center; margin-top: 20px;">This security code is active for <strong>10 minutes</strong>. If you did not register for this account, you can safely ignore this email.</p>
+          <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 25px 0;" />
+          <p style="font-size: 11px; text-align: center; color: #a8a29e;">© 2026 Olive Seeds Studio. All rights reserved.</p>
+        </div>
+      `
+    });
 
     // Notify admin
     await db.query(
@@ -55,7 +71,7 @@ Expires In: 15 minutes
       ["new_member", "New member registered (Pending OTP)", `${name} (${email}) created account - pending OTP`, "/members"]
     );
     
-    res.json({ message: "Registered successfully. OTP sent.", member_uid, dev_otp: otp });
+    res.json({ message: "Registered successfully. OTP sent.", member_uid });
   } catch (e) {
     if (e.code === "ER_DUP_ENTRY")
       return res.status(400).json({ error: "Email already registered" });
@@ -71,6 +87,16 @@ router.post("/verify-otp", async (req, res) => {
   }
 
   try {
+    // Check account lockout
+    const [members] = await db.query("SELECT id, failed_otp_attempts, locked_until FROM members WHERE email = ?", [email]);
+    if (members.length) {
+      const member = members[0];
+      if (member.locked_until && new Date(member.locked_until) > new Date()) {
+        const remaining = Math.ceil((new Date(member.locked_until) - new Date()) / 1000 / 60);
+        return res.status(403).json({ error: `Account is locked due to multiple failed OTP attempts. Try again in ${remaining} minutes.` });
+      }
+    }
+
     const [rows] = await db.query(
       `SELECT * FROM otp_verifications 
        WHERE email = ? AND otp_code = ? AND purpose = ? AND is_verified = FALSE AND expires_at > NOW() 
@@ -79,13 +105,27 @@ router.post("/verify-otp", async (req, res) => {
     );
 
     if (!rows.length) {
+      if (members.length) {
+        const nextAttempts = members[0].failed_otp_attempts + 1;
+        if (nextAttempts >= 5) {
+          await db.query(
+            "UPDATE members SET failed_otp_attempts = 0, locked_until = DATE_ADD(NOW(), INTERVAL 30 MINUTE) WHERE email = ?",
+            [email]
+          );
+          return res.status(403).json({ error: "Too many incorrect attempts. Account locked for 30 minutes." });
+        } else {
+          await db.query("UPDATE members SET failed_otp_attempts = ? WHERE email = ?", [nextAttempts, email]);
+          return res.status(400).json({ error: `Invalid or expired OTP code. ${5 - nextAttempts} attempts remaining.` });
+        }
+      }
       return res.status(400).json({ error: "Invalid or expired OTP code" });
     }
 
     const otpRecord = rows[0];
 
-    // Mark OTP as verified
+    // Mark OTP as verified & reset lock attempts
     await db.query("UPDATE otp_verifications SET is_verified = TRUE WHERE id = ?", [otpRecord.id]);
+    await db.query("UPDATE members SET failed_otp_attempts = 0, locked_until = NULL WHERE email = ?", [email]);
 
     if (purpose === "registration") {
       // Activate the account
@@ -105,7 +145,7 @@ router.post("/verify-otp", async (req, res) => {
 });
 
 // PUBLIC — resend OTP
-router.post("/resend-otp", async (req, res) => {
+router.post("/resend-otp", otpRateLimiter, async (req, res) => {
   const { email, purpose } = req.body;
   if (!email || !purpose) {
     return res.status(400).json({ error: "Email and purpose are required" });
@@ -117,24 +157,34 @@ router.post("/resend-otp", async (req, res) => {
       return res.status(404).json({ error: "Account not found" });
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = crypto.randomInt(100000, 1000000).toString();
     await db.query(
-      "INSERT INTO otp_verifications (email, otp_code, purpose, expires_at) VALUES (?, ?, ?, DATE_ADD(NOW(), INTERVAL 15 MINUTE))",
+      "INSERT INTO otp_verifications (email, otp_code, purpose, expires_at) VALUES (?, ?, ?, DATE_ADD(NOW(), INTERVAL 10 MINUTE))",
       [email, otp, purpose]
     );
 
-    console.log(`
-===================================================
-🔒 OTP SECURITY SERVICE - ACTION REQUIRED (RESEND)
-===================================================
-Type:       OTP Resend (${purpose})
-Email:      ${email}
-OTP Code:   ${otp}
-Expires In: 15 minutes
-===================================================
-    `);
+    // Send real resent OTP email
+    console.log(`✉️ Sending Resent OTP to ${email}: ${otp} (${purpose})`);
+    await sendMail({
+      to: email,
+      subject: `Resent Verification Code: ${purpose === 'registration' ? 'Activate Account' : 'Password Reset'}`,
+      text: `Your requested OTP code is ${otp}. It is valid for 10 minutes.`,
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e5e5; border-radius: 16px; background-color: #FAF9F6; color: #0D1512;">
+          <h2 style="text-align: center; color: #0D1512; font-family: sans-serif; font-weight: 800;">Verification Code</h2>
+          <p style="font-size: 14px; line-height: 1.5;">Hello,</p>
+          <p style="font-size: 14px; line-height: 1.5;">You requested a new security verification code for your account. Please enter the code below to complete your action (${purpose === 'registration' ? 'Registration' : 'Password Reset'}):</p>
+          <div style="background-color: #ffffff; padding: 20px; text-align: center; border-radius: 12px; margin: 25px 0; border: 1px solid rgba(27,57,49,0.15);">
+            <span style="font-size: 32px; font-weight: 900; letter-spacing: 6px; color: #d97706;">${otp}</span>
+          </div>
+          <p style="font-size: 12px; color: #78716c; text-align: center; margin-top: 20px;">This security code is active for <strong>10 minutes</strong>. If you did not make this request, you can safely ignore this email.</p>
+          <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 25px 0;" />
+          <p style="font-size: 11px; text-align: center; color: #a8a29e;">© 2026 Olive Seeds Studio. All rights reserved.</p>
+        </div>
+      `
+    });
 
-    res.json({ message: "A new OTP code has been sent", dev_otp: otp });
+    res.json({ message: "A new OTP code has been sent" });
   } catch (error) {
     console.error("Resend OTP failed:", error);
     res.status(500).json({ error: "Failed to resend OTP" });
@@ -152,24 +202,39 @@ router.post("/forgot-password", forgotPasswordLimiter, async (req, res) => {
       return res.status(404).json({ error: "Account with this email does not exist" });
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = crypto.randomInt(100000, 1000000).toString();
     await db.query(
-      "INSERT INTO otp_verifications (email, otp_code, purpose, expires_at) VALUES (?, ?, 'password_reset', DATE_ADD(NOW(), INTERVAL 15 MINUTE))",
+      "INSERT INTO otp_verifications (email, otp_code, purpose, expires_at) VALUES (?, ?, 'password_reset', DATE_ADD(NOW(), INTERVAL 10 MINUTE))",
       [email, otp]
     );
 
-    console.log(`
-===================================================
-🔒 OTP SECURITY SERVICE - ACTION REQUIRED
-===================================================
-Type:       Password Reset Request
-Email:      ${email}
-OTP Code:   ${otp}
-Expires In: 15 minutes
-===================================================
-    `);
+    // Send real forgot password OTP email
+    console.log(`✉️ Sending Forgot Password OTP to ${email}: ${otp}`);
+    await sendMail({
+      to: email,
+      subject: "Reset your Olive Seeds password - OTP Code",
+      text: `You requested a password reset. Use security code ${otp} to reset your password. Code is valid for 10 minutes.`,
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e5e5; border-radius: 16px; background-color: #FAF9F6; color: #0D1512;">
+          <h2 style="text-align: center; color: #0D1512; font-family: sans-serif; font-weight: 800;">Password Reset Request</h2>
+          <p style="font-size: 14px; line-height: 1.5;">Hello,</p>
+          <p style="font-size: 14px; line-height: 1.5;">We received a request to reset the password for your account at <strong>Olive Seeds Studio</strong>. Use the security verification code below to set a new password:</p>
+          <div style="background-color: #ffffff; padding: 20px; text-align: center; border-radius: 12px; margin: 25px 0; border: 1px solid rgba(27,57,49,0.15);">
+            <span style="font-size: 32px; font-weight: 900; letter-spacing: 6px; color: #d97706;">${otp}</span>
+          </div>
+          <p style="font-size: 12px; color: #78716c; text-align: center; margin-top: 20px;">This security code is active for <strong>10 minutes</strong>. If you did not request a password reset, you can safely ignore this email and your password will remain unchanged.</p>
+          <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 25px 0;" />
+          <p style="font-size: 11px; text-align: center; color: #a8a29e;">© 2026 Olive Seeds Studio. All rights reserved.</p>
+        </div>
+      `
+    });
 
-    res.json({ message: "Password reset OTP sent", dev_otp: otp });
+    res.json({ message: "Password reset OTP sent" });
+  } catch (error) {
+    console.error("Forgot password failed:", error);
+    res.status(500).json({ error: "Failed to initiate password reset" });
+  }
+});
   } catch (error) {
     console.error("Forgot password failed:", error);
     res.status(500).json({ error: "Failed to initiate password reset" });

@@ -351,34 +351,57 @@ export default function ProductDetail() {
                     >
                       <img src={t.preview_image} alt="" className="w-full h-full object-cover absolute inset-0 z-0" />
                       
-                      {/* Overlay Text Details */}
+                      {/* Overlay Text/Image Details */}
                       {t.fields?.map(f => {
-                        if (!["text", "textarea", "number", "date"].includes(f.type)) return null;
                         if (f.x_pos === null || f.y_pos === null) return null;
                         
-                        const text = customValues[f.field_key] || f.default_value || "";
-                        
-                        const style = {
-                          position: "absolute",
-                          left: `${(f.x_pos / 500) * 100}%`,
-                          top: `${(f.y_pos / 500) * 100}%`,
-                          fontFamily: f.font_family || "sans-serif",
-                          fontSize: f.font_size ? `${(f.font_size / 500) * 100}cqw` : "3.5cqw",
-                          color: f.font_color || "#000",
-                          textAlign: f.text_align || "center",
-                          maxWidth: f.max_width ? `${(f.max_width / 500) * 100}%` : "90%",
-                          transform: `translate(-50%, -50%) rotate(${f.rotation || 0}deg)`,
-                          whiteSpace: "pre-wrap",
-                          wordBreak: "break-word",
-                          lineHeight: "1.2",
-                          pointerEvents: "none",
-                          zIndex: 10
-                        };
-                        return (
-                          <div key={f.id} style={style}>
-                            {text || f.placeholder || ""}
-                          </div>
-                        );
+                        if (["text", "textarea", "number", "date"].includes(f.type)) {
+                          const text = customValues[f.field_key] || f.default_value || "";
+                          const style = {
+                            position: "absolute",
+                            left: `${(f.x_pos / 500) * 100}%`,
+                            top: `${(f.y_pos / 500) * 100}%`,
+                            fontFamily: f.font_family || "sans-serif",
+                            fontSize: f.font_size ? `${(f.font_size / 500) * 100}cqw` : "3.5cqw",
+                            color: f.font_color || "#000",
+                            textAlign: f.text_align || "center",
+                            maxWidth: f.max_width ? `${(f.max_width / 500) * 100}%` : "90%",
+                            transform: `translate(-50%, -50%) rotate(${f.rotation || 0}deg)`,
+                            whiteSpace: "pre-wrap",
+                            wordBreak: "break-word",
+                            lineHeight: "1.2",
+                            pointerEvents: "none",
+                            zIndex: 10
+                          };
+                          return (
+                            <div key={f.id} style={style}>
+                              {text || f.placeholder || ""}
+                            </div>
+                          );
+                        }
+
+                        if (["image", "file"].includes(f.type)) {
+                          const imgUrl = customValues[f.field_key] || f.default_value || "";
+                          if (!imgUrl) return null;
+                          const resolvedSrc = imgUrl.startsWith("http") ? imgUrl : `http://localhost:5000${imgUrl}`;
+                          const style = {
+                            position: "absolute",
+                            left: `${(f.x_pos / 500) * 100}%`,
+                            top: `${(f.y_pos / 500) * 100}%`,
+                            width: f.max_width ? `${(f.max_width / 500) * 100}%` : "25%",
+                            height: "auto",
+                            transform: `translate(-50%, -50%) rotate(${f.rotation || 0}deg)`,
+                            pointerEvents: "none",
+                            zIndex: 10,
+                            borderRadius: "4px",
+                            border: "1px dashed rgba(217, 119, 6, 0.4)"
+                          };
+                          return (
+                            <img key={f.id} src={resolvedSrc} alt="" style={style} />
+                          );
+                        }
+
+                        return null;
                       })}
                     </div>
                   );

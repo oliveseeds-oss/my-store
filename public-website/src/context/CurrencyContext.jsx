@@ -59,28 +59,36 @@ export function CurrencyProvider({ children }) {
         // Helper to detect currency by visitor's IP geolocation
         function detectIPCurrency(list) {
             fetch("https://ipapi.co/json/")
-                .then(res => res.json())
-                .then(geo => {
-                    const countryCode = geo.country_code; // e.g. "US", "GB", "IN"
-                    if (countryCode && list.length) {
-                        const match = list.find(c => c.country_code.toUpperCase() === countryCode.toUpperCase());
-                        if (match) {
-                            setSelected(match);
-                            localStorage.setItem("currency", JSON.stringify(match));
-                        } else {
-                            // Target countries list check: USA, UK, Canada, Australia, Malaysia, Singapore, UAE, India, South Korea, Japan, Germany, New Zealand, Saudi Arabia, Ireland, Belgium, Sweden, Switzerland
-                            // If they are from outside this list, default/commonly show Dollar (US)
-                            const usdMatch = list.find(c => c.currency_code === "USD");
-                            if (usdMatch) {
-                                setSelected(usdMatch);
-                                localStorage.setItem("currency", JSON.stringify(usdMatch));
-                            }
-                        }
-                    }
+                .then(res => {
+                    if (!res.ok) throw new Error("Primary geo-lookup failed");
+                    return res.json();
                 })
+                .then(geo => handleGeoResult(geo.country_code, list))
                 .catch(err => {
-                    console.warn("Geolocation currency detection failed, using defaults:", err);
+                    console.warn("Primary geolocation failed, trying fallback:", err.message);
+                    fetch("https://ip-api.com/json")
+                        .then(res => res.json())
+                        .then(geo => handleGeoResult(geo.countryCode, list))
+                        .catch(fallbackErr => {
+                            console.warn("Fallback geolocation failed:", fallbackErr.message);
+                        });
                 });
+        }
+
+        function handleGeoResult(countryCode, list) {
+            if (countryCode && list.length) {
+                const match = list.find(c => c.country_code.toUpperCase() === countryCode.toUpperCase());
+                if (match) {
+                    setSelected(match);
+                    localStorage.setItem("currency", JSON.stringify(match));
+                } else {
+                    const usdMatch = list.find(c => c.currency_code === "USD");
+                    if (usdMatch) {
+                        setSelected(usdMatch);
+                        localStorage.setItem("currency", JSON.stringify(usdMatch));
+                    }
+                }
+            }
         }
 
         // Visitor ping

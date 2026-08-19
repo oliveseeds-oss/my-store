@@ -14,7 +14,8 @@ const { getSubunits, getAmountFromSubunits } = require("../utils/currency");
 router.post("/orders/create", async (req, res) => {
   const {
     member_id, guest_name, guest_email, guest_phone,
-    items, address_line, currency_code, shipping_fee
+    items, address_line, currency_code, shipping_fee,
+    delivery_street, delivery_apt, delivery_city, delivery_state, delivery_country, delivery_pincode
   } = req.body;
 
   try {
@@ -120,15 +121,15 @@ router.post("/orders/create", async (req, res) => {
       finalOrderUid = order_uid;
       finalInvoiceUid = invoice_uid;
 
-      // Parse address line
+      // Parse address line or use structured fields
       const address = address_line || "";
       const parts = address.split(",").map(p => p.trim());
-      const delivery_street = parts[0] || address || "Street Address";
-      const delivery_apt = parts[1] || "";
-      const delivery_city = parts[2] || "City";
-      const delivery_state = parts[3] || "State";
-      const delivery_country = parts[4] || "India";
-      const delivery_pincode = parts[5] || "000000";
+      const streetVal = delivery_street || parts[0] || address || "Street Address";
+      const aptVal = delivery_apt || parts[1] || "";
+      const cityVal = delivery_city || parts[2] || "City";
+      const stateVal = delivery_state || parts[3] || "State";
+      const countryVal = delivery_country || parts[4] || "India";
+      const pincodeVal = delivery_pincode || parts[5] || "000000";
 
       // Call Razorpay Order Creation server-side
       const amountInMinorUnits = getSubunits(finalTotalConverted, targetCurrency);
@@ -143,8 +144,8 @@ router.post("/orders/create", async (req, res) => {
          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
         [
           order_uid, invoice_uid, member_uid, guest_name || "Guest", guest_email || "", guest_phone || "",
-          guest_name || "Guest", delivery_street, delivery_apt, delivery_city, delivery_state,
-          delivery_country, delivery_pincode, subtotalConverted, taxConverted, shippingConverted, finalTotalConverted,
+          guest_name || "Guest", streetVal, aptVal, cityVal, stateVal,
+          countryVal, pincodeVal, subtotalConverted, taxConverted, shippingConverted, finalTotalConverted,
           targetCurrency, conversionRate, "Razorpay", null, "Pending", "Processing", rzpOrder.id
         ]
       );
@@ -170,6 +171,39 @@ router.post("/orders/create", async (req, res) => {
 
         // Reduce stock
         await db.query("UPDATE products SET stock = GREATEST(0, stock - ?) WHERE product_uid = ?", [item.qty, item.product_uid]);
+
+        // Check if stock has dropped below 5
+        try {
+          const [stockCheck] = await db.query(
+            "SELECT name, stock FROM products WHERE product_uid = ?",
+            [item.product_uid]
+          );
+          if (stockCheck.length && stockCheck[0].stock < 5) {
+            const currentStock = stockCheck[0].stock;
+            const productName = stockCheck[0].name;
+            const { sendMail } = require("../utils/mailer");
+            sendMail({
+              to: "oss.oliveseeds@gmail.com",
+              subject: `⚠️ LOW STOCK WARNING: "${productName}"`,
+              text: `Low stock alert: The stock level for "${productName}" (UID: ${item.product_uid}) has dropped to ${currentStock}. Please restock soon.`,
+              html: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #f5c2c2; border-radius: 12px; background-color: #fff5f5; color: #9c0006;">
+                  <h3 style="margin-top: 0; color: #9c0006;">⚠️ Low Stock Inventory Alert</h3>
+                  <p>Hello Admin,</p>
+                  <p>This is an automated warning that stock levels for a product have dropped below 5 units:</p>
+                  <div style="background-color: #ffffff; border: 1px solid #f5c2c2; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                    <strong>Product Name:</strong> ${productName}<br/>
+                    <strong>Product UID:</strong> ${item.product_uid}<br/>
+                    <strong>Remaining Stock:</strong> <span style="font-size: 16px; font-weight: bold; color: #d90429;">${currentStock} units</span>
+                  </div>
+                  <p style="font-size: 12px; color: #5c6266;">Please login to your admin dashboard to adjust inventory levels.</p>
+                </div>
+              `
+            }).catch(err => console.error("Failed to send low stock alert:", err.message));
+          }
+        } catch (stockErr) {
+          console.error("Failed to query stock for low stock warning:", stockErr.message);
+        }
       }
 
       return res.json({
@@ -290,6 +324,10 @@ router.post("/verify", async (req, res) => {
       [`Payment of ${order.currency_code} ${order.total} verified successfully for Order #${order.order_uid}`]
     );
 
+    // Trigger email confirmation & invoice dispatch (background)
+    const { sendOrderConfirmation } = require("../utils/orderNotification");
+    sendOrderConfirmation(order.order_uid).catch(err => console.error("Failed to send order confirmation email:", err));
+
     return res.json({ success: true, message: "Payment verified successfully.", order_id: order.order_uid });
   } catch (error) {
     console.error("Verification endpoint failure:", error.message);
@@ -353,12 +391,10 @@ router.post("/razorpay/webhook", async (req, res) => {
   if (webhookSecret && signature) {
     const crypto = require("crypto");
     const hmac = crypto.createHmac("sha256", webhookSecret);
-    // Buffer body mapping
-    const rawBody = JSON.stringify(req.body);
-    const hash = hmac.update(rawBody).digest("hex");
+    const hash = hmac.update(req.rawBody || JSON.stringify(req.body)).digest("hex");
     
     if (hash !== signature) {
-      return res.status(401).json({ error: "Invalid webhook signature." });
+      return res.status(400).json({ error: "Invalid webhook signature." });
     }
   }
 
@@ -394,6 +430,9 @@ router.post("/razorpay/webhook", async (req, res) => {
                 `UPDATE ${orderTable} SET payment_status = 'Paid', transaction_id = ?, razorpay_payment_id = ?, payment_verified_at = NOW() WHERE id = ?`,
                 [rzpPaymentId, rzpPaymentId, order.id]
               );
+              // Trigger email confirmation & invoice dispatch (background)
+              const { sendOrderConfirmation } = require("../utils/orderNotification");
+              sendOrderConfirmation(order.order_uid).catch(err => console.error("Failed to send order confirmation email via webhook:", err));
             }
           }
         }

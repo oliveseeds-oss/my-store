@@ -23,7 +23,16 @@ const loadPayPalScript = (clientId, currency) => {
   return new Promise((resolve) => {
     const id = "paypal-sdk-script";
     const existing = document.getElementById(id);
-    if (existing) existing.remove();
+    if (existing) {
+      existing.remove();
+      if (window.paypal) {
+        try {
+          delete window.paypal;
+        } catch (e) {
+          window.paypal = undefined;
+        }
+      }
+    }
     
     const script = document.createElement("script");
     script.id = id;
@@ -45,7 +54,12 @@ export default function Checkout() {
     name: member?.name || "",
     email: member?.email || "",
     phone: "",
-    address: "",
+    delivery_street: "",
+    delivery_apt: "",
+    delivery_city: "",
+    delivery_state: "",
+    delivery_country: "India",
+    delivery_pincode: "",
   });
   const [placing, setPlacing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState(selected.currency_code === "INR" ? "razorpay" : "paypal");
@@ -59,9 +73,37 @@ export default function Checkout() {
   }, []);
 
   useEffect(() => {
+    if (member) {
+      API.get("/members/profile")
+        .then(res => {
+          const p = res.data;
+          setForm(prev => ({
+            ...prev,
+            name: p.full_name || p.name || prev.name,
+            email: p.email || prev.email,
+            phone: p.phone || prev.phone || "",
+            delivery_street: p.street_address || "",
+            delivery_apt: p.apt_suite || "",
+            delivery_city: p.city || "",
+            delivery_state: p.state || "",
+            delivery_country: p.country || "India",
+            delivery_pincode: p.pincode || "",
+          }));
+        })
+        .catch(err => console.error("Failed to load member profile info", err));
+    }
+  }, [member]);
+
+  useEffect(() => {
     if (!siteSettings) return;
     const paypalCurrency = selected.currency_code === "INR" ? "USD" : selected.currency_code;
-    loadPayPalScript(siteSettings.paypal_client_id, paypalCurrency)
+    const clientId = siteSettings.paypal_client_id;
+    if (!clientId) {
+      console.warn("PayPal Client ID is missing. PayPal Gateway disabled.");
+      return;
+    }
+    setPaypalLoaded(false);
+    loadPayPalScript(clientId, paypalCurrency)
       .then(success => {
         if (success && window.paypal) {
           setPaypalLoaded(true);
@@ -103,10 +145,19 @@ export default function Checkout() {
   }, [paypalLoaded, total, shipping, selected]);
 
   const placeOrder = async (gatewayDetails = null) => {
-    if (!form.name || !form.email || !form.address) {
-      alert("Please fill in delivery details first.");
+    if (!form.name || !form.email || !form.delivery_street || !form.delivery_city || !form.delivery_state || !form.delivery_pincode) {
+      alert("Please fill in all required delivery details (Name, Email, Street, City, State, and Pincode) first.");
       return;
     }
+    const formattedAddressLine = [
+      form.delivery_street,
+      form.delivery_apt,
+      form.delivery_city,
+      form.delivery_state,
+      form.delivery_country,
+      form.delivery_pincode
+    ].filter(Boolean).join(", ");
+
     setPlacing(true);
     try {
       const items = cart.map((i) => ({
@@ -126,7 +177,13 @@ export default function Checkout() {
         guest_email: form.email,
         guest_phone: form.phone,
         items,
-        address_line: form.address,
+        address_line: formattedAddressLine,
+        delivery_street: form.delivery_street,
+        delivery_apt: form.delivery_apt,
+        delivery_city: form.delivery_city,
+        delivery_state: form.delivery_state,
+        delivery_country: form.delivery_country,
+        delivery_pincode: form.delivery_pincode,
         shipping_fee: shipping,
         payment_mode: gatewayDetails?.mode || "COD",
         transaction_id: gatewayDetails?.transactionId || null,
@@ -143,10 +200,19 @@ export default function Checkout() {
   };
 
   const handleRazorpayPayment = async () => {
-    if (!form.name || !form.email || !form.address) {
-      alert("Please fill in delivery details first.");
+    if (!form.name || !form.email || !form.delivery_street || !form.delivery_city || !form.delivery_state || !form.delivery_pincode) {
+      alert("Please fill in all required delivery details (Name, Email, Street, City, State, and Pincode) first.");
       return;
     }
+    const formattedAddressLine = [
+      form.delivery_street,
+      form.delivery_apt,
+      form.delivery_city,
+      form.delivery_state,
+      form.delivery_country,
+      form.delivery_pincode
+    ].filter(Boolean).join(", ");
+
     setPlacing(true);
     const loaded = await loadRazorpayScript();
     if (!loaded) {
@@ -171,7 +237,13 @@ export default function Checkout() {
           selected_size: i.selectedSize || null,
           customizations: i.customizations || []
         })),
-        address_line: form.address,
+        address_line: formattedAddressLine,
+        delivery_street: form.delivery_street,
+        delivery_apt: form.delivery_apt,
+        delivery_city: form.delivery_city,
+        delivery_state: form.delivery_state,
+        delivery_country: form.delivery_country,
+        delivery_pincode: form.delivery_pincode,
         currency_code: selected.currency_code || "INR",
         shipping_fee: shipping
       };
@@ -270,14 +342,65 @@ export default function Checkout() {
             ))}
 
             <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Full Delivery Address</label>
-              <textarea
-                value={form.address}
-                onChange={(e) => setForm({ ...form, address: e.target.value })}
-                rows={3}
-                placeholder="House no, Street, City, State, Pincode"
-                className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] resize-none"
+              <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Street Address *</label>
+              <input
+                value={form.delivery_street}
+                onChange={(e) => setForm({ ...form, delivery_street: e.target.value })}
+                placeholder="House No., Street name, Area"
+                className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
               />
+            </div>
+
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Apartment, suite, unit, floor (Optional)</label>
+              <input
+                value={form.delivery_apt}
+                onChange={(e) => setForm({ ...form, delivery_apt: e.target.value })}
+                placeholder="Apt, Suite, Unit, etc."
+                className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">City *</label>
+                <input
+                  value={form.delivery_city}
+                  onChange={(e) => setForm({ ...form, delivery_city: e.target.value })}
+                  placeholder="City"
+                  className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">State *</label>
+                <input
+                  value={form.delivery_state}
+                  onChange={(e) => setForm({ ...form, delivery_state: e.target.value })}
+                  placeholder="State"
+                  className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Country *</label>
+                <input
+                  value={form.delivery_country}
+                  onChange={(e) => setForm({ ...form, delivery_country: e.target.value })}
+                  placeholder="Country"
+                  className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Pincode / Postal Code *</label>
+                <input
+                  value={form.delivery_pincode}
+                  onChange={(e) => setForm({ ...form, delivery_pincode: e.target.value })}
+                  placeholder="110001"
+                  className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
+                />
+              </div>
             </div>
 
             {/* Payment Details */}

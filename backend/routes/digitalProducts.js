@@ -1,5 +1,9 @@
 const router = require("express").Router();
 const db = require("../db");
+const jwt = require("jsonwebtoken");
+const path = require("path");
+const fs = require("fs");
+const crypto = require("crypto");
 const { verifyAdmin } = require("../middleware/auth");
 
 const parseJSON = (val) => {
@@ -9,9 +13,33 @@ const parseJSON = (val) => {
 };
 
 function generateDigitalProductUid() {
-  const uniqueId = Math.floor(100000 + Math.random() * 900000);
+  const uniqueId = crypto.randomInt(100000, 1000000);
   return `DPD-${uniqueId}`;
 }
+
+router.get("/download/:token", async (req, res) => {
+  const { token } = req.params;
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const { product_uid } = decoded;
+    
+    const [rows] = await db.query("SELECT file_url FROM digital_products WHERE product_uid = ?", [product_uid]);
+    if (!rows.length || !rows[0].file_url) {
+      return res.status(404).send("File not found or product inactive.");
+    }
+    
+    const fileUrl = rows[0].file_url;
+    if (fileUrl.startsWith("/uploads/")) {
+      const filePath = path.join(__dirname, "..", fileUrl);
+      if (fs.existsSync(filePath)) {
+        return res.download(filePath);
+      }
+    }
+    res.redirect(fileUrl);
+  } catch (err) {
+    res.status(400).send("Download link has expired or is invalid.");
+  }
+});
 
 router.get("/", async (req, res) => {
   const { category, search, tag, sort, minPrice, maxPrice, minRating } = req.query;

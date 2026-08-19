@@ -3,18 +3,79 @@ const db = require("../db");
 const { generateOrderUid } = require('../utils/generateUid');
 const { verifyAdmin, verifyMember } = require("../middleware/auth");
 
+async function verifyPayPalOrder(orderId) {
+  const [rows] = await db.query("SELECT paypal_client_id FROM settings WHERE id = 1");
+  const clientId = rows[0]?.paypal_client_id || process.env.PAYPAL_CLIENT_ID;
+  const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
+  
+  if (!clientId || !clientSecret) {
+    throw new Error("PayPal credentials missing in production. Cannot verify transaction.");
+  }
+
+  const isLive = !clientId.startsWith("sb") && process.env.PAYPAL_MODE !== "sandbox";
+  const baseUrl = isLive ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
+
+  const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
+  const tokenRes = await fetch(`${baseUrl}/v1/oauth2/token`, {
+    method: "POST",
+    body: "grant_type=client_credentials",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Authorization": `Basic ${auth}`
+    }
+  });
+  
+  if (!tokenRes.ok) {
+    throw new Error("Failed to authenticate with PayPal API.");
+  }
+  
+  const tokenData = await tokenRes.json();
+  const accessToken = tokenData.access_token;
+
+  const orderRes = await fetch(`${baseUrl}/v2/checkout/orders/${orderId}`, {
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${accessToken}`,
+      "Content-Type": "application/json"
+    }
+  });
+
+  if (!orderRes.ok) {
+    throw new Error("Failed to fetch order details from PayPal.");
+  }
+
+  const orderData = await orderRes.json();
+  if (orderData.status !== "COMPLETED") {
+    throw new Error(`PayPal order status is ${orderData.status}, expected COMPLETED.`);
+  }
+  return true;
+}
+
 
 // UNIFIED ORDERS PLACEMENT ROUTE
 router.post("/", async (req, res) => {
   const {
     member_id, guest_name, guest_email, guest_phone,
     items, address_line, shipping_fee,
-    payment_mode, transaction_id, currency_code, currency_rate
+    payment_mode, transaction_id, currency_code, currency_rate,
+    delivery_street, delivery_apt, delivery_city, delivery_state, delivery_country, delivery_pincode
   } = req.body;
 
   try {
     if (!items || !items.length) {
       return res.status(400).json({ error: "Cart is empty" });
+    }
+
+    if (payment_mode === "PayPal") {
+      if (!transaction_id) {
+        return res.status(400).json({ error: "PayPal Transaction ID is required" });
+      }
+      try {
+        await verifyPayPalOrder(transaction_id);
+      } catch (paypalErr) {
+        console.error("PayPal verification failed:", paypalErr.message);
+        return res.status(400).json({ error: `PayPal validation failed: ${paypalErr.message}` });
+      }
     }
 
     // 1. Resolve member_uid if member_id is provided
@@ -79,15 +140,15 @@ router.post("/", async (req, res) => {
       const ship_fee = shipping_fee !== undefined ? shipping_fee : (subtotal >= 999 ? 0 : 60);
       const total = subtotal + tax_amount + ship_fee;
 
-      // Parse address line
+      // Parse address line or use structured fields
       const address = address_line || "";
       const parts = address.split(",").map(p => p.trim());
-      const delivery_street = parts[0] || address || "Street Address";
-      const delivery_apt = parts[1] || "";
-      const delivery_city = parts[2] || "City";
-      const delivery_state = parts[3] || "State";
-      const delivery_country = parts[4] || "India";
-      const delivery_pincode = parts[5] || "000000";
+      const streetVal = delivery_street || parts[0] || address || "Street Address";
+      const aptVal = delivery_apt || parts[1] || "";
+      const cityVal = delivery_city || parts[2] || "City";
+      const stateVal = delivery_state || parts[3] || "State";
+      const countryVal = delivery_country || parts[4] || "India";
+      const pincodeVal = delivery_pincode || parts[5] || "000000";
 
       await db.query(
         `INSERT INTO physical_orders
@@ -98,8 +159,8 @@ router.post("/", async (req, res) => {
          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
         [
           order_uid, invoice_uid, member_uid, guest_name || "Guest", guest_email || "", guest_phone || "",
-          guest_name || "Guest", delivery_street, delivery_apt, delivery_city, delivery_state,
-          delivery_country, delivery_pincode, subtotal, tax_amount, ship_fee, total,
+          guest_name || "Guest", streetVal, aptVal, cityVal, stateVal,
+          countryVal, pincodeVal, subtotal, tax_amount, ship_fee, total,
           currency_code || "INR", parseFloat(currency_rate) || 1.0, payment_mode || "COD", transaction_id || null,
           (payment_mode && payment_mode !== "COD" && transaction_id) ? "Paid" : "Pending", "Processing"
         ]
@@ -137,6 +198,39 @@ router.post("/", async (req, res) => {
           "UPDATE products SET stock = GREATEST(0, stock - ?) WHERE product_uid = ?",
           [item.qty, item.product_uid]
         );
+
+        // Check if stock has dropped below 5
+        try {
+          const [stockCheck] = await db.query(
+            "SELECT name, stock FROM products WHERE product_uid = ?",
+            [item.product_uid]
+          );
+          if (stockCheck.length && stockCheck[0].stock < 5) {
+            const currentStock = stockCheck[0].stock;
+            const productName = stockCheck[0].name;
+            const { sendMail } = require("../utils/mailer");
+            sendMail({
+              to: "oss.oliveseeds@gmail.com",
+              subject: `⚠️ LOW STOCK WARNING: "${productName}"`,
+              text: `Low stock alert: The stock level for "${productName}" (UID: ${item.product_uid}) has dropped to ${currentStock}. Please restock soon.`,
+              html: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #f5c2c2; border-radius: 12px; background-color: #fff5f5; color: #9c0006;">
+                  <h3 style="margin-top: 0; color: #9c0006;">⚠️ Low Stock Inventory Alert</h3>
+                  <p>Hello Admin,</p>
+                  <p>This is an automated warning that stock levels for a product have dropped below 5 units:</p>
+                  <div style="background-color: #ffffff; border: 1px solid #f5c2c2; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                    <strong>Product Name:</strong> ${productName}<br/>
+                    <strong>Product UID:</strong> ${item.product_uid}<br/>
+                    <strong>Remaining Stock:</strong> <span style="font-size: 16px; font-weight: bold; color: #d90429;">${currentStock} units</span>
+                  </div>
+                  <p style="font-size: 12px; color: #5c6266;">Please login to your admin dashboard to adjust inventory levels.</p>
+                </div>
+              `
+            }).catch(err => console.error("Failed to send low stock alert:", err.message));
+          }
+        } catch (stockErr) {
+          console.error("Failed to query stock for low stock warning:", stockErr.message);
+        }
       }
 
       // Notification
@@ -186,6 +280,10 @@ router.post("/", async (req, res) => {
         ["new_order", "New digital order", `${order_uid} — ₹${total} from ${guest_name || member_uid || 'Guest'}`, "/orders"]
       );
     }
+
+    // Automatically trigger confirmation & invoice email sending (background)
+    const { sendOrderConfirmation } = require("../utils/orderNotification");
+    sendOrderConfirmation(finalOrderUid).catch(err => console.error("Failed to send order confirmation email:", err));
 
     res.json({
       order_id: finalOrderUid,
@@ -440,7 +538,13 @@ router.put("/admin/engraved/:uid/status", verifyAdmin, async (req, res) => {
   const { delivery_status, tracking_number, courier_name } = req.body;
   try {
     // Get internal ID of the physical order first
-    const [orders] = await db.query("SELECT id, order_uid, member_uid FROM physical_orders WHERE order_uid = ?", [req.params.uid]);
+    const [orders] = await db.query(
+      `SELECT o.id, o.order_uid, o.member_uid, o.guest_name, o.guest_email, m.email as member_email, m.name as member_name
+       FROM physical_orders o
+       LEFT JOIN members m ON o.member_uid = m.member_uid
+       WHERE o.order_uid = ?`,
+      [req.params.uid]
+    );
     if (!orders.length) {
       return res.status(404).json({ error: "Order not found" });
     }
@@ -475,6 +579,49 @@ router.put("/admin/engraved/:uid/status", verifyAdmin, async (req, res) => {
           [order.member_uid, `Order #${order.order_uid} status is now: ${delivery_status}. Tracking number: ${tracking_number}`]
         );
       }
+    }
+
+    // Trigger manual status change customer email notification
+    const customerEmail = order.guest_email || order.member_email;
+    if (customerEmail) {
+      const { sendMail } = require("../utils/mailer");
+      const customerName = order.guest_name || order.member_name || "Valued Customer";
+      const partnerName = courier_name || "Standard Carrier";
+      
+      let statusTitle = `Order Update: ${delivery_status}`;
+      let statusDesc = `We wanted to let you know that your order #${order.order_uid} status has been manually updated by our studio to: <strong>${delivery_status}</strong>.`;
+      
+      if (delivery_status === "Delivered") {
+        statusTitle = "🎉 Package Delivered!";
+        statusDesc = `Great news! Your package for Order #${order.order_uid} has been successfully delivered. Thank you for shopping with us!`;
+      } else if (delivery_status === "Shipped") {
+        statusTitle = "🚚 Package Shipped!";
+        statusDesc = `Your package for Order #${order.order_uid} has been shipped. It is on its way to you!`;
+      }
+
+      const trackingDetail = tracking_number ? `
+        <div style="background-color: #ffffff; border: 1px solid rgba(27,57,49,0.15); padding: 15px; border-radius: 12px; margin: 20px 0;">
+          <strong>Tracking Number:</strong> ${tracking_number}<br/>
+          <strong>Courier Partner:</strong> ${partnerName}<br/>
+        </div>
+      ` : "";
+
+      await sendMail({
+        to: customerEmail,
+        subject: `${statusTitle} - Order #${order.order_uid}`,
+        text: `Your order #${order.order_uid} status has been updated to: ${delivery_status}.`,
+        html: `
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 25px; border: 1px solid #e5e5e5; border-radius: 16px; background-color: #FAF9F6; color: #0D1512;">
+            <h2 style="color: #0D1512; text-align: center; font-weight: 800;">${statusTitle}</h2>
+            <p>Hello ${customerName},</p>
+            <p>${statusDesc}</p>
+            ${trackingDetail}
+            <p style="font-size: 12px; color: #78716c; text-align: center;">You can track your order status on your profile dashboard.</p>
+            <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 20px 0;" />
+            <p style="font-size: 11px; text-align: center; color: #a8a29e;">© 2026 Olive Seeds Studio. All rights reserved.</p>
+          </div>
+        `
+      }).catch(err => console.error("Failed to send manual status update customer email:", err.message));
     }
 
     res.json({ message: "Status updated successfully" });

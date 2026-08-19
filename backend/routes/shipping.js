@@ -412,7 +412,7 @@ router.post("/webhook/shiprocket", async (req, res) => {
   if (token && signature) {
     const crypto = require("crypto");
     const hmac = crypto.createHmac("sha256", token);
-    const hash = hmac.update(JSON.stringify(req.body)).digest("hex");
+    const hash = hmac.update(req.rawBody || JSON.stringify(req.body)).digest("hex");
     if (hash !== signature) {
       return res.status(401).json({ error: "Invalid signature" });
     }
@@ -475,6 +475,59 @@ router.post("/webhook/shiprocket", async (req, res) => {
       "INSERT INTO shipment_events (shipment_id, status, description, event_time) VALUES (?, ?, ?, NOW())",
       [shipment.id, shipmentStatus, `Webhook update: ${current_status}`]
     );
+
+    // Fetch order details to send automated email update to customer
+    try {
+      const [orders] = await db.query(
+        `SELECT o.*, m.email as member_email, m.name as member_name 
+         FROM physical_orders o 
+         LEFT JOIN members m ON o.member_uid = m.member_uid 
+         WHERE o.id = ?`,
+        [shipment.order_id]
+      );
+      if (orders.length) {
+        const order = orders[0];
+        const customerEmail = order.guest_email || order.member_email;
+        if (customerEmail) {
+          const { sendMail } = require("../utils/mailer");
+          const customerName = order.guest_name || order.member_name || "Valued Customer";
+          
+          let statusTitle = `Shipment Update: ${shipmentStatus}`;
+          let statusDesc = `We wanted to let you know that your order #${order.order_uid} tracking status has been updated to: <strong>${shipmentStatus}</strong> (${current_status}).`;
+          
+          if (shipmentStatus === "Delivered") {
+            statusTitle = "🎉 Package Delivered!";
+            statusDesc = `Great news! Your package for Order #${order.order_uid} has been successfully delivered. Thank you for shopping with us!`;
+          } else if (shipmentStatus === "Out for Delivery") {
+            statusTitle = "🚚 Package Out for Delivery!";
+            statusDesc = `Your package for Order #${order.order_uid} is out for delivery today. Please make sure someone is available to receive it.`;
+          }
+          
+          await sendMail({
+            to: customerEmail,
+            subject: `${statusTitle} - Order #${order.order_uid}`,
+            text: `Shipment update for Order #${order.order_uid}: ${shipmentStatus} (${current_status}).`,
+            html: `
+              <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e5e5; border-radius: 16px; background-color: #FAF9F6; color: #0D1512;">
+                <h2 style="color: #0D1512; text-align: center; font-weight: 800;">${statusTitle}</h2>
+                <p>Hello ${customerName},</p>
+                <p>${statusDesc}</p>
+                <div style="background-color: #ffffff; border: 1px solid rgba(27,57,49,0.15); padding: 15px; border-radius: 12px; margin: 20px 0;">
+                  <strong>AWB tracking code:</strong> ${awb}<br/>
+                  <strong>Courier Partner:</strong> ${courier_name || 'Shiprocket Partner'}<br/>
+                  <strong>Latest Status Notes:</strong> ${current_status}
+                </div>
+                <p style="font-size: 12px; color: #78716c; text-align: center;">You can track your parcel live on our website or directly with the courier partner.</p>
+                <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 20px 0;" />
+                <p style="font-size: 11px; text-align: center; color: #a8a29e;">© 2026 Olive Seeds Studio. All rights reserved.</p>
+              </div>
+            `
+          });
+        }
+      }
+    } catch (mailErr) {
+      console.error("Failed to trigger automated tracking update email:", mailErr.message);
+    }
 
     return res.status(200).json({ success: true, message: "Status updated successfully." });
   } catch (error) {
