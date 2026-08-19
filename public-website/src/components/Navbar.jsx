@@ -26,7 +26,11 @@ export default function Navbar() {
 
           <Link to="/" className="text-sm xs:text-base sm:text-lg font-black text-[#0D1512] flex-shrink-0"
             style={{ fontFamily: "'Outfit', sans-serif" }}>
+<<<<<<< HEAD
              Olive Seeds
+=======
+            Olive Seeds
+>>>>>>> 3496d4f (Update support)
           </Link>
         </div>
 

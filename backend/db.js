@@ -179,6 +179,9 @@ poolPromise.query(`
   poolPromise.query("INSERT INTO catalog (name, description, image_url, type) SELECT name, description, image_url, type FROM categories").catch(() => {});
   poolPromise.query("INSERT INTO portfolio (image_url, title, description, category) SELECT image_url, title, style, category FROM gallery").catch(() => {});
   
+  // Ensure default settings row exists (Priority 1)
+  poolPromise.query("INSERT IGNORE INTO settings (id, site_name) VALUES (1, 'My Engraving Store')").catch(() => {});
+
   // Index Optimization (Priority 5)
   poolPromise.query("ALTER TABLE visitor_logs ADD INDEX idx_visited_at (visited_at)").catch(() => {});
 }).catch(err => {
