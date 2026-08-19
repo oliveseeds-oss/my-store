@@ -22,7 +22,7 @@ export default function Footer({ settings = {}, dark = false }) {
               className="text-xl md:text-2xl font-black tracking-tight"
               style={{ fontFamily: "'Outfit', sans-serif", color: "#0D1512" }}
             >
-              🌱 Olive Seeds
+               Olive Seeds
             </p>
             <p className="text-xs md:text-sm leading-relaxed text-[#0D1512]/70">
               Personalized luxury laser engraved masterpieces and premium downloadable digital assets created by designers crafting in the Olive Seeds studio.
@@ -31,9 +31,9 @@ export default function Footer({ settings = {}, dark = false }) {
             {/* Social Icons */}
             <div className="flex gap-2 mt-1">
               {[
-                { icon: "📸", label: "Instagram" },
-                { icon: "💬", label: "WhatsApp" },
-                { icon: "✉️", label: "Email" }
+                { icon: "🔗", label: "LinkedIn", link: "https://www.linkedin.com/in/olive-seeds-design-studio" },
+                { icon: "💬", label: "WhatsApp, link: "https://wa.me/+919442943394" },
+                { icon: "✉️", label: "Gmail", link: "oliveseeds.oss@gmail.com" }
               ].map((s) => (
                 <button
                   key={s.label}
