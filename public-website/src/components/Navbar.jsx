@@ -26,7 +26,7 @@ export default function Navbar() {
 
           <Link to="/" className="text-sm xs:text-base sm:text-lg font-black text-[#0D1512] flex-shrink-0"
             style={{ fontFamily: "'Outfit', sans-serif" }}>
-            🌱 Olive Seeds
+             Olive Seeds
           </Link>
         </div>
 
