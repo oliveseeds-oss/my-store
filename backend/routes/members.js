@@ -235,11 +235,7 @@ router.post("/forgot-password", forgotPasswordLimiter, async (req, res) => {
     res.status(500).json({ error: "Failed to initiate password reset" });
   }
 });
-  } catch (error) {
-    console.error("Forgot password failed:", error);
-    res.status(500).json({ error: "Failed to initiate password reset" });
-  }
-});
+
 
 // PUBLIC — reset password
 router.post("/reset-password", async (req, res) => {

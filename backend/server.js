@@ -68,6 +68,6 @@ async function startServer() {
 }
 
 startServer().catch(err => {
-  console.error("❌ Server startup crashed:", err.message);
+  console.error("❌ Server startup crashed:", err);
   process.exit(1);
 });
