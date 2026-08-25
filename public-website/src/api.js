@@ -22,14 +22,17 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle 401 and 403 globally — redirect to login (except on login requests)
+// Handle 401 and 403 globally — redirect to login (except on login/auth checks)
 API.interceptors.response.use(
   (response) => response,
   (error) => {
-    const isLoginRequest = error.config?.url?.endsWith("/login");
+    const url = error.config?.url || "";
+    const isLoginRequest = url.endsWith("/login") || url.includes("/google-sso") || url.includes("/register");
+    const isProfileCheck = url.includes("/members/profile") || url.includes("/settings");
+    
     if (
       (error.response?.status === 401 || error.response?.status === 403) &&
-      !isLoginRequest
+      !isLoginRequest && !isProfileCheck
     ) {
       localStorage.removeItem("member");
       window.location.href = "/login";
