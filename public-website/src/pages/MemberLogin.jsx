@@ -19,13 +19,17 @@ export default function MemberLogin() {
   const [showGoogleModal, setShowGoogleModal] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [gsiLoaded, setGsiLoaded] = useState(false);
-  const [googleClientId, setGoogleClientId] = useState("874744414734-mockclientid.apps.googleusercontent.com");
+  const [googleClientId, setGoogleClientId] = useState("");
   
+  // Load Google client ID from backend settings before initializing GSI
   useEffect(() => {
     API.get("/settings")
       .then((res) => {
-        if (res.data.google_client_id) {
-          setGoogleClientId(res.data.google_client_id);
+        const id = res.data.google_client_id;
+        if (id) {
+          setGoogleClientId(id);
+        } else {
+          console.warn("Google client ID not found in settings; SSO disabled.");
         }
       })
       .catch((err) => {
@@ -33,17 +37,20 @@ export default function MemberLogin() {
       });
   }, []);
 
+  // Load Google Identity Services script after we have the client ID
   useEffect(() => {
+    if (!googleClientId) return; // wait for client ID
     const script = document.createElement("script");
     script.src = "https://accounts.google.com/gsi/client";
     script.async = true;
     script.defer = true;
     script.onload = () => setGsiLoaded(true);
     document.head.appendChild(script);
-  }, []);
+  }, [googleClientId]);
 
+  // Initialize Google Sign‑In once both the script and the client ID are ready
   useEffect(() => {
-    if (gsiLoaded && window.google) {
+    if (gsiLoaded && googleClientId && window.google) {
       window.google.accounts.id.initialize({
         client_id: googleClientId,
         callback: (response) => {
@@ -64,15 +71,18 @@ export default function MemberLogin() {
   const [newPassword, setNewPassword] = useState("");
 
   // Tab state listener: we need to re-render the google login button because switching tabs unmounts and remounts the element.
+  // Render the Google button whenever the script is loaded and the client ID is set
   useEffect(() => {
     const btn = document.getElementById("google-signin-btn");
-    if (gsiLoaded && window.google && btn) {
-      window.google.accounts.id.renderButton(
-        btn,
-        { theme: "outline", size: "large", width: "100%", shape: "pill" }
-      );
+    if (gsiLoaded && googleClientId && window.google && btn) {
+      window.google.accounts.id.renderButton(btn, {
+        theme: "outline",
+        size: "large",
+        width: "100%",
+        shape: "pill"
+      });
     }
-  }, [gsiLoaded, tab, showOtp, forgotStep]);
+  }, [gsiLoaded, googleClientId, tab, showOtp, forgotStep]);
 
   const handleSubmit = async () => {
     setError("");

@@ -95,11 +95,11 @@ export default function Checkout() {
   }, [member]);
 
   useEffect(() => {
-    if (!siteSettings) return;
+    if (!siteSettings || paymentMethod !== "paypal") return;
     const paypalCurrency = selected.currency_code === "INR" ? "USD" : selected.currency_code;
     const clientId = siteSettings.paypal_client_id;
-    if (!clientId) {
-      console.warn("PayPal Client ID is missing. PayPal Gateway disabled.");
+    if (!clientId || clientId === "sb" || clientId.includes("your_paypal")) {
+      console.warn("PayPal Client ID is missing or default. PayPal Gateway disabled.");
       return;
     }
     setPaypalLoaded(false);
@@ -109,40 +109,44 @@ export default function Checkout() {
           setPaypalLoaded(true);
         }
       });
-  }, [siteSettings, selected.currency_code]);
+  }, [siteSettings, selected.currency_code, paymentMethod]);
 
   useEffect(() => {
-    if (paypalLoaded && window.paypal && document.getElementById("paypal-button-container")) {
+    if (paymentMethod === "paypal" && paypalLoaded && window.paypal && document.getElementById("paypal-button-container")) {
       document.getElementById("paypal-button-container").innerHTML = "";
-      window.paypal.Buttons({
-        createOrder: (data, actions) => {
-          const isINR = selected.currency_code === "INR";
-          const currencyCode = isINR ? "USD" : selected.currency_code;
-          const rateMultiplier = isINR ? 0.012 : selected.rate_to_inr;
-          const convertedVal = ((total + shipping) * rateMultiplier).toFixed(2);
-          return actions.order.create({
-            purchase_units: [{
-              amount: {
-                currency_code: currencyCode,
-                value: convertedVal
-              }
-            }]
-          });
-        },
-        onApprove: async (data, actions) => {
-          const details = await actions.order.capture();
-          await placeOrder({
-            mode: "PayPal",
-            transactionId: details.id
-          });
-        },
-        onError: (err) => {
-          console.error("PayPal processing error:", err);
-          alert("PayPal encounter validation or system failures. Please try again.");
-        }
-      }).render("#paypal-button-container");
+      try {
+        window.paypal.Buttons({
+          createOrder: (data, actions) => {
+            const isINR = selected.currency_code === "INR";
+            const currencyCode = isINR ? "USD" : selected.currency_code;
+            const rateMultiplier = isINR ? 0.012 : selected.rate_to_inr;
+            const convertedVal = ((total + shipping) * rateMultiplier).toFixed(2);
+            return actions.order.create({
+              purchase_units: [{
+                amount: {
+                  currency_code: currencyCode,
+                  value: convertedVal
+                }
+              }]
+            });
+          },
+          onApprove: async (data, actions) => {
+            const details = await actions.order.capture();
+            await placeOrder({
+              mode: "PayPal",
+              transactionId: details.id
+            });
+          },
+          onError: (err) => {
+            console.error("PayPal processing error:", err);
+            alert("PayPal encountered a processing error. Please try again.");
+          }
+        }).render("#paypal-button-container");
+      } catch (e) {
+        console.error("Failed to render PayPal buttons:", e);
+      }
     }
-  }, [paypalLoaded, total, shipping, selected]);
+  }, [paymentMethod, paypalLoaded, total, shipping, selected]);
 
   const placeOrder = async (gatewayDetails = null) => {
     if (!form.name || !form.email || !form.delivery_street || !form.delivery_city || !form.delivery_state || !form.delivery_pincode) {

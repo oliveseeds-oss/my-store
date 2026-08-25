@@ -2,18 +2,32 @@ const db = require("../db");
 const crypto = require("crypto");
 const { decrypt, request } = require("./shiprocket");
 
-// Retrieve decrypted Razorpay credentials
+// Retrieve decrypted Razorpay credentials (with fallback to env vars)
 async function getRazorpayCredentials() {
   const [rows] = await db.query("SELECT razorpay_key, razorpay_secret FROM settings WHERE id = 1");
-  if (!rows.length) {
-    throw new Error("Store settings not found.");
+  const settings = rows[0] || {};
+  
+  let keyId = settings.razorpay_key || process.env.RAZORPAY_KEY_ID;
+  let keySecret = null;
+  
+  if (settings.razorpay_secret) {
+    try {
+      keySecret = decrypt(settings.razorpay_secret);
+    } catch (e) {
+      keySecret = settings.razorpay_secret;
+    }
   }
-  const settings = rows[0];
-  const keyId = settings.razorpay_key;
-  const keySecret = decrypt(settings.razorpay_secret);
+  
+  if (!keySecret || keySecret.includes("your_razorpay") || keySecret === "••••••••") {
+    keySecret = process.env.RAZORPAY_KEY_SECRET;
+  }
+  
+  if (!keyId || keyId.includes("your_razorpay")) {
+    keyId = process.env.RAZORPAY_KEY_ID;
+  }
 
   if (!keyId || !keySecret) {
-    throw new Error("Razorpay Key ID or Key Secret is not configured in settings.");
+    throw new Error("Razorpay Key ID or Key Secret is not configured in settings or environment.");
   }
   return { keyId, keySecret };
 }
