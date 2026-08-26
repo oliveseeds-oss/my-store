@@ -25,6 +25,9 @@ const Gallery = lazy(() => import("./pages/Gallery"));
 const Portfolio = lazy(() => import("./pages/Portfolio"));
 const Engraving = lazy(() => import("./pages/Engraving"));
 
+const TrackOrder = lazy(() => import("./pages/TrackOrder"));
+const InvoicePage = lazy(() => import("./pages/InvoicePage"));
+
 // ── The pages your footer links to ──
 const TermsConditions = lazy(() => import("./pages/TermsConditions"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
@@ -63,6 +66,8 @@ export default function App() {
                   <Route path="/order-success"      element={<OrderSuccess />} />
                   <Route path="/login"              element={<MemberLogin />} />
                   <Route path="/profile"            element={<Profile />} />
+                  <Route path="/track-order"        element={<TrackOrder />} />
+                  <Route path="/invoice/:order_id"  element={<InvoicePage />} />
                   <Route path="/blog"               element={<BlogList />} />
                   <Route path="/service" element={<Service/>}/>
                   <Route path="/contact"            element={<Contact />} />

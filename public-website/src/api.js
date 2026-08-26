@@ -22,17 +22,19 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle 401 and 403 globally — redirect to login (except on login/auth checks)
+// Handle 401 and 403 globally — only redirect to login if explicitly accessing a protected member route
 API.interceptors.response.use(
   (response) => response,
   (error) => {
     const url = error.config?.url || "";
     const isLoginRequest = url.endsWith("/login") || url.includes("/google-sso") || url.includes("/register");
-    const isProfileCheck = url.includes("/members/profile") || url.includes("/settings");
+    const isProtectedMemberCall = url.includes("/members/profile") || url.includes("/orders/my") || url.includes("/wishlist/my");
     
+    // Only logout if token is explicitly invalid on core member calls
     if (
-      (error.response?.status === 401 || error.response?.status === 403) &&
-      !isLoginRequest && !isProfileCheck
+      error.response?.status === 401 &&
+      isProtectedMemberCall &&
+      !isLoginRequest
     ) {
       localStorage.removeItem("member");
       window.location.href = "/login";

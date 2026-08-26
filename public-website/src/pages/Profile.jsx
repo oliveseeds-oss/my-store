@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import API from "../api";
 import { useMember } from "../context/MemberContext";
 import { useCart } from "../context/CartContext";
@@ -11,12 +11,13 @@ import {
 } from "react-icons/md";
 
 export default function Profile() {
+  const [searchParams] = useSearchParams();
   const { member, login, logout } = useMember();
   const { addToCart } = useCart();
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [wishlist, setWishlist] = useState([]);
-  const [activeTab, setActiveTab] = useState("home"); // 'home', 'orders', 'security', 'addresses', 'digital', 'wishlist'
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "home"); // 'home', 'orders', 'security', 'addresses', 'digital', 'wishlist'
   
   // Profile editing form states
   const [profile, setProfile] = useState({
@@ -367,7 +368,7 @@ export default function Profile() {
                           <div className="flex flex-col gap-2 w-full md:w-auto">
                             {o.type === "physical" ? (
                               <Link 
-                                to={`/track-order?order=${o.id}`}
+                                to={`/track-order?order=${o.order_uid || o.id}`}
                                 className="text-center px-4 py-2.5 border border-[#0D1512]/20 hover:border-[#0D1512] text-xs font-bold text-[#0D1512] bg-white rounded-xl transition"
                               >
                                 🚚 Track Package
@@ -381,7 +382,7 @@ export default function Profile() {
                               </button>
                             )}
                             <a 
-                              href={`/invoice/${o.id}`}
+                              href={`/invoice/${o.order_uid || o.id}`}
                               target="_blank" 
                               rel="noreferrer"
                               style={{ background: "#0D1512", color: "#FAF9F6" }}

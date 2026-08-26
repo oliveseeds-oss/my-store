@@ -41,6 +41,9 @@ export default function Navbar() {
 
         <div className="flex items-center gap-1 xs:gap-1.5 sm:gap-2">
           <CurrencySelector />
+          <Link to="/profile?tab=wishlist" aria-label="Wishlist" title="Your Wishlist" className="p-1.5 sm:p-2 hover:bg-[#0D1512]/10 rounded-xl transition text-[#0D1512]">
+            <span className="text-base sm:text-lg font-bold">♥</span>
+          </Link>
           <Link to="/cart" aria-label="Shopping Cart" className="relative p-1.5 sm:p-2 hover:bg-[#0D1512]/10 rounded-xl transition text-[#0D1512]">
             <MdShoppingCart className="text-lg sm:text-xl" />
             {count > 0 && (
