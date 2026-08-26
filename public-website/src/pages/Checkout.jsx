@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useMember } from "../context/MemberContext";
 import { useCurrency } from "../context/CurrencyContext";
@@ -7,6 +7,8 @@ import API from "../api";
 import Navbar from "../components/Navbar";
 import AdBanner from "../components/AdBanner";
 import SEO from "../components/SEO";
+import SmartAddressForm from "../components/SmartAddressForm";
+import { Country } from "country-state-city";
 
 const loadRazorpayScript = () => {
   return new Promise((resolve) => {
@@ -62,102 +64,39 @@ export default function Checkout() {
     delivery_pincode: "",
   });
 
-  // Check if cart contains physical items
-  const hasPhysicalItems = cart.some(i => i.type === "physical" || !i.type);
-
-  // 18 Allowed Physical Shipping Destinations with Dial Codes & Flags
-  const PHYSICAL_COUNTRIES = [
-    { name: "Australia", code: "+61", flag: "🇦🇺" },
-    { name: "Bahrain", code: "+973", flag: "🇧🇭" },
-    { name: "Belgium", code: "+32", flag: "🇧🇪" },
-    { name: "Canada", code: "+1", flag: "🇨🇦" },
-    { name: "France", code: "+33", flag: "🇫🇷" },
-    { name: "Germany", code: "+49", flag: "🇩🇪" },
-    { name: "India", code: "+91", flag: "🇮🇳" },
-    { name: "Kuwait", code: "+965", flag: "🇰🇼" },
-    { name: "Malaysia", code: "+60", flag: "🇲🇾" },
-    { name: "Netherlands", code: "+31", flag: "🇳🇱" },
-    { name: "New Zealand", code: "+64", flag: "🇳🇿" },
-    { name: "Norway", code: "+47", flag: "🇳🇴" },
-    { name: "Qatar", code: "+974", flag: "🇶🇦" },
-    { name: "Saudi Arabia", code: "+966", flag: "🇸🇦" },
-    { name: "Singapore", code: "+65", flag: "🇸🇬" },
-    { name: "Switzerland", code: "+41", flag: "🇨🇭" },
-    { name: "United Arab Emirates", code: "+971", flag: "🇦🇪" },
-    { name: "United Kingdom", code: "+44", flag: "🇬🇧" },
-    { name: "United States", code: "+1", flag: "🇺🇸" },
-  ];
-
-  // Extended World List for Digital Products (Complete International Nations)
-  const ALL_COUNTRIES = [
-    ...PHYSICAL_COUNTRIES,
-    { name: "Afghanistan", code: "+93", flag: "🇦🇫" },
-    { name: "Albania", code: "+355", flag: "🇦🇱" },
-    { name: "Algeria", code: "+213", flag: "🇩🇿" },
-    { name: "Argentina", code: "+54", flag: "🇦🇷" },
-    { name: "Armenia", code: "+374", flag: "🇦🇲" },
-    { name: "Austria", code: "+43", flag: "🇦🇹" },
-    { name: "Bangladesh", code: "+880", flag: "🇧🇩" },
-    { name: "Bhutan", code: "+975", flag: "🇧🇹" },
-    { name: "Brazil", code: "+55", flag: "🇧🇷" },
-    { name: "Chile", code: "+56", flag: "🇨🇱" },
-    { name: "China", code: "+86", flag: "🇨🇳" },
-    { name: "Colombia", code: "+57", flag: "🇨🇴" },
-    { name: "Denmark", code: "+45", flag: "🇩🇰" },
-    { name: "Egypt", code: "+20", flag: "🇪🇬" },
-    { name: "Finland", code: "+358", flag: "🇫🇮" },
-    { name: "Greece", code: "+30", flag: "🇬🇷" },
-    { name: "Hong Kong", code: "+852", flag: "🇭🇰" },
-    { name: "Hungary", code: "+36", flag: "🇭🇺" },
-    { name: "Indonesia", code: "+62", flag: "🇮🇩" },
-    { name: "Ireland", code: "+353", flag: "🇮🇪" },
-    { name: "Israel", code: "+972", flag: "🇮🇱" },
-    { name: "Italy", code: "+39", flag: "🇮🇹" },
-    { name: "Japan", code: "+81", flag: "🇯🇵" },
-    { name: "Jordan", code: "+962", flag: "🇯🇴" },
-    { name: "Kazakhstan", code: "+7", flag: "🇰🇿" },
-    { name: "Kenya", code: "+254", flag: "🇰🇪" },
-    { name: "Maldives", code: "+960", flag: "🇲🇻" },
-    { name: "Mexico", code: "+52", flag: "🇲🇽" },
-    { name: "Nepal", code: "+977", flag: "🇳🇵" },
-    { name: "Nigeria", code: "+234", flag: "🇳🇬" },
-    { name: "Oman", code: "+968", flag: "🇴🇲" },
-    { name: "Pakistan", code: "+92", flag: "🇵🇰" },
-    { name: "Philippines", code: "+63", flag: "🇵🇭" },
-    { name: "Poland", code: "+48", flag: "🇵🇱" },
-    { name: "Portugal", code: "+351", flag: "🇵🇹" },
-    { name: "Romania", code: "+40", flag: "🇷🇴" },
-    { name: "South Africa", code: "+27", flag: "🇿🇦" },
-    { name: "South Korea", code: "+82", flag: "🇰🇷" },
-    { name: "Spain", code: "+34", flag: "🇪🇸" },
-    { name: "Sri Lanka", code: "+94", flag: "🇱🇰" },
-    { name: "Sweden", code: "+46", flag: "🇸🇪" },
-    { name: "Taiwan", code: "+886", flag: "🇹🇼" },
-    { name: "Thailand", code: "+66", flag: "🇹🇭" },
-    { name: "Turkey", code: "+90", flag: "🇹🇷" },
-    { name: "Vietnam", code: "+84", flag: "🇻🇳" },
-    { name: "Other Country", code: "+1", flag: "🌐" },
-  ];
-
-  const availableCountries = hasPhysicalItems ? PHYSICAL_COUNTRIES : ALL_COUNTRIES;
-  const [phoneCode, setPhoneCode] = useState("+91");
+  const [hasSavedAddress, setHasSavedAddress] = useState(false);
+  const [enabledCountryCodes, setEnabledCountryCodes] = useState([]);
   const [placing, setPlacing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState(selected.currency_code === "INR" ? "razorpay" : "paypal");
   const [paypalLoaded, setPaypalLoaded] = useState(false);
   const [siteSettings, setSiteSettings] = useState(null);
 
+  // Check if cart contains physical items
+  const hasPhysicalItems = cart.some(i => i.type === "physical" || !i.type);
+
   useEffect(() => {
+    // Fetch enabled shipping countries list (Update 1 & 3)
+    API.get("/shipping-countries/enabled")
+      .then((res) => {
+        const codes = (res.data || []).map((c) => c.country_code.toUpperCase());
+        setEnabledCountryCodes(codes);
+      })
+      .catch((err) => console.error("Failed to load enabled shipping countries", err));
+
     API.get("/settings")
-      .then(res => setSiteSettings(res.data))
-      .catch(err => console.error("Failed to load settings keys", err));
+      .then((res) => setSiteSettings(res.data))
+      .catch((err) => console.error("Failed to load settings keys", err));
   }, []);
 
   useEffect(() => {
     if (member) {
       API.get("/members/profile")
-        .then(res => {
+        .then((res) => {
           const p = res.data;
-          setForm(prev => ({
+          const hasAddr = !!(p.street_address && p.city && p.country);
+          setHasSavedAddress(hasAddr);
+
+          setForm((prev) => ({
             ...prev,
             name: p.full_name || p.name || prev.name,
             email: p.email || prev.email,
@@ -170,7 +109,7 @@ export default function Checkout() {
             delivery_pincode: p.pincode || "",
           }));
         })
-        .catch(err => console.error("Failed to load member profile info", err));
+        .catch((err) => console.error("Failed to load member profile info", err));
     }
   }, [member]);
 
@@ -228,11 +167,30 @@ export default function Checkout() {
     }
   }, [paymentMethod, paypalLoaded, total, shipping, selected]);
 
-  const placeOrder = async (gatewayDetails = null) => {
-    if (!form.name || !form.email || !form.delivery_street || !form.delivery_city || !form.delivery_state || !form.delivery_pincode) {
-      alert("Please fill in all required delivery details (Name, Email, Street, City, State, and Pincode) first.");
-      return;
+  const checkShippingEligibility = () => {
+    if (!form.name || !form.email || !form.delivery_street || !form.delivery_city || !form.delivery_state) {
+      alert("Please fill in all required delivery details first.");
+      return false;
     }
+
+    if (hasPhysicalItems && enabledCountryCodes.length > 0) {
+      const selectedCountryObj = Country.getAllCountries().find(
+        (c) =>
+          c.name.toLowerCase() === (form.delivery_country || "").toLowerCase() ||
+          c.isoCode.toLowerCase() === (form.delivery_country || "").toLowerCase()
+      );
+      const iso = selectedCountryObj?.isoCode?.toUpperCase();
+      if (iso && !enabledCountryCodes.includes(iso)) {
+        alert("We currently do not ship physical products to your country.");
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const placeOrder = async (gatewayDetails = null) => {
+    if (!checkShippingEligibility()) return;
+
     const formattedAddressLine = [
       form.delivery_street,
       form.delivery_apt,
@@ -241,8 +199,6 @@ export default function Checkout() {
       form.delivery_country,
       form.delivery_pincode
     ].filter(Boolean).join(", ");
-
-    const fullPhone = form.phone ? `${phoneCode} ${form.phone.trim()}` : "";
 
     setPlacing(true);
     try {
@@ -261,7 +217,7 @@ export default function Checkout() {
         member_id: member?.id || null,
         guest_name: form.name,
         guest_email: form.email,
-        guest_phone: fullPhone,
+        guest_phone: form.phone,
         items,
         address_line: formattedAddressLine,
         delivery_street: form.delivery_street,
@@ -286,10 +242,8 @@ export default function Checkout() {
   };
 
   const handleRazorpayPayment = async () => {
-    if (!form.name || !form.email || !form.delivery_street || !form.delivery_city || !form.delivery_state || !form.delivery_pincode) {
-      alert("Please fill in all required delivery details (Name, Email, Street, City, State, and Pincode) first.");
-      return;
-    }
+    if (!checkShippingEligibility()) return;
+
     const formattedAddressLine = [
       form.delivery_street,
       form.delivery_apt,
@@ -298,7 +252,6 @@ export default function Checkout() {
       form.delivery_country,
       form.delivery_pincode
     ].filter(Boolean).join(", ");
-    const fullPhone = form.phone ? `${phoneCode} ${form.phone.trim()}` : "";
 
     setPlacing(true);
     const loaded = await loadRazorpayScript();
@@ -413,115 +366,53 @@ export default function Checkout() {
           >
             <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-xl font-bold tracking-tight">Delivery Details</h3>
             
-            <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Full Name</label>
-              <input
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                placeholder="Your full name"
-                className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-              />
-            </div>
-            <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Email Address</label>
-              <input
-                type="email"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                placeholder="your@email.com"
-                className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-              />
-            </div>
-            <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Phone Number</label>
-              <div className="flex gap-2">
-                <select
-                  value={phoneCode}
-                  onChange={(e) => setPhoneCode(e.target.value)}
-                  className="bg-white border border-[#0D1512]/20 rounded-xl px-3 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] shrink-0 font-mono"
-                >
-                  {availableCountries.map(c => (
-                    <option key={`${c.name}-${c.code}`} value={c.code}>{c.flag} {c.code}</option>
-                  ))}
-                </select>
-                <input
-                  type="tel"
-                  value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  placeholder="98765 43210"
-                  className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-                />
+            {hasSavedAddress ? (
+              <div className="bg-stone-50 border border-stone-200 rounded-2xl p-5 text-xs text-[#0D1512] space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-stone-200">
+                  <span className="font-bold uppercase tracking-wider text-[10px] text-stone-500">Saved Member Address</span>
+                  <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-md">Default Shipping</span>
+                </div>
+                <div>
+                  <p className="font-bold text-sm text-[#0D1512]">{form.name}</p>
+                  <p className="text-stone-600 mt-0.5">{form.email} • {form.phone}</p>
+                  <p className="text-stone-700 font-medium mt-2">
+                    {[form.delivery_street, form.delivery_apt, form.delivery_city, form.delivery_state, form.delivery_country, form.delivery_pincode].filter(Boolean).join(", ")}
+                  </p>
+                </div>
+                <div className="pt-2 border-t border-stone-200">
+                  <Link to="/profile?tab=addresses" className="text-amber-700 hover:text-amber-800 text-xs font-bold underline inline-flex items-center gap-1">
+                    Wrong address? Update in Profile →
+                  </Link>
+                </div>
               </div>
-            </div>
-
-            <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Street Address *</label>
-              <input
-                value={form.delivery_street}
-                onChange={(e) => setForm({ ...form, delivery_street: e.target.value })}
-                placeholder="House No., Street name, Area"
-                className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-              />
-            </div>
-
-            <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Apartment, suite, unit, floor (Optional)</label>
-              <input
-                value={form.delivery_apt}
-                onChange={(e) => setForm({ ...form, delivery_apt: e.target.value })}
-                placeholder="Apt, Suite, Unit, etc."
-                className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">City *</label>
-                <input
-                  value={form.delivery_city}
-                  onChange={(e) => setForm({ ...form, delivery_city: e.target.value })}
-                  placeholder="City"
-                  className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-                />
-              </div>
-              <div>
-                <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">State *</label>
-                <input
-                  value={form.delivery_state}
-                  onChange={(e) => setForm({ ...form, delivery_state: e.target.value })}
-                  placeholder="State"
-                  className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">
-                  Country * {hasPhysicalItems && <span className="text-amber-700 text-[9px] font-semibold">(18 Physical Shipping Destinations)</span>}
-                </label>
-                <select
-                  value={form.delivery_country}
-                  onChange={(e) => setForm({ ...form, delivery_country: e.target.value })}
-                  className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-                >
-                  {availableCountries.map((c) => (
-                    <option key={c.name} value={c.name}>
-                      {c.flag} {c.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Pincode / Postal Code *</label>
-                <input
-                  value={form.delivery_pincode}
-                  onChange={(e) => setForm({ ...form, delivery_pincode: e.target.value })}
-                  placeholder="110001"
-                  className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-                />
-              </div>
-            </div>
+            ) : (
+              <SmartAddressForm
+                form={{
+                  name: form.name,
+                  phone: form.phone,
+                  delivery_street: form.delivery_street,
+                  delivery_apt: form.delivery_apt,
+                  delivery_city: form.delivery_city,
+                  delivery_state: form.delivery_state,
+                  country: form.delivery_country,
+                  delivery_pincode: form.delivery_pincode
+                }}
+                onChange={(updated) => {
+                  setForm({
+                    ...form,
+                    name: updated.name || form.name,
+                    phone: updated.phone,
+                    delivery_street: updated.delivery_street,
+                    delivery_apt: updated.delivery_apt,
+                    delivery_city: updated.delivery_city,
+                    delivery_state: updated.delivery_state,
+                    delivery_country: updated.country,
+                    delivery_pincode: updated.delivery_pincode
+                  });
+                }}
+                enabledCountryCodes={enabledCountryCodes}
+                isPhysical={hasPhysicalItems}
+            )}
 
             {/* Payment Details */}
             <div className="border-t border-stone-150 pt-5 mt-3">

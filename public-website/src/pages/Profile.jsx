@@ -9,6 +9,7 @@ import {
   MdShoppingBag, MdLock, MdHome, MdCloudDownload, 
   MdFavorite, MdExitToApp, MdArrowBack, MdCheckCircle, MdSave 
 } from "react-icons/md";
+import SmartAddressForm from "../components/SmartAddressForm";
 
 export default function Profile() {
   const [searchParams] = useSearchParams();
@@ -507,93 +508,32 @@ export default function Profile() {
                 )}
 
                 <form onSubmit={handleSave} className="max-w-2xl space-y-5">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="md:col-span-2">
-                      <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">Street Address</label>
-                      <input 
-                        type="text"
-                        value={profile.street_address}
-                        onChange={(e) => setProfile({...profile, street_address: e.target.value})}
-                        style={{ borderColor: "rgba(27, 57, 49, 0.2)" }}
-                        className="w-full bg-[#FAF9F6]/20 border rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-                        placeholder="Flat/House No., Building Name, Street"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">Apartment/Suite</label>
-                      <input 
-                        type="text"
-                        value={profile.apt_suite}
-                        onChange={(e) => setProfile({...profile, apt_suite: e.target.value})}
-                        style={{ borderColor: "rgba(27, 57, 49, 0.2)" }}
-                        className="w-full bg-[#FAF9F6]/20 border rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-                        placeholder="Apt., Suite, Block, etc."
-                      />
-                    </div>
-                    <div>
-                      <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">Pincode</label>
-                      <input 
-                        type="text"
-                        value={profile.pincode}
-                        onChange={(e) => setProfile({...profile, pincode: e.target.value})}
-                        style={{ borderColor: "rgba(27, 57, 49, 0.2)" }}
-                        className="w-full bg-[#FAF9F6]/20 border rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-                        placeholder="600001"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">City</label>
-                      <input 
-                        type="text"
-                        value={profile.city}
-                        onChange={(e) => setProfile({...profile, city: e.target.value})}
-                        style={{ borderColor: "rgba(27, 57, 49, 0.2)" }}
-                        className="w-full bg-[#FAF9F6]/20 border rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-                        placeholder="e.g. New Delhi"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">State</label>
-                      <input 
-                        type="text"
-                        value={profile.state}
-                        onChange={(e) => setProfile({...profile, state: e.target.value})}
-                        style={{ borderColor: "rgba(27, 57, 49, 0.2)" }}
-                        className="w-full bg-[#FAF9F6]/20 border rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-                        placeholder="e.g. Delhi"
-                      />
-                    </div>
-                    <div className="md:col-span-2">
-                      <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">Country</label>
-                      <select 
-                        value={profile.country}
-                        onChange={(e) => setProfile({...profile, country: e.target.value})}
-                        style={{ borderColor: "rgba(27, 57, 49, 0.2)" }}
-                        className="w-full bg-[#FAF9F6]/20 border rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-                      >
-                        <option value="Australia">🇦🇺 Australia</option>
-                        <option value="Bahrain">🇧🇭 Bahrain</option>
-                        <option value="Belgium">🇧🇪 Belgium</option>
-                        <option value="Canada">🇨🇦 Canada</option>
-                        <option value="France">🇫🇷 France</option>
-                        <option value="Germany">🇩🇪 Germany</option>
-                        <option value="India">🇮🇳 India</option>
-                        <option value="Kuwait">🇰🇼 Kuwait</option>
-                        <option value="Malaysia">🇲🇾 Malaysia</option>
-                        <option value="Netherlands">🇳🇱 Netherlands</option>
-                        <option value="New Zealand">🇳🇿 New Zealand</option>
-                        <option value="Norway">🇳🇴 Norway</option>
-                        <option value="Qatar">🇶🇦 Qatar</option>
-                        <option value="Saudi Arabia">🇸🇦 Saudi Arabia</option>
-                        <option value="Singapore">🇸🇬 Singapore</option>
-                        <option value="Switzerland">🇨🇭 Switzerland</option>
-                        <option value="United Arab Emirates">🇦🇪 United Arab Emirates</option>
-                        <option value="United Kingdom">🇬🇧 United Kingdom</option>
-                        <option value="United States">🇺🇸 United States</option>
-                        <option value="Other">🌐 Other Country (Digital Only)</option>
-                      </select>
-                    </div>
-                  </div>
+                  <SmartAddressForm
+                    form={{
+                      name: profile.full_name,
+                      phone: profile.phone,
+                      delivery_street: profile.street_address,
+                      delivery_apt: profile.apt_suite,
+                      delivery_city: profile.city,
+                      delivery_state: profile.state,
+                      country: profile.country,
+                      delivery_pincode: profile.pincode
+                    }}
+                    onChange={(updated) => {
+                      setProfile({
+                        ...profile,
+                        full_name: updated.name || profile.full_name,
+                        phone: updated.phone,
+                        street_address: updated.delivery_street,
+                        apt_suite: updated.delivery_apt,
+                        city: updated.delivery_city,
+                        state: updated.delivery_state,
+                        country: updated.country,
+                        pincode: updated.delivery_pincode
+                      });
+                    }}
+                    isPhysical={false}
+                  />
 
                   <button
                     type="submit"

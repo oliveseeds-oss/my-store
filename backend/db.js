@@ -197,6 +197,44 @@ poolPromise.query(`
   `).catch(() => {});
   poolPromise.query("ALTER TABLE notifications MODIFY COLUMN type VARCHAR(50) NOT NULL").catch(() => {});
 
+  // Ensure shipping_countries table exists and seed default 17 enabled countries (Update 1)
+  poolPromise.query(`
+    CREATE TABLE IF NOT EXISTS shipping_countries (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      country_code VARCHAR(2) UNIQUE NOT NULL,
+      country_name VARCHAR(255) NOT NULL,
+      is_enabled BOOLEAN DEFAULT FALSE,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )
+  `).then(() => {
+    const seedCountries = [
+      ['AU', 'Australia', true],
+      ['CA', 'Canada', true],
+      ['FR', 'France', true],
+      ['DE', 'Germany', true],
+      ['IN', 'India', true],
+      ['KW', 'Kuwait', true],
+      ['MY', 'Malaysia', true],
+      ['NL', 'Netherlands', true],
+      ['NZ', 'New Zealand', true],
+      ['NO', 'Norway', true],
+      ['QA', 'Qatar', true],
+      ['SA', 'Saudi Arabia', true],
+      ['SG', 'Singapore', true],
+      ['CH', 'Switzerland', true],
+      ['AE', 'United Arab Emirates', true],
+      ['GB', 'United Kingdom', true],
+      ['US', 'United States', true]
+    ];
+    seedCountries.forEach(([code, name, enabled]) => {
+      poolPromise.query(
+        "INSERT IGNORE INTO shipping_countries (country_code, country_name, is_enabled) VALUES (?, ?, ?)",
+        [code, name, enabled]
+      ).catch(() => {});
+    });
+  }).catch(() => {});
+
   // Index Optimization (Priority 5)
   poolPromise.query("ALTER TABLE visitor_logs ADD INDEX idx_visited_at (visited_at)").catch(() => {});
 }).catch(err => {

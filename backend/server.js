@@ -43,6 +43,7 @@ async function startServer() {
   app.use("/api/visitors", require("./routes/visitors"));
   app.use("/api/invoices", require("./routes/invoices"));
   app.use("/api/shipping", require("./routes/shipping"));
+  app.use("/api", require("./routes/shippingCountries"));
   app.use("/api/payments", require("./routes/payments"));
   app.use("/api/wishlist", require("./routes/wishlist"));
   app.use("/api/transactions", require("./routes/transactions"));

@@ -23,6 +23,7 @@ const links = [
   { to: "/ads", icon: <MdCampaign />, label: "Ad panel" },
   { to: "/notifications", icon: <MdNotifications />, label: "Notifications" },
   { to: "/currency", icon: <MdPublic />, label: "Currency & shipping" },
+  { to: "/shipping-countries", icon: <MdLocalShipping />, label: "Shipping Countries" },
   { to: "/seo", icon: <MdSearch />, label: "SEO Manager" },
   { to: "/settings", icon: <MdSettings />, label: "Settings" },
 ];

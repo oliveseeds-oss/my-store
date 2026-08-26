@@ -21,6 +21,8 @@ import GalleryAdmin from "./pages/GalleryAdmin";
 import CatalogAdmin from "./pages/CatalogAdmin";
 import PortfolioAdmin from "./pages/PortfolioAdmin";
 
+import ShippingCountries from "./pages/ShippingCountries";
+
 const P = ({ children }) => <ProtectedRoute>{children}</ProtectedRoute>;
 
 export default function App() {
@@ -43,6 +45,7 @@ export default function App() {
           <Route path="/ads" element={<P><AdPanel /></P>} />
           <Route path="/notifications" element={<P><Notifications /></P>} />
           <Route path="/currency" element={<P><CurrencySettings /></P>} />
+          <Route path="/shipping-countries" element={<P><ShippingCountries /></P>} />
           <Route path="/settings" element={<P><Settings /></P>} />
           <Route path="/reports" element={<P><Reports /></P>} />
           <Route path="/transactions" element={<P><Transactions /></P>} />
