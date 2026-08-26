@@ -53,9 +53,9 @@ export default function Navbar() {
               </span>
             )}
           </Link>
-          <Link to="/login"
-            aria-label="User Profile"
-            title={member ? `Profile: ${member.name}` : "Login / Register"}
+          <Link to={member ? "/profile" : "/login"}
+            aria-label={member ? "User Profile" : "Member Login"}
+            title={member ? `Profile (${member.full_name || member.name || "Member"})` : "Login / Register"}
             className="flex items-center justify-center text-[#0D1512] hover:bg-[#0D1512]/10
                        p-2 rounded-xl transition">
             <MdPerson className="text-xl sm:text-2xl" />

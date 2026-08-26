@@ -347,8 +347,34 @@ export default function ProductList() {
 
 
 
-  const toggleWishlist = (id) =>
-    setWishlist((w) => w.includes(id) ? w.filter((x) => x !== id) : [...w, id]);
+  const loadWishlist = useCallback(async () => {
+    try {
+      const res = await API.get("/wishlist/my");
+      if (Array.isArray(res.data)) {
+        setWishlist(res.data.map(item => item.product_uid || item.id));
+      }
+    } catch {
+      // Guest mode or not logged in
+    }
+  }, []);
+
+  useEffect(() => {
+    loadWishlist();
+  }, [loadWishlist]);
+
+  const toggleWishlist = async (product_uid) => {
+    const isWishlisted = wishlist.includes(product_uid);
+    setWishlist((w) => isWishlisted ? w.filter((x) => x !== product_uid) : [...w, product_uid]);
+    try {
+      if (isWishlisted) {
+        await API.delete(`/wishlist/${product_uid}`);
+      } else {
+        await API.post("/wishlist/add", { product_uid, product_type: "physical" });
+      }
+    } catch (err) {
+      console.error("Failed to update wishlist:", err);
+    }
+  };
 
   const setFilter = (key, value) =>
     setFilters((f) => ({ ...f, [key]: value }));
@@ -701,8 +727,8 @@ export default function ProductList() {
                 <ProductCard
                   key={p.id}
                   p={p}
-                  onWishlist={toggleWishlist}
-                  isWishlisted={wishlist.includes(p.id)}
+                  onWishlist={() => toggleWishlist(p.product_uid || p.id)}
+                  isWishlisted={wishlist.includes(p.product_uid || p.id)}
                 />
               ))}
             </div>
