@@ -329,21 +329,35 @@ export default function Checkout() {
           >
             <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-xl font-bold tracking-tight">Delivery Details</h3>
             
-            {[
-              { key: "name", label: "Full Name", placeholder: "Your full name" },
-              { key: "email", label: "Email Address", placeholder: "your@email.com" },
-              { key: "phone", label: "Phone Number", placeholder: "+91 98765 43210" },
-            ].map(({ key, label, placeholder }) => (
-              <div key={key}>
-                <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">{label}</label>
-                <input
-                  value={form[key]}
-                  onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                  placeholder={placeholder}
-                  className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-                />
-              </div>
-            ))}
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Full Name</label>
+              <input
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                placeholder="Your full name"
+                className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Email Address</label>
+              <input
+                type="email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                placeholder="your@email.com"
+                className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Phone Number</label>
+              <input
+                type="tel"
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                placeholder="+91 98765 43210"
+                className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
+              />
+            </div>
 
             <div>
               <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Street Address *</label>

@@ -52,25 +52,27 @@ function ReviewForm({ productId, onSubmit }) {
           ))}
         </div>
       </div>
-      {[
-        { key:"title", label:"Title", placeholder:"Brief summary" },
-        { key:"comment", label:"Review", placeholder:"Your detailed review...", multi:true },
-      ].map(({ key, label, placeholder, multi }) => (
-        <div key={key} className="mb-3">
-          <label className="text-xs mb-1 block" style={{ color: "#64748b" }}>{label}</label>
-          {multi
-            ? <textarea value={form[key]}
-                onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                rows={4} placeholder={placeholder}
-                className="w-full px-3 py-2 text-xs focus:outline-none"
-                style={{ background: "#020617", color: "#e2e8f0", border: "1px solid rgba(56,189,248,0.2)" }} />
-            : <input value={form[key]}
-                onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                placeholder={placeholder}
-                className="w-full px-3 py-2 text-xs focus:outline-none"
-                style={{ background: "#020617", color: "#e2e8f0", border: "1px solid rgba(56,189,248,0.2)" }} />}
-        </div>
-      ))}
+      <div className="mb-3">
+        <label className="text-xs mb-1 block" style={{ color: "#64748b" }}>Title</label>
+        <input
+          value={form.title}
+          onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
+          placeholder="Brief summary"
+          className="w-full px-3 py-2 text-xs focus:outline-none"
+          style={{ background: "#020617", color: "#e2e8f0", border: "1px solid rgba(56,189,248,0.2)" }}
+        />
+      </div>
+      <div className="mb-3">
+        <label className="text-xs mb-1 block" style={{ color: "#64748b" }}>Review</label>
+        <textarea
+          value={form.comment}
+          onChange={e => setForm(f => ({ ...f, comment: e.target.value }))}
+          rows={4}
+          placeholder="Your detailed review..."
+          className="w-full px-3 py-2 text-xs focus:outline-none"
+          style={{ background: "#020617", color: "#e2e8f0", border: "1px solid rgba(56,189,248,0.2)" }}
+        />
+      </div>
       <button onClick={submit}
         className="px-6 py-2 text-xs font-bold tracking-widest transition"
         style={{ background: "#0ea5e9", color: "white", border: "none" }}>
