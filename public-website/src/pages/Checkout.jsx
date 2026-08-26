@@ -57,10 +57,45 @@ export default function Checkout() {
     delivery_street: "",
     delivery_apt: "",
     delivery_city: "",
-    delivery_state: "",
-    delivery_country: "India",
-    delivery_pincode: "",
-  });
+  // Check if cart contains physical items
+  const hasPhysicalItems = cart.some(i => i.type === "physical" || !i.type);
+
+  // 18 Allowed Physical Shipping Destinations with Dial Codes & Flags
+  const PHYSICAL_COUNTRIES = [
+    { name: "Australia", code: "+61", flag: "🇦🇺" },
+    { name: "Bahrain", code: "+973", flag: "🇧🇭" },
+    { name: "Belgium", code: "+32", flag: "🇧🇪" },
+    { name: "Canada", code: "+1", flag: "🇨🇦" },
+    { name: "France", code: "+33", flag: "🇫🇷" },
+    { name: "Germany", code: "+49", flag: "🇩🇪" },
+    { name: "India", code: "+91", flag: "🇮🇳" },
+    { name: "Kuwait", code: "+965", flag: "🇰🇼" },
+    { name: "Malaysia", code: "+60", flag: "🇲🇾" },
+    { name: "Netherlands", code: "+31", flag: "🇳🇱" },
+    { name: "New Zealand", code: "+64", flag: "🇳🇿" },
+    { name: "Norway", code: "+47", flag: "🇳🇴" },
+    { name: "Qatar", code: "+974", flag: "🇶🇦" },
+    { name: "Saudi Arabia", code: "+966", flag: "🇸🇦" },
+    { name: "Singapore", code: "+65", flag: "🇸🇬" },
+    { name: "Switzerland", code: "+41", flag: "🇨🇭" },
+    { name: "United Arab Emirates", code: "+971", flag: "🇦🇪" },
+    { name: "United Kingdom", code: "+44", flag: "🇬🇧" },
+    { name: "United States", code: "+1", flag: "🇺🇸" },
+  ];
+
+  // Extended World List for Digital Products
+  const ALL_COUNTRIES = [
+    ...PHYSICAL_COUNTRIES,
+    { name: "Japan", code: "+81", flag: "🇯🇵" },
+    { name: "Brazil", code: "+55", flag: "🇧🇷" },
+    { name: "South Africa", code: "+27", flag: "🇿🇦" },
+    { name: "Italy", code: "+39", flag: "🇮🇹" },
+    { name: "Spain", code: "+34", flag: "🇪🇸" },
+    { name: "Other Country", code: "+1", flag: "🌐" },
+  ];
+
+  const availableCountries = hasPhysicalItems ? PHYSICAL_COUNTRIES : ALL_COUNTRIES;
+  const [phoneCode, setPhoneCode] = useState("+91");
   const [placing, setPlacing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState(selected.currency_code === "INR" ? "razorpay" : "paypal");
   const [paypalLoaded, setPaypalLoaded] = useState(false);
@@ -162,6 +197,8 @@ export default function Checkout() {
       form.delivery_pincode
     ].filter(Boolean).join(", ");
 
+    const fullPhone = form.phone ? `${phoneCode} ${form.phone.trim()}` : "";
+
     setPlacing(true);
     try {
       const items = cart.map((i) => ({
@@ -179,7 +216,7 @@ export default function Checkout() {
         member_id: member?.id || null,
         guest_name: form.name,
         guest_email: form.email,
-        guest_phone: form.phone,
+        guest_phone: fullPhone,
         items,
         address_line: formattedAddressLine,
         delivery_street: form.delivery_street,
@@ -216,6 +253,7 @@ export default function Checkout() {
       form.delivery_country,
       form.delivery_pincode
     ].filter(Boolean).join(", ");
+    const fullPhone = form.phone ? `${phoneCode} ${form.phone.trim()}` : "";
 
     setPlacing(true);
     const loaded = await loadRazorpayScript();
@@ -230,7 +268,7 @@ export default function Checkout() {
         member_id: member?.id || null,
         guest_name: form.name,
         guest_email: form.email,
-        guest_phone: form.phone,
+        guest_phone: fullPhone,
         items: cart.map(i => ({
           product_id: i.type === "physical" ? i.id : null,
           digital_product_id: i.type === "digital" ? i.id : null,
@@ -351,13 +389,24 @@ export default function Checkout() {
             </div>
             <div>
               <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Phone Number</label>
-              <input
-                type="tel"
-                value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                placeholder="+91 98765 43210"
-                className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-              />
+              <div className="flex gap-2">
+                <select
+                  value={phoneCode}
+                  onChange={(e) => setPhoneCode(e.target.value)}
+                  className="bg-white border border-[#0D1512]/20 rounded-xl px-3 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] shrink-0 font-mono"
+                >
+                  {PHYSICAL_COUNTRIES.map(c => (
+                    <option key={c.name} value={c.code}>{c.flag} {c.code}</option>
+                  ))}
+                </select>
+                <input
+                  type="tel"
+                  value={form.phone}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                  placeholder="98765 43210"
+                  className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
+                />
+              </div>
             </div>
 
             <div>
@@ -403,27 +452,19 @@ export default function Checkout() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Country *</label>
+                <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">
+                  Country * {hasPhysicalItems && <span className="text-amber-700 text-[9px] font-semibold">(18 Physical Shipping Destinations)</span>}
+                </label>
                 <select
                   value={form.delivery_country}
                   onChange={(e) => setForm({ ...form, delivery_country: e.target.value })}
                   className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
                 >
-                  <option value="India">🇮🇳 India</option>
-                  <option value="United States">🇺🇸 United States</option>
-                  <option value="United Kingdom">🇬🇧 United Kingdom</option>
-                  <option value="Australia">🇦🇺 Australia</option>
-                  <option value="Canada">🇨🇦 Canada</option>
-                  <option value="United Arab Emirates">🇦🇪 United Arab Emirates</option>
-                  <option value="Singapore">🇸🇬 Singapore</option>
-                  <option value="Germany">🇩🇪 Germany</option>
-                  <option value="France">🇫🇷 France</option>
-                  <option value="Japan">🇯🇵 Japan</option>
-                  <option value="Saudi Arabia">🇸🇦 Saudi Arabia</option>
-                  <option value="Qatar">🇶🇦 Qatar</option>
-                  <option value="Malaysia">🇲🇾 Malaysia</option>
-                  <option value="New Zealand">🇳🇿 New Zealand</option>
-                  <option value="Other">🌐 Other Country</option>
+                  {availableCountries.map((c) => (
+                    <option key={c.name} value={c.name}>
+                      {c.flag} {c.name}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>

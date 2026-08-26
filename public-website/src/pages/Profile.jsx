@@ -537,21 +537,26 @@ export default function Profile() {
                         style={{ borderColor: "rgba(27, 57, 49, 0.2)" }}
                         className="w-full bg-[#FAF9F6]/20 border rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
                       >
-                        <option value="India">🇮🇳 India</option>
-                        <option value="United States">🇺🇸 United States</option>
-                        <option value="United Kingdom">🇬🇧 United Kingdom</option>
                         <option value="Australia">🇦🇺 Australia</option>
+                        <option value="Bahrain">🇧🇭 Bahrain</option>
+                        <option value="Belgium">🇧🇪 Belgium</option>
                         <option value="Canada">🇨🇦 Canada</option>
-                        <option value="United Arab Emirates">🇦🇪 United Arab Emirates</option>
-                        <option value="Singapore">🇸🇬 Singapore</option>
-                        <option value="Germany">🇩🇪 Germany</option>
                         <option value="France">🇫🇷 France</option>
-                        <option value="Japan">🇯🇵 Japan</option>
-                        <option value="Saudi Arabia">🇸🇦 Saudi Arabia</option>
-                        <option value="Qatar">🇶🇦 Qatar</option>
+                        <option value="Germany">🇩🇪 Germany</option>
+                        <option value="India">🇮🇳 India</option>
+                        <option value="Kuwait">🇰🇼 Kuwait</option>
                         <option value="Malaysia">🇲🇾 Malaysia</option>
+                        <option value="Netherlands">🇳🇱 Netherlands</option>
                         <option value="New Zealand">🇳🇿 New Zealand</option>
-                        <option value="Other">🌐 Other Country</option>
+                        <option value="Norway">🇳🇴 Norway</option>
+                        <option value="Qatar">🇶🇦 Qatar</option>
+                        <option value="Saudi Arabia">🇸🇦 Saudi Arabia</option>
+                        <option value="Singapore">🇸🇬 Singapore</option>
+                        <option value="Switzerland">🇨🇭 Switzerland</option>
+                        <option value="United Arab Emirates">🇦🇪 United Arab Emirates</option>
+                        <option value="United Kingdom">🇬🇧 United Kingdom</option>
+                        <option value="United States">🇺🇸 United States</option>
+                        <option value="Other">🌐 Other Country (Digital Only)</option>
                       </select>
                     </div>
                   </div>
