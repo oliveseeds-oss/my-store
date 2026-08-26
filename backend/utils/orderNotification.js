@@ -142,7 +142,8 @@ async function sendOrderConfirmation(orderId) {
             process.env.JWT_SECRET,
             { expiresIn: "72h" }
           );
-          const downloadUrl = `http://localhost:5000/api/digital-products/download/${downloadToken}`;
+          const apiBase = process.env.API_BASE_URL || (process.env.NODE_ENV === "production" ? "https://apiosspanel.oliveseedsdesignstudio.com/api" : "http://200.141.2.131:5000/api");
+          const downloadUrl = `${apiBase}/digital-products/download/${downloadToken}`;
           digitalLinksHtml += `
             <div style="background-color: #ffffff; border: 1px solid rgba(107, 124, 63, 0.2); padding: 15px; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; justify-content: space-between;">
               <div>

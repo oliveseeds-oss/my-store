@@ -590,7 +590,7 @@ export default function Profile() {
                                 <p className="text-[9px] text-[#0D1512]/50 mt-0.5 font-mono">UID: {item.product_uid}</p>
                               </div>
                               <a 
-                                href={`http://localhost:5000/api/digital-products/download/${item.product_uid}`} 
+                                href={`${API.defaults.baseURL}/digital-products/download/${item.product_uid}`} 
                                 target="_blank"
                                 rel="noreferrer"
                                 style={{ background: "#0D1512", color: "#FAF9F6" }}

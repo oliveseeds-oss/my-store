@@ -20,23 +20,39 @@ function generateDigitalProductUid() {
 router.get("/download/:token", async (req, res) => {
   const { token } = req.params;
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const { product_uid } = decoded;
+    let product_uid = null;
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      product_uid = decoded.product_uid;
+    } catch {
+      product_uid = token;
+    }
     
-    const [rows] = await db.query("SELECT file_url FROM digital_products WHERE product_uid = ?", [product_uid]);
+    const [rows] = await db.query(
+      "SELECT file_url FROM digital_products WHERE product_uid = ? OR id = ?",
+      [product_uid, product_uid]
+    );
     if (!rows.length || !rows[0].file_url) {
       return res.status(404).send("File not found or product inactive.");
     }
     
-    const fileUrl = rows[0].file_url;
+    let fileUrl = rows[0].file_url.trim();
+
+    // Ensure valid URL scheme for external links (e.g. Google Drive, Dropbox, Mega)
+    if (!fileUrl.startsWith("/") && !fileUrl.startsWith("http://") && !fileUrl.startsWith("https://")) {
+      fileUrl = `https://${fileUrl}`;
+    }
+
     if (fileUrl.startsWith("/uploads/")) {
       const filePath = path.join(__dirname, "..", fileUrl);
       if (fs.existsSync(filePath)) {
         return res.download(filePath);
       }
     }
-    res.redirect(fileUrl);
+
+    return res.redirect(fileUrl);
   } catch (err) {
+    console.error("Digital product download error:", err);
     res.status(400).send("Download link has expired or is invalid.");
   }
 });
