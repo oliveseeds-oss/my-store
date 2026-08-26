@@ -87,11 +87,22 @@ export default function DigitalProductDetail() {
   const [product, setProduct] = useState(null);
   const [selectedImg, setSelectedImg] = useState(0);
   const [added, setAdded] = useState(false);
+  const [isWishlisted, setIsWishlisted] = useState(false);
   const { addToCart } = useCart();
 
   const load = useCallback(async () => {
     const r = await API.get(`/digital-products/${id}`);
     setProduct(r.data);
+    try {
+      const wRes = await API.get("/wishlist/my");
+      if (Array.isArray(wRes.data)) {
+        const targetUid = r.data.product_uid || r.data.id;
+        const exists = wRes.data.some(w => w.product_uid === targetUid || String(w.product_uid) === String(id));
+        setIsWishlisted(exists);
+      }
+    } catch {
+      // Guest mode
+    }
   }, [id]);
   useEffect(() => { load(); window.scrollTo(0,0); }, [load]);
 
@@ -228,9 +239,33 @@ export default function DigitalProductDetail() {
               </p>
             )}
 
-            <h1 className="text-2xl font-bold" style={{ color: "#f1f5f9" }}>
-              {product.name}
-            </h1>
+            <div className="flex items-start justify-between gap-3">
+              <h1 className="text-2xl font-bold" style={{ color: "#f1f5f9" }}>
+                {product.name}
+              </h1>
+              <button
+                onClick={async () => {
+                  const targetUid = product.product_uid || product.id;
+                  try {
+                    if (isWishlisted) {
+                      await API.delete(`/wishlist/${targetUid}`);
+                      setIsWishlisted(false);
+                    } else {
+                      await API.post("/wishlist/add", { product_uid: targetUid, product_type: "digital" });
+                      setIsWishlisted(true);
+                    }
+                  } catch (err) {
+                    console.error("Wishlist update failed", err);
+                  }
+                }}
+                title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
+                aria-label="Wishlist"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-xl shadow-sm hover:scale-105 transition shrink-0 cursor-pointer"
+                style={{ background: "#0f172a", border: "1px solid rgba(56,189,248,0.3)", color: isWishlisted ? "#e11d48" : "#94a3b8" }}
+              >
+                {isWishlisted ? "♥" : "♡"}
+              </button>
+            </div>
 
             <div className="flex items-center gap-3">
               <div className="flex">

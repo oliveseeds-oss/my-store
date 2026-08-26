@@ -347,7 +347,7 @@ const COLLECTIONS = [
 
 
 /* ─── DigitalCard ─────────────────────────────────────────── */
-function DigitalCard({ p }) {
+function DigitalCard({ p, onWishlist, isWishlisted }) {
   const { addToCart } = useCart();
   const [added, setAdded] = useState(false);
 
@@ -366,8 +366,40 @@ function DigitalCard({ p }) {
   };
 
   return (
-    <div className="dcard">
+    <div className="dcard" style={{ position: "relative" }}>
       <div className="dcard__glow" />
+
+      {/* Wishlist Heart Button */}
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onWishlist();
+        }}
+        aria-label="Add to Wishlist"
+        style={{
+          position: "absolute",
+          top: 12,
+          right: 12,
+          zIndex: 20,
+          width: 34,
+          height: 34,
+          borderRadius: "50%",
+          background: "rgba(15,23,42,0.85)",
+          backdropFilter: "blur(8px)",
+          border: "1px solid rgba(255,255,255,0.15)",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justify: "center",
+          fontSize: 16,
+          boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
+          color: isWishlisted ? "#f43f5e" : "#94a3b8",
+          transition: "all 0.2s ease",
+        }}
+      >
+        {isWishlisted ? "♥" : "♡"}
+      </button>
 
       {/* Image */}
       <Link to={`/digital/${p.id}`} style={{ display: "block" }}>
@@ -576,6 +608,7 @@ export default function DigitalProductList() {
 
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
@@ -587,6 +620,31 @@ export default function DigitalProductList() {
     maxPrice: "",
     minRating: "",
   });
+
+  const loadWishlist = useCallback(async () => {
+    try {
+      const res = await API.get("/wishlist/my");
+      if (Array.isArray(res.data)) {
+        setWishlist(res.data.map(item => item.product_uid || item.id));
+      }
+    } catch {
+      // Guest mode
+    }
+  }, []);
+
+  const toggleWishlist = async (product_uid) => {
+    const isWishlisted = wishlist.includes(product_uid);
+    setWishlist((w) => isWishlisted ? w.filter((x) => x !== product_uid) : [...w, product_uid]);
+    try {
+      if (isWishlisted) {
+        await API.delete(`/wishlist/${product_uid}`);
+      } else {
+        await API.post("/wishlist/add", { product_uid, product_type: "digital" });
+      }
+    } catch (err) {
+      console.error("Failed to update wishlist:", err);
+    }
+  };
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -601,7 +659,7 @@ export default function DigitalProductList() {
     setLoading(false);
   }, [filters]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => { load(); loadWishlist(); }, [load, loadWishlist]);
 
   const setFilter = (key, val) => setFilters((f) => ({ ...f, [key]: val }));
 
@@ -1107,7 +1165,12 @@ export default function DigitalProductList() {
                 gap: 20,
               }}>
                 {products.map((p) => (
-                  <DigitalCard key={p.id} p={p} />
+                  <DigitalCard
+                    key={p.id}
+                    p={p}
+                    onWishlist={() => toggleWishlist(p.product_uid || p.id)}
+                    isWishlisted={wishlist.includes(p.product_uid || p.id)}
+                  />
                 ))}
               </div>
             )}

@@ -186,20 +186,21 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
 
         {/* Wishlist */}
         <button
-          onClick={(e) => { e.preventDefault(); onWishlist(p.id); }}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onWishlist(); }}
+          aria-label="Add to Wishlist"
           style={{
-            position: "absolute", top: 12, right: 12,
+            position: "absolute", top: 12, right: 12, zIndex: 10,
             width: 36, height: 36, borderRadius: "50%",
-            background: "rgba(255,255,255,0.92)",
+            background: "rgba(255,255,255,0.95)",
             backdropFilter: "blur(8px)",
-            border: "none", cursor: "pointer",
+            border: "1px solid rgba(0,0,0,0.08)", cursor: "pointer",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 16,
-            boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
-            opacity: hovered || isWishlisted ? 1 : 0,
-            transition: "opacity 0.3s ease, transform 0.2s ease",
-            transform: isWishlisted ? "scale(1.15)" : "scale(1)",
-            color: isWishlisted ? "#c0392b" : T.textSec,
+            fontSize: 18,
+            boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
+            opacity: 1,
+            transition: "all 0.2s ease",
+            transform: isWishlisted ? "scale(1.1)" : "scale(1)",
+            color: isWishlisted ? "#e11d48" : "#64748b",
           }}
         >
           {isWishlisted ? "♥" : "♡"}
