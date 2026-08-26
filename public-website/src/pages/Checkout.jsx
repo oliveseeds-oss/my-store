@@ -412,6 +412,7 @@ export default function Checkout() {
                 }}
                 enabledCountryCodes={enabledCountryCodes}
                 isPhysical={hasPhysicalItems}
+              />
             )}
 
             {/* Payment Details */}
