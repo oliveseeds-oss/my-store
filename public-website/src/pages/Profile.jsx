@@ -438,14 +438,48 @@ export default function Profile() {
                   </div>
                   <div>
                     <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">Phone Number</label>
-                    <input 
-                      type="text" 
-                      value={profile.phone}
-                      onChange={(e) => setProfile({...profile, phone: e.target.value})}
-                      style={{ borderColor: "rgba(27, 57, 49, 0.2)" }}
-                      className="w-full bg-[#FAF9F6]/20 border rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-                      placeholder="+91 98765 43210"
-                    />
+                    <div className="flex gap-2">
+                      <select
+                        value={profile.phone?.split(" ")[0]?.startsWith("+") ? profile.phone.split(" ")[0] : "+91"}
+                        onChange={(e) => {
+                          const numOnly = profile.phone?.replace(/^\+\d+\s*/, "") || "";
+                          setProfile({...profile, phone: `${e.target.value} ${numOnly}`});
+                        }}
+                        style={{ borderColor: "rgba(27, 57, 49, 0.2)" }}
+                        className="bg-[#FAF9F6]/20 border rounded-xl px-3 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] font-mono shrink-0"
+                      >
+                        <option value="+91">🇮🇳 +91</option>
+                        <option value="+1">🇺🇸 +1</option>
+                        <option value="+44">🇬🇧 +44</option>
+                        <option value="+61">🇦🇺 +61</option>
+                        <option value="+1">🇨🇦 +1</option>
+                        <option value="+971">🇦🇪 +971</option>
+                        <option value="+65">🇸🇬 +65</option>
+                        <option value="+49">🇩🇪 +49</option>
+                        <option value="+33">🇫🇷 +33</option>
+                        <option value="+966">🇸🇦 +966</option>
+                        <option value="+974">🇶🇦 +974</option>
+                        <option value="+60">🇲🇾 +60</option>
+                        <option value="+64">🇳🇿 +64</option>
+                        <option value="+965">🇰🇼 +965</option>
+                        <option value="+973">🇧🇭 +973</option>
+                        <option value="+32">🇧🇪 +32</option>
+                        <option value="+31">🇳🇱 +31</option>
+                        <option value="+47">🇳🇴 +47</option>
+                        <option value="+41">🇨🇭 +41</option>
+                      </select>
+                      <input 
+                        type="text" 
+                        value={profile.phone?.replace(/^\+\d+\s*/, "") || profile.phone || ""}
+                        onChange={(e) => {
+                          const currentPrefix = profile.phone?.split(" ")[0]?.startsWith("+") ? profile.phone.split(" ")[0] : "+91";
+                          setProfile({...profile, phone: `${currentPrefix} ${e.target.value}`});
+                        }}
+                        style={{ borderColor: "rgba(27, 57, 49, 0.2)" }}
+                        className="w-full bg-[#FAF9F6]/20 border rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
+                        placeholder="98765 43210"
+                      />
+                    </div>
                   </div>
 
                   <button

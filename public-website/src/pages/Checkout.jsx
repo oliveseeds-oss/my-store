@@ -88,14 +88,54 @@ export default function Checkout() {
     { name: "United States", code: "+1", flag: "🇺🇸" },
   ];
 
-  // Extended World List for Digital Products
+  // Extended World List for Digital Products (Complete International Nations)
   const ALL_COUNTRIES = [
     ...PHYSICAL_COUNTRIES,
-    { name: "Japan", code: "+81", flag: "🇯🇵" },
+    { name: "Afghanistan", code: "+93", flag: "🇦🇫" },
+    { name: "Albania", code: "+355", flag: "🇦🇱" },
+    { name: "Algeria", code: "+213", flag: "🇩🇿" },
+    { name: "Argentina", code: "+54", flag: "🇦🇷" },
+    { name: "Armenia", code: "+374", flag: "🇦🇲" },
+    { name: "Austria", code: "+43", flag: "🇦🇹" },
+    { name: "Bangladesh", code: "+880", flag: "🇧🇩" },
+    { name: "Bhutan", code: "+975", flag: "🇧🇹" },
     { name: "Brazil", code: "+55", flag: "🇧🇷" },
-    { name: "South Africa", code: "+27", flag: "🇿🇦" },
+    { name: "Chile", code: "+56", flag: "🇨🇱" },
+    { name: "China", code: "+86", flag: "🇨🇳" },
+    { name: "Colombia", code: "+57", flag: "🇨🇴" },
+    { name: "Denmark", code: "+45", flag: "🇩🇰" },
+    { name: "Egypt", code: "+20", flag: "🇪🇬" },
+    { name: "Finland", code: "+358", flag: "🇫🇮" },
+    { name: "Greece", code: "+30", flag: "🇬🇷" },
+    { name: "Hong Kong", code: "+852", flag: "🇭🇰" },
+    { name: "Hungary", code: "+36", flag: "🇭🇺" },
+    { name: "Indonesia", code: "+62", flag: "🇮🇩" },
+    { name: "Ireland", code: "+353", flag: "🇮🇪" },
+    { name: "Israel", code: "+972", flag: "🇮🇱" },
     { name: "Italy", code: "+39", flag: "🇮🇹" },
+    { name: "Japan", code: "+81", flag: "🇯🇵" },
+    { name: "Jordan", code: "+962", flag: "🇯🇴" },
+    { name: "Kazakhstan", code: "+7", flag: "🇰🇿" },
+    { name: "Kenya", code: "+254", flag: "🇰🇪" },
+    { name: "Maldives", code: "+960", flag: "🇲🇻" },
+    { name: "Mexico", code: "+52", flag: "🇲🇽" },
+    { name: "Nepal", code: "+977", flag: "🇳🇵" },
+    { name: "Nigeria", code: "+234", flag: "🇳🇬" },
+    { name: "Oman", code: "+968", flag: "🇴🇲" },
+    { name: "Pakistan", code: "+92", flag: "🇵🇰" },
+    { name: "Philippines", code: "+63", flag: "🇵🇭" },
+    { name: "Poland", code: "+48", flag: "🇵🇱" },
+    { name: "Portugal", code: "+351", flag: "🇵🇹" },
+    { name: "Romania", code: "+40", flag: "🇷🇴" },
+    { name: "South Africa", code: "+27", flag: "🇿🇦" },
+    { name: "South Korea", code: "+82", flag: "🇰🇷" },
     { name: "Spain", code: "+34", flag: "🇪🇸" },
+    { name: "Sri Lanka", code: "+94", flag: "🇱🇰" },
+    { name: "Sweden", code: "+46", flag: "🇸🇪" },
+    { name: "Taiwan", code: "+886", flag: "🇹🇼" },
+    { name: "Thailand", code: "+66", flag: "🇹🇭" },
+    { name: "Turkey", code: "+90", flag: "🇹🇷" },
+    { name: "Vietnam", code: "+84", flag: "🇻🇳" },
     { name: "Other Country", code: "+1", flag: "🌐" },
   ];
 
@@ -400,8 +440,8 @@ export default function Checkout() {
                   onChange={(e) => setPhoneCode(e.target.value)}
                   className="bg-white border border-[#0D1512]/20 rounded-xl px-3 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] shrink-0 font-mono"
                 >
-                  {PHYSICAL_COUNTRIES.map(c => (
-                    <option key={c.name} value={c.code}>{c.flag} {c.code}</option>
+                  {availableCountries.map(c => (
+                    <option key={`${c.name}-${c.code}`} value={c.code}>{c.flag} {c.code}</option>
                   ))}
                 </select>
                 <input
