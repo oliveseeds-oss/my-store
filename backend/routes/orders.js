@@ -102,7 +102,22 @@ router.post("/", async (req, res) => {
     const digitalItems = [];
 
     for (const item of items) {
-      if (item.type === "physical" || item.product_id !== null) {
+      if (item.type === "digital" || (item.digital_product_id && !item.product_id)) {
+        // Resolve digital product_uid from id if missing
+        let product_uid = item.product_uid;
+        if (!product_uid && (item.digital_product_id || item.product_id)) {
+          const targetId = item.digital_product_id || item.product_id;
+          const [products] = await db.query(
+            "SELECT product_uid FROM digital_products WHERE id = ? OR product_uid = ?",
+            [targetId, targetId]
+          );
+          if (products.length) product_uid = products[0].product_uid;
+        }
+        digitalItems.push({
+          ...item,
+          product_uid: product_uid || `DPD-TEMP-${Math.floor(Math.random() * 900000)}`
+        });
+      } else {
         // Resolve physical product_uid from id if missing
         let product_uid = item.product_uid;
         if (!product_uid && item.product_id) {
@@ -115,20 +130,6 @@ router.post("/", async (req, res) => {
         physicalItems.push({
           ...item,
           product_uid: product_uid || `PRD-TEMP-${Math.floor(Math.random() * 900000)}`
-        });
-      } else {
-        // Resolve digital product_uid from id if missing
-        let product_uid = item.product_uid;
-        if (!product_uid && item.digital_product_id) {
-          const [products] = await db.query(
-            "SELECT product_uid FROM digital_products WHERE id = ? OR product_uid = ?",
-            [item.digital_product_id, item.digital_product_id]
-          );
-          if (products.length) product_uid = products[0].product_uid;
-        }
-        digitalItems.push({
-          ...item,
-          product_uid: product_uid || `DPD-TEMP-${Math.floor(Math.random() * 900000)}`
         });
       }
     }

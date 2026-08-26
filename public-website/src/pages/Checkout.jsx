@@ -232,7 +232,8 @@ export default function Checkout() {
         guest_email: form.email,
         guest_phone: form.phone,
         items: cart.map(i => ({
-          product_id: i.id,
+          product_id: i.type === "physical" ? i.id : null,
+          digital_product_id: i.type === "digital" ? i.id : null,
           product_uid: i.product_uid,
           product_name: i.name,
           price: i.price,

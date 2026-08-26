@@ -53,10 +53,26 @@ router.post("/orders/create", async (req, res) => {
     let subtotalInBase = 0;
 
     for (const item of items) {
-      if (item.type === "physical" || item.product_id !== null) {
+      if (item.type === "digital" || (item.digital_product_id && !item.product_id)) {
+        const [products] = await db.query(
+          "SELECT id, product_uid, name, price, is_active FROM digital_products WHERE id = ? OR product_uid = ?",
+          [item.digital_product_id || item.product_id, item.product_uid || null]
+        );
+        if (!products.length || !products[0].is_active) {
+          return res.status(400).json({ error: `Digital asset ${item.product_name} is unavailable.` });
+        }
+        const product = products[0];
+        const price = parseFloat(product.price);
+        subtotalInBase += price * item.qty;
+        digitalItems.push({
+          ...item,
+          product_uid: product.product_uid,
+          price // Overwrite with server authoritative price
+        });
+      } else {
         const [products] = await db.query(
           "SELECT id, product_uid, name, price, stock, is_active FROM products WHERE id = ? OR product_uid = ?",
-          [item.product_id, item.product_uid]
+          [item.product_id, item.product_uid || null]
         );
         if (!products.length || !products[0].is_active) {
           return res.status(400).json({ error: `Product ${item.product_name} is no longer available.` });
@@ -69,22 +85,6 @@ router.post("/orders/create", async (req, res) => {
         const price = parseFloat(product.price);
         subtotalInBase += price * item.qty;
         physicalItems.push({
-          ...item,
-          product_uid: product.product_uid,
-          price // Overwrite with server authoritative price
-        });
-      } else {
-        const [products] = await db.query(
-          "SELECT id, product_uid, name, price, is_active FROM digital_products WHERE id = ? OR product_uid = ?",
-          [item.digital_product_id, item.product_uid]
-        );
-        if (!products.length || !products[0].is_active) {
-          return res.status(400).json({ error: `Digital asset ${item.product_name} is unavailable.` });
-        }
-        const product = products[0];
-        const price = parseFloat(product.price);
-        subtotalInBase += price * item.qty;
-        digitalItems.push({
           ...item,
           product_uid: product.product_uid,
           price // Overwrite with server authoritative price
