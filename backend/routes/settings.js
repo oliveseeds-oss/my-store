@@ -3,7 +3,7 @@ const db = require("../db");
 const { verifyAdmin } = require("../middleware/auth");
 
 router.get("/", async (req, res) => {
-  const [rows] = await db.query("SELECT site_name, site_email, phone, address, currency, shipping_fee, free_shipping_above, razorpay_key, razorpay_secret, paypal_client_id, shiprocket_email, shiprocket_password FROM settings WHERE id = 1");
+  const [rows] = await db.query("SELECT site_name, site_email, phone, address, currency, shipping_fee, free_shipping_above, razorpay_key, razorpay_secret, paypal_client_id, paypal_client_secret, shiprocket_email, shiprocket_password FROM settings WHERE id = 1");
   const settings = rows[0] || {};
   
   // Mask shiprocket password
@@ -14,6 +14,10 @@ router.get("/", async (req, res) => {
   if (settings.razorpay_secret) {
     settings.razorpay_secret = "••••••••";
   }
+  // Mask paypal secret
+  if (settings.paypal_client_secret) {
+    settings.paypal_client_secret = "••••••••";
+  }
   
   res.json({
     ...settings,
@@ -23,10 +27,10 @@ router.get("/", async (req, res) => {
 });
 
 router.put("/", verifyAdmin, async (req, res) => {
-  const { site_name, site_email, phone, address, currency, shipping_fee, free_shipping_above, razorpay_key, razorpay_secret, paypal_client_id, shiprocket_email, shiprocket_password, admin_password } = req.body;
+  const { site_name, site_email, phone, address, currency, shipping_fee, free_shipping_above, razorpay_key, razorpay_secret, paypal_client_id, paypal_client_secret, shiprocket_email, shiprocket_password, admin_password } = req.body;
   
   // Handle shiprocket credential decryption/encryption migration
-  const [current] = await db.query("SELECT shiprocket_password, razorpay_secret FROM settings WHERE id = 1");
+  const [current] = await db.query("SELECT shiprocket_password, razorpay_secret, paypal_client_secret FROM settings WHERE id = 1");
   
   let finalPassword = shiprocket_password;
   if (shiprocket_password === "••••••••") {
@@ -45,8 +49,17 @@ router.put("/", verifyAdmin, async (req, res) => {
     finalRazorpaySecret = encrypt(razorpay_secret);
   }
 
-  let query = "UPDATE settings SET site_name=?, site_email=?, phone=?, address=?, currency=?, shipping_fee=?, free_shipping_above=?, razorpay_key=?, razorpay_secret=?, paypal_client_id=?, shiprocket_email=?, shiprocket_password=?";
-  const params = [site_name, site_email, phone, address, currency, shipping_fee, free_shipping_above, razorpay_key, finalRazorpaySecret, paypal_client_id, shiprocket_email, finalPassword];
+  // Handle paypal client secret encryption migration
+  let finalPaypalSecret = paypal_client_secret;
+  if (paypal_client_secret === "••••••••") {
+    finalPaypalSecret = current[0]?.paypal_client_secret || null;
+  } else if (paypal_client_secret) {
+    const { encrypt } = require("../utils/shiprocket");
+    finalPaypalSecret = encrypt(paypal_client_secret);
+  }
+
+  let query = "UPDATE settings SET site_name=?, site_email=?, phone=?, address=?, currency=?, shipping_fee=?, free_shipping_above=?, razorpay_key=?, razorpay_secret=?, paypal_client_id=?, paypal_client_secret=?, shiprocket_email=?, shiprocket_password=?";
+  const params = [site_name, site_email, phone, address, currency, shipping_fee, free_shipping_above, razorpay_key, finalRazorpaySecret, paypal_client_id, finalPaypalSecret, shiprocket_email, finalPassword];
 
   if (admin_password) {
     const bcrypt = require("bcryptjs");
@@ -148,6 +161,56 @@ router.post("/test-razorpay", verifyAdmin, async (req, res) => {
   } catch (error) {
     console.error("Razorpay test connection failed:", error.message);
     return res.json({ success: false, message: `Razorpay connection failed: ${error.message}` });
+  }
+});
+
+router.post("/test-paypal", verifyAdmin, async (req, res) => {
+  const { paypal_client_id, paypal_client_secret } = req.body;
+  try {
+    let clientId = paypal_client_id;
+    let clientSecret = paypal_client_secret;
+
+    if (clientSecret === "••••••••") {
+      const [rows] = await db.query("SELECT paypal_client_id, paypal_client_secret FROM settings WHERE id = 1");
+      if (rows.length) {
+        clientId = paypal_client_id || rows[0].paypal_client_id;
+        const { decrypt } = require("../utils/shiprocket");
+        clientSecret = decrypt(rows[0].paypal_client_secret);
+      }
+    }
+
+    clientId = clientId || process.env.PAYPAL_CLIENT_ID;
+    clientSecret = clientSecret || process.env.PAYPAL_CLIENT_SECRET;
+
+    if (!clientId || !clientSecret) {
+      return res.json({ success: false, message: "PayPal Client ID or Secret Key not configured." });
+    }
+
+    const isLive = !clientId.startsWith("sb") && process.env.PAYPAL_MODE !== "sandbox";
+    const baseUrl = isLive ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
+    const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
+
+    const tokenRes = await fetch(`${baseUrl}/v1/oauth2/token`, {
+      method: "POST",
+      body: "grant_type=client_credentials",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": `Basic ${auth}`
+      }
+    });
+
+    if (tokenRes.ok) {
+      const data = await tokenRes.json();
+      if (data.access_token) {
+        return res.json({ success: true, message: `PayPal connection successful (${isLive ? "Live" : "Sandbox"} mode).` });
+      }
+    }
+    
+    const errData = await tokenRes.json().catch(() => ({}));
+    return res.json({ success: false, message: `PayPal connection failed: ${errData.error_description || tokenRes.statusText}` });
+  } catch (error) {
+    console.error("PayPal test connection failed:", error.message);
+    return res.json({ success: false, message: `PayPal connection failed: ${error.message}` });
   }
 });
 

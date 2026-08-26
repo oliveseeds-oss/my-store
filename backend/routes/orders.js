@@ -4,9 +4,16 @@ const { generateOrderUid } = require('../utils/generateUid');
 const { verifyAdmin, verifyMember } = require("../middleware/auth");
 
 async function verifyPayPalOrder(orderId) {
-  const [rows] = await db.query("SELECT paypal_client_id FROM settings WHERE id = 1");
+  const [rows] = await db.query("SELECT paypal_client_id, paypal_client_secret FROM settings WHERE id = 1");
   const clientId = rows[0]?.paypal_client_id || process.env.PAYPAL_CLIENT_ID;
-  const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
+  let clientSecret = rows[0]?.paypal_client_secret;
+  
+  if (clientSecret) {
+    const { decrypt } = require("../utils/shiprocket");
+    clientSecret = decrypt(clientSecret);
+  } else {
+    clientSecret = process.env.PAYPAL_CLIENT_SECRET;
+  }
   
   if (!clientId || !clientSecret) {
     throw new Error("PayPal credentials missing in production. Cannot verify transaction.");

@@ -143,6 +143,7 @@ poolPromise.query(`
   poolPromise.query("ALTER TABLE bulk_orders ADD COLUMN status VARCHAR(50) DEFAULT 'Pending'").catch(() => {});
   poolPromise.query("ALTER TABLE design_inquiries ADD COLUMN status VARCHAR(50) DEFAULT 'Pending'").catch(() => {});
   poolPromise.query("ALTER TABLE settings ADD COLUMN paypal_client_id VARCHAR(255) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE settings ADD COLUMN paypal_client_secret VARCHAR(255) DEFAULT NULL").catch(() => {});
   poolPromise.query("ALTER TABLE settings ADD COLUMN razorpay_secret VARCHAR(255) DEFAULT NULL").catch(() => {});
   poolPromise.query("ALTER TABLE settings ADD COLUMN shiprocket_email VARCHAR(255) DEFAULT NULL").catch(() => {});
   poolPromise.query("ALTER TABLE settings ADD COLUMN shiprocket_password VARCHAR(255) DEFAULT NULL").catch(() => {});
@@ -181,6 +182,20 @@ poolPromise.query(`
   
   // Ensure default settings row exists (Priority 1)
   poolPromise.query("INSERT IGNORE INTO settings (id, site_name) VALUES (1, 'My Engraving Store')").catch(() => {});
+
+  // Ensure notifications table exists and has wide type column
+  poolPromise.query(`
+    CREATE TABLE IF NOT EXISTS notifications (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      type VARCHAR(50) NOT NULL,
+      title VARCHAR(255) NOT NULL,
+      message TEXT,
+      link VARCHAR(255),
+      is_read BOOLEAN DEFAULT FALSE,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `).catch(() => {});
+  poolPromise.query("ALTER TABLE notifications MODIFY COLUMN type VARCHAR(50) NOT NULL").catch(() => {});
 
   // Index Optimization (Priority 5)
   poolPromise.query("ALTER TABLE visitor_logs ADD INDEX idx_visited_at (visited_at)").catch(() => {});
