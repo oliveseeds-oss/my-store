@@ -57,6 +57,11 @@ export default function Checkout() {
     delivery_street: "",
     delivery_apt: "",
     delivery_city: "",
+    delivery_state: "",
+    delivery_country: "India",
+    delivery_pincode: "",
+  });
+
   // Check if cart contains physical items
   const hasPhysicalItems = cart.some(i => i.type === "physical" || !i.type);
 
