@@ -266,7 +266,7 @@ export default function Checkout() {
         member_id: member?.id || null,
         guest_name: form.name,
         guest_email: form.email,
-        guest_phone: fullPhone,
+        guest_phone: form.phone,
         items: cart.map(i => ({
           product_id: i.type === "physical" ? i.id : null,
           digital_product_id: i.type === "digital" ? i.id : null,
