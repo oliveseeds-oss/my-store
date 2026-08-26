@@ -531,14 +531,28 @@ export default function Profile() {
                     </div>
                     <div className="md:col-span-2">
                       <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">Country</label>
-                      <input 
-                        type="text"
+                      <select 
                         value={profile.country}
                         onChange={(e) => setProfile({...profile, country: e.target.value})}
                         style={{ borderColor: "rgba(27, 57, 49, 0.2)" }}
                         className="w-full bg-[#FAF9F6]/20 border rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-                        placeholder="India"
-                      />
+                      >
+                        <option value="India">🇮🇳 India</option>
+                        <option value="United States">🇺🇸 United States</option>
+                        <option value="United Kingdom">🇬🇧 United Kingdom</option>
+                        <option value="Australia">🇦🇺 Australia</option>
+                        <option value="Canada">🇨🇦 Canada</option>
+                        <option value="United Arab Emirates">🇦🇪 United Arab Emirates</option>
+                        <option value="Singapore">🇸🇬 Singapore</option>
+                        <option value="Germany">🇩🇪 Germany</option>
+                        <option value="France">🇫🇷 France</option>
+                        <option value="Japan">🇯🇵 Japan</option>
+                        <option value="Saudi Arabia">🇸🇦 Saudi Arabia</option>
+                        <option value="Qatar">🇶🇦 Qatar</option>
+                        <option value="Malaysia">🇲🇾 Malaysia</option>
+                        <option value="New Zealand">🇳🇿 New Zealand</option>
+                        <option value="Other">🌐 Other Country</option>
+                      </select>
                     </div>
                   </div>
 

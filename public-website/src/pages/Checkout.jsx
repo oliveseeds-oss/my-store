@@ -404,12 +404,27 @@ export default function Checkout() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Country *</label>
-                <input
+                <select
                   value={form.delivery_country}
                   onChange={(e) => setForm({ ...form, delivery_country: e.target.value })}
-                  placeholder="Country"
                   className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-                />
+                >
+                  <option value="India">🇮🇳 India</option>
+                  <option value="United States">🇺🇸 United States</option>
+                  <option value="United Kingdom">🇬🇧 United Kingdom</option>
+                  <option value="Australia">🇦🇺 Australia</option>
+                  <option value="Canada">🇨🇦 Canada</option>
+                  <option value="United Arab Emirates">🇦🇪 United Arab Emirates</option>
+                  <option value="Singapore">🇸🇬 Singapore</option>
+                  <option value="Germany">🇩🇪 Germany</option>
+                  <option value="France">🇫🇷 France</option>
+                  <option value="Japan">🇯🇵 Japan</option>
+                  <option value="Saudi Arabia">🇸🇦 Saudi Arabia</option>
+                  <option value="Qatar">🇶🇦 Qatar</option>
+                  <option value="Malaysia">🇲🇾 Malaysia</option>
+                  <option value="New Zealand">🇳🇿 New Zealand</option>
+                  <option value="Other">🌐 Other Country</option>
+                </select>
               </div>
               <div>
                 <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Pincode / Postal Code *</label>
