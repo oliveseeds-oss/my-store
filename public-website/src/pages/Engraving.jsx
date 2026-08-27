@@ -516,6 +516,16 @@ export default function Engraving() {
                     border-color: var(--gold);
                     background: rgba(255,255,255,0.06);
                   }
+                  .responsive-form-grid {
+                    display: grid;
+                    grid-template-columns: 1fr;
+                    gap: 20px;
+                  }
+                  @media (min-width: 640px) {
+                    .responsive-form-grid {
+                      grid-template-columns: 1fr 1fr;
+                    }
+                  }
                   .bulk-label {
                     display: block;
                     font-size: 10.5px;

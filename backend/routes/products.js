@@ -16,70 +16,81 @@ function generateProductUid() {
 // PUBLIC — list with filters
 router.get("/", async (req, res) => {
   const { category, search, tag, sort, minPrice, maxPrice, minRating } = req.query;
-  let sql = `SELECT p.*, c.name as category_name
-             FROM products p
-             LEFT JOIN categories c ON p.category_id = c.id
-             WHERE p.is_active = TRUE`;
-  const params = [];
-  if (category) { sql += " AND c.name = ?"; params.push(category); }
-  if (search) { sql += " AND p.name LIKE ?"; params.push(`%${search}%`); }
-  if (minPrice) { sql += " AND COALESCE(p.discount_price, p.price) >= ?"; params.push(minPrice); }
-  if (maxPrice) { sql += " AND COALESCE(p.discount_price, p.price) <= ?"; params.push(maxPrice); }
-  if (minRating) { sql += " AND p.rating >= ?"; params.push(minRating); }
-  if (tag) { sql += " AND JSON_CONTAINS(p.tags, JSON_QUOTE(?))"; params.push(tag); }
-  if (sort === "price_asc") sql += " ORDER BY COALESCE(p.discount_price,p.price) ASC";
-  else if (sort === "price_desc") sql += " ORDER BY COALESCE(p.discount_price,p.price) DESC";
-  else if (sort === "rating") sql += " ORDER BY p.rating DESC";
-  else sql += " ORDER BY p.created_at DESC";
-  const [rows] = await db.query(sql, params);
-  res.json(rows.map(r => ({ ...r, images: parseJSON(r.images), sizes: parseJSON(r.sizes), tags: parseJSON(r.tags) })));
+  try {
+    let sql = `SELECT p.*, c.name as category_name
+               FROM products p
+               LEFT JOIN categories c ON p.category_id = c.id
+               WHERE p.is_active = TRUE`;
+    const params = [];
+    if (category) { sql += " AND (c.name = ? OR p.category = ?)"; params.push(category, category); }
+    if (search) { sql += " AND p.name LIKE ?"; params.push(`%${search}%`); }
+    if (minPrice) { sql += " AND COALESCE(p.discount_price, p.price) >= ?"; params.push(minPrice); }
+    if (maxPrice) { sql += " AND COALESCE(p.discount_price, p.price) <= ?"; params.push(maxPrice); }
+    if (minRating) { sql += " AND p.rating >= ?"; params.push(minRating); }
+    if (tag) { sql += " AND JSON_CONTAINS(p.tags, JSON_QUOTE(?))"; params.push(tag); }
+    if (sort === "price_asc") sql += " ORDER BY COALESCE(p.discount_price,p.price) ASC";
+    else if (sort === "price_desc") sql += " ORDER BY COALESCE(p.discount_price,p.price) DESC";
+    else if (sort === "rating") sql += " ORDER BY p.rating DESC";
+    else sql += " ORDER BY p.created_at DESC";
+    
+    let [rows] = await db.query(sql, params);
+    if (!rows.length) {
+      // Fallback query on physical_products
+      let physSql = "SELECT * FROM physical_products WHERE is_active = TRUE";
+      const physParams = [];
+      if (category) { physSql += " AND category = ?"; physParams.push(category); }
+      if (search) { physSql += " AND name LIKE ?"; physParams.push(`%${search}%`); }
+      physSql += " ORDER BY created_at DESC";
+      const [pRows] = await db.query(physSql, physParams);
+      rows = pRows;
+    }
+
+    res.json(rows.map(r => ({ ...r, images: parseJSON(r.images), sizes: parseJSON(r.sizes), tags: parseJSON(r.tags) })));
+  } catch (err) {
+    console.error("Error fetching products:", err);
+    res.status(500).json({ error: "Failed to fetch products" });
+  }
 });
 
 // PUBLIC — single product
 router.get("/:id", async (req, res) => {
-  const [rows] = await db.query(
-    `SELECT p.*, c.name as category_name
-     FROM products p LEFT JOIN categories c ON p.category_id = c.id
-     WHERE (p.product_uid = ? OR p.id = ?) AND p.is_active = TRUE`, [req.params.id, req.params.id]
-  );
-  if (!rows.length) return res.status(404).json({ error: "Not found" });
-  const product = { ...rows[0], images: parseJSON(rows[0].images), sizes: parseJSON(rows[0].sizes), tags: parseJSON(rows[0].tags) };
-  
-  // Load personalization templates and fields
-  const [templates] = await db.query(
-    "SELECT * FROM product_templates WHERE product_id = ? AND is_active = TRUE ORDER BY sort_order ASC",
-    [product.id]
-  );
-  for (let t of templates) {
-    const [fields] = await db.query(
-      "SELECT * FROM product_personalization_fields WHERE template_id = ? AND status = 'active' ORDER BY sort_order ASC",
-      [t.id]
+  try {
+    let [rows] = await db.query(
+      `SELECT p.*, c.name as category_name
+       FROM products p LEFT JOIN categories c ON p.category_id = c.id
+       WHERE (p.product_uid = ? OR p.id = ?) AND p.is_active = TRUE`, [req.params.id, req.params.id]
     );
-    t.fields = fields.map(f => ({ ...f, options: parseJSON(f.options) }));
-  }
-  product.templates = templates;
 
-  const [reviews] = await db.query(
-    `SELECT r.*, m.name as member_name FROM reviews r
-     JOIN members m ON r.member_uid = m.member_uid
-     WHERE r.product_uid = ? AND r.product_type = 'physical' ORDER BY r.created_at DESC`,
-    [product.product_uid]
-  );
-  product.reviews = reviews;
-  let [related] = await db.query(
-    `SELECT product_uid as id, name, price, discount_price, images, rating, review_count
-     FROM products WHERE category_id = ? AND product_uid != ? AND is_active = TRUE LIMIT 6`,
-     [product.category_id, product.product_uid]
-  );
-  if (related.length === 0) {
-    [related] = await db.query(
-      `SELECT product_uid as id, name, price, discount_price, images, rating, review_count
-       FROM products WHERE product_uid != ? AND is_active = TRUE LIMIT 6`,
-       [product.product_uid]
-    );
+    if (!rows.length) {
+      const [physRows] = await db.query(
+        "SELECT * FROM physical_products WHERE (product_uid = ? OR id = ?) AND is_active = TRUE",
+        [req.params.id, req.params.id]
+      );
+      rows = physRows;
+    }
+
+    if (!rows.length) return res.status(404).json({ error: "Not found" });
+    const product = { ...rows[0], images: parseJSON(rows[0].images), sizes: parseJSON(rows[0].sizes), tags: parseJSON(rows[0].tags) };
+    
+    // Load personalization templates and fields
+    const [templates] = await db.query(
+      "SELECT * FROM product_templates WHERE product_id = ? AND is_active = TRUE ORDER BY sort_order ASC",
+      [product.id]
+    ).catch(() => [[]]);
+
+    for (let t of (templates || [])) {
+      const [fields] = await db.query(
+        "SELECT * FROM product_personalization_fields WHERE template_id = ? AND status = 'active' ORDER BY sort_order ASC",
+        [t.id]
+      ).catch(() => [[]]);
+      t.fields = (fields || []).map(f => ({ ...f, options: parseJSON(f.options) }));
+    }
+    product.templates = templates || [];
+    res.json(product);
+  } catch (err) {
+    console.error("Error fetching product detail:", err);
+    res.status(500).json({ error: "Failed to fetch product details" });
   }
-  product.related = related.map(r => ({ ...r, images: parseJSON(r.images) }));
-  res.json(product);
 });
 
 // PUBLIC — GET /api/products/:id/related (Feature 5)

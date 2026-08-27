@@ -97,6 +97,34 @@ export default function Navbar() {
               Studio Blog
             </Link>
             <Link
+              to="/bulk-order"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="py-2 border-b border-[#0D1512]/5 hover:text-[#0D1512] font-bold text-amber-700 transition"
+            >
+              📦 Bulk Orders / Custom Engraving
+            </Link>
+            <Link
+              to="/portfolio"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="py-2 border-b border-[#0D1512]/5 hover:text-[#0D1512] transition"
+            >
+              Portfolio & Showcases
+            </Link>
+            <Link
+              to="/gallery"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="py-2 border-b border-[#0D1512]/5 hover:text-[#0D1512] transition"
+            >
+              Gallery
+            </Link>
+            <Link
+              to="/catalog"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="py-2 border-b border-[#0D1512]/5 hover:text-[#0D1512] transition"
+            >
+              Product Catalog
+            </Link>
+            <Link
               to="/contact"
               onClick={() => setIsMobileMenuOpen(false)}
               className="py-2 hover:text-[#0D1512] transition"
