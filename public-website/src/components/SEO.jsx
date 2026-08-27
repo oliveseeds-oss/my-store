@@ -31,9 +31,15 @@ export default function SEO({ title, description, keywords, ogImage, imageAlt, p
       else if (path.startsWith("/portfolio")) activePage = "portfolio";
       else if (path.startsWith("/gallery")) activePage = "gallery";
       else if (path.startsWith("/service")) activePage = "service";
+      else if (path.startsWith("/category-catalog")) activePage = "category-catalog";
       else if (path.startsWith("/catalog")) activePage = "catalog";
+      else if (path.startsWith("/cart")) activePage = "cart";
+      else if (path.startsWith("/checkout")) activePage = "checkout";
+      else if (path.startsWith("/order-success")) activePage = "order-success";
       else if (path.startsWith("/wishlist")) activePage = "wishlist";
       else if (path.startsWith("/track-order")) activePage = "track-order";
+      else if (path.startsWith("/login")) activePage = "login";
+      else if (path.startsWith("/profile")) activePage = "profile";
       else if (path.startsWith("/about")) activePage = "about";
       else if (path.startsWith("/contact")) activePage = "contact";
       else if (path.startsWith("/terms")) activePage = "terms";
