@@ -33,16 +33,16 @@ router.get("/", async (req, res) => {
     else if (sort === "rating") sql += " ORDER BY p.rating DESC";
     else sql += " ORDER BY p.created_at DESC";
     
-    let [rows] = await db.query(sql, params);
-    if (!rows.length) {
-      // Fallback query on physical_products
-      let physSql = "SELECT * FROM physical_products WHERE is_active = TRUE";
+    let [rows] = await db.query(sql, params).catch(() => [[]]);
+    if (!rows || !rows.length) {
+      // Fallback query on physical_products (ignore active flag if none returned)
+      let physSql = "SELECT * FROM physical_products WHERE 1=1";
       const physParams = [];
       if (category) { physSql += " AND category = ?"; physParams.push(category); }
       if (search) { physSql += " AND name LIKE ?"; physParams.push(`%${search}%`); }
-      physSql += " ORDER BY created_at DESC";
-      const [pRows] = await db.query(physSql, physParams);
-      rows = pRows;
+      physSql += " ORDER BY id DESC";
+      const [pRows] = await db.query(physSql, physParams).catch(() => [[]]);
+      rows = pRows || [];
     }
 
     res.json(rows.map(r => ({ ...r, images: parseJSON(r.images), sizes: parseJSON(r.sizes), tags: parseJSON(r.tags) })));
@@ -249,15 +249,15 @@ router.get("/admin/all", verifyAdmin, async (req, res) => {
   try {
     let [rows] = await db.query(
       `SELECT p.*, c.name as category_name FROM products p
-       LEFT JOIN categories c ON p.category_id = c.id ORDER BY p.created_at DESC`
-    );
-    if (!rows.length) {
-      const [physRows] = await db.query(
-        "SELECT *, category as category_name FROM physical_products ORDER BY created_at DESC"
-      );
-      rows = physRows;
-    }
-    res.json(rows.map(r => ({ ...r, images: parseJSON(r.images), sizes: parseJSON(r.sizes), tags: parseJSON(r.tags) })));
+       LEFT JOIN categories c ON p.category_id = c.id ORDER BY p.id DESC`
+    ).catch(() => [[]]);
+
+    let [physRows] = await db.query(
+      "SELECT *, category as category_name FROM physical_products ORDER BY id DESC"
+    ).catch(() => [[]]);
+
+    const combined = [...(rows || []), ...(physRows || [])];
+    res.json(combined.map(r => ({ ...r, images: parseJSON(r.images), sizes: parseJSON(r.sizes), tags: parseJSON(r.tags) })));
   } catch (err) {
     console.error("Error fetching admin all products:", err);
     res.status(500).json({ error: "Failed to fetch products" });
