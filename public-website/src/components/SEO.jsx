@@ -48,11 +48,6 @@ export default function SEO({ title, description, keywords, ogImage, imageAlt, p
     const siteUrl = (process.env.SITE_URL || process.env.REACT_APP_SITE_URL || window.location.origin).replace(/\/$/, "");
     const currentUrl = `${siteUrl}${window.location.pathname}${window.location.search}`;
 
-    const activeTitle = title || dbSeo?.title || "Olive Seeds Studio — Custom Printed Products & Digital Downloads";
-    const activeDesc = description || dbSeo?.meta_description || "Custom printed products including t-shirts, mugs, canvas prints and digital downloads. Ships worldwide to 17 countries.";
-    const activeKeywords = keywords || dbSeo?.keywords || "custom t-shirts, personalized mugs, canvas prints, digital download art, custom gifts";
-    const activeImage = ogImage || dbSeo?.og_image || `${siteUrl}/logo192.png`;
-
     const siteName = globalSeo.site_name || "Olive Seeds Studio";
     const separator = globalSeo.title_separator || "|";
 
