@@ -743,25 +743,52 @@ export default function Home() {
         keywords="custom engraved products online, digital design templates instant download, professional design services, laser engraved gifts worldwide shipping, Figma templates for designers, UI UX design service"
       />
 
-      {/* Organization Schema for Google & AI (Update 3) */}
+      {/* Organization + WebSite Schema for Google & AI (Part 2) */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "Organization",
-            "name": "Olive Seeds Studio",
-            "url": (process.env.PUBLIC_URL || process.env.REACT_APP_SITE_URL || "https://oliveseedsdesignstudio.com").replace(/\/$/, ""),
-            "logo": "https://oliveseedsdesignstudio.com/logo192.png",
-            "description": "Custom printed products — t-shirts, mugs, canvas, digital downloads and more. Ships to 17 countries worldwide.",
-            "contactPoint": {
-              "@type": "ContactPoint",
-              "email": "oss.oliveseeds@gmail.com",
-              "contactType": "customer support"
-            },
-            "sameAs": [
-              "https://instagram.com/oliveseedsstudio",
-              "https://facebook.com/oliveseedsstudio"
+            "@graph": [
+              {
+                "@type": "Organization",
+                "@id": `${(process.env.SITE_URL || process.env.REACT_APP_SITE_URL || "https://oliveseedsdesignstudio.com").replace(/\/$/, "")}/#organization`,
+                "name": "Olive Seeds Studio",
+                "url": (process.env.SITE_URL || process.env.REACT_APP_SITE_URL || "https://oliveseedsdesignstudio.com").replace(/\/$/, ""),
+                "logo": {
+                  "@type": "ImageObject",
+                  "url": `${(process.env.SITE_URL || process.env.REACT_APP_SITE_URL || "https://oliveseedsdesignstudio.com").replace(/\/$/, "")}/logo.png`
+                },
+                "description": "Custom printed products including t-shirts, mugs, canvas prints and digital downloads. Ships worldwide to 17 countries.",
+                "email": "oss.oliveseeds@gmail.com",
+                "areaServed": ["AU","CA","FR","DE","IN","KW","MY","NL","NZ","NO","QA","SA","SG","CH","AE","GB","US"],
+                "hasOfferCatalog": {
+                  "@type": "OfferCatalog",
+                  "name": "Custom Printed Products"
+                },
+                "sameAs": [
+                  process.env.REACT_APP_INSTAGRAM_URL || process.env.INSTAGRAM_URL || "https://instagram.com/oliveseedsstudio",
+                  process.env.REACT_APP_FACEBOOK_URL || process.env.FACEBOOK_URL || "https://facebook.com/oliveseedsstudio",
+                  process.env.REACT_APP_TWITTER_URL || process.env.TWITTER_URL || "https://twitter.com/oliveseeds",
+                  process.env.REACT_APP_PINTEREST_URL || process.env.PINTEREST_URL || "https://pinterest.com/oliveseeds",
+                  process.env.REACT_APP_YOUTUBE_URL || process.env.YOUTUBE_URL || "https://youtube.com/oliveseeds"
+                ]
+              },
+              {
+                "@type": "WebSite",
+                "@id": `${(process.env.SITE_URL || process.env.REACT_APP_SITE_URL || "https://oliveseedsdesignstudio.com").replace(/\/$/, "")}/#website`,
+                "url": (process.env.SITE_URL || process.env.REACT_APP_SITE_URL || "https://oliveseedsdesignstudio.com").replace(/\/$/, ""),
+                "name": "Olive Seeds Studio",
+                "publisher": { "@id": `${(process.env.SITE_URL || process.env.REACT_APP_SITE_URL || "https://oliveseedsdesignstudio.com").replace(/\/$/, "")}/#organization` },
+                "potentialAction": {
+                  "@type": "SearchAction",
+                  "target": {
+                    "@type": "EntryPoint",
+                    "urlTemplate": `${(process.env.SITE_URL || process.env.REACT_APP_SITE_URL || "https://oliveseedsdesignstudio.com").replace(/\/$/, "")}/products?search={search_term_string}`
+                  },
+                  "query-input": "required name=search_term_string"
+                }
+              }
             ]
           })
         }}

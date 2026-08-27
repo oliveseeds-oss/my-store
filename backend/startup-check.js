@@ -82,6 +82,26 @@ async function runStartupValidation() {
     process.exit(1);
   }
 
+  // 8. Optional Global SEO & Search Verification Env Check
+  const optionalSeoEnv = [
+    "SITE_URL",
+    "GOOGLE_VERIFY_CODE",
+    "BING_VERIFY_CODE",
+    "YANDEX_VERIFY_CODE",
+    "BAIDU_VERIFY_CODE",
+    "NAVER_VERIFY_CODE",
+    "PINTEREST_VERIFY_CODE",
+    "INSTAGRAM_URL",
+    "FACEBOOK_URL",
+    "TWITTER_URL",
+    "PINTEREST_URL",
+    "YOUTUBE_URL"
+  ];
+  const missingSeo = optionalSeoEnv.filter(key => !process.env[key]);
+  if (missingSeo.length > 0) {
+    console.warn(`⚠️ Optional SEO Env Warning: Missing search engine verification/social keys: ${missingSeo.join(", ")}`);
+  }
+
   console.log("🚀 All systems verified. Launching Olive Seeds Studio LIVE.");
 }
 

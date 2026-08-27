@@ -159,21 +159,48 @@ export default function ProductDetail() {
         document.head.appendChild(script);
       }
       
+      const siteUrl = (process.env.SITE_URL || process.env.REACT_APP_SITE_URL || "https://oliveseedsdesignstudio.com").replace(/\/$/, "");
+      const productImgUrl = product.image_url ? (product.image_url.startsWith("http") ? product.image_url : `${siteUrl}${product.image_url}`) : `${siteUrl}/logo192.png`;
+
       const structuredData = {
         "@context": "https://schema.org",
         "@type": "Product",
         "name": product.name,
-        "image": product.image_url ? [`https://www.oliveseedsdesignstudio.com${product.image_url}`] : [],
-        "description": product.description || "",
+        "description": product.description || `Custom printed ${product.name} by Olive Seeds Studio`,
+        "image": [productImgUrl],
         "sku": product.product_uid || `PROD-${product.id}`,
+        "brand": {
+          "@type": "Brand",
+          "name": "Olive Seeds Studio"
+        },
         "offers": {
           "@type": "Offer",
-          "url": `https://www.oliveseedsdesignstudio.com/products/${id}`,
+          "url": `${siteUrl}/product/${product.id}`,
           "priceCurrency": "INR",
           "price": product.price,
-          "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+          "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+          "seller": {
+            "@type": "Organization",
+            "name": "Olive Seeds Studio"
+          },
+          "shippingDetails": {
+            "@type": "OfferShippingDetails",
+            "shippingDestination": {
+              "@type": "DefinedRegion",
+              "addressCountry": ["AU","CA","FR","DE","IN","KW","MY","NL","NZ","NO","QA","SA","SG","CH","AE","GB","US"]
+            }
+          }
         }
       };
+
+      if (reviews && reviews.length > 0) {
+        const avgRating = (reviews.reduce((acc, curr) => acc + (curr.rating || 5), 0) / reviews.length).toFixed(1);
+        structuredData.aggregateRating = {
+          "@type": "AggregateRating",
+          "ratingValue": String(avgRating),
+          "reviewCount": String(reviews.length)
+        };
+      }
       
       script.innerHTML = JSON.stringify(structuredData);
     }
