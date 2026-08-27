@@ -19,6 +19,7 @@ const links = [
   { to: "/orders", icon: <MdListAlt />, label: "Orders" },
   { to: "/members", icon: <MdPeople />, label: "Members" },
   { to: "/blog", icon: <MdArticle />, label: "Blog" },
+  { to: "/faqs", icon: <MdArticle className="text-emerald-600" />, label: "FAQ Manager" },
   { to: "/messages", icon: <MdMail />, label: "Contact messages" },
   { to: "/ads", icon: <MdCampaign />, label: "Ad panel" },
   { to: "/notifications", icon: <MdNotifications />, label: "Notifications" },

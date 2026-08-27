@@ -743,6 +743,30 @@ export default function Home() {
         keywords="custom engraved products online, digital design templates instant download, professional design services, laser engraved gifts worldwide shipping, Figma templates for designers, UI UX design service"
       />
 
+      {/* Organization Schema for Google & AI (Update 3) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "Olive Seeds Studio",
+            "url": (process.env.PUBLIC_URL || process.env.REACT_APP_SITE_URL || "https://oliveseedsdesignstudio.com").replace(/\/$/, ""),
+            "logo": "https://oliveseedsdesignstudio.com/logo192.png",
+            "description": "Custom printed products — t-shirts, mugs, canvas, digital downloads and more. Ships to 17 countries worldwide.",
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "email": "oss.oliveseeds@gmail.com",
+              "contactType": "customer support"
+            },
+            "sameAs": [
+              "https://instagram.com/oliveseedsstudio",
+              "https://facebook.com/oliveseedsstudio"
+            ]
+          })
+        }}
+      />
+
       <Navbar />
 
       {/* ══════════════════════════════════════════════

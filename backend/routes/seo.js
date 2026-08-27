@@ -1,47 +1,66 @@
 const router = require("express").Router();
 const db = require("../db");
-const { verifyAdmin } = require("../middleware/auth");
 
-// GET /api/seo - Fetch all pages SEO configs
-router.get("/", async (req, res) => {
+// GET /sitemap.xml — Dynamic Sitemap Generator (Update 5)
+router.get("/sitemap.xml", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM seo_settings");
-    res.json(rows);
+    const domain = (process.env.PUBLIC_URL || process.env.REACT_APP_SITE_URL || "https://oliveseedsdesignstudio.com").replace(/\/$/, "");
+
+    // Fetch published physical products
+    const [products] = await db.query("SELECT id, updated_at FROM physical_products WHERE is_active = TRUE");
+
+    // Fetch published digital products
+    const [digitalProducts] = await db.query("SELECT id, product_uid, updated_at FROM digital_products WHERE is_active = TRUE");
+
+    // Fetch published blog posts
+    const [blogs] = await db.query("SELECT id, slug, updated_at, created_at FROM blogs WHERE status = 'published' OR status IS NULL");
+
+    const formatDate = (d) => {
+      if (!d) return new Date().toISOString().split("T")[0];
+      return new Date(d).toISOString().split("T")[0];
+    };
+
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+    // Static Core Pages
+    xml += `  <url>\n    <loc>${domain}/</loc>\n    <lastmod>${formatDate(new Date())}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>1.0</priority>\n  </url>\n`;
+    xml += `  <url>\n    <loc>${domain}/products</loc>\n    <lastmod>${formatDate(new Date())}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
+    xml += `  <url>\n    <loc>${domain}/faq</loc>\n    <lastmod>${formatDate(new Date())}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.9</priority>\n  </url>\n`;
+    xml += `  <url>\n    <loc>${domain}/blog</loc>\n    <lastmod>${formatDate(new Date())}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+
+    // Physical Products
+    products.forEach((p) => {
+      xml += `  <url>\n    <loc>${domain}/product/${p.id}</loc>\n    <lastmod>${formatDate(p.updated_at)}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
+    });
+
+    // Digital Products
+    digitalProducts.forEach((dp) => {
+      xml += `  <url>\n    <loc>${domain}/product/digital/${dp.product_uid || dp.id}</loc>\n    <lastmod>${formatDate(dp.updated_at)}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
+    });
+
+    // Blog Posts
+    blogs.forEach((b) => {
+      const blogIdentifier = b.slug || b.id;
+      xml += `  <url>\n    <loc>${domain}/blog/${blogIdentifier}</loc>\n    <lastmod>${formatDate(b.updated_at || b.created_at)}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+    });
+
+    xml += `</urlset>`;
+
+    res.header("Content-Type", "application/xml");
+    res.send(xml);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Error generating sitemap.xml:", err);
+    res.status(500).send("Error generating sitemap");
   }
 });
 
-// GET /api/seo/:page - Fetch SEO for specific page
-router.get("/:page", async (req, res) => {
-  try {
-    const [rows] = await db.query("SELECT * FROM seo_settings WHERE page_name = ?", [req.params.page]);
-    if (rows.length === 0) {
-      return res.status(404).json({ message: "SEO setting not found for this page" });
-    }
-    res.json(rows[0]);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// PUT /api/seo/:page - Update SEO config for specific page (Admin secured)
-router.put("/:page", verifyAdmin, async (req, res) => {
-  const { title, meta_description, keywords, og_title, og_description, og_image, image_alt } = req.body;
-  try {
-    const [result] = await db.query(
-      `UPDATE seo_settings 
-       SET title = ?, meta_description = ?, keywords = ?, og_title = ?, og_description = ?, og_image = ?, image_alt = ? 
-       WHERE page_name = ?`,
-      [title, meta_description, keywords, og_title, og_description, og_image, image_alt, req.params.page]
-    );
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "SEO setting not found or no changes made" });
-    }
-    res.json({ message: "SEO settings updated successfully" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+// GET /robots.txt — Robots instructions (Update 5)
+router.get("/robots.txt", (req, res) => {
+  const domain = (process.env.PUBLIC_URL || process.env.REACT_APP_SITE_URL || "https://oliveseedsdesignstudio.com").replace(/\/$/, "");
+  const txt = `User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\n\nSitemap: ${domain}/sitemap.xml\n`;
+  res.header("Content-Type", "text/plain");
+  res.send(txt);
 });
 
 module.exports = router;

@@ -47,10 +47,14 @@ async function startServer() {
   app.use("/api/payments", require("./routes/payments"));
   app.use("/api/wishlist", require("./routes/wishlist"));
   app.use("/api/transactions", require("./routes/transactions"));
-  app.use("/api/seo", require("./routes/seo"));
+  app.use("/api/faqs", require("./routes/faqs"));
   app.use("/api/gallery", require("./routes/gallery"));
   app.use("/api/catalog", require("./routes/catalog"));
   app.use("/api/portfolio", require("./routes/portfolio"));
+
+  const seoRouter = require("./routes/seo");
+  app.get("/sitemap.xml", (req, res) => seoRouter(req, res));
+  app.get("/robots.txt", (req, res) => seoRouter(req, res));
 
   app.get("/", (req, res) => res.send("API running ✓"));
 

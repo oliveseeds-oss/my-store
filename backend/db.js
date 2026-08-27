@@ -235,6 +235,35 @@ poolPromise.query(`
     });
   }).catch(() => {});
 
+  // Upgrade blogs table schema (LONGTEXT content & SEO columns)
+  poolPromise.query("ALTER TABLE blogs MODIFY COLUMN content LONGTEXT").catch(() => {});
+  poolPromise.query("ALTER TABLE blogs ADD COLUMN slug VARCHAR(255) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE blogs ADD COLUMN tags VARCHAR(255) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE blogs ADD COLUMN meta_title VARCHAR(255) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE blogs ADD COLUMN meta_description TEXT DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE blogs ADD COLUMN focus_keyword VARCHAR(255) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE blogs ADD COLUMN canonical_url VARCHAR(500) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE blogs ADD COLUMN og_title VARCHAR(255) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE blogs ADD COLUMN og_description TEXT DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE blogs ADD COLUMN og_image VARCHAR(500) DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE blogs ADD COLUMN no_index BOOLEAN DEFAULT FALSE").catch(() => {});
+  poolPromise.query("ALTER TABLE blogs ADD COLUMN status VARCHAR(50) DEFAULT 'published'").catch(() => {});
+  poolPromise.query("ALTER TABLE blogs ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP").catch(() => {});
+
+  // Ensure FAQs table exists (Update 4)
+  poolPromise.query(`
+    CREATE TABLE IF NOT EXISTS faqs (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      question VARCHAR(500) NOT NULL,
+      answer LONGTEXT NOT NULL,
+      category VARCHAR(100) DEFAULT 'General',
+      display_order INT DEFAULT 0,
+      is_published BOOLEAN DEFAULT TRUE,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )
+  `).catch(() => {});
+
   // Index Optimization (Priority 5)
   poolPromise.query("ALTER TABLE visitor_logs ADD INDEX idx_visited_at (visited_at)").catch(() => {});
 }).catch(err => {

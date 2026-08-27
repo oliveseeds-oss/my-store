@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { MdArticle, MdArrowBack, MdOutlineTimer, MdWhatshot } from "react-icons/md";
+import DOMPurify from "dompurify";
 import API from "../api";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -43,6 +44,9 @@ export default function BlogList() {
 
   const formatContent = (text) => {
     if (!text) return "";
+    if (text.includes("<p>") || text.includes("<div>") || text.includes("<h") || text.includes("<br")) {
+      return text;
+    }
     return text
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.*?)\*/g, '<em>$1</em>')
@@ -53,15 +57,17 @@ export default function BlogList() {
       .replace(/\n/g, '<br/>');
   };
 
+  const domain = (process.env.PUBLIC_URL || process.env.REACT_APP_SITE_URL || "https://oliveseedsdesignstudio.com").replace(/\/$/, "");
+
   const getRelatedPosts = (currentPost, limit = 2) => {
     return posts
       .filter(p => p.id !== currentPost.id && p.category === currentPost.category)
       .slice(0, limit);
   };
 
-  const getMostRead = (currentId, limit = 2) => {
-    return [...posts]
-      .filter(p => p.id !== currentId)
+  const getMostReadPosts = (currentPost, limit = 2) => {
+    return posts
+      .filter(p => p.id !== currentPost.id)
       .sort((a, b) => (b.views || 0) - (a.views || 0))
       .slice(0, limit);
   };
@@ -69,14 +75,66 @@ export default function BlogList() {
   // ✅ READER VIEW COMPONENT
   if (viewingPost) {
     const related = getRelatedPosts(viewingPost);
-    const mostRead = getMostRead(viewingPost.id);
+    const mostRead = getMostReadPosts(viewingPost);
+    const fullBlogUrl = `${domain}/blog/${viewingPost.slug || viewingPost.id}`;
+    const metaTitle = viewingPost.meta_title || viewingPost.title;
+    const metaDescription = viewingPost.meta_description || viewingPost.content.replace(/<[^>]+>/g, '').slice(0, 155);
+    const ogTitle = viewingPost.og_title || metaTitle;
+    const ogDescription = viewingPost.og_description || metaDescription;
+    const ogImage = viewingPost.og_image || viewingPost.image_url || viewingPost.image;
+
+    const blogSchema = {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": viewingPost.title,
+      "description": metaDescription,
+      "image": ogImage || `${domain}/logo192.png`,
+      "author": {
+        "@type": "Organization",
+        "name": "Olive Seeds Studio",
+        "url": domain
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Olive Seeds Studio",
+        "logo": {
+          "@type": "ImageObject",
+          "url": `${domain}/logo192.png`
+        }
+      },
+      "datePublished": viewingPost.created_at || viewingPost.date,
+      "dateModified": viewingPost.updated_at || viewingPost.created_at || viewingPost.date,
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": fullBlogUrl
+      },
+      "keywords": viewingPost.tags || viewingPost.category || "blog"
+    };
 
     return (
       <div style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }} className="min-h-screen overflow-x-hidden">
         <SEO
-          title={viewingPost.title}
-          description={viewingPost.content.substring(0, 160)}
-          keywords={`${viewingPost.category}, precision laser engraving, brand design, circular craftsmanship`}
+          title={metaTitle}
+          description={metaDescription}
+          keywords={viewingPost.tags || viewingPost.category || "blog"}
+        />
+        {/* Dynamic SEO Meta Injection */}
+        {viewingPost.canonical_url && <link rel="canonical" href={viewingPost.canonical_url} />}
+        {viewingPost.no_index && <meta name="robots" content="noindex, nofollow" />}
+        <meta property="og:title" content={ogTitle} />
+        <meta property="og:description" content={ogDescription} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={fullBlogUrl} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={ogTitle} />
+        <meta name="twitter:description" content={ogDescription} />
+        <meta name="twitter:image" content={ogImage} />
+
+        {/* JSON-LD Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(blogSchema) }}
         />
         <Navbar />
 
@@ -138,7 +196,7 @@ export default function BlogList() {
               <div
                 className="prose prose-stone prose-lg max-w-none text-stone-700 leading-relaxed font-normal"
                 style={{ wordBreak: 'break-word' }}
-                dangerouslySetInnerHTML={{ __html: formatContent(viewingPost.content) }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(formatContent(viewingPost.content)) }}
               />
             </article>
 

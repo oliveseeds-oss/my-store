@@ -27,6 +27,7 @@ const Engraving = lazy(() => import("./pages/Engraving"));
 
 const TrackOrder = lazy(() => import("./pages/TrackOrder"));
 const InvoicePage = lazy(() => import("./pages/InvoicePage"));
+const FaqPage = lazy(() => import("./pages/FaqPage"));
 
 // ── The pages your footer links to ──
 const TermsConditions = lazy(() => import("./pages/TermsConditions"));
@@ -58,6 +59,8 @@ export default function App() {
                 <Routes>
                   <Route path="/"                   element={<Home />} />
                   <Route path="/products"           element={<ProductList />} />
+                  <Route path="/faq font-bold"      element={<FaqPage />} />
+                  <Route path="/faq"                element={<FaqPage />} />
                   <Route path="/products/:id"       element={<ProductDetail />} />
                   <Route path="/digital"            element={<DigitalProductList />} />
                   <Route path="/digital/:id"        element={<DigitalProductDetail />} />
