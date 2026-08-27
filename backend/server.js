@@ -47,7 +47,7 @@ async function startServer() {
   };
 
   app.use(cors(corsOptions));
-  app.options("*", cors(corsOptions));
+  app.options(/(.*)/, cors(corsOptions));
 
   // Fallback explicit preflight handler for reverse proxies
   app.use((req, res, next) => {
