@@ -120,40 +120,6 @@ function ReviewForm({ productId, onSubmit }) {
     </div>
   );
 }
-        <div className="flex gap-1">
-          {[1, 2, 3, 4, 5].map(i => (
-            <button key={i} onClick={() => setForm(f => ({ ...f, rating: i }))}
-              className={`text-2xl transition ${i <= form.rating ? "text-amber-500" : "text-stone-300 hover:text-amber-300"}`}>
-              ★
-            </button>
-          ))}
-        </div>
-      </div>
-      <div className="mb-3">
-        <label className="text-xs text-stone-500 mb-1 block">Review title</label>
-        <input value={form.title}
-          onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
-          placeholder="Summarise your experience"
-          className="w-full border border-stone-300 px-3 py-2 text-sm focus:outline-none
-                     focus:ring-2 focus:ring-amber-400 rounded-sm" />
-      </div>
-      <div className="mb-4">
-        <label className="text-xs text-stone-500 mb-1 block">Your review</label>
-        <textarea value={form.comment}
-          onChange={e => setForm(f => ({ ...f, comment: e.target.value }))}
-          rows={4}
-          placeholder="What did you like or dislike? How was the quality?"
-          className="w-full border border-stone-300 px-3 py-2 text-sm focus:outline-none
-                     focus:ring-2 focus:ring-amber-400 rounded-sm" />
-      </div>
-      <button onClick={submit} disabled={loading}
-        className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-2 text-sm
-                   font-semibold transition disabled:opacity-50 rounded-sm">
-        {loading ? "Submitting..." : "Submit review"}
-      </button>
-    </div>
-  );
-}
 
 export default function ProductDetail() {
   const { id } = useParams();
