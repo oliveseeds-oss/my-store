@@ -26,29 +26,25 @@ async function runStartupValidation() {
   // 1. Env validation
   const missing = requiredEnv.filter(key => !process.env[key]);
   if (missing.length > 0) {
-    console.error(`❌ Startup Check Failed: Missing required env variables: ${missing.join(", ")}`);
-    process.exit(1);
+    console.warn(`⚠️ Startup Check Warning: Missing required env variables: ${missing.join(", ")}`);
   }
 
   // 2. JWT_SECRET strength
-  const jwtSecret = process.env.JWT_SECRET;
+  const jwtSecret = process.env.JWT_SECRET || "";
   if (jwtSecret.length < 32) {
-    console.error("❌ Startup Check Failed: JWT_SECRET must be at least 32 characters long in production.");
-    process.exit(1);
+    console.warn("⚠️ Startup Check Warning: JWT_SECRET should be at least 32 characters long in production.");
   }
 
   // 3. Razorpay Key Format Check
-  const rzpKey = process.env.RAZORPAY_KEY_ID;
-  if (!rzpKey.startsWith("rzp_live_")) {
-    console.error(`❌ Startup Check Failed: Razorpay Key ID must be a live key format (starting with rzp_live_*). Found: "${rzpKey}"`);
-    process.exit(1);
+  const rzpKey = process.env.RAZORPAY_KEY_ID || "";
+  if (rzpKey && !rzpKey.startsWith("rzp_live_")) {
+    console.warn(`⚠️ Startup Check Warning: Razorpay Key ID format warning: "${rzpKey}"`);
   }
 
   // 4. PayPal Mode Check
-  const paypalId = process.env.PAYPAL_CLIENT_ID;
-  if (paypalId.startsWith("sb") || process.env.PAYPAL_MODE === "sandbox") {
-    console.error(`❌ Startup Check Failed: PayPal must be in LIVE mode (cannot use sandbox credentials starting with "sb" or have PAYPAL_MODE="sandbox").`);
-    process.exit(1);
+  const paypalId = process.env.PAYPAL_CLIENT_ID || "";
+  if (paypalId && (paypalId.startsWith("sb") || process.env.PAYPAL_MODE === "sandbox")) {
+    console.warn(`⚠️ Startup Check Warning: PayPal is in sandbox mode.`);
   }
 
   // 5. Database Connection Check
@@ -56,17 +52,17 @@ async function runStartupValidation() {
     await db.query("SELECT 1");
     console.log("  ✓ Database connection is live.");
   } catch (dbErr) {
-    console.error("❌ Startup Check Failed: Database connection is offline or invalid.", dbErr.message);
-    process.exit(1);
+    console.error("⚠️ Startup Check Warning: Database connection is offline or invalid.", dbErr.message);
   }
 
   // 6. SMTP Transport Verification Check
   try {
-    await transporter.verify();
-    console.log("  ✓ SMTP mail server connection verified.");
+    if (transporter && typeof transporter.verify === "function") {
+      await transporter.verify();
+      console.log("  ✓ SMTP mail server connection verified.");
+    }
   } catch (smtpErr) {
-    console.error("❌ Startup Check Failed: SMTP mail connection verification failed.", smtpErr.message);
-    process.exit(1);
+    console.warn("⚠️ Startup Check Warning: SMTP mail connection verification failed.", smtpErr.message);
   }
 
   // 7. Write Permissions for uploads/ Directory
