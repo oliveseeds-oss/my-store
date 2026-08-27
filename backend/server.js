@@ -11,27 +11,24 @@ async function startServer() {
   const path = require("path");
 
   const app = express();
-  const allowedOrigins = [
-    "https://adminosspanel.oliveseedsdesignstudio.com",
-    "https://oliveseedsdesignstudio.com",
-    "https://www.oliveseedsdesignstudio.com",
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "http://localhost:5000"
-  ];
 
-  app.use(cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin) || origin.endsWith("oliveseedsdesignstudio.com")) {
-        callback(null, true);
-      } else {
-        callback(null, true); // Allow all valid web clients
-      }
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"]
-  }));
+  // Robust universal CORS middleware handling preflight OPTIONS immediately
+  app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    if (origin) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+    } else {
+      res.setHeader("Access-Control-Allow-Origin", "*");
+    }
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control, Pragma");
+    
+    if (req.method === "OPTIONS") {
+      return res.status(204).end();
+    }
+    next();
+  });
 
   app.use(express.json({
     verify: (req, res, buf) => {
