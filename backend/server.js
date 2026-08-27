@@ -12,17 +12,18 @@ async function startServer() {
 
   const app = express();
 
-  // Robust universal CORS middleware handling preflight OPTIONS immediately
+  // Universal CORS middleware handling preflight OPTIONS immediately
   app.use((req, res, next) => {
     const origin = req.headers.origin;
     if (origin) {
       res.setHeader("Access-Control-Allow-Origin", origin);
+      res.setHeader("Vary", "Origin");
     } else {
       res.setHeader("Access-Control-Allow-Origin", "*");
     }
     res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control, Pragma");
+    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control, Pragma, X-Access-Token");
     
     if (req.method === "OPTIONS") {
       return res.status(204).end();
