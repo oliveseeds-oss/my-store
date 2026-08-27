@@ -86,15 +86,18 @@ function ReviewForm({ productId, onSubmit }) {
 
       <div>
         <p className="text-xs font-bold text-stone-600 mb-1">Your Rating *</p>
-        <div className="flex gap-1 text-xl cursor-pointer">
+        <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map(star => (
-            <span
+            <button
+              type="button"
               key={star}
               onClick={() => setForm(f => ({ ...f, rating: star }))}
-              className={star <= form.rating ? "text-amber-500" : "text-stone-300"}
+              className={`w-11 h-11 flex items-center justify-center text-2xl transition cursor-pointer ${
+                star <= form.rating ? "text-amber-500" : "text-stone-300 hover:text-amber-400"
+              }`}
             >
               ★
-            </span>
+            </button>
           ))}
         </div>
       </div>
@@ -541,13 +544,13 @@ export default function ProductDetail() {
             </div>
 
             {/* FEATURE 7: Social Share Buttons */}
-            <div className="flex items-center gap-2 pt-1 pb-1">
-              <span className="text-xs text-stone-500 font-bold">Share this product:</span>
+            <div className="flex items-center gap-2 flex-wrap pt-1 pb-1">
+              <span className="text-xs text-stone-500 font-bold w-full sm:w-auto">Share this product:</span>
               <a
                 href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-2.5 py-1 text-xs font-bold bg-[#1877F2] text-white rounded-lg hover:opacity-90 transition"
+                className="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center text-xs font-bold bg-[#1877F2] text-white rounded-xl hover:opacity-90 transition"
               >
                 Facebook
               </a>
@@ -555,7 +558,7 @@ export default function ProductDetail() {
                 href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(product.name)}&url=${encodeURIComponent(window.location.href)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-2.5 py-1 text-xs font-bold bg-black text-white rounded-lg hover:opacity-90 transition"
+                className="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center text-xs font-bold bg-black text-white rounded-xl hover:opacity-90 transition"
               >
                 Twitter/X
               </a>
@@ -563,7 +566,7 @@ export default function ProductDetail() {
                 href={`https://pinterest.com/pin/create/button/?url=${encodeURIComponent(window.location.href)}&media=${encodeURIComponent(product.image_url || "")}&description=${encodeURIComponent(product.name)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-2.5 py-1 text-xs font-bold bg-[#BD081C] text-white rounded-lg hover:opacity-90 transition"
+                className="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center text-xs font-bold bg-[#BD081C] text-white rounded-xl hover:opacity-90 transition"
               >
                 Pinterest
               </a>
@@ -572,7 +575,7 @@ export default function ProductDetail() {
                   navigator.clipboard.writeText(window.location.href);
                   alert("Copied!");
                 }}
-                className="px-2.5 py-1 text-xs font-bold bg-stone-200 text-stone-700 rounded-lg hover:bg-stone-300 transition"
+                className="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center text-xs font-bold bg-stone-200 text-stone-700 rounded-xl hover:bg-stone-300 transition"
               >
                 Copy Link
               </button>
@@ -986,7 +989,7 @@ export default function ProductDetail() {
             <h2 className="text-xl font-bold text-stone-800 mb-6">
               Customers also viewed
             </h2>
-            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin" style={{ scrollbarWidth: "thin" }}>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
               {related.map(r => {
                 const img = Array.isArray(r.images) ? r.images[0] : null;
                 const price = r.discount_price || r.price;
@@ -994,8 +997,7 @@ export default function ProductDetail() {
                 return (
                   <Link key={r.id} to={`/products/${r.id}`}
                     onClick={() => window.scrollTo(0, 0)}
-                    style={{ flex: "0 0 180px" }}
-                    className="group bg-white border border-stone-200 hover:shadow-md transition overflow-hidden rounded-[4px] p-3 flex flex-col justify-between">
+                    className="group bg-white border border-stone-200 hover:shadow-md transition overflow-hidden rounded-xl p-3 flex flex-col justify-between">
                     <div>
                       <div className="aspect-square bg-stone-50 overflow-hidden rounded-[4px] mb-2 flex items-center justify-center">
                         {img

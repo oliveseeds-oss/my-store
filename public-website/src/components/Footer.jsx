@@ -32,19 +32,19 @@ function NewsletterForm() {
 
   return (
     <form onSubmit={handleSubscribe} className="flex flex-col gap-2 mt-1">
-      <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row gap-2">
         <input
           type="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Your email address"
-          className="flex-1 bg-white border border-[#0D1512]/15 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#0D1512]"
+          className="w-full sm:flex-1 bg-white border border-[#0D1512]/15 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-[#0D1512]"
         />
         <button
           type="submit"
           disabled={loading}
-          className="bg-[#0D1512] hover:bg-stone-800 text-white font-bold text-xs px-4 py-2 rounded-xl transition shadow-sm disabled:opacity-50 shrink-0"
+          className="w-full sm:w-auto bg-[#0D1512] hover:bg-stone-800 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition shadow-sm disabled:opacity-50 shrink-0"
         >
           {loading ? "..." : "Subscribe"}
         </button>

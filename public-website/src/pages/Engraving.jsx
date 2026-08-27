@@ -156,7 +156,15 @@ export default function Engraving() {
     }
     setSubmitting(true);
     try {
-      await API.post("/bulk-orders", formData);
+      await API.post("/bulk-inquiry", {
+        full_name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company_name: formData.company,
+        product_interest: formData.product_type,
+        quantity: formData.quantity,
+        message: formData.message
+      });
       setSuccess(true);
       setFormData({
         name: "",

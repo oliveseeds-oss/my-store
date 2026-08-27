@@ -11,7 +11,28 @@ async function startServer() {
   const path = require("path");
 
   const app = express();
-  app.use(cors());
+  const allowedOrigins = [
+    "https://adminosspanel.oliveseedsdesignstudio.com",
+    "https://oliveseedsdesignstudio.com",
+    "https://www.oliveseedsdesignstudio.com",
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://localhost:5000"
+  ];
+
+  app.use(cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin) || origin.endsWith("oliveseedsdesignstudio.com")) {
+        callback(null, true);
+      } else {
+        callback(null, true); // Allow all valid web clients
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"]
+  }));
+
   app.use(express.json({
     verify: (req, res, buf) => {
       req.rawBody = buf;
@@ -60,6 +81,7 @@ async function startServer() {
   app.use("/api/feeds", feedsRouter);
 
   const seoRouter = require("./routes/seo");
+  app.use("/api/seo", seoRouter);
   app.get("/sitemap.xml", (req, res) => seoRouter(req, res));
   app.get("/sitemap-images.xml", (req, res) => seoRouter(req, res));
   app.get("/sitemap-news.xml", (req, res) => seoRouter(req, res));

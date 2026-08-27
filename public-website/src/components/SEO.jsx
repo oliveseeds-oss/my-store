@@ -3,24 +3,42 @@ import API from "../api";
 
 export default function SEO({ title, description, keywords, ogImage, imageAlt, page, isProduct = false, productData = null }) {
   const [dbSeo, setDbSeo] = useState(null);
+  const [globalSeo, setGlobalSeo] = useState({});
 
   useEffect(() => {
+    // Fetch global SEO defaults
+    API.get("/seo/global")
+      .then(res => setGlobalSeo(res.data || {}))
+      .catch(() => {});
+
     let activePage = page;
     if (!activePage) {
       const path = window.location.pathname;
       if (path === "/" || path === "") activePage = "home";
       else if (path.startsWith("/products")) activePage = "products";
-      else if (path.startsWith("/digital")) activePage = "digital";
-      else if (path.startsWith("/blog")) activePage = "blogs";
+      else if (path.startsWith("/product/")) {
+        const pid = path.split("/").pop();
+        activePage = `product_${pid}`;
+      }
+      else if (path.startsWith("/blog/")) {
+        const bid = path.split("/").pop();
+        activePage = `blog_${bid}`;
+      }
+      else if (path.startsWith("/blog")) activePage = "blog";
+      else if (path.startsWith("/faq")) activePage = "faq";
+      else if (path.startsWith("/bulk-order")) activePage = "bulk-order";
       else if (path.startsWith("/about")) activePage = "about";
       else if (path.startsWith("/contact")) activePage = "contact";
-      else if (path.startsWith("/faq")) activePage = "faq";
     }
 
     if (activePage) {
-      API.get(`/seo/${activePage}`)
+      let endpoint = `/seo/page/${activePage}`;
+      if (activePage.startsWith("product_")) endpoint = `/seo/product/${activePage.replace("product_", "")}`;
+      else if (activePage.startsWith("blog_")) endpoint = `/seo/blog/${activePage.replace("blog_", "")}`;
+
+      API.get(endpoint)
         .then((res) => {
-          if (res.data) setDbSeo(res.data);
+          if (res.data && res.data.page_key) setDbSeo(res.data);
         })
         .catch(() => {});
     }
@@ -35,8 +53,19 @@ export default function SEO({ title, description, keywords, ogImage, imageAlt, p
     const activeKeywords = keywords || dbSeo?.keywords || "custom t-shirts, personalized mugs, canvas prints, digital download art, custom gifts";
     const activeImage = ogImage || dbSeo?.og_image || `${siteUrl}/logo192.png`;
 
+    const siteName = globalSeo.site_name || "Olive Seeds Studio";
+    const separator = globalSeo.title_separator || "|";
+
+    const rawTitle = dbSeo?.meta_title || title || "Custom Printed Products & Digital Downloads";
+    const activeTitle = rawTitle.includes(siteName) ? rawTitle : `${rawTitle} ${separator} ${siteName}`;
+
+    const activeDesc = dbSeo?.meta_description || description || globalSeo.default_meta_description || "Custom printed products including t-shirts, mugs, canvas prints and digital downloads. Ships worldwide to 17 countries.";
+    const activeKeywords = dbSeo?.keywords || keywords || "custom t-shirts, personalized mugs, canvas prints, digital download art, custom gifts";
+    const activeImage = dbSeo?.og_image || ogImage || globalSeo.default_og_image || `${siteUrl}/logo192.png`;
+    const isNoIndex = dbSeo?.no_index;
+
     // 1. Title
-    document.title = activeTitle.includes("Olive Seeds") ? activeTitle : `${activeTitle} | Olive Seeds Studio`;
+    document.title = activeTitle;
 
     // Helper for Meta Tags
     const setMeta = (attrName, attrValue, contentValue) => {
@@ -63,60 +92,43 @@ export default function SEO({ title, description, keywords, ogImage, imageAlt, p
     };
 
     // PART 1: UNIVERSAL META TAGS
-    setMeta("name", "robots", "index, follow, max-image-preview:large");
-    setMeta("name", "googlebot", "index, follow");
-    setMeta("name", "bingbot", "index, follow");
-    setMeta("name", "theme-color", "#6B7C3F");
+    if (isNoIndex) {
+      setMeta("name", "robots", "noindex, nofollow");
+    } else {
+      setMeta("name", "robots", "index, follow, max-image-preview:large");
+    }
+    setMeta("name", "googlebot", isNoIndex ? "noindex, nofollow" : "index, follow");
+    setMeta("name", "bingbot", isNoIndex ? "noindex, nofollow" : "index, follow");
     setMeta("name", "description", activeDesc);
     setMeta("name", "keywords", activeKeywords);
-    setLink("canonical", currentUrl);
+    setLink("canonical", dbSeo?.canonical_url || currentUrl);
 
-    // Search Engine & Social Verification Codes (.env)
-    const envVars = {
-      "google-site-verification": process.env.REACT_APP_GOOGLE_VERIFY_CODE || process.env.GOOGLE_VERIFY_CODE,
-      "msvalidate.01": process.env.REACT_APP_BING_VERIFY_CODE || process.env.BING_VERIFY_CODE,
-      "yandex-verification": process.env.REACT_APP_YANDEX_VERIFY_CODE || process.env.YANDEX_VERIFY_CODE,
-      "baidu-site-verification": process.env.REACT_APP_BAIDU_VERIFY_CODE || process.env.BAIDU_VERIFY_CODE,
-      "naver-site-verification": process.env.REACT_APP_NAVER_VERIFY_CODE || process.env.NAVER_VERIFY_CODE,
-      "p:domain_verify": process.env.REACT_APP_PINTEREST_VERIFY_CODE || process.env.PINTEREST_VERIFY_CODE,
+    // Search Engine Verification Codes (Global DB Settings & .env fallback)
+    const verificationCodes = {
+      "google-site-verification": globalSeo.google_verify_code || process.env.REACT_APP_GOOGLE_VERIFY_CODE || process.env.GOOGLE_VERIFY_CODE,
+      "msvalidate.01": globalSeo.bing_verify_code || process.env.REACT_APP_BING_VERIFY_CODE || process.env.BING_VERIFY_CODE,
+      "yandex-verification": globalSeo.yandex_verify_code || process.env.REACT_APP_YANDEX_VERIFY_CODE || process.env.YANDEX_VERIFY_CODE,
+      "baidu-site-verification": globalSeo.baidu_verify_code || process.env.REACT_APP_BAIDU_VERIFY_CODE || process.env.BAIDU_VERIFY_CODE,
+      "naver-site-verification": globalSeo.naver_verify_code || process.env.REACT_APP_NAVER_VERIFY_CODE || process.env.NAVER_VERIFY_CODE,
+      "p:domain_verify": globalSeo.pinterest_verify_code || process.env.REACT_APP_PINTEREST_VERIFY_CODE || process.env.PINTEREST_VERIFY_CODE,
     };
-    Object.entries(envVars).forEach(([name, val]) => {
+    Object.entries(verificationCodes).forEach(([name, val]) => {
       if (val) setMeta("name", name, val);
     });
 
-    if (process.env.REACT_APP_BAIDU_VERIFY_CODE || process.env.BAIDU_VERIFY_CODE) {
-      setMeta("name", "applicable-device", "pc,mobile");
-      setMeta("name", "mobile-agent", "format=html5");
-    }
-
     // OPEN GRAPH TAGS
-    setMeta("property", "og:site_name", "Olive Seeds Studio");
+    setMeta("property", "og:site_name", siteName);
     setMeta("property", "og:type", isProduct ? "product" : "website");
-    setMeta("property", "og:title", activeTitle);
-    setMeta("property", "og:description", activeDesc);
+    setMeta("property", "og:title", dbSeo?.og_title || activeTitle);
+    setMeta("property", "og:description", dbSeo?.og_description || activeDesc);
     setMeta("property", "og:image", activeImage);
-    setMeta("property", "og:image:width", "1200");
-    setMeta("property", "og:image:height", "630");
-    setMeta("property", "og:url", currentUrl);
-    setMeta("property", "og:locale", "en_US");
-
-    // FEED 5: OPEN GRAPH PRODUCT SPECIFIC TAGS
-    if (isProduct && productData) {
-      setMeta("property", "product:price:amount", String(productData.price || "0"));
-      setMeta("property", "product:price:currency", "INR");
-      setMeta("property", "product:availability", (productData.stock === 0 || productData.stock === "0") ? "out of stock" : "in stock");
-      setMeta("property", "product:brand", "Olive Seeds Studio");
-      if (productData.category) {
-        setMeta("property", "product:category", productData.category);
-      }
-    }
+    setMeta("property", "og:url", dbSeo?.canonical_url || currentUrl);
 
     // TWITTER / X CARDS
-    setMeta("name", "twitter:card", "summary_large_image");
-    setMeta("name", "twitter:site", process.env.REACT_APP_TWITTER_HANDLE || "@oliveseeds");
-    setMeta("name", "twitter:title", activeTitle);
-    setMeta("name", "twitter:description", activeDesc);
-    setMeta("name", "twitter:image", activeImage);
+    setMeta("name", "twitter:card", dbSeo?.twitter_card || "summary_large_image");
+    setMeta("name", "twitter:title", dbSeo?.twitter_title || dbSeo?.og_title || activeTitle);
+    setMeta("name", "twitter:description", dbSeo?.twitter_description || dbSeo?.og_description || activeDesc);
+    setMeta("name", "twitter:image", dbSeo?.twitter_image || activeImage);
 
     // PART 6: HREFLANG TAGS
     const regions = ["en", "en-AU", "en-CA", "en-GB", "en-IN", "en-SG", "en-MY", "en-NZ", "en-US", "x-default"];

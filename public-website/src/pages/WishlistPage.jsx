@@ -82,7 +82,7 @@ export default function WishlistPage() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             {wishlistItems.map((p) => (
               <div key={p.id} className="group bg-white border border-[#0D1512]/10 rounded-2xl p-4 shadow-sm hover:shadow-md transition relative flex flex-col justify-between">
                 <button

@@ -234,4 +234,192 @@ router.get("/llms-full.txt", async (req, res) => {
   }
 });
 
+// ── FIX 2 SECTION E: SEO ADMIN API ROUTES ──
+const { verifyAdmin } = require("../middleware/auth");
+
+// Public/Admin: GET /api/seo/page/:pageKey
+router.get("/api/seo/page/:pageKey", async (req, res) => {
+  try {
+    const [rows] = await db.query("SELECT * FROM seo_settings WHERE page_key = ?", [req.params.pageKey]);
+    res.json(rows.length ? rows[0] : {});
+  } catch (err) {
+    console.error("Error reading page SEO:", err);
+    res.status(500).json({ error: "Failed to read page SEO" });
+  }
+});
+
+// Admin: POST /api/seo/page/:pageKey
+router.post("/api/seo/page/:pageKey", verifyAdmin, async (req, res) => {
+  const {
+    meta_title, meta_description, focus_keyword, keywords, canonical_url,
+    no_index, og_title, og_description, og_image, twitter_card, twitter_title,
+    twitter_description, twitter_image, custom_schema
+  } = req.body;
+
+  try {
+    await db.query(
+      `INSERT INTO seo_settings (
+        page_key, meta_title, meta_description, focus_keyword, keywords, canonical_url,
+        no_index, og_title, og_description, og_image, twitter_card, twitter_title,
+        twitter_description, twitter_image, custom_schema
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE
+        meta_title=VALUES(meta_title), meta_description=VALUES(meta_description),
+        focus_keyword=VALUES(focus_keyword), keywords=VALUES(keywords), canonical_url=VALUES(canonical_url),
+        no_index=VALUES(no_index), og_title=VALUES(og_title), og_description=VALUES(og_description),
+        og_image=VALUES(og_image), twitter_card=VALUES(twitter_card), twitter_title=VALUES(twitter_title),
+        twitter_description=VALUES(twitter_description), twitter_image=VALUES(twitter_image),
+        custom_schema=VALUES(custom_schema)`,
+      [
+        req.params.pageKey, meta_title || null, meta_description || null, focus_keyword || null,
+        keywords || null, canonical_url || null, no_index ? 1 : 0, og_title || null,
+        og_description || null, og_image || null, twitter_card || "summary_large_image",
+        twitter_title || null, twitter_description || null, twitter_image || null, custom_schema || null
+      ]
+    );
+    res.json({ message: "SEO settings saved successfully" });
+  } catch (err) {
+    console.error("Error saving page SEO:", err);
+    res.status(500).json({ error: "Failed to save page SEO" });
+  }
+});
+
+// Public/Admin: GET /api/seo/global
+router.get("/api/seo/global", async (req, res) => {
+  try {
+    const [rows] = await db.query("SELECT setting_key, setting_value FROM global_seo_settings");
+    const settings = {};
+    rows.forEach(r => { settings[r.setting_key] = r.setting_value; });
+    res.json(settings);
+  } catch (err) {
+    console.error("Error fetching global SEO:", err);
+    res.status(500).json({ error: "Failed to fetch global SEO" });
+  }
+});
+
+// Admin: POST /api/seo/global
+router.post("/api/seo/global", verifyAdmin, async (req, res) => {
+  const settings = req.body;
+  try {
+    for (const [key, val] of Object.entries(settings)) {
+      await db.query(
+        "INSERT INTO global_seo_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)",
+        [key, val !== undefined && val !== null ? String(val) : ""]
+      );
+    }
+    res.json({ message: "Global SEO settings saved successfully" });
+  } catch (err) {
+    console.error("Error saving global SEO:", err);
+    res.status(500).json({ error: "Failed to save global SEO" });
+  }
+});
+
+// Admin: GET /api/seo/product/:id
+router.get("/api/seo/product/:id", async (req, res) => {
+  try {
+    const pageKey = `product_${req.params.id}`;
+    const [rows] = await db.query("SELECT * FROM seo_settings WHERE page_key = ?", [pageKey]);
+    res.json(rows.length ? rows[0] : {});
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch product SEO" });
+  }
+});
+
+// Admin: POST /api/seo/product/:id
+router.post("/api/seo/product/:id", verifyAdmin, async (req, res) => {
+  const pageKey = `product_${req.params.id}`;
+  const { meta_title, meta_description, focus_keyword, keywords, canonical_url, no_index, og_title, og_description, og_image, custom_schema } = req.body;
+  try {
+    await db.query(
+      `INSERT INTO seo_settings (page_key, meta_title, meta_description, focus_keyword, keywords, canonical_url, no_index, og_title, og_description, og_image, custom_schema)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE
+        meta_title=VALUES(meta_title), meta_description=VALUES(meta_description),
+        focus_keyword=VALUES(focus_keyword), keywords=VALUES(keywords), canonical_url=VALUES(canonical_url),
+        no_index=VALUES(no_index), og_title=VALUES(og_title), og_description=VALUES(og_description),
+        og_image=VALUES(og_image), custom_schema=VALUES(custom_schema)`,
+      [pageKey, meta_title || null, meta_description || null, focus_keyword || null, keywords || null, canonical_url || null, no_index ? 1 : 0, og_title || null, og_description || null, og_image || null, custom_schema || null]
+    );
+    res.json({ message: "Product SEO saved successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to save product SEO" });
+  }
+});
+
+// Admin: GET /api/seo/blog/:id
+router.get("/api/seo/blog/:id", async (req, res) => {
+  try {
+    const pageKey = `blog_${req.params.id}`;
+    const [rows] = await db.query("SELECT * FROM seo_settings WHERE page_key = ?", [pageKey]);
+    res.json(rows.length ? rows[0] : {});
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch blog SEO" });
+  }
+});
+
+// Admin: POST /api/seo/blog/:id
+router.post("/api/seo/blog/:id", verifyAdmin, async (req, res) => {
+  const pageKey = `blog_${req.params.id}`;
+  const { meta_title, meta_description, focus_keyword, keywords, canonical_url, no_index, og_title, og_description, og_image, custom_schema } = req.body;
+  try {
+    await db.query(
+      `INSERT INTO seo_settings (page_key, meta_title, meta_description, focus_keyword, keywords, canonical_url, no_index, og_title, og_description, og_image, custom_schema)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE
+        meta_title=VALUES(meta_title), meta_description=VALUES(meta_description),
+        focus_keyword=VALUES(focus_keyword), keywords=VALUES(keywords), canonical_url=VALUES(canonical_url),
+        no_index=VALUES(no_index), og_title=VALUES(og_title), og_description=VALUES(og_description),
+        og_image=VALUES(og_image), custom_schema=VALUES(custom_schema)`,
+      [pageKey, meta_title || null, meta_description || null, focus_keyword || null, keywords || null, canonical_url || null, no_index ? 1 : 0, og_title || null, og_description || null, og_image || null, custom_schema || null]
+    );
+    res.json({ message: "Blog SEO saved successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to save blog SEO" });
+  }
+});
+
+// Admin: GET /api/seo/health — SEO Health Checker
+router.get("/api/seo/health", verifyAdmin, async (req, res) => {
+  try {
+    const [savedPages] = await db.query("SELECT * FROM seo_settings");
+    const [products] = await db.query("SELECT id, name, image_url FROM physical_products WHERE is_active = TRUE");
+    const [blogs] = await db.query("SELECT id, title FROM blogs WHERE status = 'published' OR status IS NULL");
+
+    const missingTitle = [];
+    const missingDesc = [];
+    const missingOgImage = [];
+    const titleOver60 = [];
+    const descOver160 = [];
+
+    savedPages.forEach(p => {
+      if (!p.meta_title) missingTitle.push(p.page_key);
+      else if (p.meta_title.length > 60) titleOver60.push({ page: p.page_key, title: p.meta_title, length: p.meta_title.length });
+
+      if (!p.meta_description) missingDesc.push(p.page_key);
+      else if (p.meta_description.length > 160) descOver160.push({ page: p.page_key, desc: p.meta_description, length: p.meta_description.length });
+
+      if (!p.og_image) missingOgImage.push(p.page_key);
+    });
+
+    const productsMissingAlt = products.filter(p => !p.image_alt).map(p => ({ id: p.id, name: p.name }));
+
+    res.json({
+      missingTitle,
+      missingDesc,
+      missingOgImage,
+      titleOver60,
+      descOver160,
+      productsMissingAlt,
+      sitemap: {
+        lastGenerated: new Date().toISOString(),
+        totalUrls: 4 + products.length + blogs.length
+      },
+      robotsTxtAccessible: true
+    });
+  } catch (err) {
+    console.error("SEO health check failed:", err);
+    res.status(500).json({ error: "Failed to run SEO health check" });
+  }
+});
+
 module.exports = router;

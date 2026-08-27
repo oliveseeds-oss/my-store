@@ -60,15 +60,14 @@ export default function RecentlyViewed({ currentProductId = null }) {
           Recently Viewed
         </h3>
 
-        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin" style={{ scrollbarWidth: "thin" }}>
+        <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 scrollbar-thin snap-x snap-mandatory" style={{ scrollbarWidth: "thin" }}>
           {products.map((p) => {
             const img = p.image_url || "/logo192.png";
             return (
               <Link
                 key={p.id}
                 to={`/product/${p.id}`}
-                style={{ flex: "0 0 180px" }}
-                className="group bg-white border border-stone-200 hover:shadow-md transition overflow-hidden rounded-xl p-3 flex flex-col justify-between"
+                className="group bg-white border border-stone-200 hover:shadow-md transition overflow-hidden rounded-xl p-3 flex flex-col justify-between shrink-0 snap-start w-[calc(50%-6px)] sm:w-[180px]"
               >
                 <div>
                   <div className="aspect-square bg-stone-50 overflow-hidden rounded-lg mb-2 flex items-center justify-center">

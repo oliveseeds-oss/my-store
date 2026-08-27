@@ -4,7 +4,7 @@ const getBaseURL = () => {
   if (typeof window !== "undefined") {
     const hostname = window.location.hostname;
     if (hostname.endsWith("oliveseedsdesignstudio.com")) {
-      return `${window.location.protocol}//apiosspanel.oliveseedsdesignstudio.com/api`;
+      return "https://apiosspanel.oliveseedsdesignstudio.com/api";
     }
   }
   return "http://200.141.2.131:5000/api";

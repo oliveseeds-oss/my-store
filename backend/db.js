@@ -340,6 +340,38 @@ poolPromise.query(`
     )
   `).catch(() => {});
 
+  // FIX 2: SEO Settings Tables
+  poolPromise.query(`
+    CREATE TABLE IF NOT EXISTS seo_settings (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      page_key VARCHAR(255) UNIQUE NOT NULL,
+      meta_title VARCHAR(255),
+      meta_description TEXT,
+      focus_keyword VARCHAR(255),
+      keywords TEXT,
+      canonical_url VARCHAR(500),
+      no_index BOOLEAN DEFAULT false,
+      og_title VARCHAR(255),
+      og_description TEXT,
+      og_image VARCHAR(500),
+      twitter_card VARCHAR(50),
+      twitter_title VARCHAR(255),
+      twitter_description TEXT,
+      twitter_image VARCHAR(500),
+      custom_schema TEXT,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )
+  `).catch(() => {});
+
+  poolPromise.query(`
+    CREATE TABLE IF NOT EXISTS global_seo_settings (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      setting_key VARCHAR(255) UNIQUE NOT NULL,
+      setting_value TEXT,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )
+  `).catch(() => {});
+
   // Index Optimization (Priority 5)
   poolPromise.query("ALTER TABLE visitor_logs ADD INDEX idx_visited_at (visited_at)").catch(() => {});
 }).catch(err => {

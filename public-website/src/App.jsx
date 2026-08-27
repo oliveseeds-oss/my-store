@@ -31,7 +31,6 @@ const TrackOrder = lazy(() => import("./pages/TrackOrder"));
 const InvoicePage = lazy(() => import("./pages/InvoicePage"));
 const FaqPage = lazy(() => import("./pages/FaqPage"));
 const WishlistPage = lazy(() => import("./pages/WishlistPage"));
-const BulkOrderPage = lazy(() => import("./pages/BulkOrderPage"));
 
 // ── The pages your footer links to ──
 const TermsConditions = lazy(() => import("./pages/TermsConditions"));
@@ -67,7 +66,7 @@ export default function App() {
                   <Route path="/faq font-bold"      element={<FaqPage />} />
                   <Route path="/faq"                element={<FaqPage />} />
                   <Route path="/wishlist"           element={<WishlistPage />} />
-                  <Route path="/bulk-order"         element={<BulkOrderPage />} />
+                  <Route path="/bulk-order"         element={<Engraving />} />
                   <Route path="/products/:id"       element={<ProductDetail />} />
                   <Route path="/digital"            element={<DigitalProductList />} />
                   <Route path="/digital/:id"        element={<DigitalProductDetail />} />
