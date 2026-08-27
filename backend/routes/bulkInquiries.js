@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const db = require("../db");
-const mailer = require("../mailer");
+const mailer = require("../utils/mailer");
 const { verifyAdmin } = require("../middleware/auth");
 
 // POST /api/bulk-inquiry — submit inquiry (public, no auth needed)
