@@ -36,6 +36,7 @@ export default function Navbar() {
           <Link to="/digital" className="hover:text-[#0D1512] transition">Digital</Link>
           <Link to="/service" className="hover:text-[#0D1512] transition">Service</Link>
           <Link to="/blog" className="hover:text-[#0D1512] transition">Blog</Link>
+          <Link to="/bulk-order" className="hover:text-[#0D1512] transition">Bulk Orders</Link>
           <Link to="/contact" className="hover:text-[#0D1512] transition">Contact</Link>
         </div>
 

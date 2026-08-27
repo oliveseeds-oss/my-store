@@ -2,19 +2,17 @@ const router = require("express").Router();
 const db = require("../db");
 const { verifyMember } = require("../middleware/auth");
 
-// GET /api/wishlist/my
-router.get("/my", verifyMember, async (req, res) => {
-  const member_uid = req.member.member_uid;
+// GET /api/wishlist — get current user wishlist
+router.get("/", verifyMember, async (req, res) => {
+  const userId = req.member.id;
   try {
     const [items] = await db.query(
-      `SELECT w.*, 
-              p.name as product_name, p.price as product_price, p.image_url as product_image,
-              dp.name as digital_name, dp.price as digital_price, dp.thumbnail_url as digital_image
-       FROM wishlist w
-       LEFT JOIN products p ON w.product_uid = p.product_uid AND w.product_type = 'physical'
-       LEFT JOIN digital_products dp ON w.product_uid = dp.product_uid AND w.product_type = 'digital'
-       WHERE w.member_uid = ?`,
-      [member_uid]
+      `SELECT w.id as wishlist_id, w.created_at as saved_at,
+              p.id, p.name, p.price, p.description, p.image_url, p.category, p.stock
+       FROM wishlists w
+       JOIN physical_products p ON w.product_id = p.id
+       WHERE w.user_id = ? ORDER BY w.created_at DESC`,
+      [userId]
     );
     res.json(items);
   } catch (error) {
@@ -23,47 +21,48 @@ router.get("/my", verifyMember, async (req, res) => {
   }
 });
 
-// POST /api/wishlist/add
-router.post("/add", verifyMember, async (req, res) => {
-  const member_uid = req.member.member_uid;
-  const { product_uid, product_type } = req.body;
-  const pType = product_type === "digital" ? "digital" : "physical";
-
-  if (!product_uid) {
-    return res.status(400).json({ error: "product_uid is required" });
+// GET /api/wishlist/my — legacy compatibility
+router.get("/my", verifyMember, async (req, res) => {
+  const userId = req.member.id;
+  try {
+    const [items] = await db.query("SELECT * FROM wishlists WHERE user_id = ?", [userId]);
+    res.json(items);
+  } catch (error) {
+    res.json([]);
   }
+});
+
+// POST /api/wishlist/:product_id — add to wishlist (logged in only)
+router.post("/:product_id", verifyMember, async (req, res) => {
+  const userId = req.member.id;
+  const productId = req.params.product_id;
 
   try {
-    // Insert if not exists (using manual check to be perfectly compatible and safe)
-    const [existing] = await db.query(
-      "SELECT id FROM wishlist WHERE member_uid = ? AND product_uid = ?",
-      [member_uid, product_uid]
+    await db.query(
+      "INSERT IGNORE INTO wishlists (user_id, product_id) VALUES (?, ?)",
+      [userId, productId]
     );
-    if (!existing.length) {
-      await db.query(
-        "INSERT INTO wishlist (member_uid, product_uid, product_type) VALUES (?, ?, ?)",
-        [member_uid, product_uid, pType]
-      );
-    }
-    res.json({ ok: true, message: "Added to wishlist" });
+    res.json({ message: "Added to wishlist" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to add to wishlist" });
   }
 });
 
-// DELETE /api/wishlist/:id
-router.delete("/:id", verifyMember, async (req, res) => {
-  const member_uid = req.member.member_uid;
+// DELETE /api/wishlist/:product_id — remove from wishlist
+router.delete("/:product_id", verifyMember, async (req, res) => {
+  const userId = req.member.id;
+  const productId = req.params.product_id;
+
   try {
     await db.query(
-      "DELETE FROM wishlist WHERE member_uid = ? AND (id = ? OR product_uid = ?)",
-      [member_uid, req.params.id, req.params.id]
+      "DELETE FROM wishlists WHERE user_id = ? AND product_id = ?",
+      [userId, productId]
     );
-    res.json({ ok: true, message: "Removed from wishlist" });
+    res.json({ message: "Removed from wishlist" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Failed to remove" });
+    res.status(500).json({ error: "Failed to remove from wishlist" });
   }
 });
 

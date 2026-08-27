@@ -1,49 +1,118 @@
 const router = require("express").Router();
 const db = require("../db");
-const { verifyMember } = require("../middleware/auth");
+const { verifyMember, verifyAdmin } = require("../middleware/auth");
 
-router.get("/product/:id", async (req, res) => {
-  const { type } = req.query;
-  const product_uid = req.params.id;
-  const pType = type === "digital" ? "digital" : "physical";
-
-  const [rows] = await db.query(
-    `SELECT r.*, m.name as member_name FROM reviews r
-     JOIN members m ON r.member_uid = m.member_uid
-     WHERE r.product_uid = ? AND r.product_type = ? ORDER BY r.created_at DESC`,
-    [product_uid, pType]
-  );
-  res.json(rows);
+// Public: GET /api/reviews/:product_id — get approved reviews for a product
+router.get("/:product_id", async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT r.*, m.name as user_name FROM product_reviews r
+       JOIN members m ON r.user_id = m.id
+       WHERE r.product_id = ? AND r.is_approved = true ORDER BY r.created_at DESC`,
+      [req.params.product_id]
+    );
+    res.json(rows);
+  } catch (err) {
+    // Fallback if joined table fails
+    const [rows] = await db.query(
+      "SELECT * FROM product_reviews WHERE product_id = ? AND is_approved = true ORDER BY created_at DESC",
+      [req.params.product_id]
+    );
+    res.json(rows);
+  }
 });
 
+// Member: Check if member has purchased this product (GET /api/reviews/check-purchased/:product_id)
+router.get("/check-purchased/:product_id", verifyMember, async (req, res) => {
+  try {
+    const userId = req.member.id;
+    const productId = req.params.product_id;
+
+    // Check completed orders containing this product
+    const [orders] = await db.query(
+      `SELECT o.id FROM orders o
+       JOIN order_items oi ON o.id = oi.order_id
+       WHERE (o.member_id = ? OR o.user_id = ?) AND oi.product_id = ? AND (o.status = 'delivered' OR o.status = 'completed' OR o.payment_status = 'paid')`,
+      [userId, userId, productId]
+    );
+
+    res.json({ hasPurchased: orders.length > 0 });
+  } catch (err) {
+    console.error("Error checking purchased status:", err);
+    res.json({ hasPurchased: false });
+  }
+});
+
+// Member: POST /api/reviews — submit review (logged in users only, must have purchased)
 router.post("/", verifyMember, async (req, res) => {
-  const { product_id, product_type, rating, title, comment } = req.body;
-  const member_uid = req.member.member_uid;
-  const pType = product_type === "digital" ? "digital" : "physical";
+  const { product_id, rating, review_text } = req.body;
+  const userId = req.member.id;
+
+  if (!rating || rating < 1 || rating > 5) {
+    return res.status(400).json({ error: "Rating must be between 1 and 5 stars" });
+  }
 
   try {
-    await db.query(
-      `INSERT INTO reviews (member_uid, product_uid, product_type, rating, title, comment, created_at)
-       VALUES (?,?,?,?,?,?,NOW())`,
-      [member_uid, product_id, pType, rating, title, comment]
+    // Verify purchase
+    const [orders] = await db.query(
+      `SELECT o.id FROM orders o
+       JOIN order_items oi ON o.id = oi.order_id
+       WHERE (o.member_id = ? OR o.user_id = ?) AND oi.product_id = ? AND (o.status = 'delivered' OR o.status = 'completed' OR o.payment_status = 'paid')`,
+      [userId, userId, product_id]
     );
 
-    const table = pType === "digital" ? "digital_products" : "products";
+    if (orders.length === 0) {
+      return res.status(403).json({ error: "You must have a completed order for this product to write a review." });
+    }
 
-    const [[avg]] = await db.query(
-      `SELECT AVG(rating) as avg, COUNT(*) as cnt FROM reviews
-       WHERE product_uid = ? AND product_type = ?`, [product_id, pType]
+    const [result] = await db.query(
+      "INSERT INTO product_reviews (product_id, user_id, rating, review_text, is_approved) VALUES (?, ?, ?, ?, false)",
+      [product_id, userId, rating, review_text || ""]
     );
 
-    await db.query(
-      `UPDATE ${table} SET rating=?, review_count=? WHERE product_uid=?`,
-      [parseFloat(avg.avg || 0).toFixed(2), avg.cnt, product_id]
-    );
+    res.json({ id: result.insertId, message: "Review submitted! It will appear once approved by admin." });
+  } catch (err) {
+    console.error("Failed to submit review:", err);
+    res.status(500).json({ error: "Failed to submit review" });
+  }
+});
 
-    res.json({ ok: true, message: "Review added successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to add review" });
+// Admin: GET /api/admin/reviews — get all reviews
+router.get("/admin/all", verifyAdmin, async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT r.*, p.name as product_name, m.name as customer_name, m.email as customer_email
+       FROM product_reviews r
+       LEFT JOIN physical_products p ON r.product_id = p.id
+       LEFT JOIN members m ON r.user_id = m.id
+       ORDER BY r.created_at DESC`
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error("Failed to fetch admin reviews:", err);
+    res.status(500).json({ error: "Failed to fetch reviews" });
+  }
+});
+
+// Admin: PUT /api/admin/reviews/:id/approve — approve a review
+router.put("/admin/:id/approve", verifyAdmin, async (req, res) => {
+  try {
+    await db.query("UPDATE product_reviews SET is_approved = true WHERE id = ?", [req.params.id]);
+    res.json({ message: "Review approved successfully" });
+  } catch (err) {
+    console.error("Failed to approve review:", err);
+    res.status(500).json({ error: "Failed to approve review" });
+  }
+});
+
+// Admin: DELETE /api/admin/reviews/:id — delete a review
+router.delete("/admin/:id", verifyAdmin, async (req, res) => {
+  try {
+    await db.query("DELETE FROM product_reviews WHERE id = ?", [req.params.id]);
+    res.json({ message: "Review deleted successfully" });
+  } catch (err) {
+    console.error("Failed to delete review:", err);
+    res.status(500).json({ error: "Failed to delete review" });
   }
 });
 

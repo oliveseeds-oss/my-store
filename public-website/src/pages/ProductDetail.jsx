@@ -8,6 +8,8 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SEO from "../components/SEO";
 import AdBanner from "../components/AdBanner";
+import RecentlyViewed, { trackRecentlyViewed } from "../components/RecentlyViewed";
+import { trackGA4Event } from "../utils/ga4";
 
 function Stars({ rating, size = "md" }) {
   const sz = size === "sm" ? "text-xs" : "text-base";
@@ -22,42 +24,102 @@ function Stars({ rating, size = "md" }) {
 
 function ReviewForm({ productId, onSubmit }) {
   const { member } = useMember();
-  const [form, setForm] = useState({ rating: 5, title: "", comment: "" });
+  const [hasPurchased, setHasPurchased] = useState(false);
+  const [checkingPurchase, setCheckingPurchase] = useState(true);
+  const [form, setForm] = useState({ rating: 5, review_text: "" });
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
+  useEffect(() => {
+    if (member && productId) {
+      API.get(`/reviews/check-purchased/${productId}`)
+        .then(res => setHasPurchased(res.data?.hasPurchased || false))
+        .catch(() => setHasPurchased(false))
+        .finally(() => setCheckingPurchase(false));
+    } else {
+      setCheckingPurchase(false);
+    }
+  }, [member, productId]);
+
   if (!member) return (
-    <div className="bg-amber-50 border border-amber-200 p-4 text-sm text-amber-800">
-      <Link to="/login" className="underline font-semibold">Sign in</Link> to write a review
+    <div className="bg-amber-50 border border-amber-200 p-4 text-xs text-amber-800 rounded-lg">
+      <Link to="/login" className="underline font-bold text-amber-900">Login to leave a review</Link>
+    </div>
+  );
+
+  if (checkingPurchase) {
+    return <div className="text-xs text-stone-400 py-2">Checking purchase eligibility...</div>;
+  }
+
+  if (!hasPurchased) return (
+    <div className="bg-stone-100 border border-stone-200 p-4 text-xs text-stone-600 rounded-lg font-medium">
+      Purchase this product to review it
     </div>
   );
 
   if (done) return (
-    <div className="bg-green-50 border border-green-200 p-4 text-sm text-green-800">
-      ✓ Thank you for your review!
+    <div className="bg-emerald-50 border border-emerald-200 p-4 text-xs font-bold text-emerald-800 rounded-lg">
+      ✓ Thank you for your review! It will appear once approved by admin.
     </div>
   );
 
   const submit = async () => {
-    if (!form.comment) return;
     setLoading(true);
     try {
       await API.post("/reviews", {
-        product_id: productId, product_type: "physical",
-        rating: form.rating, title: form.title, comment: form.comment
+        product_id: productId,
+        rating: form.rating,
+        review_text: form.review_text
       });
       setDone(true);
-      onSubmit();
+      if (onSubmit) onSubmit();
+    } catch (err) {
+      alert(err.response?.data?.error || "Failed to submit review");
     } finally { setLoading(false); }
   };
 
   return (
-    <div className="border border-stone-200 bg-white p-5">
-      <h4 className="font-bold text-stone-800 mb-4">
+    <div className="border border-stone-200 bg-white p-5 rounded-xl space-y-4">
+      <h4 className="font-bold text-stone-800 text-sm">
         Write a customer review
       </h4>
-      <div className="mb-3">
-        <p className="text-xs text-stone-500 mb-1">Your rating</p>
+
+      <div>
+        <p className="text-xs font-bold text-stone-600 mb-1">Your Rating *</p>
+        <div className="flex gap-1 text-xl cursor-pointer">
+          {[1, 2, 3, 4, 5].map(star => (
+            <span
+              key={star}
+              onClick={() => setForm(f => ({ ...f, rating: star }))}
+              className={star <= form.rating ? "text-amber-500" : "text-stone-300"}
+            >
+              ★
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <label className="text-xs font-bold text-stone-600 mb-1 block">Your Review (Optional)</label>
+        <textarea
+          value={form.review_text}
+          onChange={e => setForm(f => ({ ...f, review_text: e.target.value }))}
+          rows={3}
+          placeholder="What did you like or dislike? How was the quality?"
+          className="w-full border border-stone-300 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-400 rounded-lg resize-none"
+        />
+      </div>
+
+      <button
+        onClick={submit}
+        disabled={loading}
+        className="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2 text-xs font-bold transition disabled:opacity-50 rounded-lg shadow-sm"
+      >
+        {loading ? "Submitting..." : "Submit Review"}
+      </button>
+    </div>
+  );
+}
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map(i => (
             <button key={i} onClick={() => setForm(f => ({ ...f, rating: i }))}
@@ -113,6 +175,14 @@ export default function ProductDetail() {
   const load = useCallback(async () => {
     const r = await API.get(`/products/${id}`);
     setProduct(r.data);
+    if (r.data?.id) {
+      trackRecentlyViewed(r.data.id);
+      trackGA4Event("view_item", {
+        currency: "INR",
+        value: r.data.price,
+        items: [{ item_id: r.data.id, item_name: r.data.name }]
+      });
+    }
     if (r.data.sizes?.length) setSelectedSize(r.data.sizes[0]);
     
     // Check if item is in wishlist
@@ -504,6 +574,44 @@ export default function ProductDetail() {
               </button>
             </div>
 
+            {/* FEATURE 7: Social Share Buttons */}
+            <div className="flex items-center gap-2 pt-1 pb-1">
+              <span className="text-xs text-stone-500 font-bold">Share this product:</span>
+              <a
+                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-2.5 py-1 text-xs font-bold bg-[#1877F2] text-white rounded-lg hover:opacity-90 transition"
+              >
+                Facebook
+              </a>
+              <a
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(product.name)}&url=${encodeURIComponent(window.location.href)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-2.5 py-1 text-xs font-bold bg-black text-white rounded-lg hover:opacity-90 transition"
+              >
+                Twitter/X
+              </a>
+              <a
+                href={`https://pinterest.com/pin/create/button/?url=${encodeURIComponent(window.location.href)}&media=${encodeURIComponent(product.image_url || "")}&description=${encodeURIComponent(product.name)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-2.5 py-1 text-xs font-bold bg-[#BD081C] text-white rounded-lg hover:opacity-90 transition"
+              >
+                Pinterest
+              </a>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.href);
+                  alert("Copied!");
+                }}
+                className="px-2.5 py-1 text-xs font-bold bg-stone-200 text-stone-700 rounded-lg hover:bg-stone-300 transition"
+              >
+                Copy Link
+              </button>
+            </div>
+
             {/* Rating */}
             <div className="flex items-center gap-3">
               <Stars rating={product.rating} />
@@ -520,14 +628,23 @@ export default function ProductDetail() {
                     <span className="text-base text-stone-400 line-through">M.R.P: {convert(product.price)}</span>
                     <span className="text-sm font-bold text-red-600">({discount}% off)</span>
                   </div>
-                  <p className="text-xs text-stone-500 mt-0.5">Inclusive of all taxes</p>
                 </div>
               ) : (
-                <div>
-                  <span className="text-3xl font-bold text-stone-900">{convert(product.price)}</span>
-                  <p className="text-xs text-stone-500 mt-0.5">Inclusive of all taxes</p>
-                </div>
+                <span className="text-3xl font-bold text-stone-900">{convert(product.price)}</span>
               )}
+
+              {/* FEATURE 6: Live Stock Counter */}
+              {product.stock > 0 && product.stock <= 10 && (
+                <p className="text-xs font-bold text-orange-600 mt-2">
+                  Only {product.stock} left in stock!
+                </p>
+              )}
+              {product.stock === 0 && (
+                <p className="text-xs font-bold text-red-600 mt-2">
+                  Out of Stock
+                </p>
+              )}
+              <p className="text-xs text-stone-500 mt-0.5">Inclusive of all taxes</p>
             </div>
 
             {/* Size selector */}
@@ -947,6 +1064,9 @@ export default function ProductDetail() {
             </div>
           </div>
         )}
+
+        {/* FEATURE 4: Recently Viewed Products */}
+        <RecentlyViewed currentProductId={product.id} />
       </div>
       <Footer />
     </div>

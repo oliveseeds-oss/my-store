@@ -23,6 +23,10 @@ import PortfolioAdmin from "./pages/PortfolioAdmin";
 
 import FaqManager from "./pages/FaqManager";
 import FeedManager from "./pages/FeedManager";
+import ReviewsManager from "./pages/ReviewsManager";
+import CouponsManager from "./pages/CouponsManager";
+import BulkInquiriesManager from "./pages/BulkInquiriesManager";
+import NewsletterManager from "./pages/NewsletterManager";
 import ShippingCountries from "./pages/ShippingCountries";
 
 const P = ({ children }) => <ProtectedRoute>{children}</ProtectedRoute>;
@@ -40,11 +44,15 @@ export default function App() {
           <Route path="/portfolio" element={<P><PortfolioAdmin /></P>} />
           <Route path="/products" element={<P><Products /></P>} />
           <Route path="/digital-products" element={<P><DigitalProducts /></P>} />
+          <Route path="/reviews" element={<P><ReviewsManager /></P>} />
           <Route path="/orders" element={<P><Orders /></P>} />
           <Route path="/members" element={<P><Members /></P>} />
           <Route path="/blog" element={<P><Blog /></P>} />
           <Route path="/faqs" element={<P><FaqManager /></P>} />
           <Route path="/feeds" element={<P><FeedManager /></P>} />
+          <Route path="/coupons" element={<P><CouponsManager /></P>} />
+          <Route path="/bulk-inquiries" element={<P><BulkInquiriesManager /></P>} />
+          <Route path="/newsletter" element={<P><NewsletterManager /></P>} />
           <Route path="/messages" element={<P><ContactMessages /></P>} />
           <Route path="/ads" element={<P><AdPanel /></P>} />
           <Route path="/notifications" element={<P><Notifications /></P>} />

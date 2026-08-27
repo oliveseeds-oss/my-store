@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { trackGA4Event } from "../utils/ga4";
 
 const CartContext = createContext();
 
@@ -21,6 +22,11 @@ export function CartProvider({ children }) {
   }, [cart]);
 
   const addToCart = (item) => {
+    trackGA4Event("add_to_cart", {
+      currency: "INR",
+      value: item.price * (item.qty || 1),
+      items: [{ item_id: item.id, item_name: item.name, quantity: item.qty || 1 }]
+    });
     setCart((prev) => {
       const getCartKey = (i) => `${i.id}-${i.type}-${i.selectedSize || ""}-${i.customizationSummary || ""}`;
       const itemKey = getCartKey(item);

@@ -9,6 +9,7 @@ import AdBanner from "../components/AdBanner";
 import SEO from "../components/SEO";
 import SmartAddressForm from "../components/SmartAddressForm";
 import { Country } from "country-state-city";
+import { trackGA4Event } from "../utils/ga4";
 
 const loadRazorpayScript = () => {
   return new Promise((resolve) => {
@@ -71,6 +72,35 @@ export default function Checkout() {
   const [paypalLoaded, setPaypalLoaded] = useState(false);
   const [siteSettings, setSiteSettings] = useState(null);
 
+  // Coupon state
+  const [couponCode, setCouponCode] = useState("");
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [couponMsg, setCouponMsg] = useState("");
+  const [couponErr, setCouponErr] = useState("");
+  const [couponApplied, setCouponApplied] = useState(false);
+
+  const applyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setCouponMsg("");
+    setCouponErr("");
+    try {
+      const res = await API.post("/coupons/validate", {
+        code: couponCode.trim(),
+        cart_total: total,
+        user_id: member?.id || null
+      });
+      if (res.data.valid) {
+        setCouponDiscount(res.data.discount_amount);
+        setCouponMsg(res.data.message);
+        setCouponApplied(true);
+      }
+    } catch (err) {
+      setCouponDiscount(0);
+      setCouponApplied(false);
+      setCouponErr(err.response?.data?.error || "Invalid coupon code");
+    }
+  };
+
   // Check if cart contains physical items
   const hasPhysicalItems = cart.some(i => i.type === "physical" || !i.type);
 
@@ -86,6 +116,12 @@ export default function Checkout() {
     API.get("/settings")
       .then((res) => setSiteSettings(res.data))
       .catch((err) => console.error("Failed to load settings keys", err));
+
+    trackGA4Event("begin_checkout", {
+      currency: "INR",
+      value: total,
+      items: cart.map(i => ({ item_id: i.id, item_name: i.name, quantity: i.qty }))
+    });
   }, []);
 
   useEffect(() => {
@@ -449,14 +485,45 @@ export default function Checkout() {
                 ))}
               </div>
 
+              {/* Coupon Code Section (Feature 3) */}
+              <div className="border-t border-stone-100 pt-3 flex flex-col gap-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest opacity-75">Discount Coupon</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    placeholder="ENTER CODE"
+                    disabled={couponApplied}
+                    className="flex-1 bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-xs font-mono font-bold uppercase focus:outline-none focus:border-amber-500 disabled:bg-stone-100"
+                  />
+                  <button
+                    type="button"
+                    onClick={applyCoupon}
+                    disabled={couponApplied || !couponCode.trim()}
+                    className="bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white text-xs font-bold px-4 py-2 rounded-xl transition shrink-0"
+                  >
+                    {couponApplied ? "Applied" : "Apply"}
+                  </button>
+                </div>
+                {couponMsg && <p className="text-[11px] text-emerald-600 font-bold">{couponMsg}</p>}
+                {couponErr && <p className="text-[11px] text-rose-500 font-bold">{couponErr}</p>}
+              </div>
+
               <div className="border-t border-stone-100 pt-4 flex flex-col gap-2.5">
                 <div className="flex justify-between text-xs font-semibold opacity-75">
                   <span>Shipping Fee</span>
                   <span>{shipping === 0 ? "Free" : convert(shipping)}</span>
                 </div>
+                {couponDiscount > 0 && (
+                  <div className="flex justify-between text-xs font-bold text-emerald-600">
+                    <span>Coupon Discount</span>
+                    <span>- {convert(couponDiscount)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between font-black text-lg text-[#0D1512] pt-1">
                   <span>Total</span>
-                  <span>{convert(total + shipping)}</span>
+                  <span>{convert(Math.max(0, total + shipping - couponDiscount))}</span>
                 </div>
               </div>
 

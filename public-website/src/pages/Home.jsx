@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SEO from "../components/SEO";
 import AdBanner from "../components/AdBanner";
+import RecentlyViewed from "../components/RecentlyViewed";
 
 /* ─── Fade-up animation wrapper ─── */
 const FadeUp = ({ children, delay = 0, className = "", style = {} }) => (
@@ -2016,6 +2017,9 @@ export default function Home() {
           </div>
         </FadeUp>
       </section>
+
+      {/* FEATURE 4: Recently Viewed Products */}
+      <RecentlyViewed />
 
       <Footer settings={settings} />
     </div>

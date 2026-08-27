@@ -3,7 +3,7 @@ import {
   MdDashboard, MdShoppingBag, MdDownload, MdPeople,
   MdListAlt, MdArticle, MdMail, MdCampaign,
   MdNotifications, MdSettings, MdCategory,
-  MdPublic, MdLocalShipping, MdBarChart, MdReceipt, MdSearch, MdInsertPhoto, MdRssFeed
+  MdPublic, MdLocalShipping, MdBarChart, MdReceipt, MdSearch, MdInsertPhoto, MdRssFeed, MdStar
 } from "react-icons/md";
 
 const links = [
@@ -16,13 +16,17 @@ const links = [
   { to: "/portfolio", icon: <MdInsertPhoto className="text-indigo-500" />, label: "Portfolio Showcase" },
   { to: "/products", icon: <MdShoppingBag />, label: "Products" },
   { to: "/digital-products", icon: <MdDownload />, label: "Digital products" },
+  { to: "/reviews", icon: <MdStar className="text-amber-500" />, label: "Reviews Manager" },
   { to: "/orders", icon: <MdListAlt />, label: "Orders" },
   { to: "/members", icon: <MdPeople />, label: "Members" },
   { to: "/blog", icon: <MdArticle />, label: "Blog" },
   { to: "/faqs", icon: <MdArticle className="text-emerald-600" />, label: "FAQ Manager" },
   { to: "/feeds", icon: <MdRssFeed className="text-amber-600" />, label: "Product Feeds" },
+  { to: "/coupons", icon: <MdSettings className="text-indigo-600" />, label: "Coupons" },
+  { to: "/bulk-inquiries", icon: <MdMail className="text-emerald-600" />, label: "Bulk Inquiries" },
   { to: "/messages", icon: <MdMail />, label: "Contact messages" },
   { to: "/ads", icon: <MdCampaign />, label: "Ad panel" },
+  { to: "/newsletter", icon: <MdMail className="text-indigo-600" />, label: "Newsletter" },
   { to: "/notifications", icon: <MdNotifications />, label: "Notifications" },
   { to: "/currency", icon: <MdPublic />, label: "Currency & shipping" },
   { to: "/shipping-countries", icon: <MdLocalShipping />, label: "Shipping Countries" },

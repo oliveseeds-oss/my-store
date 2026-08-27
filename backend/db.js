@@ -264,6 +264,82 @@ poolPromise.query(`
     )
   `).catch(() => {});
 
+  // FEATURE 1: Product Reviews Table
+  poolPromise.query(`
+    CREATE TABLE IF NOT EXISTS product_reviews (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      product_id INT NOT NULL,
+      user_id INT NOT NULL,
+      rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+      review_text TEXT,
+      is_approved BOOLEAN DEFAULT false,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `).catch(() => {});
+
+  // FEATURE 2: Wishlists Table
+  poolPromise.query(`
+    CREATE TABLE IF NOT EXISTS wishlists (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      user_id INT NOT NULL,
+      product_id INT NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE KEY unique_wishlist (user_id, product_id)
+    )
+  `).catch(() => {});
+
+  // FEATURE 3: Coupons & Usage Tables
+  poolPromise.query(`
+    CREATE TABLE IF NOT EXISTS coupons (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      code VARCHAR(50) UNIQUE NOT NULL,
+      type ENUM('percentage', 'flat') NOT NULL,
+      value DECIMAL(10,2) NOT NULL,
+      minimum_order_value DECIMAL(10,2) DEFAULT 0,
+      usage_limit INT DEFAULT NULL,
+      used_count INT DEFAULT 0,
+      is_active BOOLEAN DEFAULT true,
+      expires_at TIMESTAMP NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `).catch(() => {});
+
+  poolPromise.query(`
+    CREATE TABLE IF NOT EXISTS coupon_usage (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      coupon_id INT NOT NULL,
+      user_id INT NOT NULL,
+      order_id INT NOT NULL,
+      used_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `).catch(() => {});
+
+  // FEATURE 8: Bulk Inquiries Table
+  poolPromise.query(`
+    CREATE TABLE IF NOT EXISTS bulk_inquiries (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      full_name VARCHAR(255) NOT NULL,
+      email VARCHAR(255) NOT NULL,
+      phone VARCHAR(50),
+      company_name VARCHAR(255),
+      product_interest TEXT,
+      quantity INT,
+      message TEXT,
+      status ENUM('new','contacted','closed') DEFAULT 'new',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `).catch(() => {});
+
+  // FEATURE 9: Newsletter Subscribers Table
+  poolPromise.query(`
+    CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      email VARCHAR(255) UNIQUE NOT NULL,
+      is_active BOOLEAN DEFAULT true,
+      subscribed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `).catch(() => {});
+
   // Index Optimization (Priority 5)
   poolPromise.query("ALTER TABLE visitor_logs ADD INDEX idx_visited_at (visited_at)").catch(() => {});
 }).catch(err => {

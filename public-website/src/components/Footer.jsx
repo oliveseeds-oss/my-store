@@ -1,4 +1,59 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import API from "../api";
+
+function NewsletterForm() {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [msg, setMsg] = useState("");
+  const [err, setErr] = useState("");
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+      setErr("Please enter a valid email address.");
+      return;
+    }
+
+    setLoading(true);
+    setMsg("");
+    setErr("");
+
+    try {
+      const res = await API.post("/newsletter/subscribe", { email });
+      setMsg(res.data.message || "You are subscribed!");
+      setEmail("");
+    } catch (error) {
+      setErr(error.response?.data?.error || "Subscription failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubscribe} className="flex flex-col gap-2 mt-1">
+      <div className="flex gap-2">
+        <input
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Your email address"
+          className="flex-1 bg-white border border-[#0D1512]/15 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#0D1512]"
+        />
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-[#0D1512] hover:bg-stone-800 text-white font-bold text-xs px-4 py-2 rounded-xl transition shadow-sm disabled:opacity-50 shrink-0"
+        >
+          {loading ? "..." : "Subscribe"}
+        </button>
+      </div>
+      {msg && <p className="text-[11px] font-bold text-emerald-700">{msg}</p>}
+      {err && <p className="text-[11px] font-bold text-rose-600">{err}</p>}
+    </form>
+  );
+}
 
 export default function Footer({ settings = {}, dark = false }) {
   // We use a beautiful premium custard cream background (#FAF9F6) and deep forest green text (#0D1512)
@@ -83,6 +138,9 @@ export default function Footer({ settings = {}, dark = false }) {
               <Link to="/contact" className="text-xs md:text-sm text-[#0D1512]/70 hover:text-[#0D1512] hover:underline transition-all">
                 Contact Us
               </Link>
+              <Link to="/bulk-order" className="text-xs md:text-sm text-[#0D1512]/70 hover:text-[#0D1512] hover:underline transition-all">
+                Bulk & Wholesale Orders
+              </Link>
               <Link to="/shipping" className="text-xs md:text-sm text-[#0D1512]/70 hover:text-[#0D1512] hover:underline transition-all">
                 Delivery Policy
               </Link>
@@ -108,6 +166,21 @@ export default function Footer({ settings = {}, dark = false }) {
                 Refund Policy
               </Link>
             </div>
+          </div>
+
+          {/* FEATURE 9: Newsletter Signup */}
+          <div className="flex flex-col gap-3">
+            <p
+              className="text-xs font-bold uppercase tracking-[0.2em] mb-1"
+              style={{ fontFamily: "'Outfit', sans-serif", color: "#0D1512" }}
+            >
+              Stay Updated
+            </p>
+            <p className="text-xs text-[#0D1512]/70">
+              Get exclusive offers, new product alerts, and creative design updates.
+            </p>
+
+            <NewsletterForm />
           </div>
 
         </div>

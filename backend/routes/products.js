@@ -82,6 +82,44 @@ router.get("/:id", async (req, res) => {
   res.json(product);
 });
 
+// PUBLIC — GET /api/products/:id/related (Feature 5)
+router.get("/:id/related", async (req, res) => {
+  try {
+    const [pRows] = await db.query(
+      "SELECT id, category, category_id FROM physical_products WHERE id = ? OR product_uid = ?",
+      [req.params.id, req.params.id]
+    );
+
+    const currentId = pRows.length ? pRows[0].id : req.params.id;
+    const category = pRows.length ? pRows[0].category : null;
+
+    let query = "SELECT * FROM physical_products WHERE is_active = TRUE AND id != ?";
+    let params = [currentId];
+
+    if (category) {
+      query += " AND category = ?";
+      params.push(category);
+    }
+
+    query += " ORDER BY created_at DESC LIMIT 4";
+    let [rows] = await db.query(query, params);
+
+    // Fallback if less than 4 category matches
+    if (rows.length < 4) {
+      const [fallbackRows] = await db.query(
+        "SELECT * FROM physical_products WHERE is_active = TRUE AND id != ? ORDER BY created_at DESC LIMIT 4",
+        [currentId]
+      );
+      rows = fallbackRows;
+    }
+
+    res.json(rows);
+  } catch (err) {
+    console.error("Error fetching related products:", err);
+    res.status(500).json({ error: "Failed to fetch related products" });
+  }
+});
+
 // ADMIN — get personalization settings
 router.get("/admin/:id/personalization", verifyAdmin, async (req, res) => {
   try {

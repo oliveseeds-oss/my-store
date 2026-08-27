@@ -6,6 +6,8 @@ import { CartProvider } from "./context/CartContext";
 import { MemberProvider } from "./context/MemberContext";
 import { CurrencyProvider } from "./context/CurrencyContext";
 
+import { initGA4 } from "./utils/ga4";
+
 const Home = lazy(() => import("./pages/Home"));
 const ProductList = lazy(() => import("./pages/ProductList"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
@@ -28,6 +30,8 @@ const Engraving = lazy(() => import("./pages/Engraving"));
 const TrackOrder = lazy(() => import("./pages/TrackOrder"));
 const InvoicePage = lazy(() => import("./pages/InvoicePage"));
 const FaqPage = lazy(() => import("./pages/FaqPage"));
+const WishlistPage = lazy(() => import("./pages/WishlistPage"));
+const BulkOrderPage = lazy(() => import("./pages/BulkOrderPage"));
 
 // ── The pages your footer links to ──
 const TermsConditions = lazy(() => import("./pages/TermsConditions"));
@@ -41,6 +45,7 @@ const AboutUs = lazy(() => import("./pages/AboutUs"));
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
+    initGA4();
     window.scrollTo(0, 0);
   }, [pathname]);
   return null;
@@ -61,6 +66,8 @@ export default function App() {
                   <Route path="/products"           element={<ProductList />} />
                   <Route path="/faq font-bold"      element={<FaqPage />} />
                   <Route path="/faq"                element={<FaqPage />} />
+                  <Route path="/wishlist"           element={<WishlistPage />} />
+                  <Route path="/bulk-order"         element={<BulkOrderPage />} />
                   <Route path="/products/:id"       element={<ProductDetail />} />
                   <Route path="/digital"            element={<DigitalProductList />} />
                   <Route path="/digital/:id"        element={<DigitalProductDetail />} />

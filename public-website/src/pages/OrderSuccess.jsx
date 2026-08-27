@@ -3,6 +3,7 @@ import { useSearchParams, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import API from "../api";
 import SEO from "../components/SEO";
+import { trackGA4Event } from "../utils/ga4";
 
 export default function OrderSuccess() {
   const [params] = useSearchParams();
@@ -18,6 +19,13 @@ export default function OrderSuccess() {
       .then(res => {
         setOrderData(res.data);
         setLoading(false);
+        if (res.data?.order) {
+          trackGA4Event("purchase", {
+            transaction_id: res.data.order.order_uid || res.data.order.id,
+            value: res.data.order.total_amount,
+            currency: res.data.order.currency_code || "INR"
+          });
+        }
       })
       .catch(err => {
         console.error(err);
