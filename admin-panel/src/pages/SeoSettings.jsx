@@ -9,12 +9,24 @@ import {
 
 const STATIC_PAGES = [
   { key: "home", name: "Home (/)", url: "/" },
-  { key: "products", name: "Products (/products)", url: "/products" },
+  { key: "products", name: "Physical Products (/products)", url: "/products" },
+  { key: "digital", name: "Digital Products Market (/digital)", url: "/digital" },
   { key: "blog", name: "Blog (/blog)", url: "/blog" },
   { key: "faq", name: "FAQ (/faq)", url: "/faq" },
-  { key: "bulk-order", name: "Bulk Order (/bulk-order)", url: "/bulk-order" },
+  { key: "bulk-order", name: "Bulk Order / Custom Engraving (/bulk-order)", url: "/bulk-order" },
+  { key: "portfolio", name: "Portfolio / Showcases (/portfolio)", url: "/portfolio" },
+  { key: "gallery", name: "Gallery (/gallery)", url: "/gallery" },
+  { key: "service", name: "Custom Services (/service)", url: "/service" },
+  { key: "catalog", name: "Product Catalog (/catalog)", url: "/catalog" },
+  { key: "wishlist", name: "Saved Wishlist (/wishlist)", url: "/wishlist" },
+  { key: "track-order", name: "Track Order (/track-order)", url: "/track-order" },
   { key: "about", name: "About Us (/about)", url: "/about" },
   { key: "contact", name: "Contact (/contact)", url: "/contact" },
+  { key: "terms", name: "Terms & Conditions (/terms)", url: "/terms" },
+  { key: "privacy", name: "Privacy Policy (/privacy)", url: "/privacy" },
+  { key: "refund", name: "Refund Policy (/refund-policy)", url: "/refund-policy" },
+  { key: "shipping-policy", name: "Shipping Policy (/shipping-policy)", url: "/shipping-policy" },
+  { key: "cookies", name: "Cookies Policy (/cookies)", url: "/cookies" },
 ];
 
 const DYNAMIC_PAGE_TYPES = [

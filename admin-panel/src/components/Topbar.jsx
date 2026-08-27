@@ -12,9 +12,17 @@ export default function Topbar({ title }) {
   useEffect(() => {
     API.get("/currency?active=1")
       .then((r) => {
-        const list = r.data;
-        // Always ensure INR (base) is available
-        if (!list.find((c) => c.currency_code === "INR")) {
+        let list = Array.isArray(r.data) ? r.data : [];
+        if (list.length === 0) {
+          list = [
+            { country_name: "India", country_code: "IN", currency_code: "INR", currency_symbol: "₹", flag_emoji: "🇮🇳", rate_to_inr: 1.0 },
+            { country_name: "United States", country_code: "US", currency_code: "USD", currency_symbol: "$", flag_emoji: "🇺🇸", rate_to_inr: 0.012 },
+            { country_name: "Eurozone", country_code: "EU", currency_code: "EUR", currency_symbol: "€", flag_emoji: "🇪🇺", rate_to_inr: 0.011 },
+            { country_name: "United Kingdom", country_code: "GB", currency_code: "GBP", currency_symbol: "£", flag_emoji: "🇬🇧", rate_to_inr: 0.0095 },
+            { country_name: "Canada", country_code: "CA", currency_code: "CAD", currency_symbol: "$", flag_emoji: "🇨🇦", rate_to_inr: 0.016 },
+            { country_name: "Australia", country_code: "AU", currency_code: "AUD", currency_symbol: "$", flag_emoji: "🇦🇺", rate_to_inr: 0.018 }
+          ];
+        } else if (!list.find((c) => c.currency_code === "INR")) {
           list.unshift({
             country_name: "India",
             country_code: "IN",
@@ -26,7 +34,16 @@ export default function Topbar({ title }) {
         }
         setCurrencies(list);
       })
-      .catch(() => {});
+      .catch(() => {
+        setCurrencies([
+          { country_name: "India", country_code: "IN", currency_code: "INR", currency_symbol: "₹", flag_emoji: "🇮🇳", rate_to_inr: 1.0 },
+          { country_name: "United States", country_code: "US", currency_code: "USD", currency_symbol: "$", flag_emoji: "🇺🇸", rate_to_inr: 0.012 },
+          { country_name: "Eurozone", country_code: "EU", currency_code: "EUR", currency_symbol: "€", flag_emoji: "🇪🇺", rate_to_inr: 0.011 },
+          { country_name: "United Kingdom", country_code: "GB", currency_code: "GBP", currency_symbol: "£", flag_emoji: "🇬🇧", rate_to_inr: 0.0095 },
+          { country_name: "Canada", country_code: "CA", currency_code: "CAD", currency_symbol: "$", flag_emoji: "🇨🇦", rate_to_inr: 0.016 },
+          { country_name: "Australia", country_code: "AU", currency_code: "AUD", currency_symbol: "$", flag_emoji: "🇦🇺", rate_to_inr: 0.018 }
+        ]);
+      });
   }, []);
 
   const handleCurrencyChange = (e) => {

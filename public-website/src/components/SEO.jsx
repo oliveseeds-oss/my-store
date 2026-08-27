@@ -16,6 +16,7 @@ export default function SEO({ title, description, keywords, ogImage, imageAlt, p
       const path = window.location.pathname;
       if (path === "/" || path === "") activePage = "home";
       else if (path.startsWith("/products")) activePage = "products";
+      else if (path.startsWith("/digital")) activePage = "digital";
       else if (path.startsWith("/product/")) {
         const pid = path.split("/").pop();
         activePage = `product_${pid}`;
@@ -27,8 +28,19 @@ export default function SEO({ title, description, keywords, ogImage, imageAlt, p
       else if (path.startsWith("/blog")) activePage = "blog";
       else if (path.startsWith("/faq")) activePage = "faq";
       else if (path.startsWith("/bulk-order")) activePage = "bulk-order";
+      else if (path.startsWith("/portfolio")) activePage = "portfolio";
+      else if (path.startsWith("/gallery")) activePage = "gallery";
+      else if (path.startsWith("/service")) activePage = "service";
+      else if (path.startsWith("/catalog")) activePage = "catalog";
+      else if (path.startsWith("/wishlist")) activePage = "wishlist";
+      else if (path.startsWith("/track-order")) activePage = "track-order";
       else if (path.startsWith("/about")) activePage = "about";
       else if (path.startsWith("/contact")) activePage = "contact";
+      else if (path.startsWith("/terms")) activePage = "terms";
+      else if (path.startsWith("/privacy")) activePage = "privacy";
+      else if (path.startsWith("/refund")) activePage = "refund";
+      else if (path.startsWith("/shipping")) activePage = "shipping-policy";
+      else if (path.startsWith("/cookies")) activePage = "cookies";
     }
 
     if (activePage) {
