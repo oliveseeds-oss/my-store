@@ -135,16 +135,30 @@ export default function SmartAddressForm({
         />
       </div>
 
-      {/* 2. Phone with dial code dropdown + validation */}
+      {/* 2. Phone — dial code prefix dropdown (auto-set from country) + number input, validated with libphonenumber-js */}
       <div>
         <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">
           Phone Number *
         </label>
         <div className="flex gap-2">
-          <div className="bg-stone-100 border border-[#0D1512]/20 rounded-xl px-3 py-3 text-xs font-mono shrink-0 flex items-center gap-1.5 text-[#0D1512]">
-            <span>{currentCountryObj?.flag || getFlagEmoji(currentCountryObj?.isoCode)}</span>
-            <span>{dialCode}</span>
-          </div>
+          <select
+            disabled={readOnly}
+            value={currentCountryObj?.isoCode}
+            onChange={handleCountryChange}
+            className="bg-[#FAF9F6]/20 border border-[#0D1512]/20 rounded-xl px-3 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] font-mono shrink-0 disabled:bg-stone-100 disabled:cursor-not-allowed"
+          >
+            {allCountries.map((c) => {
+              let code = "+1";
+              try {
+                code = "+" + getCountryCallingCode(c.isoCode);
+              } catch {}
+              return (
+                <option key={`dial-${c.isoCode}`} value={c.isoCode}>
+                  {c.flag || getFlagEmoji(c.isoCode)} {code}
+                </option>
+              );
+            })}
+          </select>
           <input
             type="tel"
             required
