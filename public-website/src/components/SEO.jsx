@@ -100,6 +100,17 @@ export default function SEO({ title, description, keywords, ogImage, imageAlt, p
     setMeta("property", "og:url", currentUrl);
     setMeta("property", "og:locale", "en_US");
 
+    // FEED 5: OPEN GRAPH PRODUCT SPECIFIC TAGS
+    if (isProduct && productData) {
+      setMeta("property", "product:price:amount", String(productData.price || "0"));
+      setMeta("property", "product:price:currency", "INR");
+      setMeta("property", "product:availability", (productData.stock === 0 || productData.stock === "0") ? "out of stock" : "in stock");
+      setMeta("property", "product:brand", "Olive Seeds Studio");
+      if (productData.category) {
+        setMeta("property", "product:category", productData.category);
+      }
+    }
+
     // TWITTER / X CARDS
     setMeta("name", "twitter:card", "summary_large_image");
     setMeta("name", "twitter:site", process.env.REACT_APP_TWITTER_HANDLE || "@oliveseeds");

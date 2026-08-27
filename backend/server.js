@@ -52,6 +52,10 @@ async function startServer() {
   app.use("/api/catalog", require("./routes/catalog"));
   app.use("/api/portfolio", require("./routes/portfolio"));
 
+  const feedsRouter = require("./routes/feeds");
+  app.use("/feeds", feedsRouter);
+  app.use("/api/feeds", feedsRouter);
+
   const seoRouter = require("./routes/seo");
   app.get("/sitemap.xml", (req, res) => seoRouter(req, res));
   app.get("/sitemap-images.xml", (req, res) => seoRouter(req, res));

@@ -22,6 +22,7 @@ import CatalogAdmin from "./pages/CatalogAdmin";
 import PortfolioAdmin from "./pages/PortfolioAdmin";
 
 import FaqManager from "./pages/FaqManager";
+import FeedManager from "./pages/FeedManager";
 import ShippingCountries from "./pages/ShippingCountries";
 
 const P = ({ children }) => <ProtectedRoute>{children}</ProtectedRoute>;
@@ -43,6 +44,7 @@ export default function App() {
           <Route path="/members" element={<P><Members /></P>} />
           <Route path="/blog" element={<P><Blog /></P>} />
           <Route path="/faqs" element={<P><FaqManager /></P>} />
+          <Route path="/feeds" element={<P><FeedManager /></P>} />
           <Route path="/messages" element={<P><ContactMessages /></P>} />
           <Route path="/ads" element={<P><AdPanel /></P>} />
           <Route path="/notifications" element={<P><Notifications /></P>} />

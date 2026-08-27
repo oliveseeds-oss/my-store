@@ -347,10 +347,12 @@ export default function ProductDetail() {
     <div className="min-h-screen" style={{ background: "#f7f3ef" }}>
       <SEO 
         title={product.name} 
-        description={product.description.substring(0, 160)} 
+        description={product.description ? product.description.substring(0, 160) : ""} 
         keywords={`${product.category_name || "laser engraving"}, dynamic keepsakes, organic wood carvings, custom gift`} 
         ogImage={product.image_url}
         imageAlt={product.image_alt || product.name}
+        isProduct={true}
+        productData={product}
       />
       <Navbar />
 
