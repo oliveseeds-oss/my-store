@@ -246,11 +246,22 @@ router.post("/admin/:id/personalization", verifyAdmin, async (req, res) => {
 
 // ADMIN — all
 router.get("/admin/all", verifyAdmin, async (req, res) => {
-  const [rows] = await db.query(
-    `SELECT p.*, c.name as category_name FROM products p
-     LEFT JOIN categories c ON p.category_id = c.id ORDER BY p.created_at DESC`
-  );
-  res.json(rows.map(r => ({ ...r, images: parseJSON(r.images), sizes: parseJSON(r.sizes), tags: parseJSON(r.tags) })));
+  try {
+    let [rows] = await db.query(
+      `SELECT p.*, c.name as category_name FROM products p
+       LEFT JOIN categories c ON p.category_id = c.id ORDER BY p.created_at DESC`
+    );
+    if (!rows.length) {
+      const [physRows] = await db.query(
+        "SELECT *, category as category_name FROM physical_products ORDER BY created_at DESC"
+      );
+      rows = physRows;
+    }
+    res.json(rows.map(r => ({ ...r, images: parseJSON(r.images), sizes: parseJSON(r.sizes), tags: parseJSON(r.tags) })));
+  } catch (err) {
+    console.error("Error fetching admin all products:", err);
+    res.status(500).json({ error: "Failed to fetch products" });
+  }
 });
 
 // ADMIN — add
