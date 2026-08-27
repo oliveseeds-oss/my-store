@@ -12,53 +12,26 @@ async function startServer() {
 
   const app = express();
 
-  const corsOptions = {
-    origin: function (origin, callback) {
-      const allowedOrigins = [
-        "https://adminosspanel.oliveseedsdesignstudio.com",
-        "https://oliveseedsdesignstudio.com",
-        "https://www.oliveseedsdesignstudio.com",
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "http://localhost:5173",
-        "http://localhost:5174"
-      ];
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith("oliveseedsdesignstudio.com")) {
-        callback(null, true);
-      } else {
-        callback(new Error("CORS policy: Origin not allowed: " + origin));
-      }
-    },
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "X-Requested-With",
-      "Accept",
-      "Origin",
-      "Cache-Control",
-      "Pragma",
-      "X-Access-Token"
-    ],
-    credentials: true,
-    optionsSuccessStatus: 200,
-    preflightContinue: false
-  };
-
-  app.use(cors(corsOptions));
-  app.options(/(.*)/, cors(corsOptions));
-
-  // Fallback explicit preflight handler for reverse proxies
   app.use((req, res, next) => {
     const origin = req.headers.origin;
-    if (origin) {
+    const allowed = [
+      "https://adminosspanel.oliveseedsdesignstudio.com",
+      "https://oliveseedsdesignstudio.com",
+      "https://www.oliveseedsdesignstudio.com",
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "http://localhost:5173",
+      "http://localhost:5174"
+    ];
+    if (origin && (allowed.includes(origin) || origin.endsWith("oliveseedsdesignstudio.com"))) {
       res.setHeader("Access-Control-Allow-Origin", origin);
-      res.setHeader("Vary", "Origin");
-      res.setHeader("Access-Control-Allow-Credentials", "true");
-      res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
-      res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept, Origin, Cache-Control, Pragma, X-Access-Token");
+    } else {
+      res.setHeader("Access-Control-Allow-Origin", "*");
     }
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept, Origin, Cache-Control, Pragma, X-Access-Token");
+    
     if (req.method === "OPTIONS") {
       return res.status(200).end();
     }
