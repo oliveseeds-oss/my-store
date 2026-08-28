@@ -364,6 +364,10 @@ export default function ProductList() {
   }, [loadWishlist]);
 
   const toggleWishlist = async (product_uid) => {
+    if (!member) {
+      navigate("/login");
+      return;
+    }
     const isWishlisted = wishlist.includes(product_uid);
     setWishlist((w) => isWishlisted ? w.filter((x) => x !== product_uid) : [...w, product_uid]);
     try {

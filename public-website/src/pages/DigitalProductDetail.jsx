@@ -245,6 +245,10 @@ export default function DigitalProductDetail() {
               </h1>
               <button
                 onClick={async () => {
+                  if (!member) {
+                    navigate("/login");
+                    return;
+                  }
                   const targetUid = product.product_uid || product.id;
                   try {
                     if (isWishlisted) {

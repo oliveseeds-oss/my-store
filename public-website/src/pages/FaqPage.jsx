@@ -18,10 +18,19 @@ export default function FaqPage() {
       .then((res) => {
         setFaqs(res.data || []);
         if (res.data && res.data.length > 0) {
-          setOpenId(res.data[0].id); // Open first FAQ by default
+          setOpenId(res.data[0].id);
         }
       })
-      .catch((err) => console.error("Failed to load FAQs:", err))
+      .catch(() => {
+        API.get("/faq")
+          .then((res) => {
+            setFaqs(res.data || []);
+            if (res.data && res.data.length > 0) {
+              setOpenId(res.data[0].id);
+            }
+          })
+          .catch((err) => console.error("Failed to load FAQs:", err));
+      })
       .finally(() => setLoading(false));
   }, []);
 
