@@ -449,36 +449,8 @@ export default function DigitalProductDetail() {
             </div>
           )}
 
-          <div className="flex flex-col gap-4 mb-6">
-            {reviews.map(r => (
-              <div key={r.id} className="pb-4" style={{ borderBottom: "1px solid rgba(56,189,248,0.08)" }}>
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
-                    style={{ background: "#0c1445", color: "#38bdf8", border: "1px solid rgba(56,189,248,0.3)" }}>
-                    {r.member_name?.[0]?.toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold" style={{ color: "#e2e8f0" }}>{r.member_name}</p>
-                    <div className="flex">
-                      {[1,2,3,4,5].map(i => (
-                        <span key={i} className="text-xs"
-                          style={{ color: i <= r.rating ? "#0ea5e9" : "#1e293b" }}>★</span>
-                      ))}
-                    </div>
-                  </div>
-                  <p className="text-xs ml-auto" style={{ color: "#334155" }}>
-                    {new Date(r.created_at).toLocaleDateString("en-IN", { day:"numeric", month:"short", year:"numeric" })}
-                  </p>
-                </div>
-                {r.title && <p className="text-xs font-bold mb-1" style={{ color: "#38bdf8" }}>{r.title}</p>}
-                <p className="text-xs leading-relaxed" style={{ color: "#64748b" }}>{r.comment}</p>
-              </div>
-            ))}
-            {reviews.length === 0 && (
-              <p className="text-xs" style={{ color: "#334155" }}>No reviews yet. Be the first!</p>
-            )}
-          </div>
-          <ReviewForm productId={product.id} onSubmit={load} />
+          {/* Customer Reviews Section */}
+          <ReviewSection productId={product.id || product.product_uid} />
         </div>
 
         {/* Related */}

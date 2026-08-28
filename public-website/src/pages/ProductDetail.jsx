@@ -957,66 +957,8 @@ export default function ProductDetail() {
                   </p>
                 </div>
                 {r.title && <p className="text-sm font-semibold text-stone-800 mb-1">{r.title}</p>}
-                <p className="text-sm text-stone-600 leading-relaxed">{r.comment}</p>
-              </div>
-            ))}
-            {reviews.length === 0 && (
-              <p className="text-sm text-stone-400">No reviews yet. Be the first to review!</p>
-            )}
-          </div>
-
-          <ReviewForm productId={product.id} onSubmit={load} />
-        </div>
-
-        {/* ── Related products ── */}
-        {related.length > 0 && (
-          <div className="mt-10 border-t border-stone-200 pt-8">
-            <h2 className="text-xl font-bold text-stone-800 mb-6">
-              Customers also viewed
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-              {related.map(r => {
-                const img = Array.isArray(r.images) ? r.images[0] : null;
-                const price = r.discount_price || r.price;
-                const discount = r.discount_price ? Math.round((1 - r.discount_price / r.price) * 100) : 0;
-                return (
-                  <Link key={r.id} to={`/products/${r.id}`}
-                    onClick={() => window.scrollTo(0, 0)}
-                    className="group bg-white border border-stone-200 hover:shadow-md transition overflow-hidden rounded-xl p-3 flex flex-col justify-between">
-                    <div>
-                      <div className="aspect-square bg-stone-50 overflow-hidden rounded-[4px] mb-2 flex items-center justify-center">
-                        {img
-                          ? <img src={img} alt={r.name} className="w-full h-full object-cover group-hover:scale-105 transition" />
-                          : <span className="text-3xl">🪵</span>}
-                      </div>
-                      <p className="text-xs text-[#007185] hover:text-[#C7511F] hover:underline line-clamp-2 leading-snug mb-1 font-medium">
-                        {r.name}
-                      </p>
-                      {/* Rating */}
-                      <div className="flex items-center gap-1 mb-1">
-                        <span className="text-xs text-amber-500">
-                          {"★".repeat(Math.round(r.rating || 5)) + "☆".repeat(5 - Math.round(r.rating || 5))}
-                        </span>
-                        <span className="text-[10px] text-[#007185]">{r.review_count || 12}</span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex items-baseline gap-1.5 flex-wrap">
-                        <span className="text-sm font-bold text-stone-900">{convert(price)}</span>
-                        {r.discount_price && (
-                          <>
-                            <span className="text-[10px] text-stone-400 line-through">{convert(r.price)}</span>
-                            <span className="text-[10px] font-bold text-green-700">({discount}% off)</span>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        )}
+        {/* Customer Reviews Section */}
+        <ReviewSection productId={product.id} />
 
         {/* FEATURE 4: Recently Viewed Products */}
         <RecentlyViewed currentProductId={product.id} />
