@@ -373,12 +373,12 @@ export default function ProductList() {
     }
     const uidStr = String(targetUid);
     const isWishlisted = wishlist.some(x => String(x) === uidStr);
-    setWishlist((w) => isWishlisted ? w.filter((x) => String(x) !== uidStr) : [...w, targetUid]);
+    setWishlist((w) => isWishlisted ? w.filter((x) => String(x) !== uidStr) : [...w, uidStr]);
     try {
       if (isWishlisted) {
         await API.delete(`/wishlist/${targetUid}`);
       } else {
-        await API.post("/wishlist/add", { product_uid: uidStr, product_type: "physical" });
+        await API.post("/wishlist/add", { product_id: !isNaN(targetUid) ? parseInt(targetUid) : 0, product_uid: uidStr, product_type: "physical" });
       }
     } catch (err) {
       console.error("Failed to update wishlist:", err);
