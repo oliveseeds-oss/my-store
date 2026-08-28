@@ -68,8 +68,8 @@ export default function Topbar({ title }) {
             onChange={handleCurrencyChange}
             className="bg-transparent text-xs font-bold text-gray-700 focus:outline-none cursor-pointer">
             {currencies.map((c) => (
-              <option key={c.currency_code} value={c.currency_code}>
-                {c.flag_emoji || "🌐"} {c.currency_code} ({c.currency_symbol})
+              <option key={c.id || c.country_code || c.currency_code} value={c.currency_code}>
+                {c.flag_emoji || "🌐"} {c.currency_code} ({c.currency_symbol}) - {c.country_name}
               </option>
             ))}
           </select>
