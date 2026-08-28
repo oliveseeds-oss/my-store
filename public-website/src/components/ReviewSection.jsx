@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import API from '../api'
 import { useMember } from '../context/MemberContext'
 
 const StarDisplay = ({ rating, size = '1rem' }) => (
@@ -51,7 +51,7 @@ const ReviewSection = ({ productId }) => {
 
   useEffect(() => {
     if (!productId) return
-    axios.get(`/api/reviews/${productId}`)
+    API.get(`/reviews/${productId}`)
       .then(res => {
         const rawReviews = res.data.reviews || (Array.isArray(res.data) ? res.data : [])
         const rawAvg = res.data.average ?? res.data.average_rating ?? 0
@@ -67,7 +67,7 @@ const ReviewSection = ({ productId }) => {
       .catch(() => setLoading(false))
 
     if (user) {
-      axios.get(`/api/reviews/can-review/${productId}`)
+      API.get(`/reviews/can-review/${productId}`)
         .then(res => setCanReview(res.data.canReview))
         .catch(() => {})
     }
@@ -85,7 +85,7 @@ const ReviewSection = ({ productId }) => {
     setSubmitting(true)
     setError('')
     try {
-      await axios.post('/api/reviews', {
+      await API.post('/reviews', {
         product_id: productId,
         rating,
         review_text: text

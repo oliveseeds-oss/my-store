@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import axios from 'axios'
+import API from '../api'
 
 const NotificationBell = () => {
   const [notifications, setNotifications] = useState([])
@@ -28,7 +28,7 @@ const NotificationBell = () => {
 
   const fetchUnreadCount = async () => {
     try {
-      const res = await axios.get('/api/notifications/unread-count')
+      const res = await API.get('/notifications/unread-count')
       setUnreadCount(res.data.count || 0)
     } catch (err) {
       // Silent fail — do not show error to user
@@ -38,7 +38,7 @@ const NotificationBell = () => {
   const fetchNotifications = async () => {
     setLoading(true)
     try {
-      const res = await axios.get('/api/notifications')
+      const res = await API.get('/notifications')
       setNotifications(res.data || [])
     } catch (err) {
       console.error('Notifications error:', err)
@@ -54,7 +54,7 @@ const NotificationBell = () => {
 
   const markAsRead = async (id) => {
     try {
-      await axios.put(`/api/notifications/${id}/read`)
+      await API.put(`/notifications/${id}/read`)
       setNotifications(prev =>
         prev.map(n => n.id === id ? { ...n, is_read: true } : n)
       )
@@ -64,7 +64,7 @@ const NotificationBell = () => {
 
   const markAllRead = async () => {
     try {
-      await axios.put('/api/notifications/read-all')
+      await API.put('/notifications/read-all')
       setNotifications(prev =>
         prev.map(n => ({ ...n, is_read: true }))
       )
