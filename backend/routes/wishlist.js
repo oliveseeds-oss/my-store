@@ -31,13 +31,17 @@ router.get("/", verifyMember, async (req, res) => {
   }
 });
 
-// GET /api/wishlist/my — legacy compatibility array of saved IDs & product_uids
+// GET /api/wishlist/my — array of all saved IDs & product_uids as strings
 router.get("/my", verifyMember, async (req, res) => {
   const userId = req.member.id;
   try {
     const [items] = await db.query("SELECT product_id, product_uid FROM wishlists WHERE user_id = ?", [userId]);
-    const savedList = items.map(i => i.product_uid || i.product_id).filter(Boolean);
-    res.json(savedList);
+    const savedList = [];
+    items.forEach(i => {
+      if (i.product_uid) savedList.push(String(i.product_uid));
+      if (i.product_id && i.product_id !== 0) savedList.push(String(i.product_id));
+    });
+    res.json(Array.from(new Set(savedList)));
   } catch (error) {
     res.json([]);
   }

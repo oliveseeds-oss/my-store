@@ -98,8 +98,9 @@ export default function DigitalProductDetail() {
     try {
       const wRes = await API.get("/wishlist/my");
       if (Array.isArray(wRes.data)) {
-        const targetUid = r.data.product_uid || r.data.id;
-        const exists = wRes.data.some(w => w.product_uid === targetUid || String(w.product_uid) === String(id));
+        const idStr = String(id);
+        const pUidStr = String(r.data.product_uid || r.data.id || "");
+        const exists = wRes.data.some(w => String(w) === idStr || String(w) === pUidStr);
         setIsWishlisted(exists);
       }
     } catch {
