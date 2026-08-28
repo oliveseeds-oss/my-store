@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import API from "../api";
 import { useCart } from "../context/CartContext";
 import { useMember } from "../context/MemberContext";

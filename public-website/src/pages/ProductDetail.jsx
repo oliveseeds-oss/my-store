@@ -58,6 +58,16 @@ function ReviewForm({ productId, onSubmit }) {
   );
 
   if (done) return (
+    <div className="bg-emerald-50 border border-emerald-200 p-4 text-xs font-bold text-emerald-800 rounded-lg">
+      ✓ Thank you for your review! It will appear once approved by admin.
+    </div>
+  );
+
+  const submit = async () => {
+    setLoading(true);
+    try {
+      await API.post("/reviews", {
+        product_id: productId,
         rating: form.rating,
         review_text: form.review_text
       });
