@@ -163,10 +163,10 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
         </div>
 
         {/* Badges */}
-        <div style={{ position: "absolute", top: 12, left: 12, display: "flex", flexDirection: "column", gap: 6 }}>
+        <div style={{ position: "absolute", top: 10, left: 10, display: "flex", flexWrap: "wrap", gap: 6, zIndex: 10, maxWidth: "calc(100% - 54px)" }}>
           {discount > 0 && (
             <span style={{
-              fontSize: 10, fontWeight: 700, padding: "4px 10px",
+              fontSize: 10, fontWeight: 700, padding: "3px 8px",
               borderRadius: 50, background: "#7f1d1d", color: "#fff",
               fontFamily: T.bodyFont, letterSpacing: "0.05em",
             }}>
@@ -175,7 +175,7 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
           )}
           {tags.slice(0, 1).map((t) => (
             <span key={t} style={{
-              fontSize: 10, fontWeight: 700, padding: "4px 10px",
+              fontSize: 10, fontWeight: 700, padding: "3px 8px",
               borderRadius: 50, fontFamily: T.bodyFont, letterSpacing: "0.05em",
               background: t === "Best Seller" ? T.highlight : t === "New Arrival" ? "#0f766e" : T.accent,
               color: "#fff",
@@ -190,13 +190,13 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); onWishlist(); }}
           aria-label="Add to Wishlist"
           style={{
-            position: "absolute", top: 12, right: 12, zIndex: 10,
-            width: 36, height: 36, borderRadius: "50%",
+            position: "absolute", top: 10, right: 10, zIndex: 25,
+            width: 34, height: 34, borderRadius: "50%",
             background: "rgba(255,255,255,0.95)",
             backdropFilter: "blur(8px)",
             border: "1px solid rgba(0,0,0,0.08)", cursor: "pointer",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 18,
+            fontSize: 16,
             boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
             opacity: 1,
             transition: "all 0.2s ease",

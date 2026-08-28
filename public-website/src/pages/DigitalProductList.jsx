@@ -372,8 +372,9 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
     <div className="dcard" style={{ position: "relative" }}>
       <div className="dcard__glow" />
 
-      {/* Wishlist Heart Button */}
+      {/* Wishlist Button */}
       <button
+        type="button"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -382,11 +383,11 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
         aria-label="Add to Wishlist"
         style={{
           position: "absolute",
-          top: 12,
-          right: 12,
-          zIndex: 20,
-          width: 34,
-          height: 34,
+          top: 10,
+          right: 10,
+          zIndex: 25,
+          width: 32,
+          height: 32,
           borderRadius: "50%",
           background: "rgba(15,23,42,0.85)",
           backdropFilter: "blur(8px)",
@@ -394,8 +395,8 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
           cursor: "pointer",
           display: "flex",
           alignItems: "center",
-          justify: "center",
-          fontSize: 16,
+          justifyContent: "center",
+          fontSize: 15,
           boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
           color: isWishlisted ? "#f43f5e" : "#94a3b8",
           transition: "all 0.2s ease",
@@ -422,12 +423,13 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
           )}
           <div className="dcard__img-overlay" />
 
-          {discount > 0 && (
-            <div style={{ position: "absolute", top: 12, left: 12 }}>
+          {/* Badges Container Top-Left */}
+          <div style={{ position: "absolute", top: 10, left: 10, display: "flex", flexWrap: "wrap", gap: 6, zIndex: 10, maxWidth: "calc(100% - 48px)" }}>
+            {discount > 0 && (
               <span style={{
-                padding: "4px 10px",
+                padding: "3px 8px",
                 borderRadius: 999,
-                fontSize: 11,
+                fontSize: 10,
                 fontWeight: 700,
                 fontFamily: "Inter, sans-serif",
                 background: "linear-gradient(90deg,#F59E0B,#EF4444)",
@@ -436,33 +438,12 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
               }}>
                 -{discount}%
               </span>
-            </div>
-          )}
-
-          {p.file_format && (
-            <div style={{ position: "absolute", bottom: 10, left: 12 }}>
+            )}
+            {tags.length > 0 && (
               <span style={{
-                padding: "4px 10px",
+                padding: "3px 8px",
                 borderRadius: 999,
-                fontSize: 11,
-                fontWeight: 600,
-                fontFamily: "Inter, sans-serif",
-                background: "rgba(255,255,255,0.1)",
-                backdropFilter: "blur(10px)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                color: "#fff",
-              }}>
-                {p.file_format}
-              </span>
-            </div>
-          )}
-
-          {tags.length > 0 && (
-            <div style={{ position: "absolute", top: 12, right: 12 }}>
-              <span style={{
-                padding: "4px 10px",
-                borderRadius: 999,
-                fontSize: 11,
+                fontSize: 10,
                 fontWeight: 700,
                 fontFamily: "Inter, sans-serif",
                 background: "linear-gradient(90deg, rgba(110,231,249,0.25), rgba(139,124,255,0.25))",
@@ -471,6 +452,24 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
                 backdropFilter: "blur(8px)",
               }}>
                 {tags[0]}
+              </span>
+            )}
+          </div>
+
+          {p.file_format && (
+            <div style={{ position: "absolute", bottom: 10, left: 10, zIndex: 10 }}>
+              <span style={{
+                padding: "3px 8px",
+                borderRadius: 999,
+                fontSize: 10,
+                fontWeight: 600,
+                fontFamily: "Inter, sans-serif",
+                background: "rgba(255,255,255,0.1)",
+                backdropFilter: "blur(10px)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                color: "#fff",
+              }}>
+                {p.file_format}
               </span>
             </div>
           )}
