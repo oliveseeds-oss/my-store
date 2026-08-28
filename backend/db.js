@@ -300,6 +300,7 @@ poolPromise.query(`
       id INT PRIMARY KEY AUTO_INCREMENT,
       user_id INT NOT NULL DEFAULT 0,
       member_id INT DEFAULT 0,
+      member_uid VARCHAR(100),
       product_id INT DEFAULT 0,
       digital_id INT DEFAULT 0,
       product_uid VARCHAR(100),
@@ -311,6 +312,7 @@ poolPromise.query(`
   // Add missing columns to wishlists table if existing table had old/different schema
   poolPromise.query("ALTER TABLE wishlists ADD COLUMN user_id INT DEFAULT 0").catch(() => {});
   poolPromise.query("ALTER TABLE wishlists ADD COLUMN member_id INT DEFAULT 0").catch(() => {});
+  poolPromise.query("ALTER TABLE wishlists ADD COLUMN member_uid VARCHAR(100)").catch(() => {});
   poolPromise.query("ALTER TABLE wishlists ADD COLUMN product_uid VARCHAR(100)").catch(() => {});
   poolPromise.query("ALTER TABLE wishlists ADD COLUMN product_type VARCHAR(20) DEFAULT 'physical'").catch(() => {});
   poolPromise.query("ALTER TABLE wishlists ADD COLUMN digital_id INT DEFAULT 0").catch(() => {});
