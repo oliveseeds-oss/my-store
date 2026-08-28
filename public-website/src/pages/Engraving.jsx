@@ -4,6 +4,7 @@ import API from "../api";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SEO from "../components/SEO";
+import ReviewSection from "../components/ReviewSection";
 
 const FadeUp = ({ children, delay = 0 }) => (
   <motion.div
@@ -636,6 +637,10 @@ export default function Engraving() {
           )}
         </div>
       </section>
+
+      <div className="max-w-7xl mx-auto px-4 pb-12">
+        <ReviewSection productId={1} />
+      </div>
 
       <Footer settings={settings} />
     </div>

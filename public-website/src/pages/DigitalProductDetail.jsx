@@ -9,6 +9,7 @@ import Footer from "../components/Footer";
 import SEO from "../components/SEO";
 import AdBanner from "../components/AdBanner";
 import CuteLoader from "../components/CuteLoader";
+import ReviewSection from "../components/ReviewSection";
 
 function ReviewForm({ productId, onSubmit }) {
   const { member } = useMember();
@@ -530,6 +531,9 @@ export default function DigitalProductDetail() {
             </div>
           </div>
         )}
+
+        {/* Customer Reviews */}
+        <ReviewSection productId={product.id || product.product_uid} />
       </div>
       <Footer dark />
     </div>

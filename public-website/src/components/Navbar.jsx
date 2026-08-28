@@ -4,6 +4,7 @@ import { useCart } from "../context/CartContext";
 import { useMember } from "../context/MemberContext";
 import { MdShoppingCart, MdPerson, MdMenu, MdClose } from "react-icons/md";
 import CurrencySelector from "./CurrencySelector";
+import NotificationBell from "./NotificationBell";
 
 export default function Navbar() {
   const { count } = useCart();
@@ -42,6 +43,7 @@ export default function Navbar() {
 
         <div className="flex items-center gap-1 xs:gap-1.5 sm:gap-2">
           <CurrencySelector />
+          {member && <NotificationBell />}
           <Link to="/profile?tab=wishlist" aria-label="Wishlist" title="Your Wishlist" className="p-1.5 sm:p-2 hover:bg-[#0D1512]/10 rounded-xl transition text-[#0D1512]">
             <span className="text-base sm:text-lg font-bold">♥</span>
           </Link>

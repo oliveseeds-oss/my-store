@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const db = require("../db");
 const { verifyAdmin } = require("../middleware/auth");
+const createNotification = require("../utils/createNotification");
 
 const SHIPPING_PARTNERS = {
   delhivery: {
@@ -475,6 +476,50 @@ router.post("/webhook/shiprocket", async (req, res) => {
       "INSERT INTO shipment_events (shipment_id, status, description, event_time) VALUES (?, ?, ?, NOW())",
       [shipment.id, shipmentStatus, `Webhook update: ${current_status}`]
     );
+
+    // Trigger user notification
+    try {
+      const [ordRows] = await db.query(
+        "SELECT member_uid FROM physical_orders WHERE id = ?",
+        [shipment.order_id]
+      );
+      if (ordRows.length && ordRows[0].member_uid) {
+        const [mRows] = await db.query(
+          "SELECT id FROM members WHERE member_uid = ? OR id = ?",
+          [ordRows[0].member_uid, ordRows[0].member_uid]
+        );
+        const userId = mRows[0]?.id;
+        if (userId) {
+          if (shipmentStatus === "Out for Delivery" || String(current_status).toLowerCase().includes("out for delivery")) {
+            await createNotification(
+              db, userId,
+              "Out for Delivery 🚚",
+              `Your order #${shipment.order_id} is out for delivery today!`,
+              "order_out_for_delivery",
+              shipment.order_id, null
+            );
+          } else if (shipmentStatus === "Delivered" || orderStatus === "Delivered") {
+            await createNotification(
+              db, userId,
+              "Order Delivered 🎉",
+              `Your order #${shipment.order_id} has been delivered. Enjoy your purchase!`,
+              "order_delivered",
+              shipment.order_id, null
+            );
+          } else if (orderStatus === "Shipped" || shipmentStatus === "In Transit" || shipmentStatus === "Picked Up") {
+            await createNotification(
+              db, userId,
+              "Order Shipped 📦",
+              `Your order #${shipment.order_id} has been shipped and is on its way.`,
+              "order_shipped",
+              shipment.order_id, null
+            );
+          }
+        }
+      }
+    } catch (notifErr) {
+      console.error("Shipping webhook notification error:", notifErr);
+    }
 
     // Fetch order details to send automated email update to customer
     try {

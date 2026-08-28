@@ -9,6 +9,7 @@ import Footer from "../components/Footer";
 import SEO from "../components/SEO";
 import AdBanner from "../components/AdBanner";
 import RecentlyViewed, { trackRecentlyViewed } from "../components/RecentlyViewed";
+import ReviewSection from "../components/ReviewSection";
 import { trackGA4Event } from "../utils/ga4";
 
 function Stars({ rating, size = "md" }) {
@@ -1019,6 +1020,9 @@ export default function ProductDetail() {
 
         {/* FEATURE 4: Recently Viewed Products */}
         <RecentlyViewed currentProductId={product.id} />
+
+        {/* Customer Reviews */}
+        <ReviewSection productId={product.id} />
       </div>
       <Footer />
     </div>

@@ -7,7 +7,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { 
   MdShoppingBag, MdLock, MdHome, MdCloudDownload, 
-  MdFavorite, MdExitToApp, MdArrowBack, MdCheckCircle, MdSave 
+  MdFavorite, MdExitToApp, MdArrowBack, MdCheckCircle, MdSave, MdNotifications 
 } from "react-icons/md";
 import SmartAddressForm from "../components/SmartAddressForm";
 
@@ -36,6 +36,34 @@ export default function Profile() {
   const [successMsg, setSuccessMsg] = useState("");
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [loadingWishlist, setLoadingWishlist] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
+
+  const fetchNotifications = useCallback(async () => {
+    setLoadingNotifications(true);
+    try {
+      const r = await API.get("/notifications");
+      setNotifications(Array.isArray(r.data) ? r.data : []);
+    } catch (err) {
+      console.error("Failed to load notifications:", err);
+    } finally {
+      setLoadingNotifications(false);
+    }
+  }, []);
+
+  const markAllReadNotifications = async () => {
+    try {
+      await API.put("/notifications/read-all");
+      setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+    } catch (err) {}
+  };
+
+  const markSingleReadNotification = async (id) => {
+    try {
+      await API.put(`/notifications/${id}/read`);
+      setNotifications(prev => prev.map(n => n.id === id ? ({ ...n, is_read: true }) : n));
+    } catch (err) {}
+  };
 
   const fetchOrders = useCallback(async () => {
     setLoadingOrders(true);
@@ -86,7 +114,8 @@ export default function Profile() {
 
     fetchOrders();
     fetchWishlist();
-  }, [member, navigate, fetchOrders, fetchWishlist]);
+    fetchNotifications();
+  }, [member, navigate, fetchOrders, fetchWishlist, fetchNotifications]);
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -270,6 +299,22 @@ export default function Profile() {
                 <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="font-bold text-[#0D1512] text-sm leading-snug">Your Wishlist</h3>
                 <p className="text-[#0D1512]/60 text-xs mt-1.5 leading-relaxed">
                   Manage your wishlisted items, transfer products instantly to the shopping cart, or delete saved records.
+                </p>
+              </div>
+            </div>
+
+            {/* Card 6: Notifications */}
+            <div 
+              onClick={() => setActiveTab("notifications")}
+              style={{ background: "white", borderColor: "rgba(27, 57, 49, 0.15)" }}
+              className="rounded-2xl border hover:border-[#0D1512] p-6 
+                         flex gap-4 cursor-pointer shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-0.5"
+            >
+              <div className="text-3xl text-[#0D1512] flex-shrink-0 mt-0.5"><MdNotifications /></div>
+              <div>
+                <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="font-bold text-[#0D1512] text-sm leading-snug">Notifications</h3>
+                <p className="text-[#0D1512]/60 text-xs mt-1.5 leading-relaxed">
+                  View full order status notifications, shipping updates, broadcasts, and announcements.
                 </p>
               </div>
             </div>
@@ -673,6 +718,81 @@ export default function Profile() {
               </div>
             )}
 
+          </div>
+        )}
+
+        {/* ─── NOTIFICATIONS VIEW ─── */}
+        {activeTab === "notifications" && (
+          <div className="animate-fadeIn">
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <button 
+                  onClick={() => setActiveTab("home")}
+                  className="text-xs font-bold text-[#0D1512]/60 hover:text-[#0D1512] flex items-center gap-1 mb-2 transition"
+                >
+                  <MdArrowBack /> Back to Account Overview
+                </button>
+                <h2 className="text-2xl font-black text-[#0D1512]" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                  Notifications & History
+                </h2>
+              </div>
+              {notifications.some(n => !n.is_read) && (
+                <button
+                  onClick={markAllReadNotifications}
+                  className="text-xs font-bold px-4 py-2 rounded-xl bg-[#0D1512] text-[#FAF9F6] hover:bg-[#0D1512]/80 transition shadow"
+                >
+                  Mark all as read
+                </button>
+              )}
+            </div>
+
+            {loadingNotifications ? (
+              <div className="bg-white rounded-2xl border p-12 text-center text-gray-500">
+                <p className="text-sm font-semibold">Loading notifications...</p>
+              </div>
+            ) : notifications.length === 0 ? (
+              <div className="bg-white rounded-2xl border p-12 text-center text-gray-500 shadow-sm">
+                <div className="text-4xl mb-3">🔔</div>
+                <p className="font-bold text-gray-800 text-base">No notifications yet</p>
+                <p className="text-xs text-gray-500 mt-1">You will receive notifications here about your order status and updates.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {notifications.map((n) => (
+                  <div
+                    key={n.id}
+                    onClick={() => markSingleReadNotification(n.id)}
+                    className={`p-5 rounded-2xl border transition cursor-pointer flex justify-between items-start shadow-sm hover:shadow-md ${
+                      n.is_read ? "bg-white border-gray-100" : "bg-[#f0f4e8] border-[#6B7C3F]/40"
+                    }`}
+                  >
+                    <div className="flex gap-3 items-start">
+                      <span className="text-xl">
+                        {n.type === 'order_confirmed' ? '📦' :
+                         n.type === 'order_shipped' ? '🚚' :
+                         n.type === 'order_out_for_delivery' ? '🛵' :
+                         n.type === 'order_delivered' ? '🎉' :
+                         n.type === 'new_arrival' ? '✨' : '🔔'}
+                      </span>
+                      <div>
+                        <div className={`text-sm ${n.is_read ? 'font-semibold text-gray-800' : 'font-black text-[#0D1512]'}`}>
+                          {n.title}
+                        </div>
+                        <div className="text-xs text-gray-600 mt-1 leading-relaxed">
+                          {n.message}
+                        </div>
+                        <div className="text-[10px] text-gray-400 mt-2">
+                          {new Date(n.created_at).toLocaleString()}
+                        </div>
+                      </div>
+                    </div>
+                    {!n.is_read && (
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#6B7C3F] shrink-0 mt-1" />
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

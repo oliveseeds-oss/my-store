@@ -183,19 +183,36 @@ poolPromise.query(`
   // Ensure default settings row exists (Priority 1)
   poolPromise.query("INSERT IGNORE INTO settings (id, site_name) VALUES (1, 'My Engraving Store')").catch(() => {});
 
-  // Ensure notifications table exists and has wide type column
+  // Ensure notifications table exists and has user_id, related_order_id, related_product_id columns
   poolPromise.query(`
     CREATE TABLE IF NOT EXISTS notifications (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      type VARCHAR(50) NOT NULL,
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      user_id INT NOT NULL,
       title VARCHAR(255) NOT NULL,
-      message TEXT,
-      link VARCHAR(255),
-      is_read BOOLEAN DEFAULT FALSE,
+      message TEXT NOT NULL,
+      type VARCHAR(50) DEFAULT 'general',
+      related_order_id INT DEFAULT NULL,
+      related_product_id INT DEFAULT NULL,
+      is_read BOOLEAN DEFAULT false,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `).catch(() => {});
-  poolPromise.query("ALTER TABLE notifications MODIFY COLUMN type VARCHAR(50) NOT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE notifications ADD COLUMN user_id INT DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE notifications ADD COLUMN related_order_id INT DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE notifications ADD COLUMN related_product_id INT DEFAULT NULL").catch(() => {});
+  poolPromise.query("ALTER TABLE notifications MODIFY COLUMN type VARCHAR(50) DEFAULT 'general'").catch(() => {});
+
+  // Ensure broadcast_notifications table exists
+  poolPromise.query(`
+    CREATE TABLE IF NOT EXISTS broadcast_notifications (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      title VARCHAR(255) NOT NULL,
+      message TEXT NOT NULL,
+      type VARCHAR(50) DEFAULT 'new_arrival',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      sent_count INT DEFAULT 0
+    )
+  `).catch(() => {});
 
   // Ensure shipping_countries table exists and seed default 17 enabled countries (Update 1)
   poolPromise.query(`

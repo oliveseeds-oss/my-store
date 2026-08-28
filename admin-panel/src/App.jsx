@@ -28,6 +28,7 @@ import CouponsManager from "./pages/CouponsManager";
 import BulkInquiriesManager from "./pages/BulkInquiriesManager";
 import NewsletterManager from "./pages/NewsletterManager";
 import ShippingCountries from "./pages/ShippingCountries";
+import SendNotifications from "./pages/SendNotifications";
 
 const P = ({ children }) => <ProtectedRoute>{children}</ProtectedRoute>;
 
@@ -56,6 +57,7 @@ export default function App() {
           <Route path="/messages" element={<P><ContactMessages /></P>} />
           <Route path="/ads" element={<P><AdPanel /></P>} />
           <Route path="/notifications" element={<P><Notifications /></P>} />
+          <Route path="/send-notifications" element={<P><SendNotifications /></P>} />
           <Route path="/currency" element={<P><CurrencySettings /></P>} />
           <Route path="/shipping-countries" element={<P><ShippingCountries /></P>} />
           <Route path="/settings" element={<P><Settings /></P>} />

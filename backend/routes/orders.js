@@ -2,6 +2,7 @@ const router = require("express").Router();
 const db = require("../db");
 const { generateOrderUid } = require('../utils/generateUid');
 const { verifyAdmin, verifyMember } = require("../middleware/auth");
+const createNotification = require("../utils/createNotification");
 
 async function verifyPayPalOrder(orderId) {
   const [rows] = await db.query("SELECT paypal_client_id, paypal_client_secret FROM settings WHERE id = 1");
@@ -292,6 +293,30 @@ router.post("/", async (req, res) => {
     // Automatically trigger confirmation & invoice email sending (background)
     const { sendOrderConfirmation } = require("../utils/orderNotification");
     sendOrderConfirmation(finalOrderUid).catch(err => console.error("Failed to send order confirmation email:", err));
+
+    // Send user notification if member_id / member_uid is present
+    if (member_id || member_uid) {
+      try {
+        let targetUserId = member_id;
+        if (!targetUserId && member_uid) {
+          const [mRows] = await db.query("SELECT id FROM members WHERE member_uid = ?", [member_uid]);
+          if (mRows.length) targetUserId = mRows[0].id;
+        }
+        if (targetUserId) {
+          await createNotification(
+            db,
+            targetUserId,
+            'Order Confirmed 📦',
+            `Your order #${finalOrderUid} has been confirmed and is being processed.`,
+            'order_confirmed',
+            finalOrderUid,
+            null
+          );
+        }
+      } catch (notifErr) {
+        console.error("Order notification trigger error:", notifErr);
+      }
+    }
 
     res.json({
       order_id: finalOrderUid,

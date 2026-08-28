@@ -64,8 +64,10 @@ async function startServer() {
   app.use("/api/settings", require("./routes/settings"));
   app.use("/api/categories", require("./routes/categories"));
   app.use("/api/reviews", require("./routes/reviews"));
+  app.use("/api/admin/reviews", require("./routes/reviews"));
   app.use("/api/currency", require("./routes/currency"));
   app.use("/api/notifications", require("./routes/notifications"));
+  app.use("/api/admin/notifications", require("./routes/notifications"));
   app.use("/api/visitors", require("./routes/visitors"));
   app.use("/api/invoices", require("./routes/invoices"));
   app.use("/api/shipping", require("./routes/shipping"));
