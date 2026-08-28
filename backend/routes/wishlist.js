@@ -31,9 +31,9 @@ router.get("/", verifyMember, async (req, res) => {
          UNION ALL
          SELECT id, 0 as user_id, 0 as member_id, member_uid, 0 as product_id, 0 as digital_id, product_uid, product_type, product_type as type, NOW() as created_at FROM wishlist
        ) w
-       LEFT JOIN products p ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND w.product_uid = p.product_uid) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = p.id)
-       LEFT JOIN physical_products phys ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND w.product_uid = phys.product_uid) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = phys.id)
-       LEFT JOIN digital_products dp ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND w.product_uid = dp.product_uid) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = dp.id) OR (w.digital_id IS NOT NULL AND w.digital_id != 0 AND w.digital_id = dp.id)
+       LEFT JOIN products p ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND (w.product_uid = p.product_uid OR w.product_uid = CAST(p.id AS CHAR))) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = p.id)
+       LEFT JOIN physical_products phys ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND (w.product_uid = phys.product_uid OR w.product_uid = CAST(phys.id AS CHAR))) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = phys.id)
+       LEFT JOIN digital_products dp ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND (w.product_uid = dp.product_uid OR w.product_uid = CAST(dp.id AS CHAR))) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = dp.id) OR (w.digital_id IS NOT NULL AND w.digital_id != 0 AND w.digital_id = dp.id)
        WHERE (w.user_id = ? OR w.member_id = ? OR w.member_uid = ?) ORDER BY w.created_at DESC`,
       [userId, userId, memberUid]
     );
