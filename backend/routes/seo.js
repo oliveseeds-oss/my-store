@@ -422,4 +422,24 @@ router.get("/api/seo/health", verifyAdmin, async (req, res) => {
   }
 });
 
+// GET /api/seo/global — Global SEO settings
+router.get("/global", async (req, res) => {
+  try {
+    const [rows] = await db.query("SELECT * FROM seo_settings WHERE page_key = 'global' OR page_key = 'home'");
+    res.json(rows[0] || {});
+  } catch (err) {
+    res.json({});
+  }
+});
+
+// GET /api/seo/page/:key — Page specific SEO settings
+router.get("/page/:key", async (req, res) => {
+  try {
+    const [rows] = await db.query("SELECT * FROM seo_settings WHERE page_key = ?", [req.params.key]);
+    res.json(rows[0] || {});
+  } catch (err) {
+    res.json({});
+  }
+});
+
 module.exports = router;

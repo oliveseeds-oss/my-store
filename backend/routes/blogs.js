@@ -74,4 +74,14 @@ router.delete("/:id", verifyAdmin, async (req, res) => {
   res.json({ message: "Deleted" });
 });
 
+// Increment blog views
+router.put("/:id/view", async (req, res) => {
+  try {
+    await db.query("UPDATE blogs SET views = COALESCE(views, 0) + 1 WHERE id = ? OR slug = ?", [req.params.id, req.params.id]);
+    res.json({ message: "Views incremented" });
+  } catch (err) {
+    res.json({ message: "Ignored view count" });
+  }
+});
+
 module.exports = router;

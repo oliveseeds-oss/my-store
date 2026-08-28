@@ -6,19 +6,15 @@ const { verifyMember, verifyAdmin } = require("../middleware/auth");
 router.get("/:product_id", async (req, res) => {
   try {
     const [rows] = await db.query(
-      `SELECT r.*, m.name as user_name FROM product_reviews r
-       JOIN members m ON r.user_id = m.id
-       WHERE r.product_id = ? AND r.is_approved = true ORDER BY r.created_at DESC`,
-      [req.params.product_id]
+      `SELECT r.*, COALESCE(m.name, m.full_name, 'Customer') as user_name FROM product_reviews r
+       LEFT JOIN members m ON (r.user_id = m.id OR r.user_id = m.member_uid)
+       WHERE (r.product_id = ? OR r.product_id = (SELECT id FROM physical_products WHERE product_uid = ? LIMIT 1) OR r.product_id = (SELECT id FROM digital_products WHERE product_uid = ? LIMIT 1))
+       AND (r.is_approved = true OR r.is_approved = 1) ORDER BY r.created_at DESC`,
+      [req.params.product_id, req.params.product_id, req.params.product_id]
     );
     res.json(rows);
   } catch (err) {
-    // Fallback if joined table fails
-    const [rows] = await db.query(
-      "SELECT * FROM product_reviews WHERE product_id = ? AND is_approved = true ORDER BY created_at DESC",
-      [req.params.product_id]
-    );
-    res.json(rows);
+    res.json([]);
   }
 });
 
