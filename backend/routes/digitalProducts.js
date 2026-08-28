@@ -84,12 +84,28 @@ router.get("/:id", async (req, res) => {
   );
   if (!rows.length) return res.status(404).json({ error: "Not found" });
   const product = { ...rows[0], images: parseJSON(rows[0].images), tags: parseJSON(rows[0].tags) };
-  const [reviews] = await db.query(
-    `SELECT r.*, m.name as member_name FROM reviews r
-     JOIN members m ON r.member_uid = m.member_uid
-     WHERE r.product_uid = ? AND r.product_type = 'digital' ORDER BY r.created_at DESC`,
-    [product.product_uid]
-  );
+  let reviews = [];
+  try {
+    const [revs] = await db.query(
+      `SELECT r.*, COALESCE(m.name, m.full_name, 'Customer') as member_name FROM reviews r
+       LEFT JOIN members m ON (r.member_uid = m.member_uid OR r.member_uid = m.id)
+       WHERE (r.product_uid = ? OR r.product_uid = ?) AND r.product_type = 'digital' ORDER BY r.created_at DESC`,
+      [product.product_uid, String(product.id)]
+    );
+    reviews = revs;
+  } catch {
+    try {
+      const [revs] = await db.query(
+        `SELECT r.*, COALESCE(m.name, m.full_name, 'Customer') as member_name, r.review_text as comment FROM product_reviews r
+         LEFT JOIN members m ON r.user_id = m.id
+         WHERE r.product_id = ? ORDER BY r.created_at DESC`,
+        [product.id]
+      );
+      reviews = revs;
+    } catch {
+      reviews = [];
+    }
+  }
   product.reviews = reviews;
   const [related] = await db.query(
     `SELECT product_uid as id, name, price, discount_price, images, thumbnail_url, rating, review_count

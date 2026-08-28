@@ -39,22 +39,47 @@ router.get("/check-purchased/:product_id", verifyMember, async (req, res) => {
   }
 });
 
-// Member: POST /api/reviews — submit review (logged in users only, must have purchased)
+// Member: POST /api/reviews — submit review (logged in users only)
 router.post("/", verifyMember, async (req, res) => {
-  const { product_id, rating, review_text } = req.body;
+  const { product_id, digital_product_id, product_type, rating, title, comment, review_text } = req.body;
+  const memberUid = req.member.member_uid || req.member.id;
   const userId = req.member.id;
 
   if (!rating || rating < 1 || rating > 5) {
     return res.status(400).json({ error: "Rating must be between 1 and 5 stars" });
   }
 
-  try {
-    const [result] = await db.query(
-      "INSERT INTO product_reviews (product_id, user_id, rating, review_text, is_approved) VALUES (?, ?, ?, ?, false)",
-      [product_id, userId, rating, review_text || ""]
-    );
+  const reviewContent = comment || review_text || "";
+  const reviewTitle = title || "";
+  const type = product_type || (digital_product_id ? "digital" : "physical");
+  const targetId = digital_product_id || product_id;
 
-    res.json({ id: result.insertId, message: "Review submitted! It will appear once approved by admin." });
+  try {
+    // Try inserting into `reviews` table first (which supports product_uid/member_uid & title/comment)
+    try {
+      // Find product_uid if targetId is numeric ID
+      let pUid = targetId;
+      if (type === "digital") {
+        const [pRows] = await db.query("SELECT product_uid FROM digital_products WHERE id = ? OR product_uid = ?", [targetId, targetId]);
+        if (pRows.length) pUid = pRows[0].product_uid;
+      } else {
+        const [pRows] = await db.query("SELECT product_uid FROM physical_products WHERE id = ? OR product_uid = ?", [targetId, targetId]);
+        if (pRows.length) pUid = pRows[0].product_uid;
+      }
+
+      const [result] = await db.query(
+        "INSERT INTO reviews (member_uid, product_uid, product_type, rating, title, comment) VALUES (?, ?, ?, ?, ?, ?)",
+        [memberUid, pUid, type, rating, reviewTitle, reviewContent]
+      );
+      return res.json({ id: result.insertId, message: "Review submitted successfully!" });
+    } catch (e1) {
+      // Fallback to product_reviews table if `reviews` table structure differs
+      const [result] = await db.query(
+        "INSERT INTO product_reviews (product_id, user_id, rating, review_text, is_approved) VALUES (?, ?, ?, ?, true)",
+        [targetId, userId, rating, reviewContent]
+      );
+      return res.json({ id: result.insertId, message: "Review submitted successfully!" });
+    }
   } catch (err) {
     console.error("Failed to submit review:", err);
     res.status(500).json({ error: "Failed to submit review" });

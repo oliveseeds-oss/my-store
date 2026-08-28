@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useCart } from "../context/CartContext";
 import { useMember } from "../context/MemberContext";
+import { useCurrency } from "../context/CurrencyContext";
 import SEO from "../components/SEO";
 import AdBanner from "../components/AdBanner";
 
@@ -350,6 +351,7 @@ const COLLECTIONS = [
 /* ─── DigitalCard ─────────────────────────────────────────── */
 function DigitalCard({ p, onWishlist, isWishlisted }) {
   const { addToCart } = useCart();
+  const { convert } = useCurrency();
   const [added, setAdded] = useState(false);
 
   const img = p.thumbnail_url || (p.images && p.images[0]);
@@ -545,7 +547,7 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
               WebkitTextFillColor: "transparent",
             }}
           >
-            ₹{finalPrice}
+            {convert(finalPrice)}
           </span>
           {p.discount_price && (
             <span style={{
@@ -554,7 +556,7 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
               textDecoration: "line-through",
               color: "rgba(165,180,199,0.35)",
             }}>
-              ₹{p.price}
+              {convert(p.price)}
             </span>
           )}
         </div>

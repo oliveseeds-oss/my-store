@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import API from "../api";
 import { useCart } from "../context/CartContext";
 import { useMember } from "../context/MemberContext";
+import { useCurrency } from "../context/CurrencyContext";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SEO from "../components/SEO";
@@ -12,6 +13,8 @@ import CuteLoader from "../components/CuteLoader";
 function ReviewForm({ productId, onSubmit }) {
   const { member } = useMember();
   const [form, setForm] = useState({ rating: 5, title: "", comment: "" });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [done, setDone] = useState(false);
 
   if (!member) return (
@@ -22,30 +25,49 @@ function ReviewForm({ productId, onSubmit }) {
 
   if (done) return (
     <div className="p-4 text-xs" style={{ background: "#0c1445", border: "1px solid rgba(56,189,248,0.3)", color: "#38bdf8" }}>
-      ✓ Review submitted. Thank you!
+      ✓ Review submitted successfully. Thank you!
     </div>
   );
 
-  const submit = async () => {
-    if (!form.comment) return;
-    await API.post("/reviews", {
-      digital_product_id: productId, product_type: "digital",
-      rating: form.rating, title: form.title, comment: form.comment
-    });
-    setDone(true); onSubmit();
+  const submit = async (e) => {
+    if (e) e.preventDefault();
+    if (!form.comment.trim()) {
+      setError("Please enter your review text before submitting.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      await API.post("/reviews", {
+        digital_product_id: productId, product_type: "digital",
+        rating: form.rating, title: form.title, comment: form.comment
+      });
+      setDone(true);
+      if (onSubmit) onSubmit();
+    } catch (err) {
+      console.error("Review submission error:", err);
+      setError(err.response?.data?.error || "Failed to submit review. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="p-5" style={{ background: "#0f172a", border: "1px solid rgba(56,189,248,0.15)" }}>
+    <form onSubmit={submit} className="p-5" style={{ background: "#0f172a", border: "1px solid rgba(56,189,248,0.15)" }}>
       <h4 className="text-sm font-bold mb-4" style={{ color: "#38bdf8", fontFamily: "'Space Mono', monospace" }}>
         {"// WRITE A REVIEW"}
       </h4>
+      {error && (
+        <div className="mb-3 p-2 text-xs rounded" style={{ background: "rgba(244,63,94,0.15)", border: "1px solid #f43f5e", color: "#f43f5e" }}>
+          {error}
+        </div>
+      )}
       <div className="mb-3">
         <p className="text-xs mb-1" style={{ color: "#64748b" }}>Rating</p>
         <div className="flex gap-2">
           {[1,2,3,4,5].map(i => (
-            <button key={i} onClick={() => setForm(f => ({ ...f, rating: i }))}
-              className="text-2xl transition"
+            <button type="button" key={i} onClick={() => setForm(f => ({ ...f, rating: i }))}
+              className="text-2xl transition cursor-pointer"
               style={{ color: i <= form.rating ? "#0ea5e9" : "#1e293b" }}>
               ★
             </button>
@@ -63,7 +85,7 @@ function ReviewForm({ productId, onSubmit }) {
         />
       </div>
       <div className="mb-3">
-        <label className="text-xs mb-1 block" style={{ color: "#64748b" }}>Review</label>
+        <label className="text-xs mb-1 block" style={{ color: "#64748b" }}>Review *</label>
         <textarea
           value={form.comment}
           onChange={e => setForm(f => ({ ...f, comment: e.target.value }))}
@@ -73,18 +95,19 @@ function ReviewForm({ productId, onSubmit }) {
           style={{ background: "#020617", color: "#e2e8f0", border: "1px solid rgba(56,189,248,0.2)" }}
         />
       </div>
-      <button onClick={submit}
-        className="px-6 py-2 text-xs font-bold tracking-widest transition"
+      <button type="submit" disabled={loading}
+        className="px-6 py-2 text-xs font-bold tracking-widest transition cursor-pointer disabled:opacity-50"
         style={{ background: "#0ea5e9", color: "white", border: "none" }}>
-        SUBMIT REVIEW
+        {loading ? "SUBMITTING..." : "SUBMIT REVIEW"}
       </button>
-    </div>
+    </form>
   );
 }
 
 export default function DigitalProductDetail() {
   const navigate = useNavigate();
   const { member } = useMember();
+  const { convert } = useCurrency();
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [selectedImg, setSelectedImg] = useState(0);
@@ -289,12 +312,12 @@ export default function DigitalProductDetail() {
             <div style={{ borderTop: "1px solid rgba(56,189,248,0.15)", paddingTop: "1rem" }}>
               {product.discount_price ? (
                 <div className="flex items-baseline gap-3">
-                  <span className="text-3xl font-bold" style={{ color: "#f1f5f9" }}>₹{finalPrice}</span>
-                  <span className="text-sm line-through" style={{ color: "#475569" }}>₹{product.price}</span>
+                  <span className="text-3xl font-bold" style={{ color: "#f1f5f9" }}>{convert(finalPrice)}</span>
+                  <span className="text-sm line-through" style={{ color: "#475569" }}>{convert(product.price)}</span>
                   <span className="text-xs font-bold" style={{ color: "#f43f5e" }}>-{discount}%</span>
                 </div>
               ) : (
-                <span className="text-3xl font-bold" style={{ color: "#f1f5f9" }}>₹{finalPrice}</span>
+                <span className="text-3xl font-bold" style={{ color: "#f1f5f9" }}>{convert(finalPrice)}</span>
               )}
             </div>
 
@@ -492,10 +515,10 @@ export default function DigitalProductDetail() {
                     </div>
                     <div>
                       <div className="flex items-baseline gap-1.5 flex-wrap">
-                        <span className="text-sm font-bold text-white">₹{price}</span>
+                        <span className="text-sm font-bold text-white">{convert(price)}</span>
                         {r.discount_price && (
                           <>
-                            <span className="text-[10px] line-through" style={{ color: "#64748b" }}>₹{r.price}</span>
+                            <span className="text-[10px] line-through" style={{ color: "#64748b" }}>{convert(r.price)}</span>
                             <span className="text-[10px] font-bold text-rose-500">({discount}% off)</span>
                           </>
                         )}

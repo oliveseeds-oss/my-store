@@ -8,6 +8,7 @@ import SEO from "../components/SEO";
 import AdBanner from "../components/AdBanner";
 import RecentlyViewed from "../components/RecentlyViewed";
 import { useMember } from "../context/MemberContext";
+import { useCurrency } from "../context/CurrencyContext";
 
 /* ─── Fade-up animation wrapper ─── */
 const FadeUp = ({ children, delay = 0, className = "", style = {} }) => (
@@ -177,6 +178,7 @@ function CollectionCard({ col }) {
 }
 
 function PremiumProductCard({ p, to, isDigital = false, onWishlist, isWishlisted }) {
+  const { convert } = useCurrency();
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
 
@@ -355,7 +357,7 @@ function PremiumProductCard({ p, to, isDigital = false, onWishlist, isWishlisted
           borderTop: isDigital ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(15, 39, 68, 0.08)",
         }}>
           <span className="clash" style={{ fontSize: "1.45rem", fontWeight: 700, color: isDigital ? "var(--gold)" : "var(--accent)" }}>
-            ₹{p.price}
+            {convert(p.price)}
           </span>
           <div style={{
             width: "38px", 

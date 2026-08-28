@@ -9,7 +9,8 @@ function fetchRates() {
     const urls = [
       "https://open.er-api.com/v6/latest/INR",
       "https://api.exchangerate-api.com/v4/latest/INR",
-      "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/inr.json"
+      "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/inr.json",
+      "https://open.er-api.com/v6/latest/USD"
     ];
 
     const tryFetch = (index) => {
@@ -28,9 +29,20 @@ function fetchRates() {
           try {
             const parsed = JSON.parse(data);
             if (parsed && parsed.rates) {
-              resolve(parsed);
+              // If base was USD, convert all rates to INR base (1 Foreign = ? INR)
+              if (parsed.base_code === "USD" && parsed.rates.INR) {
+                const usdToInr = parsed.rates.INR; // e.g. 83.5
+                const ratesRelativeToInr = {};
+                for (const [code, usdRate] of Object.entries(parsed.rates)) {
+                  // rate_to_inr means: 1 foreign_currency = X INR
+                  // 1 USD = 83.5 INR -> rate_to_inr = 0.011976 (1 INR = 0.011976 USD)
+                  ratesRelativeToInr[code] = usdRate / usdToInr;
+                }
+                resolve({ rates: ratesRelativeToInr });
+              } else {
+                resolve({ rates: parsed.rates });
+              }
             } else if (parsed && parsed.inr) {
-              // Format from currency-api
               resolve({ rates: parsed.inr });
             } else {
               tryFetch(index + 1);
