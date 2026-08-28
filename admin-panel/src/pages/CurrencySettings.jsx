@@ -16,18 +16,18 @@ function CurrencyRow({ r, updateRate, saving }) {
             <td className="px-4 py-3 font-medium">
                 {r.currency_code} ({r.currency_symbol})
             </td>
-            <td className="px-4 py-3">
-                <div className="flex items-center gap-2">
-                    <span className="text-gray-400 text-xs">1 {r.currency_code} =</span>
-                    <input
-                        type="number" step="0.0001"
-                        value={rate}
-                        onChange={e => setRate(e.target.value)}
-                        className="border border-gray-200 rounded-lg px-2 py-1 text-sm w-24
-                               focus:outline-none focus:ring-2 focus:ring-indigo-200" />
-                    <span className="text-gray-400 text-xs">INR</span>
-                </div>
-            </td>
+                    <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                            <span className="text-gray-400 text-xs">1 INR =</span>
+                            <input
+                                type="number" step="0.0001"
+                                value={rate}
+                                onChange={e => setRate(e.target.value)}
+                                className="border border-gray-200 rounded-lg px-2 py-1 text-sm w-28
+                                       focus:outline-none focus:ring-2 focus:ring-indigo-200" />
+                            <span className="text-gray-400 text-xs">{r.currency_code}</span>
+                        </div>
+                    </td>
             <td className="px-4 py-3">
                 <input type="checkbox" checked={!!allowed}
                     onChange={e => setAllowed(e.target.checked)}
@@ -113,7 +113,7 @@ export default function CurrencySettings() {
                                 <tr>
                                     <th className="px-4 py-3">Country</th>
                                     <th className="px-4 py-3">Currency</th>
-                                    <th className="px-4 py-3">Rate (1 unit = ? INR)</th>
+                                    <th className="px-4 py-3">Rate (1 INR = ? Foreign)</th>
                                     <th className="px-4 py-3">Shipping enabled</th>
                                     <th className="px-4 py-3">Save</th>
                                 </tr>

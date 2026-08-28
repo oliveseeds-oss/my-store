@@ -17,6 +17,6 @@ export function getAdminCurrency() {
 export function formatAdminPrice(priceInInr) {
   const curr = getAdminCurrency();
   const rate = Number(curr.rate_to_inr) || 1.0;
-  const amount = Number(priceInInr || 0) / rate;
+  const amount = Number(priceInInr || 0) * rate;
   return `${curr.currency_symbol}${amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
