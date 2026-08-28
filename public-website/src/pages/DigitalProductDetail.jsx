@@ -417,40 +417,8 @@ export default function DigitalProductDetail() {
         </div>
 
         {/* Reviews */}
-        <div className="mt-10 pt-8" style={{ borderTop: "1px solid rgba(56,189,248,0.1)" }}>
-          <h2 className="text-sm font-bold tracking-widest mb-6" style={{ color: "#38bdf8" }}>
-            {"// CUSTOMER REVIEWS"}
-          </h2>
-          {reviews.length > 0 && (
-            <div className="flex flex-col md:flex-row gap-8 mb-8">
-              <div className="flex flex-col items-center justify-center w-40">
-                <p className="text-5xl font-bold" style={{ color: "#f1f5f9" }}>
-                  {Number(product.rating).toFixed(1)}
-                </p>
-                <div className="flex my-1">
-                  {[1,2,3,4,5].map(i => (
-                    <span key={i} style={{ color: i <= Math.round(product.rating) ? "#0ea5e9" : "#1e293b" }}>★</span>
-                  ))}
-                </div>
-                <p className="text-xs" style={{ color: "#64748b" }}>{reviews.length} reviews</p>
-              </div>
-              <div className="flex-1 flex flex-col gap-2">
-                {ratingCounts.map(({ star, pct }) => (
-                  <div key={star} className="flex items-center gap-3">
-                    <span className="text-xs w-12 text-right" style={{ color: "#38bdf8" }}>{star} ★</span>
-                    <div className="flex-1 h-2 rounded-full overflow-hidden"
-                      style={{ background: "#1e293b" }}>
-                      <div className="h-full rounded-full" style={{ width: `${pct}%`, background: "#0ea5e9" }} />
-                    </div>
-                    <span className="text-xs w-8" style={{ color: "#64748b" }}>{pct}%</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Customer Reviews Section */}
-          <ReviewSection productId={product.id || product.product_uid} />
+        <div className="mt-10">
+          <ReviewSection productId={product.id || product.product_uid} dark={true} />
         </div>
 
         {/* Related */}

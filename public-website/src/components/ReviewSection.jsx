@@ -34,7 +34,7 @@ const StarInput = ({ value, onChange }) => {
   )
 }
 
-const ReviewSection = ({ productId }) => {
+const ReviewSection = ({ productId, dark = false }) => {
   const { member: user } = useMember()
   const [data, setData] = useState({
     reviews: [],
@@ -112,16 +112,20 @@ const ReviewSection = ({ productId }) => {
 
   const breakdown = ratingBreakdown(data.reviews || [])
 
+  const textColor = dark ? '#e2e8f0' : '#333';
+  const borderColor = dark ? 'rgba(56,189,248,0.15)' : '#eee';
+
   return (
     <div style={{
       marginTop: '48px',
       paddingTop: '32px',
-      borderTop: '2px solid #eee'
+      borderTop: `2px solid ${borderColor}`
     }}>
       <h3 style={{
         fontSize: '1.4rem',
         marginBottom: '24px',
-        color: '#333'
+        color: textColor,
+        fontWeight: 'bold'
       }}>
         Customer Reviews
       </h3>
