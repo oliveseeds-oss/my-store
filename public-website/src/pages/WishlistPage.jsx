@@ -82,33 +82,41 @@ export default function WishlistPage() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="space-y-4">
             {wishlistItems.map((p) => {
               const targetUid = p.product_uid || p.id;
               const productLink = p.type === "digital" ? `/digital/${targetUid}` : `/products/${targetUid}`;
+              const imgSrc = p.image || p.image_url || "/logo192.png";
               return (
-                <div key={p.wishlist_id || targetUid} className="group bg-white border border-[#0D1512]/10 rounded-2xl p-4 shadow-sm hover:shadow-md transition relative flex flex-col justify-between">
-                  <button
-                    onClick={() => removeFromWishlist(targetUid)}
-                    className="absolute top-6 right-6 z-10 p-2 bg-white/90 backdrop-blur-sm rounded-full text-rose-500 hover:scale-110 transition shadow-sm cursor-pointer"
-                    title="Remove from wishlist"
-                  >
-                    <MdFavorite className="text-lg" />
-                  </button>
-
-                  <Link to={productLink} className="block">
-                    <div className="aspect-square bg-stone-50 rounded-xl overflow-hidden mb-3">
-                      <img src={p.image || p.image_url || "/logo192.png"} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition" />
+                <div key={p.wishlist_id || targetUid} className="bg-white border border-[#0D1512]/10 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md transition flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-4 min-w-0">
+                    <Link to={productLink} className="w-16 h-16 sm:w-20 sm:h-20 bg-stone-100 rounded-xl overflow-hidden flex-shrink-0 border border-stone-200/60 block">
+                      <img src={imgSrc} alt={p.name} className="w-full h-full object-cover hover:scale-105 transition" />
+                    </Link>
+                    <div className="min-w-0 flex-1">
+                      <span className="inline-block text-[10px] font-extrabold uppercase tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md mb-1">
+                        {p.type === "digital" ? "Digital Asset" : (p.category || "Custom Printed")}
+                      </span>
+                      <Link to={productLink} className="block font-bold text-sm sm:text-base text-[#0D1512] hover:text-amber-700 transition truncate">
+                        {p.name}
+                      </Link>
+                      <p className="font-extrabold text-sm sm:text-base text-[#0D1512] mt-1">
+                        {convert(p.price)}
+                      </p>
                     </div>
-                    <h3 className="font-bold text-xs text-[#0D1512] line-clamp-2 leading-snug mb-1">{p.name}</h3>
-                    <p className="text-[10px] text-stone-400 mb-2">{p.category || "Custom Item"}</p>
-                  </Link>
+                  </div>
 
-                  <div className="flex items-center justify-between pt-3 border-t border-stone-100">
-                    <span className="font-bold text-sm text-[#0D1512]">{convert(p.price)}</span>
-                    <Link to={productLink} className="bg-[#0D1512] text-white text-[11px] font-bold px-3 py-1.5 rounded-lg hover:bg-stone-800 transition">
+                  <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                    <Link to={productLink} className="bg-[#0D1512] text-white text-xs font-bold px-4 py-2.5 rounded-xl hover:bg-stone-800 transition shadow-sm">
                       View Product
                     </Link>
+                    <button
+                      onClick={() => removeFromWishlist(targetUid)}
+                      className="p-2.5 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition cursor-pointer"
+                      title="Remove from wishlist"
+                    >
+                      <MdFavorite className="text-xl text-rose-500" />
+                    </button>
                   </div>
                 </div>
               );

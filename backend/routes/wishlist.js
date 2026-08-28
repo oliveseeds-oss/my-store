@@ -35,8 +35,9 @@ router.get("/", verifyMember, async (req, res) => {
               COALESCE(p.price, phys.price, dp.price, 0) as price,
               COALESCE(p.discount_price, phys.discount_price, dp.discount_price, NULL) as discount_price,
               COALESCE(p.description, phys.description, dp.description, '') as description,
-              COALESCE(p.image_url, phys.image_url, dp.image_url, '') as image,
-              COALESCE(p.image_url, phys.image_url, dp.image_url, '') as image_url,
+              COALESCE(p.image_url, phys.image_url, dp.image_url, p.image, phys.image, dp.image, '') as image,
+              COALESCE(p.image_url, phys.image_url, dp.image_url, p.image, phys.image, dp.image, '') as image_url,
+              COALESCE(p.images, phys.images, dp.images, NULL) as images_json,
               COALESCE(p.category, phys.category, dp.category, 'General') as category,
               COALESCE(p.stock, phys.stock, 99) as stock,
               COALESCE(p.product_uid, phys.product_uid, dp.product_uid, CAST(w.product_id AS CHAR)) as slug
@@ -57,8 +58,9 @@ router.get("/", verifyMember, async (req, res) => {
                 COALESCE(p.price, phys.price, dp.price, 0) as price,
                 COALESCE(p.discount_price, phys.discount_price, dp.discount_price, NULL) as discount_price,
                 COALESCE(p.description, phys.description, dp.description, '') as description,
-                COALESCE(p.image_url, phys.image_url, dp.image_url, '') as image,
-                COALESCE(p.image_url, phys.image_url, dp.image_url, '') as image_url,
+                COALESCE(p.image_url, phys.image_url, dp.image_url, p.image, phys.image, dp.image, '') as image,
+                COALESCE(p.image_url, phys.image_url, dp.image_url, p.image, phys.image, dp.image, '') as image_url,
+                COALESCE(p.images, phys.images, dp.images, NULL) as images_json,
                 COALESCE(p.category, phys.category, dp.category, 'General') as category,
                 COALESCE(p.stock, phys.stock, 99) as stock,
                 COALESCE(p.product_uid, phys.product_uid, dp.product_uid, w.product_uid) as slug
@@ -94,8 +96,19 @@ router.get("/", verifyMember, async (req, res) => {
       }
     }
 
-    console.log(`✅ Wishlist items fetched count: ${items ? items.length : 0}`);
-    res.json(items || []);
+    const formatted = (items || []).map(item => {
+      let img = item.image || item.image_url || "";
+      if (!img && item.images_json) {
+        try {
+          const parsed = typeof item.images_json === "string" ? JSON.parse(item.images_json) : item.images_json;
+          if (Array.isArray(parsed) && parsed.length > 0) img = parsed[0];
+        } catch (e) {}
+      }
+      return { ...item, image: img, image_url: img };
+    });
+
+    console.log(`✅ Wishlist items fetched count: ${formatted.length}`);
+    res.json(formatted);
   } catch (error) {
     console.error("Failed to fetch wishlist:", error);
     res.status(500).json({ error: "Failed to get wishlist" });

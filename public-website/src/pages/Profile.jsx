@@ -662,53 +662,53 @@ export default function Profile() {
                     </Link>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                  <div className="space-y-4">
                     {wishlist.map((item) => {
                       const itemImg = item.image || item.image_url || item.product_image || item.digital_image;
-                      const itemName = item.name || item.product_name || item.digital_name || "Saved Item";
+                      const itemName = item.name || item.product_name || item.digital_name || "Saved Product";
                       const itemPrice = item.price || item.product_price || item.digital_price || 0;
                       const itemType = item.type || item.product_type || "physical";
                       const targetUid = item.product_uid || item.slug || item.product_id || item.id;
+                      const productLink = itemType === "digital" ? `/digital/${targetUid}` : `/products/${targetUid}`;
 
                       return (
-                        <div key={item.wishlist_id || item.id} style={{ borderColor: "rgba(27, 57, 49, 0.12)" }} className="border rounded-2xl overflow-hidden shadow-md flex flex-col bg-white hover:shadow-lg transition">
-                          <div className="aspect-square bg-stone-100 relative overflow-hidden flex items-center justify-center flex-shrink-0">
-                            {itemImg ? (
-                              <img 
-                                src={itemImg} 
-                                alt={itemName} 
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <span className="text-5xl">{itemType === "digital" ? "📦" : "🪵"}</span>
-                            )}
-                          </div>
-                          <div className="p-5 flex flex-col flex-grow">
-                            <p className="text-[10px] font-black text-[#0D1512] uppercase tracking-widest mb-1.5 capitalize">
-                              {itemType} Product
-                            </p>
-                            <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="font-bold text-[#0D1512] text-sm leading-snug line-clamp-2 min-h-[2.5rem] mb-2">
-                              {itemName}
-                            </h3>
-                            <p className="font-black text-[#0D1512] text-lg mb-4">
-                              ₹{itemPrice}
-                            </p>
-
-                            <div className="flex flex-col gap-2 mt-auto">
-                              <button
-                                onClick={() => handleAddWishlistToCart(item)}
-                                style={{ background: "#0D1512", color: "#FAF9F6" }}
-                                className="w-full py-2.5 font-bold text-xs rounded-xl shadow active:scale-95 transition flex items-center justify-center gap-1.5"
-                              >
-                                🛒 Add to Cart
-                              </button>
-                              <button
-                                onClick={() => handleRemoveWishlist(targetUid)}
-                                className="w-full py-2.5 text-center text-red-500 hover:bg-red-50 text-xs font-bold rounded-xl border border-transparent hover:border-red-200 transition"
-                              >
-                                Remove Item
-                              </button>
+                        <div key={item.wishlist_id || item.id} style={{ borderColor: "rgba(27, 57, 49, 0.12)" }} className="border rounded-2xl p-4 sm:p-5 flex items-center justify-between gap-4 bg-white hover:shadow-md transition">
+                          <div className="flex items-center gap-4 min-w-0">
+                            <Link to={productLink} className="w-16 h-16 sm:w-20 sm:h-20 bg-stone-100 rounded-xl overflow-hidden flex-shrink-0 border border-stone-200/60 block flex items-center justify-center">
+                              {itemImg ? (
+                                <img src={itemImg} alt={itemName} className="w-full h-full object-cover hover:scale-105 transition" />
+                              ) : (
+                                <span className="text-2xl">{itemType === "digital" ? "📦" : "🪵"}</span>
+                              )}
+                            </Link>
+                            <div className="min-w-0 flex-1">
+                              <span className="inline-block text-[10px] font-extrabold uppercase tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md mb-1 capitalize">
+                                {itemType} Product
+                              </span>
+                              <Link to={productLink} style={{ fontFamily: "'Outfit', sans-serif" }} className="block font-bold text-sm sm:text-base text-[#0D1512] hover:text-amber-700 transition truncate">
+                                {itemName}
+                              </Link>
+                              <p className="font-black text-sm sm:text-base text-[#0D1512] mt-1">
+                                ₹{itemPrice}
+                              </p>
                             </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                            <button
+                              onClick={() => handleAddWishlistToCart(item)}
+                              style={{ background: "#0D1512", color: "#FAF9F6" }}
+                              className="py-2.5 px-4 font-bold text-xs rounded-xl shadow active:scale-95 transition flex items-center justify-center gap-1.5 cursor-pointer"
+                            >
+                              🛒 Add to Cart
+                            </button>
+                            <button
+                              onClick={() => handleRemoveWishlist(targetUid)}
+                              className="p-2 text-red-500 hover:bg-red-50 rounded-xl border border-transparent hover:border-red-200 transition cursor-pointer text-xs font-bold"
+                              title="Remove item"
+                            >
+                              Remove
+                            </button>
                           </div>
                         </div>
                       );
