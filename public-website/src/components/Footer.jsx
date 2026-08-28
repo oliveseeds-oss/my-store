@@ -135,6 +135,9 @@ export default function Footer({ settings = {}, dark = false }) {
               <Link to="/blog" className="text-xs md:text-sm text-[#0D1512]/70 hover:text-[#0D1512] hover:underline transition-all">
                 Studio Blog
               </Link>
+              <Link to="/faq" className="text-xs md:text-sm text-[#0D1512]/70 hover:text-[#0D1512] hover:underline transition-all">
+                Frequently Asked Questions (FAQ)
+              </Link>
               <Link to="/contact" className="text-xs md:text-sm text-[#0D1512]/70 hover:text-[#0D1512] hover:underline transition-all">
                 Contact Us
               </Link>
