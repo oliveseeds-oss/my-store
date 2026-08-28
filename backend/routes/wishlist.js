@@ -26,7 +26,11 @@ router.get("/", verifyMember, async (req, res) => {
               COALESCE(p.category, phys.category, dp.category, 'General') as category,
               COALESCE(p.stock, phys.stock, 99) as stock,
               COALESCE(p.product_uid, phys.product_uid, dp.product_uid, CAST(w.product_id AS CHAR)) as slug
-       FROM wishlists w
+       FROM (
+         SELECT id, user_id, member_id, member_uid, product_id, digital_id, product_uid, product_type, type, created_at FROM wishlists
+         UNION ALL
+         SELECT id, 0 as user_id, 0 as member_id, member_uid, 0 as product_id, 0 as digital_id, product_uid, product_type, product_type as type, NOW() as created_at FROM wishlist
+       ) w
        LEFT JOIN products p ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND w.product_uid = p.product_uid) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = p.id)
        LEFT JOIN physical_products phys ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND w.product_uid = phys.product_uid) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = phys.id)
        LEFT JOIN digital_products dp ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND w.product_uid = dp.product_uid) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = dp.id) OR (w.digital_id IS NOT NULL AND w.digital_id != 0 AND w.digital_id = dp.id)
@@ -45,8 +49,10 @@ router.get("/my", verifyMember, async (req, res) => {
   const { userId, memberUid } = getMemberIdentifiers(req);
   try {
     const [items] = await db.query(
-      "SELECT product_id, product_uid, digital_id FROM wishlists WHERE (user_id = ? OR member_id = ? OR member_uid = ?)",
-      [userId, userId, memberUid]
+      `SELECT product_id, product_uid, digital_id FROM wishlists WHERE (user_id = ? OR member_id = ? OR member_uid = ?)
+       UNION
+       SELECT 0 as product_id, product_uid, 0 as digital_id FROM wishlist WHERE member_uid = ?`,
+      [userId, userId, memberUid, memberUid]
     );
     const savedList = [];
     items.forEach(i => {
@@ -73,7 +79,7 @@ router.post("/add", verifyMember, async (req, res) => {
   }
 
   try {
-    // Check if already in wishlist
+    // Check if already in wishlists
     const [existing] = await db.query(
       "SELECT id FROM wishlists WHERE (user_id = ? OR member_id = ? OR member_uid = ?) AND ((product_uid = ? AND product_uid IS NOT NULL) OR (product_id = ? AND product_id != 0))",
       [userId, userId, memberUid, targetUid, targetId]
@@ -84,6 +90,17 @@ router.post("/add", verifyMember, async (req, res) => {
         [userId, userId, memberUid, targetId, targetUid, pType]
       );
     }
+
+    // Also sync to legacy `wishlist` table if present
+    try {
+      await db.query(
+        "INSERT IGNORE INTO wishlist (member_uid, product_uid, product_type) VALUES (?, ?, ?)",
+        [memberUid, targetUid || String(targetId), pType]
+      );
+    } catch (e) {
+      // Ignore if table/constraint doesn't exist
+    }
+
     res.json({ message: "added", saved: true });
   } catch (error) {
     console.error("Failed to add to wishlist:", error);
@@ -110,6 +127,15 @@ router.post("/:product_id", verifyMember, async (req, res) => {
         [userId, userId, memberUid, targetId, targetUid]
       );
     }
+
+    // Sync to legacy wishlist table
+    try {
+      await db.query(
+        "INSERT IGNORE INTO wishlist (member_uid, product_uid, product_type) VALUES (?, ?, 'physical')",
+        [memberUid, targetUid]
+      );
+    } catch (e) {}
+
     res.json({ message: "added", saved: true });
   } catch (error) {
     console.error("Failed to add to wishlist:", error);
@@ -127,6 +153,13 @@ router.delete("/:product_id", verifyMember, async (req, res) => {
       "DELETE FROM wishlists WHERE (user_id = ? OR member_id = ? OR member_uid = ?) AND (product_id = ? OR product_uid = ? OR id = ?)",
       [userId, userId, memberUid, paramVal, paramVal, paramVal]
     );
+    try {
+      await db.query(
+        "DELETE FROM wishlist WHERE member_uid = ? AND (product_uid = ? OR id = ?)",
+        [memberUid, paramVal, paramVal]
+      );
+    } catch (e) {}
+
     res.json({ message: "removed", saved: false });
   } catch (error) {
     console.error("Failed to remove from wishlist:", error);
