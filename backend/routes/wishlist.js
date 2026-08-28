@@ -47,8 +47,8 @@ router.get("/my", verifyMember, async (req, res) => {
 router.post("/add", verifyMember, async (req, res) => {
   const userId = req.member.id;
   const { product_id, product_uid, product_type } = req.body;
-  const targetUid = product_uid || (product_id ? String(product_id) : null);
-  const targetId = typeof product_id === "number" ? product_id : 0;
+  const targetUid = product_uid ? String(product_uid) : (product_id ? String(product_id) : null);
+  const targetId = typeof product_id === "number" ? product_id : (!isNaN(product_uid) ? parseInt(product_uid) : 0);
   const pType = product_type || "physical";
 
   if (!targetUid && !targetId) {
@@ -56,10 +56,14 @@ router.post("/add", verifyMember, async (req, res) => {
   }
 
   try {
-    await db.query(
-      "INSERT IGNORE INTO wishlists (user_id, product_id, product_uid, product_type) VALUES (?, ?, ?, ?)",
-      [userId, targetId, targetUid, pType]
-    );
+    try {
+      await db.query(
+        "INSERT INTO wishlists (user_id, product_id, product_uid, product_type) VALUES (?, ?, ?, ?)",
+        [userId, targetId, targetUid, pType]
+      );
+    } catch (e) {
+      // Ignore duplicate key error
+    }
     res.json({ message: "added", saved: true });
   } catch (error) {
     console.error("Failed to add to wishlist:", error);
@@ -76,10 +80,14 @@ router.post("/:product_id", verifyMember, async (req, res) => {
   const targetUid = String(paramVal);
 
   try {
-    await db.query(
-      "INSERT IGNORE INTO wishlists (user_id, product_id, product_uid, product_type) VALUES (?, ?, ?, 'physical')",
-      [userId, targetId, targetUid]
-    );
+    try {
+      await db.query(
+        "INSERT INTO wishlists (user_id, product_id, product_uid, product_type) VALUES (?, ?, ?, 'physical')",
+        [userId, targetId, targetUid]
+      );
+    } catch (e) {
+      // Ignore duplicate
+    }
     res.json({ message: "added", saved: true });
   } catch (error) {
     console.error("Failed to add to wishlist:", error);
@@ -94,8 +102,8 @@ router.delete("/:product_id", verifyMember, async (req, res) => {
 
   try {
     await db.query(
-      "DELETE FROM wishlists WHERE user_id = ? AND (product_id = ? OR product_uid = ?)",
-      [userId, paramVal, paramVal]
+      "DELETE FROM wishlists WHERE user_id = ? AND (product_id = ? OR product_uid = ? OR id = ?)",
+      [userId, paramVal, paramVal, paramVal]
     );
     res.json({ message: "removed", saved: false });
   } catch (error) {
