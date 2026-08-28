@@ -74,6 +74,8 @@ router.get("/", verifyMember, async (req, res) => {
       if (!p) return "";
       if (p.image_url) return p.image_url;
       if (p.image) return p.image;
+      if (p.thumbnail_url) return p.thumbnail_url;
+      if (p.thumbnail) return p.thumbnail;
       if (p.images) {
         try {
           const imgs = typeof p.images === "string" ? JSON.parse(p.images) : p.images;
@@ -95,6 +97,12 @@ router.get("/", verifyMember, async (req, res) => {
                     catalogMap.get(`uid_${targetUid}`) ||
                     catalogMap.get(`id_${targetId}`);
 
+      // If not matched under pType, try cross-searching opposite table
+      if (!matched) {
+        const altType = pType === "digital" ? "physical" : "digital";
+        matched = catalogMap.get(`${altType}_uid_${targetUid}`) || catalogMap.get(`${altType}_id_${targetId}`);
+      }
+
       const img = extractImage(matched);
 
       return {
@@ -102,7 +110,7 @@ router.get("/", verifyMember, async (req, res) => {
         saved_at: w.created_at || new Date(),
         product_id: matched?.id || w.product_id || 0,
         product_uid: matched?.product_uid || targetUid || String(matched?.id || w.id),
-        type: pType,
+        type: matched ? (matched.file_url ? "digital" : "physical") : pType,
         id: matched?.id || targetId || w.id,
         name: matched?.name || matched?.title || "Saved Product",
         price: matched ? (matched.discount_price || matched.price || 0) : 0,
@@ -110,7 +118,7 @@ router.get("/", verifyMember, async (req, res) => {
         description: matched?.description || "",
         image: img,
         image_url: img,
-        category: matched?.category || "Engraved Product",
+        category: matched?.category || (pType === "digital" ? "Digital Asset" : "Engraved Product"),
         stock: matched?.stock ?? 99,
         slug: matched?.product_uid || targetUid || String(matched?.id || w.id)
       };
