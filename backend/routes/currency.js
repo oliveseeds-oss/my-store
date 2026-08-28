@@ -3,7 +3,7 @@ const db = require("../db");
 const https = require("https");
 const { verifyAdmin } = require("../middleware/auth");
 
-// Helper to fetch live rates from free public APIs relative to INR
+// Helper to fetch live rates from free public APIs (returns rates where 1 INR = X foreign currency units)
 function fetchRates() {
   return new Promise((resolve, reject) => {
     const urls = [
@@ -29,13 +29,14 @@ function fetchRates() {
           try {
             const parsed = JSON.parse(data);
             if (parsed && parsed.rates) {
-              // If base was USD, convert all rates to INR base (1 Foreign = ? INR)
               if (parsed.base_code === "USD" && parsed.rates.INR) {
-                const usdToInr = parsed.rates.INR; // e.g. 83.5
+                // 1 USD = usdToInr INR (e.g. 83.5 INR)
+                // Therefore: 1 INR = (1 / usdToInr) USD (e.g. 0.011976 USD)
+                const usdToInr = parsed.rates.INR;
                 const ratesRelativeToInr = {};
                 for (const [code, usdRate] of Object.entries(parsed.rates)) {
-                  // rate_to_inr means: 1 foreign_currency = X INR
-                  // 1 USD = 83.5 INR -> rate_to_inr = 0.011976 (1 INR = 0.011976 USD)
+                  // usdRate is units of 'code' per 1 USD
+                  // units of 'code' per 1 INR = usdRate / usdToInr
                   ratesRelativeToInr[code] = usdRate / usdToInr;
                 }
                 resolve({ rates: ratesRelativeToInr });

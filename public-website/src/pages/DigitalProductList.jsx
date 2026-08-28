@@ -372,42 +372,9 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
     <div className="dcard" style={{ position: "relative" }}>
       <div className="dcard__glow" />
 
-      {/* Wishlist Button */}
-      <button
-        type="button"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          onWishlist();
-        }}
-        aria-label="Add to Wishlist"
-        style={{
-          position: "absolute",
-          top: 10,
-          right: 10,
-          zIndex: 25,
-          width: 32,
-          height: 32,
-          borderRadius: "50%",
-          background: "rgba(15,23,42,0.85)",
-          backdropFilter: "blur(8px)",
-          border: "1px solid rgba(255,255,255,0.15)",
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: 15,
-          boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
-          color: isWishlisted ? "#f43f5e" : "#94a3b8",
-          transition: "all 0.2s ease",
-        }}
-      >
-        {isWishlisted ? "♥" : "♡"}
-      </button>
-
       {/* Image */}
       <Link to={`/digital/${p.id}`} style={{ display: "block" }}>
-        <div className="dcard__img-wrap">
+        <div className="dcard__img-wrap" style={{ position: "relative" }}>
           {img ? (
             <img src={img} alt={p.name} className="dcard__img" />
           ) : (
@@ -423,8 +390,41 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
           )}
           <div className="dcard__img-overlay" />
 
+          {/* Wishlist Button Inside Image Wrap Top-Right */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onWishlist();
+            }}
+            aria-label="Add to Wishlist"
+            style={{
+              position: "absolute",
+              top: 10,
+              right: 10,
+              zIndex: 30,
+              width: 32,
+              height: 32,
+              borderRadius: "50%",
+              background: "rgba(15,23,42,0.85)",
+              backdropFilter: "blur(8px)",
+              border: "1px solid rgba(255,255,255,0.15)",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 15,
+              boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
+              color: isWishlisted ? "#f43f5e" : "#94a3b8",
+              transition: "all 0.2s ease",
+            }}
+          >
+            {isWishlisted ? "♥" : "♡"}
+          </button>
+
           {/* Badges Container Top-Left */}
-          <div style={{ position: "absolute", top: 10, left: 10, display: "flex", flexWrap: "wrap", gap: 6, zIndex: 10, maxWidth: "calc(100% - 48px)" }}>
+          <div style={{ position: "absolute", top: 10, left: 10, display: "flex", flexWrap: "wrap", gap: 6, zIndex: 10, maxWidth: "calc(100% - 52px)" }}>
             {discount > 0 && (
               <span style={{
                 padding: "3px 8px",
