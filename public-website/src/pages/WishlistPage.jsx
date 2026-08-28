@@ -83,32 +83,36 @@ export default function WishlistPage() {
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-            {wishlistItems.map((p) => (
-              <div key={p.id} className="group bg-white border border-[#0D1512]/10 rounded-2xl p-4 shadow-sm hover:shadow-md transition relative flex flex-col justify-between">
-                <button
-                  onClick={() => removeFromWishlist(p.id)}
-                  className="absolute top-6 right-6 z-10 p-2 bg-white/90 backdrop-blur-sm rounded-full text-rose-500 hover:scale-110 transition shadow-sm"
-                  title="Remove from wishlist"
-                >
-                  <MdFavorite className="text-lg" />
-                </button>
+            {wishlistItems.map((p) => {
+              const targetUid = p.product_uid || p.id;
+              const productLink = p.type === "digital" ? `/digital/${targetUid}` : `/products/${targetUid}`;
+              return (
+                <div key={p.wishlist_id || targetUid} className="group bg-white border border-[#0D1512]/10 rounded-2xl p-4 shadow-sm hover:shadow-md transition relative flex flex-col justify-between">
+                  <button
+                    onClick={() => removeFromWishlist(targetUid)}
+                    className="absolute top-6 right-6 z-10 p-2 bg-white/90 backdrop-blur-sm rounded-full text-rose-500 hover:scale-110 transition shadow-sm cursor-pointer"
+                    title="Remove from wishlist"
+                  >
+                    <MdFavorite className="text-lg" />
+                  </button>
 
-                <Link to={`/product/${p.id}`} className="block">
-                  <div className="aspect-square bg-stone-50 rounded-xl overflow-hidden mb-3">
-                    <img src={p.image_url || "/logo192.png"} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition" />
-                  </div>
-                  <h3 className="font-bold text-xs text-[#0D1512] line-clamp-2 leading-snug mb-1">{p.name}</h3>
-                  <p className="text-[10px] text-stone-400 mb-2">{p.category || "Custom Printed"}</p>
-                </Link>
-
-                <div className="flex items-center justify-between pt-3 border-t border-stone-100">
-                  <span className="font-bold text-sm text-[#0D1512]">{convert(p.price)}</span>
-                  <Link to={`/product/${p.id}`} className="bg-[#0D1512] text-white text-[11px] font-bold px-3 py-1.5 rounded-lg hover:bg-stone-800 transition">
-                    View Product
+                  <Link to={productLink} className="block">
+                    <div className="aspect-square bg-stone-50 rounded-xl overflow-hidden mb-3">
+                      <img src={p.image || p.image_url || "/logo192.png"} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition" />
+                    </div>
+                    <h3 className="font-bold text-xs text-[#0D1512] line-clamp-2 leading-snug mb-1">{p.name}</h3>
+                    <p className="text-[10px] text-stone-400 mb-2">{p.category || "Custom Item"}</p>
                   </Link>
+
+                  <div className="flex items-center justify-between pt-3 border-t border-stone-100">
+                    <span className="font-bold text-sm text-[#0D1512]">{convert(p.price)}</span>
+                    <Link to={productLink} className="bg-[#0D1512] text-white text-[11px] font-bold px-3 py-1.5 rounded-lg hover:bg-stone-800 transition">
+                      View Product
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </main>

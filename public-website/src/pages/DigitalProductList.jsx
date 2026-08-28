@@ -630,7 +630,7 @@ export default function DigitalProductList() {
     try {
       const res = await API.get("/wishlist/my");
       if (Array.isArray(res.data)) {
-        setWishlist(res.data.map(item => item.product_uid || item.id));
+        setWishlist(res.data.map(item => String(item)));
       }
     } catch {
       // Guest mode

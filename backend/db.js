@@ -299,11 +299,17 @@ poolPromise.query(`
     CREATE TABLE IF NOT EXISTS wishlists (
       id INT PRIMARY KEY AUTO_INCREMENT,
       user_id INT NOT NULL,
-      product_id INT NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      UNIQUE KEY unique_wishlist (user_id, product_id)
+      product_id INT DEFAULT 0,
+      product_uid VARCHAR(100),
+      product_type VARCHAR(20) DEFAULT 'physical',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `).catch(() => {});
+
+  // Add missing columns to wishlists table if existing table had old schema
+  poolPromise.query("ALTER TABLE wishlists ADD COLUMN product_uid VARCHAR(100)").catch(() => {});
+  poolPromise.query("ALTER TABLE wishlists ADD COLUMN product_type VARCHAR(20) DEFAULT 'physical'").catch(() => {});
+  poolPromise.query("ALTER TABLE wishlists MODIFY COLUMN product_id INT DEFAULT 0").catch(() => {});
 
   // FEATURE 3: Coupons & Usage Tables
   poolPromise.query(`

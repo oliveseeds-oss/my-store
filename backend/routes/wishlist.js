@@ -15,12 +15,13 @@ router.get("/", verifyMember, async (req, res) => {
               COALESCE(p.discount_price, dp.discount_price, NULL) as discount_price,
               COALESCE(p.description, dp.description, '') as description,
               COALESCE(p.image_url, dp.image_url, '') as image,
+              COALESCE(p.image_url, dp.image_url, '') as image_url,
               COALESCE(p.category, dp.category, 'General') as category,
               COALESCE(p.stock, 99) as stock,
               COALESCE(p.product_uid, dp.product_uid, CAST(w.product_id AS CHAR)) as slug
        FROM wishlists w
-       LEFT JOIN physical_products p ON (w.product_uid = p.product_uid OR (w.product_id = p.id AND w.product_id != 0))
-       LEFT JOIN digital_products dp ON (w.product_uid = dp.product_uid OR (w.product_id = dp.id AND w.product_id != 0))
+       LEFT JOIN physical_products p ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND w.product_uid = p.product_uid) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = p.id)
+       LEFT JOIN digital_products dp ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND w.product_uid = dp.product_uid) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = dp.id)
        WHERE w.user_id = ? ORDER BY w.created_at DESC`,
       [userId]
     );
@@ -52,7 +53,7 @@ router.post("/add", verifyMember, async (req, res) => {
   const userId = req.member.id;
   const { product_id, product_uid, product_type } = req.body;
   const targetUid = product_uid ? String(product_uid) : (product_id ? String(product_id) : null);
-  const targetId = typeof product_id === "number" ? product_id : (!isNaN(product_uid) ? parseInt(product_uid) : 0);
+  const targetId = typeof product_id === "number" ? product_id : (!isNaN(product_uid) && product_uid !== null ? parseInt(product_uid) : 0);
   const pType = product_type || "physical";
 
   if (!targetUid && !targetId) {
@@ -60,13 +61,16 @@ router.post("/add", verifyMember, async (req, res) => {
   }
 
   try {
-    try {
+    // Check if already in wishlist
+    const [existing] = await db.query(
+      "SELECT id FROM wishlists WHERE user_id = ? AND ((product_uid = ? AND product_uid IS NOT NULL) OR (product_id = ? AND product_id != 0))",
+      [userId, targetUid, targetId]
+    );
+    if (existing.length === 0) {
       await db.query(
         "INSERT INTO wishlists (user_id, product_id, product_uid, product_type) VALUES (?, ?, ?, ?)",
         [userId, targetId, targetUid, pType]
       );
-    } catch (e) {
-      // Ignore duplicate key error
     }
     res.json({ message: "added", saved: true });
   } catch (error) {
@@ -84,13 +88,15 @@ router.post("/:product_id", verifyMember, async (req, res) => {
   const targetUid = String(paramVal);
 
   try {
-    try {
+    const [existing] = await db.query(
+      "SELECT id FROM wishlists WHERE user_id = ? AND ((product_uid = ? AND product_uid IS NOT NULL) OR (product_id = ? AND product_id != 0))",
+      [userId, targetUid, targetId]
+    );
+    if (existing.length === 0) {
       await db.query(
         "INSERT INTO wishlists (user_id, product_id, product_uid, product_type) VALUES (?, ?, ?, 'physical')",
         [userId, targetId, targetUid]
       );
-    } catch (e) {
-      // Ignore duplicate
     }
     res.json({ message: "added", saved: true });
   } catch (error) {
