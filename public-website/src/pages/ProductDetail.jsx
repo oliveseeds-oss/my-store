@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import API from "../api";
 import { useCart } from "../context/CartContext";
 import { useMember } from "../context/MemberContext";
@@ -58,16 +58,6 @@ function ReviewForm({ productId, onSubmit }) {
   );
 
   if (done) return (
-    <div className="bg-emerald-50 border border-emerald-200 p-4 text-xs font-bold text-emerald-800 rounded-lg">
-      ✓ Thank you for your review! It will appear once approved by admin.
-    </div>
-  );
-
-  const submit = async () => {
-    setLoading(true);
-    try {
-      await API.post("/reviews", {
-        product_id: productId,
         rating: form.rating,
         review_text: form.review_text
       });
@@ -126,6 +116,7 @@ function ReviewForm({ productId, onSubmit }) {
 
 export default function ProductDetail() {
   const navigate = useNavigate();
+  const { member } = useMember();
   const { id } = useParams();
   const { convert } = useCurrency();
   const [product, setProduct] = useState(null);
