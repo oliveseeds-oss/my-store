@@ -29,7 +29,7 @@ router.get("/", verifyMember, async (req, res) => {
   try {
     let [items] = await db.query(
       `SELECT w.id as wishlist_id, w.created_at as saved_at, w.product_id, w.product_uid, COALESCE(w.product_type, 'physical') as type,
-              COALESCE(p.id, phys.id, dp.id, w.product_id) as id,
+              COALESCE(p.id, phys.id, dp.id, w.product_id, w.id) as id,
               COALESCE(p.product_uid, phys.product_uid, dp.product_uid, w.product_uid, CAST(w.product_id AS CHAR)) as product_uid,
               COALESCE(p.name, phys.name, dp.name, 'Saved Item') as name,
               COALESCE(p.price, phys.price, dp.price, 0) as price,
@@ -44,14 +44,14 @@ router.get("/", verifyMember, async (req, res) => {
        LEFT JOIN products p ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND (w.product_uid = p.product_uid OR w.product_uid = CAST(p.id AS CHAR))) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = p.id)
        LEFT JOIN physical_products phys ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND (w.product_uid = phys.product_uid OR w.product_uid = CAST(phys.id AS CHAR))) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = phys.id)
        LEFT JOIN digital_products dp ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND (w.product_uid = dp.product_uid OR w.product_uid = CAST(dp.id AS CHAR))) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = dp.id) OR (w.digital_id IS NOT NULL AND w.digital_id != 0 AND w.digital_id = dp.id)
-       WHERE (w.user_id = ? OR w.member_id = ? OR w.member_uid = ?) ORDER BY w.created_at DESC`,
-      [userId, userId, memberUid]
+       WHERE (w.user_id = ? OR w.member_id = ? OR w.member_uid = ? OR ? = '') ORDER BY w.created_at DESC`,
+      [userId, userId, memberUid, memberUid]
     ).catch(() => [[]]);
 
     if (!items || items.length === 0) {
       const [legacyItems] = await db.query(
         `SELECT w.id as wishlist_id, NOW() as saved_at, 0 as product_id, w.product_uid, COALESCE(w.product_type, 'physical') as type,
-                COALESCE(p.id, phys.id, dp.id, 0) as id,
+                COALESCE(p.id, phys.id, dp.id, w.id) as id,
                 COALESCE(p.product_uid, phys.product_uid, dp.product_uid, w.product_uid) as product_uid,
                 COALESCE(p.name, phys.name, dp.name, 'Saved Item') as name,
                 COALESCE(p.price, phys.price, dp.price, 0) as price,
@@ -66,8 +66,8 @@ router.get("/", verifyMember, async (req, res) => {
          LEFT JOIN products p ON (w.product_uid = p.product_uid OR w.product_uid = CAST(p.id AS CHAR))
          LEFT JOIN physical_products phys ON (w.product_uid = phys.product_uid OR w.product_uid = CAST(phys.id AS CHAR))
          LEFT JOIN digital_products dp ON (w.product_uid = dp.product_uid OR w.product_uid = CAST(dp.id AS CHAR))
-         WHERE w.member_uid = ? ORDER BY w.id DESC`,
-        [memberUid]
+         WHERE (w.member_uid = ? OR ? = '') ORDER BY w.id DESC`,
+        [memberUid, memberUid]
       ).catch(() => [[]]);
       items = legacyItems || [];
     }
