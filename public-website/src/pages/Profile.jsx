@@ -726,12 +726,6 @@ export default function Profile() {
           <div className="animate-fadeIn">
             <div className="flex justify-between items-center mb-6">
               <div>
-                <button 
-                  onClick={() => setActiveTab("home")}
-                  className="text-xs font-bold text-[#0D1512]/60 hover:text-[#0D1512] flex items-center gap-1 mb-2 transition"
-                >
-                  <MdArrowBack /> Back to Account Overview
-                </button>
                 <h2 className="text-2xl font-black text-[#0D1512]" style={{ fontFamily: "'Outfit', sans-serif" }}>
                   Notifications & History
                 </h2>
