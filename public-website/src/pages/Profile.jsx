@@ -718,75 +718,76 @@ export default function Profile() {
               </div>
             )}
 
-          </div>
-        )}
-
-        {/* ─── NOTIFICATIONS VIEW ─── */}
-        {activeTab === "notifications" && (
-          <div className="animate-fadeIn">
-            <div className="flex justify-between items-center mb-6">
+            {/* 6. Notifications & History Panel */}
+            {activeTab === "notifications" && (
               <div>
-                <h2 className="text-2xl font-black text-[#0D1512]" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                  Notifications & History
-                </h2>
-              </div>
-              {notifications.some(n => !n.is_read) && (
-                <button
-                  onClick={markAllReadNotifications}
-                  className="text-xs font-bold px-4 py-2 rounded-xl bg-[#0D1512] text-[#FAF9F6] hover:bg-[#0D1512]/80 transition shadow"
-                >
-                  Mark all as read
-                </button>
-              )}
-            </div>
-
-            {loadingNotifications ? (
-              <div className="bg-white rounded-2xl border p-12 text-center text-gray-500">
-                <p className="text-sm font-semibold">Loading notifications...</p>
-              </div>
-            ) : notifications.length === 0 ? (
-              <div className="bg-white rounded-2xl border p-12 text-center text-gray-500 shadow-sm">
-                <div className="text-4xl mb-3">🔔</div>
-                <p className="font-bold text-gray-800 text-base">No notifications yet</p>
-                <p className="text-xs text-gray-500 mt-1">You will receive notifications here about your order status and updates.</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {notifications.map((n) => (
-                  <div
-                    key={n.id}
-                    onClick={() => markSingleReadNotification(n.id)}
-                    className={`p-5 rounded-2xl border transition cursor-pointer flex justify-between items-start shadow-sm hover:shadow-md ${
-                      n.is_read ? "bg-white border-gray-100" : "bg-[#f0f4e8] border-[#6B7C3F]/40"
-                    }`}
-                  >
-                    <div className="flex gap-3 items-start">
-                      <span className="text-xl">
-                        {n.type === 'order_confirmed' ? '📦' :
-                         n.type === 'order_shipped' ? '🚚' :
-                         n.type === 'order_out_for_delivery' ? '🛵' :
-                         n.type === 'order_delivered' ? '🎉' :
-                         n.type === 'new_arrival' ? '✨' : '🔔'}
-                      </span>
-                      <div>
-                        <div className={`text-sm ${n.is_read ? 'font-semibold text-gray-800' : 'font-black text-[#0D1512]'}`}>
-                          {n.title}
-                        </div>
-                        <div className="text-xs text-gray-600 mt-1 leading-relaxed">
-                          {n.message}
-                        </div>
-                        <div className="text-[10px] text-gray-400 mt-2">
-                          {new Date(n.created_at).toLocaleString()}
-                        </div>
-                      </div>
-                    </div>
-                    {!n.is_read && (
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#6B7C3F] shrink-0 mt-1" />
-                    )}
+                <div className="flex justify-between items-center mb-6">
+                  <div>
+                    <h2 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-2xl font-black text-[#0D1512] mb-1">
+                      Notifications & Updates
+                    </h2>
+                    <p className="text-xs text-[#0D1512]/60">Stay updated on order changes, account announcements, and studio updates</p>
                   </div>
-                ))}
+                  {notifications.some(n => !n.is_read) && (
+                    <button
+                      onClick={markAllReadNotifications}
+                      className="text-xs font-bold px-4 py-2 rounded-xl bg-[#0D1512] text-[#FAF9F6] hover:bg-[#0D1512]/80 transition shadow cursor-pointer"
+                    >
+                      Mark all as read
+                    </button>
+                  )}
+                </div>
+
+                {loadingNotifications ? (
+                  <div className="bg-[#FAF9F6]/40 rounded-2xl border border-stone-200 p-12 text-center text-gray-500">
+                    <p className="text-xs font-bold animate-pulse text-[#0D1512]/60 uppercase tracking-widest">Loading notifications...</p>
+                  </div>
+                ) : notifications.length === 0 ? (
+                  <div style={{ background: "#FAF9F6/20", borderColor: "rgba(27, 57, 49, 0.1)" }} className="border border-dashed rounded-2xl p-12 text-center space-y-2">
+                    <div className="text-4xl mb-2">🔔</div>
+                    <h3 className="font-bold text-[#0D1512] text-sm">No Notifications Yet</h3>
+                    <p className="text-xs text-stone-500 max-w-sm mx-auto">You'll see real-time updates here when your order status changes or studio announcements arrive.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {notifications.map((n) => (
+                      <div
+                        key={n.id}
+                        onClick={() => markSingleReadNotification(n.id)}
+                        className={`p-4 sm:p-5 rounded-2xl border transition cursor-pointer flex justify-between items-start shadow-sm hover:shadow-md ${
+                          n.is_read ? "bg-white border-stone-200/70" : "bg-amber-50/60 border-amber-200"
+                        }`}
+                      >
+                        <div className="flex gap-3.5 items-start min-w-0">
+                          <span className="text-2xl p-2 bg-stone-100/80 rounded-xl shrink-0">
+                            {n.type === 'order_confirmed' ? '📦' :
+                             n.type === 'order_shipped' ? '🚚' :
+                             n.type === 'order_out_for_delivery' ? '🛵' :
+                             n.type === 'order_delivered' ? '🎉' :
+                             n.type === 'new_arrival' ? '✨' : '🔔'}
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <h4 className={`text-xs sm:text-sm ${n.is_read ? 'font-bold text-stone-800' : 'font-black text-[#0D1512]'}`}>
+                              {n.title}
+                            </h4>
+                            <p className="text-xs text-stone-600 mt-1 leading-relaxed">
+                              {n.message}
+                            </p>
+                            <p className="text-[10px] font-medium text-stone-400 mt-2 font-mono">
+                              {new Date(n.created_at).toLocaleString()}
+                            </p>
+                          </div>
+                        </div>
+                        {!n.is_read && (
+                          <span className="w-2.5 h-2.5 rounded-full bg-amber-600 shrink-0 mt-1" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
+
           </div>
         )}
 
