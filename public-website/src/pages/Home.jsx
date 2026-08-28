@@ -1,5 +1,5 @@
-import { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState, useRef, useCallback } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import API from "../api";
 import Navbar from "../components/Navbar";
@@ -7,6 +7,7 @@ import Footer from "../components/Footer";
 import SEO from "../components/SEO";
 import AdBanner from "../components/AdBanner";
 import RecentlyViewed from "../components/RecentlyViewed";
+import { useMember } from "../context/MemberContext";
 
 /* ─── Fade-up animation wrapper ─── */
 const FadeUp = ({ children, delay = 0, className = "", style = {} }) => (
@@ -175,7 +176,7 @@ function CollectionCard({ col }) {
   );
 }
 
-function PremiumProductCard({ p, to, isDigital = false }) {
+function PremiumProductCard({ p, to, isDigital = false, onWishlist, isWishlisted }) {
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
 
@@ -290,6 +291,38 @@ function PremiumProductCard({ p, to, isDigital = false }) {
         }}>
           {isDigital ? "Digital File" : "Premium Craft"}
         </span>
+
+        {/* Heart Wishlist Button */}
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (onWishlist) onWishlist(p.product_uid || p.id);
+          }}
+          style={{
+            position: "absolute",
+            top: "14px",
+            right: "14px",
+            zIndex: 10,
+            background: "rgba(255, 255, 255, 0.95)",
+            border: "none",
+            borderRadius: "50%",
+            width: "36px",
+            height: "36px",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+            color: isWishlisted ? "#e11d48" : "#94a3b8",
+            fontSize: "18px",
+            transition: "all 0.2s ease",
+          }}
+          aria-label="Save to wishlist"
+          title={isWishlisted ? "Remove from Wishlist" : "Save to Wishlist"}
+        >
+          {isWishlisted ? "♥" : "♡"}
+        </button>
       </div>
 
       <div style={{ padding: "24px" }}>
@@ -347,10 +380,46 @@ function PremiumProductCard({ p, to, isDigital = false }) {
 }
 
 export default function Home() {
+  const navigate = useNavigate();
+  const { member } = useMember();
   const [products, setProducts] = useState([]);
   const [digitalProducts, setDigitalProducts] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
   const [settings, setSettings] = useState({});
   const heroRef = useRef(null);
+
+  const loadWishlist = useCallback(async () => {
+    try {
+      const res = await API.get("/wishlist/my");
+      if (Array.isArray(res.data)) {
+        setWishlist(res.data.map(item => item.product_uid || item.id));
+      }
+    } catch {
+      // Guest mode
+    }
+  }, []);
+
+  useEffect(() => {
+    loadWishlist();
+  }, [loadWishlist]);
+
+  const toggleWishlist = async (product_uid, type = "physical") => {
+    if (!member) {
+      navigate("/login");
+      return;
+    }
+    const isWishlisted = wishlist.includes(product_uid);
+    setWishlist((w) => isWishlisted ? w.filter((x) => x !== product_uid) : [...w, product_uid]);
+    try {
+      if (isWishlisted) {
+        await API.delete(`/wishlist/${product_uid}`);
+      } else {
+        await API.post("/wishlist/add", { product_uid, product_type: type });
+      }
+    } catch (err) {
+      console.error("Failed to update wishlist:", err);
+    }
+  };
 
   useEffect(() => {
     // Dynamic SEO Metadata Injection
@@ -367,7 +436,6 @@ export default function Home() {
     API.get("/digital-products")
       .then((r) => setDigitalProducts(Array.isArray(r.data) ? r.data.slice(0, 4) : []))
       .catch(() => setDigitalProducts([]));
-
 
     API.get("/settings")
       .then((r) => { if (r.data) setSettings(r.data); })
@@ -1475,7 +1543,13 @@ export default function Home() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "32px" }}>
               {products.map((p, i) => (
                 <FadeUp key={p.id} delay={i * 0.08}>
-                  <PremiumProductCard p={p} to={`/products/${p.id}`} isDigital={false} />
+                  <PremiumProductCard
+                    p={p}
+                    to={`/products/${p.id}`}
+                    isDigital={false}
+                    onWishlist={(uid) => toggleWishlist(uid, "physical")}
+                    isWishlisted={wishlist.includes(p.product_uid || p.id)}
+                  />
                 </FadeUp>
               ))}
             </div>
@@ -1559,7 +1633,13 @@ export default function Home() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "32px" }}>
               {digitalProducts.map((p, i) => (
                 <FadeUp key={p.id} delay={i * 0.08}>
-                  <PremiumProductCard p={p} to={`/digital/${p.id}`} isDigital={true} />
+                  <PremiumProductCard
+                    p={p}
+                    to={`/digital/${p.id}`}
+                    isDigital={true}
+                    onWishlist={(uid) => toggleWishlist(uid, "digital")}
+                    isWishlisted={wishlist.includes(p.product_uid || p.id)}
+                  />
                 </FadeUp>
               ))}
             </div>
