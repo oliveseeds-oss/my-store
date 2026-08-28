@@ -19,7 +19,7 @@ router.get("/", verifyMember, async (req, res) => {
               COALESCE(p.stock, 99) as stock,
               COALESCE(p.product_uid, dp.product_uid, CAST(w.product_id AS CHAR)) as slug
        FROM wishlists w
-       LEFT JOIN products p ON (w.product_uid = p.product_uid OR (w.product_id = p.id AND w.product_id != 0))
+       LEFT JOIN physical_products p ON (w.product_uid = p.product_uid OR (w.product_id = p.id AND w.product_id != 0))
        LEFT JOIN digital_products dp ON (w.product_uid = dp.product_uid OR (w.product_id = dp.id AND w.product_id != 0))
        WHERE w.user_id = ? ORDER BY w.created_at DESC`,
       [userId]

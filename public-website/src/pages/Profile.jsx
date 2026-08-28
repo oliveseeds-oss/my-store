@@ -52,8 +52,8 @@ export default function Profile() {
   const fetchWishlist = useCallback(async () => {
     setLoadingWishlist(true);
     try {
-      const r = await API.get("/wishlist/my");
-      setWishlist(r.data);
+      const r = await API.get("/wishlist");
+      setWishlist(Array.isArray(r.data) ? r.data : []);
     } catch (err) {
       console.error("Failed to load wishlist:", err);
     } finally {
@@ -618,48 +618,56 @@ export default function Profile() {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                    {wishlist.map((item) => (
-                      <div key={item.id} style={{ borderColor: "rgba(27, 57, 49, 0.12)" }} className="border rounded-2xl overflow-hidden shadow-md flex flex-col bg-white hover:shadow-lg transition">
-                        <div className="aspect-square bg-stone-100 relative overflow-hidden flex items-center justify-center flex-shrink-0">
-                          {(item.product_image || item.digital_image) ? (
-                            <img 
-                              src={item.product_image || item.digital_image} 
-                              alt="" 
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <span className="text-5xl">{item.product_type === "digital" ? "📦" : "🪵"}</span>
-                          )}
-                        </div>
-                        <div className="p-5 flex flex-col flex-grow">
-                          <p className="text-[10px] font-black text-[#0D1512] uppercase tracking-widest mb-1.5 capitalize">
-                            {item.product_type} Product
-                          </p>
-                          <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="font-bold text-[#0D1512] text-sm leading-snug line-clamp-2 min-h-[2.5rem] mb-2">
-                            {item.product_type === "digital" ? item.digital_name : item.product_name}
-                          </h3>
-                          <p className="font-black text-[#0D1512] text-lg mb-4">
-                            ₹{item.product_type === "digital" ? item.digital_price : item.product_price}
-                          </p>
+                    {wishlist.map((item) => {
+                      const itemImg = item.image || item.image_url || item.product_image || item.digital_image;
+                      const itemName = item.name || item.product_name || item.digital_name || "Saved Item";
+                      const itemPrice = item.price || item.product_price || item.digital_price || 0;
+                      const itemType = item.type || item.product_type || "physical";
+                      const targetUid = item.product_uid || item.slug || item.product_id || item.id;
 
-                          <div className="flex flex-col gap-2 mt-auto">
-                            <button
-                              onClick={() => handleAddWishlistToCart(item)}
-                              style={{ background: "#0D1512", color: "#FAF9F6" }}
-                              className="w-full py-2.5 font-bold text-xs rounded-xl shadow active:scale-95 transition flex items-center justify-center gap-1.5"
-                            >
-                              🛒 Add to Cart
-                            </button>
-                            <button
-                              onClick={() => handleRemoveWishlist(item.id)}
-                              className="w-full py-2.5 text-center text-red-500 hover:bg-red-50 text-xs font-bold rounded-xl border border-transparent hover:border-red-200 transition"
-                            >
-                              Remove Item
-                            </button>
+                      return (
+                        <div key={item.wishlist_id || item.id} style={{ borderColor: "rgba(27, 57, 49, 0.12)" }} className="border rounded-2xl overflow-hidden shadow-md flex flex-col bg-white hover:shadow-lg transition">
+                          <div className="aspect-square bg-stone-100 relative overflow-hidden flex items-center justify-center flex-shrink-0">
+                            {itemImg ? (
+                              <img 
+                                src={itemImg} 
+                                alt={itemName} 
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <span className="text-5xl">{itemType === "digital" ? "📦" : "🪵"}</span>
+                            )}
+                          </div>
+                          <div className="p-5 flex flex-col flex-grow">
+                            <p className="text-[10px] font-black text-[#0D1512] uppercase tracking-widest mb-1.5 capitalize">
+                              {itemType} Product
+                            </p>
+                            <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="font-bold text-[#0D1512] text-sm leading-snug line-clamp-2 min-h-[2.5rem] mb-2">
+                              {itemName}
+                            </h3>
+                            <p className="font-black text-[#0D1512] text-lg mb-4">
+                              ₹{itemPrice}
+                            </p>
+
+                            <div className="flex flex-col gap-2 mt-auto">
+                              <button
+                                onClick={() => handleAddWishlistToCart(item)}
+                                style={{ background: "#0D1512", color: "#FAF9F6" }}
+                                className="w-full py-2.5 font-bold text-xs rounded-xl shadow active:scale-95 transition flex items-center justify-center gap-1.5"
+                              >
+                                🛒 Add to Cart
+                              </button>
+                              <button
+                                onClick={() => handleRemoveWishlist(targetUid)}
+                                className="w-full py-2.5 text-center text-red-500 hover:bg-red-50 text-xs font-bold rounded-xl border border-transparent hover:border-red-200 transition"
+                              >
+                                Remove Item
+                              </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>
