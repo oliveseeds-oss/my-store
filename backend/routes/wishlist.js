@@ -13,8 +13,8 @@ const getMemberIdentifiers = (req) => {
 router.get("/", verifyMember, async (req, res) => {
   const { userId, memberUid } = getMemberIdentifiers(req);
   try {
-    const [items] = await db.query(
-      `SELECT w.id as wishlist_id, w.created_at as saved_at, w.product_id, w.product_uid, COALESCE(w.product_type, w.type, 'physical') as type,
+    let [items] = await db.query(
+      `SELECT w.id as wishlist_id, w.created_at as saved_at, w.product_id, w.product_uid, COALESCE(w.product_type, 'physical') as type,
               COALESCE(p.id, phys.id, dp.id, w.product_id) as id,
               COALESCE(p.product_uid, phys.product_uid, dp.product_uid, w.product_uid, CAST(w.product_id AS CHAR)) as product_uid,
               COALESCE(p.name, phys.name, dp.name, 'Saved Item') as name,
@@ -26,18 +26,39 @@ router.get("/", verifyMember, async (req, res) => {
               COALESCE(p.category, phys.category, dp.category, 'General') as category,
               COALESCE(p.stock, phys.stock, 99) as stock,
               COALESCE(p.product_uid, phys.product_uid, dp.product_uid, CAST(w.product_id AS CHAR)) as slug
-       FROM (
-         SELECT id, user_id, member_id, member_uid, product_id, digital_id, product_uid, product_type, type, created_at FROM wishlists
-         UNION ALL
-         SELECT id, 0 as user_id, 0 as member_id, member_uid, 0 as product_id, 0 as digital_id, product_uid, product_type, product_type as type, NOW() as created_at FROM wishlist
-       ) w
+       FROM wishlists w
        LEFT JOIN products p ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND (w.product_uid = p.product_uid OR w.product_uid = CAST(p.id AS CHAR))) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = p.id)
        LEFT JOIN physical_products phys ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND (w.product_uid = phys.product_uid OR w.product_uid = CAST(phys.id AS CHAR))) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = phys.id)
        LEFT JOIN digital_products dp ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND (w.product_uid = dp.product_uid OR w.product_uid = CAST(dp.id AS CHAR))) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = dp.id) OR (w.digital_id IS NOT NULL AND w.digital_id != 0 AND w.digital_id = dp.id)
        WHERE (w.user_id = ? OR w.member_id = ? OR w.member_uid = ?) ORDER BY w.created_at DESC`,
       [userId, userId, memberUid]
-    );
-    res.json(items);
+    ).catch(() => [[]]);
+
+    if (!items || items.length === 0) {
+      const [legacyItems] = await db.query(
+        `SELECT w.id as wishlist_id, NOW() as saved_at, 0 as product_id, w.product_uid, COALESCE(w.product_type, 'physical') as type,
+                COALESCE(p.id, phys.id, dp.id, 0) as id,
+                COALESCE(p.product_uid, phys.product_uid, dp.product_uid, w.product_uid) as product_uid,
+                COALESCE(p.name, phys.name, dp.name, 'Saved Item') as name,
+                COALESCE(p.price, phys.price, dp.price, 0) as price,
+                COALESCE(p.discount_price, phys.discount_price, dp.discount_price, NULL) as discount_price,
+                COALESCE(p.description, phys.description, dp.description, '') as description,
+                COALESCE(p.image_url, phys.image_url, dp.image_url, '') as image,
+                COALESCE(p.image_url, phys.image_url, dp.image_url, '') as image_url,
+                COALESCE(p.category, phys.category, dp.category, 'General') as category,
+                COALESCE(p.stock, phys.stock, 99) as stock,
+                COALESCE(p.product_uid, phys.product_uid, dp.product_uid, w.product_uid) as slug
+         FROM wishlist w
+         LEFT JOIN products p ON (w.product_uid = p.product_uid OR w.product_uid = CAST(p.id AS CHAR))
+         LEFT JOIN physical_products phys ON (w.product_uid = phys.product_uid OR w.product_uid = CAST(phys.id AS CHAR))
+         LEFT JOIN digital_products dp ON (w.product_uid = dp.product_uid OR w.product_uid = CAST(dp.id AS CHAR))
+         WHERE w.member_uid = ? ORDER BY w.id DESC`,
+        [memberUid]
+      ).catch(() => [[]]);
+      items = legacyItems || [];
+    }
+
+    res.json(items || []);
   } catch (error) {
     console.error("Failed to fetch wishlist:", error);
     res.status(500).json({ error: "Failed to get wishlist" });
