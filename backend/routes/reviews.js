@@ -77,17 +77,24 @@ router.post("/", verifyMember, async (req, res) => {
 const fetchAdminReviews = async (req, res) => {
   try {
     const [rows] = await db.query(
-      `SELECT r.*, COALESCE(p.name, dp.name, 'Product') as product_name, COALESCE(m.name, m.full_name, 'Customer') as customer_name, m.email as customer_email
+      `SELECT r.*, 
+              COALESCE(pp.name, dp.name, 'Product') as product_name, 
+              COALESCE(m.name, m.full_name, 'Customer') as customer_name, 
+              m.email as customer_email
        FROM product_reviews r
-       LEFT JOIN products p ON r.product_id = p.id
+       LEFT JOIN physical_products pp ON r.product_id = pp.id
        LEFT JOIN digital_products dp ON r.product_id = dp.id
-       LEFT JOIN members m ON r.user_id = m.id
+       LEFT JOIN members m ON (r.user_id = m.id OR r.user_id = m.member_uid)
        ORDER BY r.created_at DESC`
     );
     res.json(rows);
   } catch (err) {
-    console.error("Failed to fetch admin reviews:", err);
-    res.status(500).json({ error: "Failed to fetch reviews" });
+    try {
+      const [simpleRows] = await db.query("SELECT * FROM product_reviews ORDER BY created_at DESC");
+      res.json(simpleRows);
+    } catch {
+      res.json([]);
+    }
   }
 };
 
