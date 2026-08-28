@@ -635,18 +635,19 @@ export default function DigitalProductList() {
     }
   }, []);
 
-  const toggleWishlist = async (product_uid) => {
+  const toggleWishlist = async (targetUid) => {
     if (!member) {
       navigate("/login");
       return;
     }
-    const isWishlisted = wishlist.includes(product_uid);
-    setWishlist((w) => isWishlisted ? w.filter((x) => x !== product_uid) : [...w, product_uid]);
+    const uidStr = String(targetUid);
+    const isWishlisted = wishlist.some(x => String(x) === uidStr);
+    setWishlist((w) => isWishlisted ? w.filter((x) => String(x) !== uidStr) : [...w, targetUid]);
     try {
       if (isWishlisted) {
-        await API.delete(`/wishlist/${product_uid}`);
+        await API.delete(`/wishlist/${targetUid}`);
       } else {
-        await API.post("/wishlist/add", { product_uid, product_type: "digital" });
+        await API.post("/wishlist/add", { product_uid: uidStr, product_type: "digital" });
       }
     } catch (err) {
       console.error("Failed to update wishlist:", err);
