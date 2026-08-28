@@ -159,9 +159,9 @@ router.post("/sync", verifyAdmin, async (req, res) => {
                 if (isNaN(rateVal) || rateVal <= 0 || !isFinite(rateVal)) continue;
 
                 try {
-                  await db.query("UPDATE currency_rates SET rate_to_inr=?, exchange_rate=?, updated_at=NOW() WHERE id=?", [rateVal.toFixed(4), rateVal.toFixed(4), row.id]);
+                  await db.query("UPDATE currency_rates SET rate_to_inr=?, exchange_rate=?, updated_at=NOW() WHERE id=?", [rateVal.toFixed(6), rateVal.toFixed(6), row.id]);
                 } catch {
-                  await db.query("UPDATE currency_rates SET rate_to_inr=?, updated_at=NOW() WHERE id=?", [rateVal.toFixed(4), row.id]);
+                  await db.query("UPDATE currency_rates SET rate_to_inr=?, updated_at=NOW() WHERE id=?", [rateVal.toFixed(6), row.id]);
                 }
             }
         }
