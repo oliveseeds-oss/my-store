@@ -27,88 +27,97 @@ router.get("/", verifyMember, async (req, res) => {
   const { userId, memberUid } = await getMemberIdentifiers(req);
   console.log(`🔍 Fetching wishlist for user: userId=${userId}, memberUid=${memberUid}`);
   try {
-    let [items] = await db.query(
-      `SELECT w.id as wishlist_id, w.created_at as saved_at, w.product_id, w.product_uid, COALESCE(w.product_type, 'physical') as type,
-              COALESCE(p.id, phys.id, dp.id, w.product_id, w.id) as id,
-              COALESCE(p.product_uid, phys.product_uid, dp.product_uid, w.product_uid, CAST(w.product_id AS CHAR)) as product_uid,
-              COALESCE(p.name, phys.name, dp.name, 'Saved Product') as name,
-              COALESCE(p.price, phys.price, dp.price, 0) as price,
-              COALESCE(p.discount_price, phys.discount_price, dp.discount_price, NULL) as discount_price,
-              COALESCE(p.description, phys.description, dp.description, '') as description,
-              COALESCE(p.image_url, phys.image_url, dp.image_url, p.image, phys.image, dp.image, '') as image,
-              COALESCE(p.image_url, phys.image_url, dp.image_url, p.image, phys.image, dp.image, '') as image_url,
-              COALESCE(p.images, phys.images, dp.images, NULL) as images_json,
-              COALESCE(p.category, phys.category, dp.category, 'General') as category,
-              COALESCE(p.stock, phys.stock, 99) as stock,
-              COALESCE(p.product_uid, phys.product_uid, dp.product_uid, CAST(w.product_id AS CHAR)) as slug
-       FROM wishlists w
-       LEFT JOIN products p ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND (w.product_uid = p.product_uid OR w.product_uid = CAST(p.id AS CHAR))) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = p.id)
-       LEFT JOIN physical_products phys ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND (w.product_uid = phys.product_uid OR w.product_uid = CAST(phys.id AS CHAR))) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = phys.id)
-       LEFT JOIN digital_products dp ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND (w.product_uid = dp.product_uid OR w.product_uid = CAST(dp.id AS CHAR))) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = dp.id) OR (w.digital_id IS NOT NULL AND w.digital_id != 0 AND w.digital_id = dp.id)
-       WHERE (w.user_id = ? OR w.member_id = ? OR w.member_uid = ? OR (? != '' AND (w.user_id = 0 OR w.member_id = 0))) ORDER BY w.created_at DESC`,
-      [userId, userId, memberUid, memberUid]
+    // 1. Fetch user wishlist entries
+    const [wishlistRows] = await db.query(
+      `SELECT * FROM wishlists WHERE (user_id = ? OR member_id = ? OR member_uid = ?) ORDER BY created_at DESC`,
+      [userId, userId, memberUid]
     ).catch(() => [[]]);
 
-    if (!items || items.length === 0) {
-      const [legacyItems] = await db.query(
-        `SELECT w.id as wishlist_id, NOW() as saved_at, 0 as product_id, w.product_uid, COALESCE(w.product_type, 'physical') as type,
-                COALESCE(p.id, phys.id, dp.id, w.id) as id,
-                COALESCE(p.product_uid, phys.product_uid, dp.product_uid, w.product_uid) as product_uid,
-                COALESCE(p.name, phys.name, dp.name, 'Saved Product') as name,
-                COALESCE(p.price, phys.price, dp.price, 0) as price,
-                COALESCE(p.discount_price, phys.discount_price, dp.discount_price, NULL) as discount_price,
-                COALESCE(p.description, phys.description, dp.description, '') as description,
-                COALESCE(p.image_url, phys.image_url, dp.image_url, p.image, phys.image, dp.image, '') as image,
-                COALESCE(p.image_url, phys.image_url, dp.image_url, p.image, phys.image, dp.image, '') as image_url,
-                COALESCE(p.images, phys.images, dp.images, NULL) as images_json,
-                COALESCE(p.category, phys.category, dp.category, 'General') as category,
-                COALESCE(p.stock, phys.stock, 99) as stock,
-                COALESCE(p.product_uid, phys.product_uid, dp.product_uid, w.product_uid) as slug
-         FROM wishlist w
-         LEFT JOIN products p ON (w.product_uid = p.product_uid OR w.product_uid = CAST(p.id AS CHAR))
-         LEFT JOIN physical_products phys ON (w.product_uid = phys.product_uid OR w.product_uid = CAST(phys.id AS CHAR))
-         LEFT JOIN digital_products dp ON (w.product_uid = dp.product_uid OR w.product_uid = CAST(dp.id AS CHAR))
-         WHERE (w.member_uid = ? OR ? = '') ORDER BY w.id DESC`,
-        [memberUid, memberUid]
+    let rawEntries = wishlistRows || [];
+    if (rawEntries.length === 0) {
+      const [legacyRows] = await db.query(
+        `SELECT * FROM wishlist WHERE member_uid = ? ORDER BY id DESC`,
+        [memberUid]
       ).catch(() => [[]]);
-      items = legacyItems || [];
+      rawEntries = legacyRows || [];
     }
 
-    if (!items || items.length === 0) {
-      // Fallback 3: Return raw wishlists entries without WHERE filter if single member on server
-      const [allWishlists] = await db.query("SELECT * FROM wishlists ORDER BY id DESC LIMIT 50").catch(() => [[]]);
-      if (allWishlists && allWishlists.length > 0) {
-        items = allWishlists.map(w => ({
-          wishlist_id: w.id,
-          saved_at: w.created_at,
-          product_id: w.product_id,
-          product_uid: w.product_uid || String(w.product_id),
-          type: w.product_type || "physical",
-          id: w.product_id || w.id,
-          name: "Saved Product",
-          price: 0,
-          image: "",
-          image_url: "",
-          category: "General",
-          stock: 99,
-          slug: w.product_uid || String(w.product_id || w.id)
-        }));
-      }
+    if (rawEntries.length === 0) {
+      return res.json([]);
     }
 
-    const formatted = (items || []).map(item => {
-      let img = item.image || item.image_url || "";
-      if (!img && item.images_json) {
-        try {
-          const parsed = typeof item.images_json === "string" ? JSON.parse(item.images_json) : item.images_json;
-          if (Array.isArray(parsed) && parsed.length > 0) img = parsed[0];
-        } catch (e) {}
-      }
-      return { ...item, image: img, image_url: img };
+    // 2. Fetch full product catalog from all tables to join in Node.js
+    const [products] = await db.query("SELECT * FROM products").catch(() => [[]]);
+    const [physProducts] = await db.query("SELECT * FROM physical_products").catch(() => [[]]);
+    const [digiProducts] = await db.query("SELECT * FROM digital_products").catch(() => [[]]);
+
+    const catalogMap = new Map();
+
+    // Map physical products
+    [...(products || []), ...(physProducts || [])].forEach(p => {
+      if (p.id) catalogMap.set(`physical_id_${p.id}`, p);
+      if (p.product_uid) catalogMap.set(`physical_uid_${p.product_uid}`, p);
+      catalogMap.set(`id_${p.id}`, p);
+      if (p.product_uid) catalogMap.set(`uid_${p.product_uid}`, p);
     });
 
-    console.log(`✅ Wishlist items fetched count: ${formatted.length}`);
-    res.json(formatted);
+    // Map digital products
+    (digiProducts || []).forEach(p => {
+      if (p.id) catalogMap.set(`digital_id_${p.id}`, p);
+      if (p.product_uid) catalogMap.set(`digital_uid_${p.product_uid}`, p);
+      if (!catalogMap.has(`id_${p.id}`)) catalogMap.set(`id_${p.id}`, p);
+      if (p.product_uid && !catalogMap.has(`uid_${p.product_uid}`)) catalogMap.set(`uid_${p.product_uid}`, p);
+    });
+
+    // Helper to parse image
+    const extractImage = (p) => {
+      if (!p) return "";
+      if (p.image_url) return p.image_url;
+      if (p.image) return p.image;
+      if (p.images) {
+        try {
+          const imgs = typeof p.images === "string" ? JSON.parse(p.images) : p.images;
+          if (Array.isArray(imgs) && imgs.length > 0) return imgs[0];
+        } catch (e) {}
+      }
+      return "";
+    };
+
+    // 3. Build enriched result list
+    const result = rawEntries.map(w => {
+      const pType = w.product_type || w.type || "physical";
+      const targetUid = w.product_uid || (w.product_id ? String(w.product_id) : (w.digital_id ? String(w.digital_id) : ""));
+      const targetId = w.product_id || w.digital_id || w.id;
+
+      // Look up matched product object
+      let matched = catalogMap.get(`${pType}_uid_${targetUid}`) ||
+                    catalogMap.get(`${pType}_id_${targetId}`) ||
+                    catalogMap.get(`uid_${targetUid}`) ||
+                    catalogMap.get(`id_${targetId}`);
+
+      const img = extractImage(matched);
+
+      return {
+        wishlist_id: w.id,
+        saved_at: w.created_at || new Date(),
+        product_id: matched?.id || w.product_id || 0,
+        product_uid: matched?.product_uid || targetUid || String(matched?.id || w.id),
+        type: pType,
+        id: matched?.id || targetId || w.id,
+        name: matched?.name || matched?.title || "Saved Product",
+        price: matched ? (matched.discount_price || matched.price || 0) : 0,
+        discount_price: matched?.discount_price || null,
+        description: matched?.description || "",
+        image: img,
+        image_url: img,
+        category: matched?.category || "Engraved Product",
+        stock: matched?.stock ?? 99,
+        slug: matched?.product_uid || targetUid || String(matched?.id || w.id)
+      };
+    });
+
+    console.log(`✅ Wishlist items enriched count: ${result.length}`);
+    res.json(result);
   } catch (error) {
     console.error("Failed to fetch wishlist:", error);
     res.status(500).json({ error: "Failed to get wishlist" });
