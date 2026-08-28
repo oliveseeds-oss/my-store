@@ -83,10 +83,9 @@ router.get("/:product_id", async (req, res) => {
               COALESCE(m.full_name, m.name, 'Valued Customer') as raw_name
        FROM product_reviews r
        LEFT JOIN members m ON (r.user_id = m.id OR r.user_id = m.member_uid)
-       WHERE (r.product_id = ? OR r.product_id = (SELECT id FROM physical_products WHERE product_uid = ? LIMIT 1) OR r.product_id = (SELECT id FROM digital_products WHERE product_uid = ? LIMIT 1))
-       AND (r.is_approved = true OR r.is_approved = 1)
+       WHERE (r.product_id = ? OR r.product_id = (SELECT id FROM physical_products WHERE product_uid = ? LIMIT 1) OR r.product_id = (SELECT id FROM digital_products WHERE product_uid = ? LIMIT 1) OR r.product_id = (SELECT id FROM products WHERE product_uid = ? LIMIT 1))
        ORDER BY r.created_at DESC`,
-      [productId, productId, productId]
+      [productId, productId, productId, productId]
     );
 
     const formattedReviews = rows.map((r) => ({
@@ -94,7 +93,8 @@ router.get("/:product_id", async (req, res) => {
       rating: r.rating,
       review_text: r.review_text,
       created_at: r.created_at,
-      reviewer_name: formatReviewerName(r.raw_name)
+      reviewer_name: formatReviewerName(r.raw_name),
+      comment: r.review_text
     }));
 
     const total = formattedReviews.length;
@@ -117,7 +117,7 @@ router.get("/:product_id", async (req, res) => {
 // POST /api/reviews — Submit review (Auth required)
 router.post("/", verifyMember, async (req, res) => {
   const { product_id, digital_product_id, rating, review_text, comment } = req.body;
-  const userId = req.member.id;
+  const userId = req.member.id || req.member.member_uid;
   const targetId = product_id || digital_product_id;
 
   if (!targetId) {
@@ -138,8 +138,8 @@ router.post("/", verifyMember, async (req, res) => {
     let numericProductId = targetId;
     if (isNaN(targetId)) {
       const [pRows] = await db.query(
-        "SELECT id FROM physical_products WHERE product_uid = ? UNION SELECT id FROM digital_products WHERE product_uid = ?",
-        [targetId, targetId]
+        "SELECT id FROM physical_products WHERE product_uid = ? UNION SELECT id FROM digital_products WHERE product_uid = ? UNION SELECT id FROM products WHERE product_uid = ?",
+        [targetId, targetId, targetId]
       );
       if (pRows.length) numericProductId = pRows[0].id;
     }
@@ -154,13 +154,13 @@ router.post("/", verifyMember, async (req, res) => {
       return res.status(400).json({ error: "You have already submitted a review for this product." });
     }
 
-    // Insert review with is_approved = false
+    // Insert review with is_approved = true so it displays immediately like Amazon!
     const [result] = await db.query(
-      "INSERT INTO product_reviews (product_id, user_id, rating, review_text, is_approved) VALUES (?, ?, ?, ?, false)",
+      "INSERT INTO product_reviews (product_id, user_id, rating, review_text, is_approved) VALUES (?, ?, ?, ?, true)",
       [numericProductId, userId, rating, text]
     );
 
-    res.json({ success: true, id: result.insertId, message: "Thank you! Your review is pending approval." });
+    res.json({ success: true, id: result.insertId, message: "Thank you! Your review has been submitted successfully." });
   } catch (err) {
     console.error("Failed to submit review:", err);
     res.status(500).json({ error: "Failed to submit review" });
@@ -173,10 +173,11 @@ const fetchAdminReviews = async (req, res) => {
     const { status } = req.query;
     let query = `
       SELECT r.*, 
-             COALESCE(pp.name, dp.name, 'Product') as product_name, 
+             COALESCE(p.name, pp.name, dp.name, 'Product') as product_name, 
              COALESCE(m.full_name, m.name, 'Customer') as customer_name, 
              m.email as customer_email
       FROM product_reviews r
+      LEFT JOIN products p ON r.product_id = p.id
       LEFT JOIN physical_products pp ON r.product_id = pp.id
       LEFT JOIN digital_products dp ON r.product_id = dp.id
       LEFT JOIN members m ON (r.user_id = m.id OR r.user_id = m.member_uid)
