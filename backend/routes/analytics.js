@@ -340,9 +340,9 @@ router.get("/export", verifyAdmin, async (req, res) => {
            GROUP BY do.id
          ) o
          ORDER BY o.created_at DESC`,
-        [days]
-      );
-      data = rows;
+        [days, days]
+      ).catch(() => [[]]);
+      data = rows || [];
     } else if (type === "products") {
       const [rows] = await db.query(
         `SELECT product_name, SUM(qty) as units, SUM(price*qty) as revenue, type
@@ -361,8 +361,8 @@ router.get("/export", verifyAdmin, async (req, res) => {
          GROUP BY product_name, type
          ORDER BY revenue DESC`,
         [days]
-      );
-      data = rows;
+      ).catch(() => [[]]);
+      data = rows || [];
     } else if (type === "members") {
       const [rows] = await db.query(
         `SELECT m.member_uid, m.name, m.email, m.phone, m.status, m.created_at,
@@ -374,8 +374,17 @@ router.get("/export", verifyAdmin, async (req, res) => {
            SELECT order_uid, member_uid, total FROM digital_orders
          ) o ON m.member_uid = o.member_uid
          GROUP BY m.id ORDER BY total_spent DESC`
-      );
-      data = rows;
+      ).catch(() => [[]]);
+      data = rows || [];
+    }
+
+    if (req.query.format === "csv") {
+      res.setHeader("Content-Type", "text/csv");
+      res.setHeader("Content-Disposition", `attachment; filename="export_${type}_${period}.csv"`);
+      if (!data.length) return res.send("No data");
+      const headers = Object.keys(data[0]).join(",");
+      const rowsCsv = data.map(row => Object.values(row).map(val => `"${String(val ?? "").replace(/"/g, '""')}"`).join(","));
+      return res.send([headers, ...rowsCsv].join("\n"));
     }
 
     res.json({ type, period: `${days} days`, count: data.length, data });

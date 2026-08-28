@@ -77,13 +77,14 @@ router.post("/", verifyMember, async (req, res) => {
   }
 });
 
-// Admin: GET /api/admin/reviews — get all reviews
-router.get("/admin/all", verifyAdmin, async (req, res) => {
+// Admin: GET /api/admin/reviews AND GET /api/reviews/admin/all — get all reviews
+const fetchAdminReviews = async (req, res) => {
   try {
     const [rows] = await db.query(
-      `SELECT r.*, p.name as product_name, m.name as customer_name, m.email as customer_email
+      `SELECT r.*, COALESCE(p.name, dp.name, 'Product') as product_name, COALESCE(m.name, m.full_name, 'Customer') as customer_name, m.email as customer_email
        FROM product_reviews r
-       LEFT JOIN physical_products p ON r.product_id = p.id
+       LEFT JOIN products p ON r.product_id = p.id
+       LEFT JOIN digital_products dp ON r.product_id = dp.id
        LEFT JOIN members m ON r.user_id = m.id
        ORDER BY r.created_at DESC`
     );
@@ -92,7 +93,10 @@ router.get("/admin/all", verifyAdmin, async (req, res) => {
     console.error("Failed to fetch admin reviews:", err);
     res.status(500).json({ error: "Failed to fetch reviews" });
   }
-});
+};
+
+router.get("/admin/all", verifyAdmin, fetchAdminReviews);
+router.get("/admin/reviews", verifyAdmin, fetchAdminReviews);
 
 // Admin: PUT /api/admin/reviews/:id/approve — approve a review
 router.put("/admin/:id/approve", verifyAdmin, async (req, res) => {

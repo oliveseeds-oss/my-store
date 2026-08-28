@@ -194,7 +194,7 @@ export default function BlogList() {
               )}
 
               <div
-                className="prose prose-stone prose-lg max-w-none text-stone-700 leading-relaxed font-normal"
+                className="blog-content prose prose-stone prose-lg max-w-none text-stone-700 leading-relaxed font-normal"
                 style={{ wordBreak: 'break-word' }}
                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(formatContent(viewingPost.content)) }}
               />

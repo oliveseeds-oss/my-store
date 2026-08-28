@@ -41,11 +41,27 @@ const mapGoogleCategory = (catName) => {
 async function generateXmlFeed(feedType) {
   const domain = getDomain();
 
-  let physicalQuery = "SELECT id, name, description, price, category, image_url, image_url_2, stock, is_active FROM physical_products WHERE is_active = TRUE ORDER BY id DESC";
-  let digitalQuery = "SELECT id, product_uid, name, description, price, category, thumbnail_url, is_active FROM digital_products WHERE is_active = TRUE ORDER BY id DESC";
+  let physicalProducts = [];
+  let digitalProducts = [];
 
-  const [physicalProducts] = await db.query(physicalQuery);
-  const [digitalProducts] = await db.query(digitalQuery);
+  try {
+    const [pRows] = await db.query("SELECT * FROM products WHERE is_active = TRUE ORDER BY id DESC").catch(() => [[]]);
+    if (pRows && pRows.length) {
+      physicalProducts = pRows;
+    } else {
+      const [physRows] = await db.query("SELECT * FROM physical_products WHERE is_active = TRUE ORDER BY id DESC").catch(() => [[]]);
+      physicalProducts = physRows || [];
+    }
+  } catch (e) {
+    physicalProducts = [];
+  }
+
+  try {
+    const [dRows] = await db.query("SELECT * FROM digital_products WHERE is_active = TRUE ORDER BY id DESC").catch(() => [[]]);
+    digitalProducts = dRows || [];
+  } catch (e) {
+    digitalProducts = [];
+  }
 
   let items = [];
   let count = 0;

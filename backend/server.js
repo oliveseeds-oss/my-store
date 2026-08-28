@@ -74,6 +74,7 @@ async function startServer() {
   app.use("/api/wishlist", require("./routes/wishlist"));
   app.use("/api/transactions", require("./routes/transactions"));
   app.use("/api/faqs", require("./routes/faqs"));
+  app.use("/api/faq", require("./routes/faqs"));
   app.use("/api/coupons", require("./routes/coupons"));
   app.use("/api/bulk-inquiry", require("./routes/bulkInquiries"));
   app.use("/api/newsletter", require("./routes/newsletter"));

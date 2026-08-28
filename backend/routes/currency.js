@@ -61,45 +61,61 @@ router.put("/:id", verifyAdmin, async (req, res) => {
     res.json({ message: "Rate updated" });
 });
 
+// ADMIN — get all available world currencies from live API (Future Expansion)
+router.get("/available", verifyAdmin, async (req, res) => {
+  try {
+    const data = await fetchRates();
+    if (data && data.rates) {
+      const allCurrencies = Object.keys(data.rates).map(code => ({
+        currency_code: code,
+        live_rate: data.rates[code]
+      }));
+      return res.json(allCurrencies);
+    }
+    res.json([]);
+  } catch (error) {
+    console.error("Available currencies fetch error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // ADMIN — sync live rates relative to INR
 router.post("/sync", verifyAdmin, async (req, res) => {
     try {
         const data = await fetchRates();
-        if (data.result !== "success" || !data.rates) {
+        const rates = data?.rates;
+        if (!rates) {
             return res.status(400).json({ error: "Failed to fetch rates from Exchange Rate API" });
         }
 
-        const rates = data.rates;
         const [dbRates] = await db.query("SELECT id, currency_code FROM currency_rates");
 
         for (const row of dbRates) {
             const code = row.currency_code;
             if (code === "INR") {
                 await db.query(
-                    "UPDATE currency_rates SET rate_to_inr=1.0, updated_at=NOW() WHERE id=?",
+                    "UPDATE currency_rates SET rate_to_inr=1.0, exchange_rate=1.0, updated_at=NOW() WHERE id=?",
                     [row.id]
                 );
             } else if (rates[code]) {
-                // rates[code] is the multiplier from INR to target currency (e.g. 1 INR = 0.012 USD)
                 const rateVal = parseFloat(rates[code]);
 
-                // Validate synchronized rates (Priority 9)
                 if (isNaN(rateVal) || rateVal <= 0 || !isFinite(rateVal)) {
                     console.warn(`[Currency Sync Warning] Invalid rate synced for ${code}: ${rateVal}. Skipping.`);
                     continue;
                 }
 
                 await db.query(
-                    "UPDATE currency_rates SET rate_to_inr=?, updated_at=NOW() WHERE id=?",
-                    [rateVal.toFixed(4), row.id]
+                    "UPDATE currency_rates SET rate_to_inr=?, exchange_rate=?, updated_at=NOW() WHERE id=?",
+                    [rateVal.toFixed(4), rateVal.toFixed(4), row.id]
                 );
             }
         }
 
-        res.json({ ok: true, message: "Currency rates synced successfully!" });
+        res.json({ ok: true, success: true, message: "Live rates synced successfully!", synced_at: new Date() });
     } catch (error) {
         console.error("Live currency sync failed:", error.message);
-        res.status(500).json({ error: "Failed to sync rates in real-time" });
+        res.status(500).json({ error: "Failed to sync rates in real-time: " + error.message });
     }
 });
 
