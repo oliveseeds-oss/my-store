@@ -25,6 +25,7 @@ const getMemberIdentifiers = async (req) => {
 // GET /api/wishlist — get current user wishlist details
 router.get("/", verifyMember, async (req, res) => {
   const { userId, memberUid } = await getMemberIdentifiers(req);
+  console.log(`🔍 Fetching wishlist for user: userId=${userId}, memberUid=${memberUid}`);
   try {
     let [items] = await db.query(
       `SELECT w.id as wishlist_id, w.created_at as saved_at, w.product_id, w.product_uid, COALESCE(w.product_type, 'physical') as type,
@@ -71,6 +72,7 @@ router.get("/", verifyMember, async (req, res) => {
       items = legacyItems || [];
     }
 
+    console.log(`✅ Wishlist items fetched count: ${items ? items.length : 0}`);
     res.json(items || []);
   } catch (error) {
     console.error("Failed to fetch wishlist:", error);
