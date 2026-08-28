@@ -2,16 +2,29 @@ const router = require("express").Router();
 const db = require("../db");
 const { verifyMember } = require("../middleware/auth");
 
-// Helper to get member identifiers
-const getMemberIdentifiers = (req) => {
-  const userId = req.member?.id || req.member?.member_id || 0;
-  const memberUid = req.member?.member_uid || String(userId);
+// Helper to get member identifiers (resolves both numeric id and alphanumeric member_uid from DB if needed)
+const getMemberIdentifiers = async (req) => {
+  let userId = req.member?.id || req.member?.member_id || 0;
+  let memberUid = req.member?.member_uid || (userId ? String(userId) : "");
+
+  if ((!userId || !memberUid) && (req.member?.email || memberUid)) {
+    try {
+      const [rows] = await db.query(
+        "SELECT id, member_uid FROM members WHERE member_uid = ? OR email = ? OR id = ?",
+        [memberUid, req.member?.email || "", userId]
+      );
+      if (rows.length > 0) {
+        userId = rows[0].id;
+        memberUid = rows[0].member_uid;
+      }
+    } catch (e) {}
+  }
   return { userId, memberUid };
 };
 
 // GET /api/wishlist — get current user wishlist details
 router.get("/", verifyMember, async (req, res) => {
-  const { userId, memberUid } = getMemberIdentifiers(req);
+  const { userId, memberUid } = await getMemberIdentifiers(req);
   try {
     let [items] = await db.query(
       `SELECT w.id as wishlist_id, w.created_at as saved_at, w.product_id, w.product_uid, COALESCE(w.product_type, 'physical') as type,
@@ -67,7 +80,7 @@ router.get("/", verifyMember, async (req, res) => {
 
 // GET /api/wishlist/my — array of all saved IDs & product_uids as strings
 router.get("/my", verifyMember, async (req, res) => {
-  const { userId, memberUid } = getMemberIdentifiers(req);
+  const { userId, memberUid } = await getMemberIdentifiers(req);
   try {
     const [items] = await db.query(
       `SELECT product_id, product_uid, digital_id FROM wishlists WHERE (user_id = ? OR member_id = ? OR member_uid = ?)
@@ -89,7 +102,7 @@ router.get("/my", verifyMember, async (req, res) => {
 
 // POST /api/wishlist/add — add via body { product_id, product_uid, product_type }
 router.post("/add", verifyMember, async (req, res) => {
-  const { userId, memberUid } = getMemberIdentifiers(req);
+  const { userId, memberUid } = await getMemberIdentifiers(req);
   const { product_id, product_uid, product_type } = req.body;
   const targetUid = product_uid ? String(product_uid) : (product_id ? String(product_id) : null);
   const targetId = typeof product_id === "number" ? product_id : (!isNaN(product_uid) && product_uid !== null ? parseInt(product_uid) : 0);
@@ -131,7 +144,7 @@ router.post("/add", verifyMember, async (req, res) => {
 
 // POST /api/wishlist/:product_id — add to wishlist by param
 router.post("/:product_id", verifyMember, async (req, res) => {
-  const { userId, memberUid } = getMemberIdentifiers(req);
+  const { userId, memberUid } = await getMemberIdentifiers(req);
   const paramVal = req.params.product_id;
   const isNum = !isNaN(paramVal);
   const targetId = isNum ? parseInt(paramVal) : 0;
@@ -166,7 +179,7 @@ router.post("/:product_id", verifyMember, async (req, res) => {
 
 // DELETE /api/wishlist/:product_id — remove from wishlist
 router.delete("/:product_id", verifyMember, async (req, res) => {
-  const { userId, memberUid } = getMemberIdentifiers(req);
+  const { userId, memberUid } = await getMemberIdentifiers(req);
   const paramVal = req.params.product_id;
 
   try {
