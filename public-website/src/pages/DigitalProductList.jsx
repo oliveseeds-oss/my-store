@@ -1,9 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import API from "../api";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useCart } from "../context/CartContext";
+import { useMember } from "../context/MemberContext";
 import SEO from "../components/SEO";
 import AdBanner from "../components/AdBanner";
 
@@ -606,6 +607,8 @@ function SkeletonCard() {
 export default function DigitalProductList() {
   injectStyles();
 
+  const navigate = useNavigate();
+  const { member } = useMember();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [wishlist, setWishlist] = useState([]);

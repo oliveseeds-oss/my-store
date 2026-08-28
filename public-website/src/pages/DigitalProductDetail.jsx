@@ -83,6 +83,8 @@ function ReviewForm({ productId, onSubmit }) {
 }
 
 export default function DigitalProductDetail() {
+  const navigate = useNavigate();
+  const { member } = useMember();
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [selectedImg, setSelectedImg] = useState(0);

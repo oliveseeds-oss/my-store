@@ -125,6 +125,7 @@ function ReviewForm({ productId, onSubmit }) {
 }
 
 export default function ProductDetail() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const { convert } = useCurrency();
   const [product, setProduct] = useState(null);
