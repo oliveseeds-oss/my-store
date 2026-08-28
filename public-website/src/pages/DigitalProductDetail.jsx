@@ -532,8 +532,6 @@ export default function DigitalProductDetail() {
           </div>
         )}
 
-        {/* Customer Reviews */}
-        <ReviewSection productId={product.id || product.product_uid} />
       </div>
       <Footer dark />
     </div>

@@ -1020,9 +1020,6 @@ export default function ProductDetail() {
 
         {/* FEATURE 4: Recently Viewed Products */}
         <RecentlyViewed currentProductId={product.id} />
-
-        {/* Customer Reviews */}
-        <ReviewSection productId={product.id} />
       </div>
       <Footer />
     </div>
