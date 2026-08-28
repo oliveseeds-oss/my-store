@@ -56,27 +56,27 @@ router.get("/", async (req, res) => {
     query += " ORDER BY country_name";
 
     try {
-        const [rows] = await db.query(query);
-
-        // Background auto sync live exchange rates if last update > 6 hours ago
-        const lastUpdated = rows[0]?.updated_at ? new Date(rows[0].updated_at).getTime() : 0;
-        if (Date.now() - lastUpdated > 6 * 3600 * 1000) {
-            fetchRates().then(data => {
-                if (data && data.rates) {
-                    rows.forEach(r => {
-                        if (r.currency_code === "INR") {
-                            db.query("UPDATE currency_rates SET rate_to_inr=1.0, exchange_rate=1.0, updated_at=NOW() WHERE id=?", [r.id]).catch(() => {});
-                        } else if (data.rates[r.currency_code]) {
-                            const val = parseFloat(data.rates[r.currency_code]);
-                            if (!isNaN(val) && val > 0) {
-                                db.query("UPDATE currency_rates SET rate_to_inr=?, exchange_rate=?, updated_at=NOW() WHERE id=?", [val.toFixed(4), val.toFixed(4), r.id]).catch(() => {});
-                            }
-                        }
-                    });
+        // Fetch live rates and update DB synchronously
+        try {
+          const liveData = await fetchRates();
+          if (liveData && liveData.rates) {
+            const [currentDb] = await db.query("SELECT id, currency_code FROM currency_rates");
+            for (const r of currentDb) {
+              if (r.currency_code === "INR") {
+                await db.query("UPDATE currency_rates SET rate_to_inr=1.0, exchange_rate=1.0, updated_at=NOW() WHERE id=?", [r.id]);
+              } else if (liveData.rates[r.currency_code]) {
+                const val = parseFloat(liveData.rates[r.currency_code]);
+                if (!isNaN(val) && val > 0) {
+                  await db.query("UPDATE currency_rates SET rate_to_inr=?, exchange_rate=?, updated_at=NOW() WHERE id=?", [val.toFixed(6), val.toFixed(6), r.id]);
                 }
-            }).catch(() => {});
+              }
+            }
+          }
+        } catch (e) {
+          // Fallback to current DB rows if offline
         }
 
+        const [rows] = await db.query(query);
         res.json(rows);
     } catch (error) {
         console.error("Failed to fetch currency rates:", error.message);
