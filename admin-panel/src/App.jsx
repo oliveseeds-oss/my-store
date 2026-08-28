@@ -10,7 +10,6 @@ import Members from "./pages/Members";
 import Blog from "./pages/Blog";
 import ContactMessages from "./pages/ContactMessages";
 import AdPanel from "./pages/AdPanel";
-import Notifications from "./pages/Notifications";
 import Settings from "./pages/Settings";
 import Categories from "./pages/Categories";
 import CurrencySettings from "./pages/CurrencySettings";
@@ -56,7 +55,7 @@ export default function App() {
           <Route path="/newsletter" element={<P><NewsletterManager /></P>} />
           <Route path="/messages" element={<P><ContactMessages /></P>} />
           <Route path="/ads" element={<P><AdPanel /></P>} />
-          <Route path="/notifications" element={<P><Notifications /></P>} />
+          <Route path="/notifications" element={<P><SendNotifications /></P>} />
           <Route path="/send-notifications" element={<P><SendNotifications /></P>} />
           <Route path="/currency" element={<P><CurrencySettings /></P>} />
           <Route path="/shipping-countries" element={<P><ShippingCountries /></P>} />

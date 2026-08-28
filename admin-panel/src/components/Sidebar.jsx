@@ -29,7 +29,6 @@ const links = [
   { to: "/ads", icon: <MdCampaign />, label: "Ad panel" },
   { to: "/newsletter", icon: <MdMail className="text-indigo-600" />, label: "Newsletter" },
   { to: "/send-notifications", icon: <MdNotifications className="text-emerald-600" />, label: "Send Notifications" },
-  { to: "/notifications", icon: <MdNotifications />, label: "Notifications" },
   { to: "/currency", icon: <MdPublic />, label: "Currency & shipping" },
   { to: "/shipping-countries", icon: <MdLocalShipping />, label: "Shipping Countries" },
   { to: "/seo", icon: <MdSearch />, label: "SEO Manager" },
