@@ -907,56 +907,6 @@ export default function ProductDetail() {
           </p>
         </div>
 
-        {/* ── Reviews ── */}
-        <div className="mt-10 border-t border-stone-200 pt-8">
-          <h2 className="text-xl font-bold text-stone-800 mb-6">
-            Customer Reviews
-          </h2>
-
-          {reviews.length > 0 && (
-            <div className="flex flex-col md:flex-row gap-8 mb-8">
-              {/* Overall rating */}
-              <div className="flex flex-col items-center justify-center w-40 flex-shrink-0">
-                <p className="text-6xl font-bold text-stone-900">
-                  {Number(product.rating).toFixed(1)}
-                </p>
-                <Stars rating={product.rating} />
-                <p className="text-xs text-stone-500 mt-1">{reviews.length} reviews</p>
-              </div>
-              {/* Breakdown */}
-              <div className="flex-1 flex flex-col gap-1.5">
-                {ratingCounts.map(({ star, count, pct }) => (
-                  <div key={star} className="flex items-center gap-3">
-                    <span className="text-xs text-amber-700 w-12 text-right">{star} star</span>
-                    <div className="flex-1 bg-stone-200 h-2.5 rounded-full overflow-hidden">
-                      <div className="bg-amber-500 h-full rounded-full transition-all"
-                        style={{ width: `${pct}%` }} />
-                    </div>
-                    <span className="text-xs text-stone-500 w-8">{pct}%</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Review list */}
-          <div className="flex flex-col gap-4 mb-8">
-            {reviews.map(r => (
-              <div key={r.id} className="border-b border-stone-100 pb-4">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center
-                                  justify-center text-amber-700 font-bold text-sm">
-                    {r.member_name?.[0]?.toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-stone-700">{r.member_name}</p>
-                    <Stars rating={r.rating} size="sm" />
-                  </div>
-                  <p className="text-xs text-stone-400 ml-auto">
-                    {new Date(r.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
-                  </p>
-                </div>
-                {r.title && <p className="text-sm font-semibold text-stone-800 mb-1">{r.title}</p>}
         {/* Customer Reviews Section */}
         <ReviewSection productId={product.id} />
 
