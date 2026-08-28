@@ -3,20 +3,42 @@ const db = require("../db");
 const https = require("https");
 const { verifyAdmin } = require("../middleware/auth");
 
-// Helper to fetch live rates from free public API relative to INR
+// Helper to fetch live rates from free public APIs relative to INR
 function fetchRates() {
   return new Promise((resolve, reject) => {
-    https.get("https://open.er-api.com/v6/latest/INR", (res) => {
-      let data = "";
-      res.on("data", chunk => data += chunk);
-      res.on("end", () => {
-        try {
-          resolve(JSON.parse(data));
-        } catch (e) {
-          reject(e);
-        }
-      });
-    }).on("error", reject);
+    const urls = [
+      "https://open.er-api.com/v6/latest/INR",
+      "https://api.exchangerate-api.com/v4/latest/INR"
+    ];
+
+    const tryFetch = (index) => {
+      if (index >= urls.length) {
+        return reject(new Error("All exchange rate APIs failed"));
+      }
+
+      const options = {
+        headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" }
+      };
+
+      https.get(urls[index], options, (res) => {
+        let data = "";
+        res.on("data", chunk => data += chunk);
+        res.on("end", () => {
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed && (parsed.rates || parsed.rates)) {
+              resolve(parsed);
+            } else {
+              tryFetch(index + 1);
+            }
+          } catch (e) {
+            tryFetch(index + 1);
+          }
+        });
+      }).on("error", () => tryFetch(index + 1));
+    };
+
+    tryFetch(0);
   });
 }
 
