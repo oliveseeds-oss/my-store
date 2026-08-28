@@ -92,7 +92,9 @@ export default function MemberLogin() {
       if (tab === "login") {
         const res = await API.post("/members/login", { email: form.email, password: form.password });
         login(res.data);
-        navigate("/profile");
+        const params = new URLSearchParams(window.location.search);
+        const redirectUrl = params.get("redirect") || "/profile";
+        navigate(redirectUrl);
       } else {
         const res = await API.post("/members/register", form);
         setOtpEmail(form.email);

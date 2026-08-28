@@ -105,6 +105,10 @@ export default function Checkout() {
   const hasPhysicalItems = cart.some(i => i.type === "physical" || !i.type);
 
   useEffect(() => {
+    if (!member) {
+      navigate("/login?redirect=/checkout");
+      return;
+    }
     // Fetch enabled shipping countries list (Update 1 & 3)
     API.get("/shipping-countries/enabled")
       .then((res) => {
