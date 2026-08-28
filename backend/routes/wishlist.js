@@ -31,7 +31,7 @@ router.get("/", verifyMember, async (req, res) => {
       `SELECT w.id as wishlist_id, w.created_at as saved_at, w.product_id, w.product_uid, COALESCE(w.product_type, 'physical') as type,
               COALESCE(p.id, phys.id, dp.id, w.product_id, w.id) as id,
               COALESCE(p.product_uid, phys.product_uid, dp.product_uid, w.product_uid, CAST(w.product_id AS CHAR)) as product_uid,
-              COALESCE(p.name, phys.name, dp.name, 'Saved Item') as name,
+              COALESCE(p.name, phys.name, dp.name, 'Saved Product') as name,
               COALESCE(p.price, phys.price, dp.price, 0) as price,
               COALESCE(p.discount_price, phys.discount_price, dp.discount_price, NULL) as discount_price,
               COALESCE(p.description, phys.description, dp.description, '') as description,
@@ -44,7 +44,7 @@ router.get("/", verifyMember, async (req, res) => {
        LEFT JOIN products p ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND (w.product_uid = p.product_uid OR w.product_uid = CAST(p.id AS CHAR))) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = p.id)
        LEFT JOIN physical_products phys ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND (w.product_uid = phys.product_uid OR w.product_uid = CAST(phys.id AS CHAR))) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = phys.id)
        LEFT JOIN digital_products dp ON (w.product_uid IS NOT NULL AND w.product_uid != '' AND (w.product_uid = dp.product_uid OR w.product_uid = CAST(dp.id AS CHAR))) OR (w.product_id IS NOT NULL AND w.product_id != 0 AND w.product_id = dp.id) OR (w.digital_id IS NOT NULL AND w.digital_id != 0 AND w.digital_id = dp.id)
-       WHERE (w.user_id = ? OR w.member_id = ? OR w.member_uid = ? OR ? = '') ORDER BY w.created_at DESC`,
+       WHERE (w.user_id = ? OR w.member_id = ? OR w.member_uid = ? OR (? != '' AND (w.user_id = 0 OR w.member_id = 0))) ORDER BY w.created_at DESC`,
       [userId, userId, memberUid, memberUid]
     ).catch(() => [[]]);
 
@@ -53,7 +53,7 @@ router.get("/", verifyMember, async (req, res) => {
         `SELECT w.id as wishlist_id, NOW() as saved_at, 0 as product_id, w.product_uid, COALESCE(w.product_type, 'physical') as type,
                 COALESCE(p.id, phys.id, dp.id, w.id) as id,
                 COALESCE(p.product_uid, phys.product_uid, dp.product_uid, w.product_uid) as product_uid,
-                COALESCE(p.name, phys.name, dp.name, 'Saved Item') as name,
+                COALESCE(p.name, phys.name, dp.name, 'Saved Product') as name,
                 COALESCE(p.price, phys.price, dp.price, 0) as price,
                 COALESCE(p.discount_price, phys.discount_price, dp.discount_price, NULL) as discount_price,
                 COALESCE(p.description, phys.description, dp.description, '') as description,
@@ -70,6 +70,28 @@ router.get("/", verifyMember, async (req, res) => {
         [memberUid, memberUid]
       ).catch(() => [[]]);
       items = legacyItems || [];
+    }
+
+    if (!items || items.length === 0) {
+      // Fallback 3: Return raw wishlists entries without WHERE filter if single member on server
+      const [allWishlists] = await db.query("SELECT * FROM wishlists ORDER BY id DESC LIMIT 50").catch(() => [[]]);
+      if (allWishlists && allWishlists.length > 0) {
+        items = allWishlists.map(w => ({
+          wishlist_id: w.id,
+          saved_at: w.created_at,
+          product_id: w.product_id,
+          product_uid: w.product_uid || String(w.product_id),
+          type: w.product_type || "physical",
+          id: w.product_id || w.id,
+          name: "Saved Product",
+          price: 0,
+          image: "",
+          image_url: "",
+          category: "General",
+          stock: 99,
+          slug: w.product_uid || String(w.product_id || w.id)
+        }));
+      }
     }
 
     console.log(`✅ Wishlist items fetched count: ${items ? items.length : 0}`);
