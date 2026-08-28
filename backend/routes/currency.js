@@ -8,7 +8,8 @@ function fetchRates() {
   return new Promise((resolve, reject) => {
     const urls = [
       "https://open.er-api.com/v6/latest/INR",
-      "https://api.exchangerate-api.com/v4/latest/INR"
+      "https://api.exchangerate-api.com/v4/latest/INR",
+      "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/inr.json"
     ];
 
     const tryFetch = (index) => {
@@ -26,8 +27,11 @@ function fetchRates() {
         res.on("end", () => {
           try {
             const parsed = JSON.parse(data);
-            if (parsed && (parsed.rates || parsed.rates)) {
+            if (parsed && parsed.rates) {
               resolve(parsed);
+            } else if (parsed && parsed.inr) {
+              // Format from currency-api
+              resolve({ rates: parsed.inr });
             } else {
               tryFetch(index + 1);
             }

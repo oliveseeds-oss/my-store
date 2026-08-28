@@ -24,36 +24,13 @@ function Stars({ rating, size = "md" }) {
 
 function ReviewForm({ productId, onSubmit }) {
   const { member } = useMember();
-  const [hasPurchased, setHasPurchased] = useState(false);
-  const [checkingPurchase, setCheckingPurchase] = useState(true);
   const [form, setForm] = useState({ rating: 5, review_text: "" });
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
-  useEffect(() => {
-    if (member && productId) {
-      API.get(`/reviews/check-purchased/${productId}`)
-        .then(res => setHasPurchased(res.data?.hasPurchased || false))
-        .catch(() => setHasPurchased(false))
-        .finally(() => setCheckingPurchase(false));
-    } else {
-      setCheckingPurchase(false);
-    }
-  }, [member, productId]);
-
   if (!member) return (
     <div className="bg-amber-50 border border-amber-200 p-4 text-xs text-amber-800 rounded-lg">
       <Link to="/login" className="underline font-bold text-amber-900">Login to leave a review</Link>
-    </div>
-  );
-
-  if (checkingPurchase) {
-    return <div className="text-xs text-stone-400 py-2">Checking purchase eligibility...</div>;
-  }
-
-  if (!hasPurchased) return (
-    <div className="bg-stone-100 border border-stone-200 p-4 text-xs text-stone-600 rounded-lg font-medium">
-      Purchase this product to review it
     </div>
   );
 

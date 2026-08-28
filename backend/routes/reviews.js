@@ -49,18 +49,6 @@ router.post("/", verifyMember, async (req, res) => {
   }
 
   try {
-    // Verify purchase
-    const [orders] = await db.query(
-      `SELECT o.id FROM orders o
-       JOIN order_items oi ON o.id = oi.order_id
-       WHERE (o.member_id = ? OR o.user_id = ?) AND oi.product_id = ? AND (o.status = 'delivered' OR o.status = 'completed' OR o.payment_status = 'paid')`,
-      [userId, userId, product_id]
-    );
-
-    if (orders.length === 0) {
-      return res.status(403).json({ error: "You must have a completed order for this product to write a review." });
-    }
-
     const [result] = await db.query(
       "INSERT INTO product_reviews (product_id, user_id, rating, review_text, is_approved) VALUES (?, ?, ?, ?, false)",
       [product_id, userId, rating, review_text || ""]
