@@ -14,14 +14,14 @@ router.post("/login", loginLimiter, async (req, res) => {
 
     const match = settings ? await bcrypt.compare(password, settings.admin_password) : false;
 
-    if (username === "admin" && match) {
+    if ((username === "admin" || username === "admin@oliveseeds.com") && match) {
       const token = jwt.sign(
         { role: "admin" },
         process.env.JWT_SECRET,
         { expiresIn: "7d" }
       );
       // Must return { token, username }
-      res.json({ token, username: "admin" });
+      res.json({ token, username: username });
     } else {
       res.status(401).json({ error: "Invalid credentials" });
     }

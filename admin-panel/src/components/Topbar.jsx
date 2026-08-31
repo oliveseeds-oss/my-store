@@ -33,6 +33,18 @@ export default function Topbar({ title }) {
           });
         }
         setCurrencies(list);
+
+        // Update stored admin_currency in localStorage with the latest live rate from DB
+        const storedAdmin = localStorage.getItem("admin_currency");
+        if (storedAdmin) {
+          try {
+            const parsedAdmin = JSON.parse(storedAdmin);
+            const fresh = list.find((c) => c.currency_code === parsedAdmin.currency_code);
+            if (fresh) {
+              localStorage.setItem("admin_currency", JSON.stringify(fresh));
+            }
+          } catch (e) {}
+        }
       })
       .catch(() => {
         setCurrencies([

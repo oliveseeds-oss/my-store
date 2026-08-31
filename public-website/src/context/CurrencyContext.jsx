@@ -15,15 +15,18 @@ export function CurrencyProvider({ children }) {
 
     useEffect(() => {
         API.get("/currency?active=1").then(r => {
-            const list = r.data;
+            const list = Array.isArray(r.data) ? r.data : [];
             setCurrencies(list);
 
             // 1. Check persistent manual selection override first (one-time choice)
             const manualOverride = localStorage.getItem("currency_override");
             if (manualOverride) {
                 const c = JSON.parse(manualOverride);
-                setSelected(c);
-                localStorage.setItem("currency", JSON.stringify(c));
+                const latestMatch = list.find(item => item.currency_code === c.currency_code);
+                const updated = latestMatch || c;
+                setSelected(updated);
+                localStorage.setItem("currency", JSON.stringify(updated));
+                localStorage.setItem("currency_override", JSON.stringify(updated));
                 return;
             }
 
