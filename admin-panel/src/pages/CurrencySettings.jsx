@@ -57,7 +57,7 @@ export default function CurrencySettings() {
     const [syncing, setSyncing] = useState(false);
 
     const loadRates = () => {
-        API.get("/currency").then(r => setRates(r.data));
+        API.get(`/currency?_t=${Date.now()}`).then(r => setRates(r.data));
     };
 
     useEffect(() => {
