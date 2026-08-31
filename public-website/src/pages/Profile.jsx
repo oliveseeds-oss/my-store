@@ -5,6 +5,7 @@ import { useMember } from "../context/MemberContext";
 import { useCart } from "../context/CartContext";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import SEO from "../components/SEO";
 import { 
   MdShoppingBag, MdLock, MdHome, MdCloudDownload, 
   MdFavorite, MdExitToApp, MdArrowBack, MdCheckCircle, MdSave, MdNotifications 
@@ -176,6 +177,11 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+      <SEO
+        title="Member Account | Olive Seeds Studio"
+        description="Manage your account profile, track active shipments, review orders, and access purchased digital assets."
+        noIndex={true}
+      />
       <Navbar />
       
       {/* Breadcrumbs */}

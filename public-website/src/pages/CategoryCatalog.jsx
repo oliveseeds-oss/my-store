@@ -99,7 +99,7 @@ export default function CategoryCatalog() {
                     </div>
                   </div>
                   <div style={{ padding: "20px", flex: 1, display: "flex", flexDirection: "column" }}>
-                    <h3 style={{ fontSize: "16px", fontWeight: 750, color: "var(--accent)", margin: "0 0 6px" }}>{c.name}</h3>
+                    <h2 style={{ fontSize: "16px", fontWeight: 750, color: "var(--accent)", margin: "0 0 6px" }}>{c.name}</h2>
                     <p style={{ fontSize: "12.5px", color: "var(--text-2)", lineHeight: 1.5, margin: "0 0 16px" }}>{c.description || "Browse custom size templates and premium material selections."}</p>
                     <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--gold)", textTransform: "uppercase", letterSpacing: "0.05em", marginTop: "auto" }}>
                       Explore Category →

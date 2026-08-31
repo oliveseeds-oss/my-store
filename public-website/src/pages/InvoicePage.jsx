@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import API from "../api";
 import Navbar from "../components/Navbar";
+import SEO from "../components/SEO";
 
 export default function InvoicePage() {
   const { order_id } = useParams();
@@ -24,6 +25,7 @@ export default function InvoicePage() {
 
   return (
     <>
+      <SEO title={`Invoice #${order_id} | Olive Seeds Studio`} noIndex={true} />
       {/* Print: hide navbar */}
       <style>{`@media print { .no-print { display: none !important; } body { background: white; } }`}</style>
 

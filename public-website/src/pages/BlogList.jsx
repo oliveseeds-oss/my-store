@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { MdArticle, MdArrowBack, MdOutlineTimer, MdWhatshot } from "react-icons/md";
 import DOMPurify from "dompurify";
 import API from "../api";
@@ -8,6 +9,8 @@ import SEO from "../components/SEO";
 import AdBanner from "../components/AdBanner";
 
 export default function BlogList() {
+  const { id, slug } = useParams();
+  const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [viewingPost, setViewingPost] = useState(null);
 
@@ -18,6 +21,7 @@ export default function BlogList() {
           const formattedPosts = r.data.map(p => ({
             ...p,
             id: p.id,
+            slug: p.slug || String(p.id),
             title: p.title || "",
             content: p.content || "",
             image_url: p.image_url || p.image || "",
@@ -27,19 +31,33 @@ export default function BlogList() {
             views: p.views || 0
           }));
           setPosts(formattedPosts);
+
+          const targetParam = slug || id;
+          if (targetParam) {
+            const matched = formattedPosts.find(p => String(p.slug) === String(targetParam) || String(p.id) === String(targetParam));
+            if (matched) {
+              setViewingPost(matched);
+            }
+          }
         }
       })
       .catch((err) => {
         console.error("Failed to fetch dynamic blogs:", err);
         setPosts([]);
       });
-  }, []);
+  }, [id, slug]);
 
   const openReader = (post) => {
     setViewingPost(post);
+    navigate(`/blog/${post.slug || post.id}`, { replace: false });
     API.put(`/blogs/${post.id}/view`).catch(() => { });
     setPosts(prev => prev.map(p => p.id === post.id ? { ...p, views: (p.views || 0) + 1 } : p));
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const closeReader = () => {
+    setViewingPost(null);
+    navigate("/blog", { replace: false });
   };
 
   const formatContent = (text) => {
@@ -140,7 +158,7 @@ export default function BlogList() {
 
         <div className="max-w-5xl mx-auto px-6 py-16">
           <button
-            onClick={() => setViewingPost(null)}
+            onClick={closeReader}
             className="inline-flex items-center gap-2 text-sm text-[#0D1512]/70 hover:text-[#0D1512] font-bold transition-all duration-300 mb-8 hover:translate-x-[-4px]"
           >
             <MdArrowBack className="text-base" /> Back to Journal

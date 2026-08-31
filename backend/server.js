@@ -90,12 +90,7 @@ async function startServer() {
 
   const seoRouter = require("./routes/seo");
   app.use("/api/seo", seoRouter);
-  app.get("/sitemap.xml", (req, res) => seoRouter(req, res));
-  app.get("/sitemap-images.xml", (req, res) => seoRouter(req, res));
-  app.get("/sitemap-news.xml", (req, res) => seoRouter(req, res));
-  app.get("/robots.txt", (req, res) => seoRouter(req, res));
-  app.get("/llms.txt", (req, res) => seoRouter(req, res));
-  app.get("/llms-full.txt", (req, res) => seoRouter(req, res));
+  app.use("/", seoRouter);
 
   app.get("/", (req, res) => res.send("API running ✓"));
 

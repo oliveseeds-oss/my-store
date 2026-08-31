@@ -1,104 +1,110 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://www.oliveseedsdesignstudio.com/</loc>
-    <lastmod>2026-08-01</lastmod>
+    <loc>https://oliveseedsdesignstudio.com/</loc>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.oliveseedsdesignstudio.com/products</loc>
-    <lastmod>2026-08-01</lastmod>
+    <loc>https://oliveseedsdesignstudio.com/products</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://oliveseedsdesignstudio.com/digital</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://oliveseedsdesignstudio.com/catalog</loc>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.oliveseedsdesignstudio.com/catalog</loc>
-    <lastmod>2026-08-01</lastmod>
+    <loc>https://oliveseedsdesignstudio.com/categories</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://oliveseedsdesignstudio.com/bulk-order</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://oliveseedsdesignstudio.com/service</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://oliveseedsdesignstudio.com/gallery</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://oliveseedsdesignstudio.com/portfolio</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://oliveseedsdesignstudio.com/faq</loc>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.oliveseedsdesignstudio.com/categories</loc>
-    <lastmod>2026-08-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.oliveseedsdesignstudio.com/digital</loc>
-    <lastmod>2026-08-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://www.oliveseedsdesignstudio.com/service</loc>
-    <lastmod>2026-08-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.oliveseedsdesignstudio.com/gallery</loc>
-    <lastmod>2026-08-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.oliveseedsdesignstudio.com/portfolio</loc>
-    <lastmod>2026-08-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.oliveseedsdesignstudio.com/engraving</loc>
-    <lastmod>2026-08-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.oliveseedsdesignstudio.com/blog</loc>
-    <lastmod>2026-08-01</lastmod>
+    <loc>https://oliveseedsdesignstudio.com/blog</loc>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.oliveseedsdesignstudio.com/about</loc>
-    <lastmod>2026-08-01</lastmod>
+    <loc>https://oliveseedsdesignstudio.com/about</loc>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.oliveseedsdesignstudio.com/contact</loc>
-    <lastmod>2026-08-01</lastmod>
+    <loc>https://oliveseedsdesignstudio.com/contact</loc>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.oliveseedsdesignstudio.com/terms</loc>
-    <lastmod>2026-08-01</lastmod>
+    <loc>https://oliveseedsdesignstudio.com/terms</loc>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://www.oliveseedsdesignstudio.com/privacy</loc>
-    <lastmod>2026-08-01</lastmod>
+    <loc>https://oliveseedsdesignstudio.com/privacy</loc>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://www.oliveseedsdesignstudio.com/refund</loc>
-    <lastmod>2026-08-01</lastmod>
+    <loc>https://oliveseedsdesignstudio.com/refund</loc>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://www.oliveseedsdesignstudio.com/shipping</loc>
-    <lastmod>2026-08-01</lastmod>
+    <loc>https://oliveseedsdesignstudio.com/shipping</loc>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://www.oliveseedsdesignstudio.com/cookies</loc>
-    <lastmod>2026-08-01</lastmod>
+    <loc>https://oliveseedsdesignstudio.com/cookies</loc>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>

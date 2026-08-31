@@ -626,6 +626,10 @@ export default function DigitalProductList() {
   });
 
   const loadWishlist = useCallback(async () => {
+    if (!member) {
+      setWishlist([]);
+      return;
+    }
     try {
       const res = await API.get("/wishlist/my");
       if (Array.isArray(res.data)) {
@@ -634,7 +638,7 @@ export default function DigitalProductList() {
     } catch {
       // Guest mode
     }
-  }, []);
+  }, [member]);
 
   const toggleWishlist = async (targetUid) => {
     if (!member) {

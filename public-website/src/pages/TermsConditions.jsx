@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import SEO from "../components/SEO";
 
 const sections = [
   {
@@ -139,14 +140,19 @@ export default function TermsConditions() {
 
   return (
     <div style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }} className="min-h-screen">
+      <SEO
+        title="Terms & Conditions | Olive Seeds Studio"
+        description="Review the official terms of service, user agreements, digital license terms, and purchase policies of Olive Seeds Creative Studio."
+        keywords="terms and conditions, terms of service, user agreement, licensing terms, Olive Seeds terms"
+      />
       <Navbar />
 
-      {/* Hero Section */}
-      <header style={{ background: "#0D1512" }} className="relative overflow-hidden pt-24 pb-20 shadow-md">
+      {/* Header */}
+      <header style={{ background: "#0D1512" }} className="py-16 md:py-24 relative overflow-hidden shadow-xl">
         {/* Luxury glowing mesh blurs */}
-        <div className="absolute top-1/4 right-1/4 w-80 h-80 bg-[#FAF9F6]/10 rounded-full blur-[90px] pointer-events-none" />
-        <div className="absolute -bottom-10 left-10 w-60 h-60 bg-emerald-500/10 rounded-full blur-[75px] pointer-events-none" />
-
+        <div className="absolute top-1/4 right-10 w-80 h-80 bg-[#FAF9F6]/10 rounded-full blur-[90px] pointer-events-none" />
+        <div className="absolute -bottom-10 left-1/3 w-60 h-60 bg-emerald-500/10 rounded-full blur-[70px] pointer-events-none" />
+        
         <div 
           className="absolute inset-0 opacity-10"
           style={{
@@ -222,7 +228,7 @@ export default function TermsConditions() {
                 These terms govern your use of Olive Seeds and all transactions on our platform. Questions?
                 Contact us at{" "}
                 <a 
-                  href="contact@oliveseedsdesignstudio.com" 
+                  href="mailto:contact@oliveseedsdesignstudio.com" 
                   className="text-[#0D1512] font-black underline hover:opacity-85"
                 >
                   contact@oliveseedsdesignstudio.com

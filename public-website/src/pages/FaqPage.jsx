@@ -150,10 +150,14 @@ export default function FaqPage() {
           <div className="space-y-8">
             {Object.keys(groupedFaqs).map((catName) => (
               <div key={catName} className="space-y-3">
-                {selectedCategory === "All" && (
-                  <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-sm font-bold text-amber-800 uppercase tracking-widest pt-2">
+                {selectedCategory === "All" ? (
+                  <h2 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-sm font-bold text-amber-800 uppercase tracking-widest pt-2">
                     {catName}
-                  </h3>
+                  </h2>
+                ) : (
+                  <h2 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-sm font-bold text-amber-800 uppercase tracking-widest pt-2">
+                    {selectedCategory} Questions
+                  </h2>
                 )}
 
                 <div className="space-y-3">
@@ -170,7 +174,7 @@ export default function FaqPage() {
                           onClick={() => setOpenId(isOpen ? null : f.id)}
                           className="w-full px-6 py-4.5 flex items-center justify-between text-left gap-4 font-bold text-xs md:text-sm text-[#0D1512]"
                         >
-                          <span className="leading-snug">{f.question}</span>
+                          <h3 className="leading-snug font-bold text-xs md:text-sm">{f.question}</h3>
                           <span className="p-1 rounded-lg bg-[#FAF9F6] border border-[#0D1512]/10 text-stone-600 shrink-0">
                             {isOpen ? <MdExpandLess className="text-lg" /> : <MdExpandMore className="text-lg" />}
                           </span>

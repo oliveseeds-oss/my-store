@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import SEO from "../components/SEO";
 
 const sections = [
   {
@@ -114,7 +115,12 @@ export default function PrivacyPolicy() {
   }, []);
 
   return (
-    <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", background: "#FAF9F6", color: "#0D1512" }} className="min-h-screen">
+    <div style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }} className="min-h-screen">
+      <SEO
+        title="Privacy Policy | Olive Seeds Studio"
+        description="Learn how Olive Seeds Studio securely handles customer personal data, encrypted credentials, payment security, and GDPR/CCPA privacy rights."
+        keywords="privacy policy, data security, customer privacy, encryption, Olive Seeds privacy"
+      />
       <Navbar />
 
       {/* Hero — premium green palette for privacy */}

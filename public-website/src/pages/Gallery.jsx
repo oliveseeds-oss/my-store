@@ -162,9 +162,9 @@ export default function Gallery() {
                     </div>
                   </div>
                   <div className="p-5 flex-1 flex flex-col justify-between">
-                    <h3 className="font-serif italic text-stone-900 text-lg group-hover:text-amber-800 transition-colors">
+                    <h2 className="font-serif italic text-stone-900 text-lg group-hover:text-amber-800 transition-colors">
                       {item.title}
-                    </h3>
+                    </h2>
                     <div className="mt-3 flex items-center justify-between text-[11px] text-stone-400 font-bold uppercase tracking-wider">
                       <span>{item.material || "Genuine Teak"}</span>
                       <span style={{ color: "#C9A86A" }}>{item.style || "Bespoke"}</span>

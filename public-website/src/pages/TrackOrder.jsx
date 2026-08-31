@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import API from "../api";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import SEO from "../components/SEO";
 
 const STEPS = ["Picked Up", "In Transit", "Out for Delivery", "Delivered"];
 const STEP_ICONS = ["📦", "🚛", "🏍️", "✅"];
@@ -41,7 +43,12 @@ export default function TrackOrder() {
   const currentStep = data ? Math.max(0, STEPS.indexOf(data.status)) : -1;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-between">
+      <SEO
+        title="Track Your Order | Olive Seeds Studio"
+        description="Enter your order or tracking number to view real-time shipment status, dispatch timeline, and delivery estimates."
+        keywords="track order, order status, shipment tracking, Olive Seeds tracking"
+      />
       <Navbar />
       <div className="max-w-3xl mx-auto px-4 py-10">
         <div className="text-center mb-8">
@@ -183,6 +190,7 @@ export default function TrackOrder() {
           <Link to="/contact" className="text-sm text-indigo-600 font-semibold hover:underline">Contact Support →</Link>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

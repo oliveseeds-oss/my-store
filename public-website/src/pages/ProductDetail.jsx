@@ -135,16 +135,20 @@ export default function ProductDetail() {
     if (r.data.sizes?.length) setSelectedSize(r.data.sizes[0]);
     
     // Check if item is in wishlist
-    try {
-      const wRes = await API.get("/wishlist/my");
-      if (Array.isArray(wRes.data)) {
-        const idStr = String(id);
-        const pUidStr = String(r.data.product_uid || r.data.id || "");
-        const exists = wRes.data.some(w => String(w) === idStr || String(w) === pUidStr);
-        setIsWishlisted(exists);
+    if (member) {
+      try {
+        const wRes = await API.get("/wishlist/my");
+        if (Array.isArray(wRes.data)) {
+          const idStr = String(id);
+          const pUidStr = String(r.data.product_uid || r.data.id || "");
+          const exists = wRes.data.some(w => String(w) === idStr || String(w) === pUidStr);
+          setIsWishlisted(exists);
+        }
+      } catch {
+        // Guest user
       }
-    } catch {
-      // Guest user
+    } else {
+      setIsWishlisted(false);
     }
 
     // Initialize default values for customizable fields

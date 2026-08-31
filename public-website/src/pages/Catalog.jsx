@@ -167,9 +167,9 @@ export default function Catalog() {
 
                 {/* Card Details */}
                 <div className="p-6 flex flex-col gap-2 flex-1">
-                  <h3 className="text-lg font-bold text-stone-800 tracking-tight group-hover:text-amber-800 transition duration-200">
+                  <h2 className="text-lg font-bold text-stone-800 tracking-tight group-hover:text-amber-800 transition duration-200">
                     {c.name}
-                  </h3>
+                  </h2>
                   <p className="text-stone-500 text-xs leading-relaxed line-clamp-2">
                     {c.description || "Browse custom size templates and premium material selections."}
                   </p>

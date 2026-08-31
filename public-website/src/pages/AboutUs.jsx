@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import SEO from "../components/SEO";
 
 const values = [
   { icon: "💡", title: "Strategic Thinking", desc: "Every successful project begins with understanding. We combine research, creativity, and strategy to design brands, digital experiences, and products that deliver meaningful results." },
@@ -52,6 +53,11 @@ export default function AboutUs() {
 
   return (
     <div style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }} className="min-h-screen">
+      <SEO
+        title="About Our Studio | Olive Seeds"
+        description="Learn about our passion for luxury craftsmanship, organic bamboo & recycled acrylic selections, precision laser engraving, and custom brand designs."
+        keywords="luxury craftsmanship, sustainable design, about olive seeds, laser workshop, design studio"
+      />
       <Navbar />
 
       {/* Hero Header */}

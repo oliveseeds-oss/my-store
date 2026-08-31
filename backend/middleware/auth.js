@@ -28,4 +28,21 @@ function verifyMember(req, res, next) {
   }
 }
 
-module.exports = { verifyAdmin, verifyMember };
+function optionalMember(req, res, next) {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    req.member = null;
+    return next();
+  }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const member_uid = decoded.member_uid || decoded.member_id || (decoded.id ? String(decoded.id) : null);
+    req.member = { ...decoded, member_uid };
+    next();
+  } catch (err) {
+    req.member = null;
+    next();
+  }
+}
+
+module.exports = { verifyAdmin, verifyMember, optionalMember };

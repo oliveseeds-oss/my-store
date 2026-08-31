@@ -97,9 +97,11 @@ export default function WishlistPage() {
                       <span className="inline-block text-[10px] font-extrabold uppercase tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md mb-1">
                         {p.type === "digital" ? "Digital Asset" : (p.category || "Custom Printed")}
                       </span>
-                      <Link to={productLink} className="block font-bold text-sm sm:text-base text-[#0D1512] hover:text-amber-700 transition truncate">
-                        {p.name}
-                      </Link>
+                      <h2 className="text-sm sm:text-base font-bold truncate">
+                        <Link to={productLink} className="text-[#0D1512] hover:text-amber-700 transition">
+                          {p.name}
+                        </Link>
+                      </h2>
                       <p className="font-extrabold text-sm sm:text-base text-[#0D1512] mt-1">
                         {convert(p.price)}
                       </p>

@@ -63,13 +63,15 @@ export default function App() {
                 <Routes>
                   <Route path="/"                   element={<Home />} />
                   <Route path="/products"           element={<ProductList />} />
-                  <Route path="/faq font-bold"      element={<FaqPage />} />
-                  <Route path="/faq"                element={<FaqPage />} />
-                  <Route path="/wishlist"           element={<WishlistPage />} />
-                  <Route path="/bulk-order"         element={<Engraving />} />
                   <Route path="/products/:id"       element={<ProductDetail />} />
+                  <Route path="/product/:id"        element={<ProductDetail />} />
                   <Route path="/digital"            element={<DigitalProductList />} />
                   <Route path="/digital/:id"        element={<DigitalProductDetail />} />
+                  <Route path="/product/digital/:id" element={<DigitalProductDetail />} />
+                  <Route path="/faq"                element={<FaqPage />} />
+                  <Route path="/faq font-bold"      element={<FaqPage />} />
+                  <Route path="/wishlist"           element={<WishlistPage />} />
+                  <Route path="/bulk-order"         element={<Engraving />} />
                   <Route path="/cart"               element={<Cart />} />
                   <Route path="/checkout"           element={<Checkout />} />
                   <Route path="/order-success"      element={<OrderSuccess />} />
@@ -78,10 +80,13 @@ export default function App() {
                   <Route path="/track-order"        element={<TrackOrder />} />
                   <Route path="/invoice/:order_id"  element={<InvoicePage />} />
                   <Route path="/blog"               element={<BlogList />} />
-                  <Route path="/service" element={<Service/>}/>
+                  <Route path="/blog/:id"           element={<BlogList />} />
+                  <Route path="/blog/:slug"         element={<BlogList />} />
+                  <Route path="/service"            element={<Service />} />
                   <Route path="/contact"            element={<Contact />} />
                   <Route path="/catalog"            element={<Catalog />} />
                   <Route path="/categories"         element={<CategoryCatalog />} />
+                  <Route path="/category-catalog"   element={<CategoryCatalog />} />
                   <Route path="/gallery"            element={<Gallery />} />
                   <Route path="/portfolio"          element={<Portfolio />} />
                   <Route path="/engraving"          element={<Engraving />} />
@@ -90,7 +95,9 @@ export default function App() {
                   <Route path="/terms"              element={<TermsConditions />} />
                   <Route path="/privacy"            element={<PrivacyPolicy />} />
                   <Route path="/refund"             element={<RefundPolicy />} />
+                  <Route path="/refund-policy"      element={<RefundPolicy />} />
                   <Route path="/shipping"           element={<ShippingPolicy />} />
+                  <Route path="/shipping-policy"    element={<ShippingPolicy />} />
                   <Route path="/cookies"            element={<CookiesPolicy />} />
                   <Route path="/about"              element={<AboutUs />} />
                 </Routes>

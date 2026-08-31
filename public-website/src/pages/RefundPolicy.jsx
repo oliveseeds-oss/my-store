@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import SEO from "../components/SEO";
 
 const timeline = [
   { day: "Day 1–2", label: "Contact us", desc: "Email or call us with your Order ID and reason", icon: "📧" },
@@ -25,6 +26,11 @@ export default function RefundPolicy() {
 
   return (
     <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", background: "#FAF9F6", color: "#0D1512" }} className="min-h-screen">
+      <SEO
+        title="Refund & Cancellation Policy | Olive Seeds Studio"
+        description="Transparent guidelines for product returns, damage replacements, order cancellations, and digital purchase policies at Olive Seeds Studio."
+        keywords="refund policy, return policy, cancellations, damage replacement, Olive Seeds returns"
+      />
       <Navbar />
 
       {/* Hero — premium green palette for refunds */}

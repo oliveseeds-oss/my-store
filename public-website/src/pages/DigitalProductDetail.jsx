@@ -119,18 +119,22 @@ export default function DigitalProductDetail() {
   const load = useCallback(async () => {
     const r = await API.get(`/digital-products/${id}`);
     setProduct(r.data);
-    try {
-      const wRes = await API.get("/wishlist/my");
-      if (Array.isArray(wRes.data)) {
-        const idStr = String(id);
-        const pUidStr = String(r.data.product_uid || r.data.id || "");
-        const exists = wRes.data.some(w => String(w) === idStr || String(w) === pUidStr);
-        setIsWishlisted(exists);
+    if (member) {
+      try {
+        const wRes = await API.get("/wishlist/my");
+        if (Array.isArray(wRes.data)) {
+          const idStr = String(id);
+          const pUidStr = String(r.data.product_uid || r.data.id || "");
+          const exists = wRes.data.some(w => String(w) === idStr || String(w) === pUidStr);
+          setIsWishlisted(exists);
+        }
+      } catch {
+        // Guest mode
       }
-    } catch {
-      // Guest mode
+    } else {
+      setIsWishlisted(false);
     }
-  }, [id]);
+  }, [id, member]);
   useEffect(() => { load(); window.scrollTo(0,0); }, [load]);
 
   useEffect(() => {

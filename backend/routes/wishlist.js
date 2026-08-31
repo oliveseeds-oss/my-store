@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const db = require("../db");
-const { verifyMember } = require("../middleware/auth");
+const { verifyMember, optionalMember } = require("../middleware/auth");
 
 // Helper to get member identifiers (resolves both numeric id and alphanumeric member_uid from DB if needed)
 const getMemberIdentifiers = async (req) => {
@@ -22,8 +22,11 @@ const getMemberIdentifiers = async (req) => {
   return { userId, memberUid };
 };
 
-// GET /api/wishlist — get current user wishlist details
-router.get("/", verifyMember, async (req, res) => {
+// GET /api/wishlist — get current user wishlist details (returns [] for guest)
+router.get("/", optionalMember, async (req, res) => {
+  if (!req.member) {
+    return res.json([]);
+  }
   const { userId, memberUid } = await getMemberIdentifiers(req);
   console.log(`🔍 Fetching wishlist for user: userId=${userId}, memberUid=${memberUid}`);
   try {
@@ -132,8 +135,11 @@ router.get("/", verifyMember, async (req, res) => {
   }
 });
 
-// GET /api/wishlist/my — array of all saved IDs & product_uids as strings
-router.get("/my", verifyMember, async (req, res) => {
+// GET /api/wishlist/my — array of all saved IDs & product_uids as strings (returns [] for guest)
+router.get("/my", optionalMember, async (req, res) => {
+  if (!req.member) {
+    return res.json([]);
+  }
   const { userId, memberUid } = await getMemberIdentifiers(req);
   try {
     const [items] = await db.query(

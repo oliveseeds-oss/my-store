@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import SEO from "../components/SEO";
 import API from "../api";
 
 const zoneGroups = [
@@ -61,6 +62,11 @@ export default function ShippingPolicy() {
 
   return (
     <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", background: "#FAF9F6", color: "#0D1512" }} className="min-h-screen">
+      <SEO
+        title="Shipping & Delivery Policy | Olive Seeds Studio"
+        description="Comprehensive shipping information, international delivery zones, dispatch times, tracking details, and customs guidelines."
+        keywords="shipping policy, international shipping, delivery times, order tracking, Olive Seeds shipping"
+      />
       <Navbar />
 
       {/* Hero — rich green */}

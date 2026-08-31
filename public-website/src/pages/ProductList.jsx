@@ -352,6 +352,10 @@ export default function ProductList() {
 
 
   const loadWishlist = useCallback(async () => {
+    if (!member) {
+      setWishlist([]);
+      return;
+    }
     try {
       const res = await API.get("/wishlist/my");
       if (Array.isArray(res.data)) {
@@ -360,7 +364,7 @@ export default function ProductList() {
     } catch {
       // Guest mode or not logged in
     }
-  }, []);
+  }, [member]);
 
   useEffect(() => {
     loadWishlist();

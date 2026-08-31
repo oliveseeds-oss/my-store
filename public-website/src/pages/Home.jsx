@@ -391,6 +391,10 @@ export default function Home() {
   const heroRef = useRef(null);
 
   const loadWishlist = useCallback(async () => {
+    if (!member) {
+      setWishlist([]);
+      return;
+    }
     try {
       const res = await API.get("/wishlist/my");
       if (Array.isArray(res.data)) {
@@ -399,7 +403,7 @@ export default function Home() {
     } catch {
       // Guest mode
     }
-  }, []);
+  }, [member]);
 
   useEffect(() => {
     loadWishlist();

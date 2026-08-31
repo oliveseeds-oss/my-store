@@ -370,11 +370,11 @@ poolPromise.query(`
     )
   `).catch(() => {});
 
-  // FIX 2: SEO Settings Tables
+  // FIX 2: SEO Settings Tables & Migrations
   poolPromise.query(`
     CREATE TABLE IF NOT EXISTS seo_settings (
       id INT PRIMARY KEY AUTO_INCREMENT,
-      page_key VARCHAR(255) UNIQUE NOT NULL,
+      page_key VARCHAR(255) UNIQUE,
       meta_title VARCHAR(255),
       meta_description TEXT,
       focus_keyword VARCHAR(255),
@@ -384,7 +384,7 @@ poolPromise.query(`
       og_title VARCHAR(255),
       og_description TEXT,
       og_image VARCHAR(500),
-      twitter_card VARCHAR(50),
+      twitter_card VARCHAR(50) DEFAULT 'summary_large_image',
       twitter_title VARCHAR(255),
       twitter_description TEXT,
       twitter_image VARCHAR(500),
@@ -393,6 +393,25 @@ poolPromise.query(`
     )
   `).catch(() => {});
 
+  // Add missing columns to seo_settings if table was created with older schema
+  poolPromise.query("ALTER TABLE seo_settings ADD COLUMN page_key VARCHAR(255) UNIQUE").catch(() => {});
+  poolPromise.query("ALTER TABLE seo_settings ADD COLUMN meta_title VARCHAR(255)").catch(() => {});
+  poolPromise.query("ALTER TABLE seo_settings ADD COLUMN focus_keyword VARCHAR(255)").catch(() => {});
+  poolPromise.query("ALTER TABLE seo_settings ADD COLUMN canonical_url VARCHAR(500)").catch(() => {});
+  poolPromise.query("ALTER TABLE seo_settings ADD COLUMN no_index BOOLEAN DEFAULT false").catch(() => {});
+  poolPromise.query("ALTER TABLE seo_settings ADD COLUMN twitter_card VARCHAR(50) DEFAULT 'summary_large_image'").catch(() => {});
+  poolPromise.query("ALTER TABLE seo_settings ADD COLUMN twitter_title VARCHAR(255)").catch(() => {});
+  poolPromise.query("ALTER TABLE seo_settings ADD COLUMN twitter_description TEXT").catch(() => {});
+  poolPromise.query("ALTER TABLE seo_settings ADD COLUMN twitter_image VARCHAR(500)").catch(() => {});
+  poolPromise.query("ALTER TABLE seo_settings ADD COLUMN custom_schema TEXT").catch(() => {});
+  poolPromise.query("ALTER TABLE seo_settings ADD COLUMN og_title VARCHAR(255)").catch(() => {});
+  poolPromise.query("ALTER TABLE seo_settings ADD COLUMN og_description TEXT").catch(() => {});
+  poolPromise.query("ALTER TABLE seo_settings ADD COLUMN og_image VARCHAR(500)").catch(() => {});
+
+  // Sync legacy columns if present
+  poolPromise.query("UPDATE seo_settings SET page_key = page_name WHERE (page_key IS NULL OR page_key = '') AND page_name IS NOT NULL").catch(() => {});
+  poolPromise.query("UPDATE seo_settings SET meta_title = title WHERE (meta_title IS NULL OR meta_title = '') AND title IS NOT NULL").catch(() => {});
+
   poolPromise.query(`
     CREATE TABLE IF NOT EXISTS global_seo_settings (
       id INT PRIMARY KEY AUTO_INCREMENT,
@@ -400,7 +419,19 @@ poolPromise.query(`
       setting_value TEXT,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     )
-  `).catch(() => {});
+  `).then(() => {
+    const defaultGlobals = [
+      ['site_name', 'Olive Seeds Studio'],
+      ['title_separator', '|'],
+      ['default_meta_description', 'Olive Seeds Design Studio offers custom laser-engraved products, instant-download digital templates, and professional design services. Worldwide shipping available.'],
+      ['default_og_image', 'https://oliveseedsdesignstudio.com/logo192.png'],
+      ['site_logo_url', 'https://oliveseedsdesignstudio.com/logo192.png'],
+      ['robots_txt', `User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /checkout\nDisallow: /cart\nDisallow: /profile\nDisallow: /api/\n\nSitemap: https://oliveseedsdesignstudio.com/sitemap.xml\nSitemap: https://oliveseedsdesignstudio.com/sitemap-images.xml\nSitemap: https://oliveseedsdesignstudio.com/sitemap-news.xml`]
+    ];
+    defaultGlobals.forEach(([k, v]) => {
+      poolPromise.query("INSERT IGNORE INTO global_seo_settings (setting_key, setting_value) VALUES (?, ?)", [k, v]).catch(() => {});
+    });
+  }).catch(() => {});
 
   // Index Optimization (Priority 5)
   poolPromise.query("ALTER TABLE visitor_logs ADD INDEX idx_visited_at (visited_at)").catch(() => {});
