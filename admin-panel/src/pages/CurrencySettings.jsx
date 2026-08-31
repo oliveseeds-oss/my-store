@@ -7,6 +7,11 @@ function CurrencyRow({ r, updateRate, saving }) {
     const [rate, setRate] = useState(r.rate_to_inr);
     const [allowed, setAllowed] = useState(r.shipping_allowed);
 
+    useEffect(() => {
+        setRate(r.rate_to_inr);
+        setAllowed(r.shipping_allowed);
+    }, [r.rate_to_inr, r.shipping_allowed]);
+
     return (
         <tr className="border-t border-gray-50">
             <td className="px-4 py-3">
@@ -20,11 +25,11 @@ function CurrencyRow({ r, updateRate, saving }) {
                         <div className="flex items-center gap-2">
                             <span className="text-gray-400 text-xs">1 INR =</span>
                             <input
-                                type="number" step="0.0001"
+                                type="number" step="0.000001"
                                 value={rate}
                                 onChange={e => setRate(e.target.value)}
-                                className="border border-gray-200 rounded-lg px-2 py-1 text-sm w-28
-                                       focus:outline-none focus:ring-2 focus:ring-indigo-200" />
+                                className="border border-gray-200 rounded-lg px-2 py-1 text-sm w-32
+                                       focus:outline-none focus:ring-2 focus:ring-indigo-200 font-mono" />
                             <span className="text-gray-400 text-xs">{r.currency_code}</span>
                         </div>
                     </td>
