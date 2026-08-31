@@ -7,10 +7,10 @@ const { verifyAdmin } = require("../middleware/auth");
 function fetchRates() {
   return new Promise((resolve, reject) => {
     const urls = [
+      "https://open.er-api.com/v6/latest/USD",
       "https://open.er-api.com/v6/latest/INR",
       "https://api.exchangerate-api.com/v4/latest/INR",
-      "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/inr.json",
-      "https://open.er-api.com/v6/latest/USD"
+      "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/inr.json"
     ];
 
     const tryFetch = (index) => {
