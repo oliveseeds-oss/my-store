@@ -141,20 +141,11 @@ router.get("/available", verifyAdmin, async (req, res) => {
 // ADMIN — sync live rates relative to INR
 router.post("/sync", verifyAdmin, async (req, res) => {
     try {
-        let rates = null;
-        try {
-          const data = await fetchRates();
-          rates = data?.rates;
-        } catch {
-          // Fallback static rates if network is restricted
-          rates = {
-            USD: 0.012, EUR: 0.011, GBP: 0.0094, CAD: 0.016, AUD: 0.018,
-            AED: 0.044, SGD: 0.016, JPY: 1.82, INR: 1.0
-          };
-        }
+        const data = await fetchRates();
+        const rates = data?.rates;
 
         if (!rates) {
-          rates = { USD: 0.012, EUR: 0.011, GBP: 0.0094, INR: 1.0 };
+          return res.status(500).json({ error: "Could not fetch live exchange rates from financial APIs" });
         }
 
         const [dbRates] = await db.query("SELECT id, currency_code FROM currency_rates");
@@ -182,7 +173,7 @@ router.post("/sync", verifyAdmin, async (req, res) => {
         res.json({ ok: true, success: true, message: "Live rates synced successfully!", synced_at: new Date() });
     } catch (error) {
         console.error("Live currency sync failed:", error.message);
-        res.json({ ok: true, success: true, message: "Live rates updated", synced_at: new Date() });
+        res.status(500).json({ error: `Live currency sync failed: ${error.message}` });
     }
 });
 
