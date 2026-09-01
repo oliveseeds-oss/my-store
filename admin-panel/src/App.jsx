@@ -19,6 +19,7 @@ import SeoSettings from "./pages/SeoSettings";
 import GalleryAdmin from "./pages/GalleryAdmin";
 import CatalogAdmin from "./pages/CatalogAdmin";
 import PortfolioAdmin from "./pages/PortfolioAdmin";
+import BulkTools from "./pages/BulkTools";
 
 import FaqManager from "./pages/FaqManager";
 import FeedManager from "./pages/FeedManager";
@@ -43,6 +44,7 @@ export default function App() {
           <Route path="/gallery" element={<P><GalleryAdmin /></P>} />
           <Route path="/portfolio" element={<P><PortfolioAdmin /></P>} />
           <Route path="/products" element={<P><Products /></P>} />
+          <Route path="/bulk-tools" element={<P><BulkTools /></P>} />
           <Route path="/digital-products" element={<P><DigitalProducts /></P>} />
           <Route path="/reviews" element={<P><ReviewsManager /></P>} />
           <Route path="/orders" element={<P><Orders /></P>} />

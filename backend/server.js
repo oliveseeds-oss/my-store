@@ -50,6 +50,7 @@ async function startServer() {
   // Routes
   app.use("/api/uploads", require("./routes/uploads"));
   app.use("/api/admin", require("./routes/admin"));
+  app.use("/api/admin", require("./routes/bulkAdmin"));
   app.use("/api/products", require("./routes/products"));
   app.use("/api/digital-products", require("./routes/digitalProducts"));
   app.use("/api/orders", require("./routes/orders"));

@@ -60,6 +60,19 @@ export default function BlogList() {
     navigate("/blog", { replace: false });
   };
 
+  const stripHtml = (html) => {
+    if (!html) return ''
+    return html
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/\s+/g, ' ')
+      .trim()
+  }
+
   const formatContent = (text) => {
     if (!text) return "";
     if (text.includes("<p>") || text.includes("<div>") || text.includes("<h") || text.includes("<br")) {
@@ -354,7 +367,10 @@ export default function BlogList() {
               <div className="md:col-span-5 p-8 flex flex-col justify-center bg-stone-50/40">
                 <span className="text-[10px] font-black text-[#0D1512] uppercase tracking-widest">{featuredPost.category}</span>
                 <h2 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-2xl md:text-3xl font-black mt-3 group-hover:text-[#0D1512] transition-colors leading-snug">{featuredPost.title}</h2>
-                <p className="text-stone-500 mt-4 text-xs md:text-sm line-clamp-4 leading-relaxed font-normal">{featuredPost.content}</p>
+                <p className="text-stone-500 mt-4 text-xs md:text-sm line-clamp-4 leading-relaxed font-normal">
+                  {stripHtml(featuredPost.content).substring(0, 150)}
+                  {stripHtml(featuredPost.content).length > 150 ? '...' : ''}
+                </p>
 
                 <div className="flex items-center justify-between mt-8 pt-6 border-t border-stone-200 text-xs text-stone-400">
                   <span>By {featuredPost.author}</span>
@@ -400,7 +416,10 @@ export default function BlogList() {
                 <div className="p-6 md:p-8 flex-1 flex flex-col justify-between">
                   <div>
                     <h4 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-xl font-bold group-hover:text-[#0D1512] transition-colors leading-snug">{post.title}</h4>
-                    <p className="text-stone-500 mt-3 text-xs md:text-sm line-clamp-3 leading-relaxed font-normal">{post.content}</p>
+                    <p className="text-stone-500 mt-3 text-xs md:text-sm line-clamp-3 leading-relaxed font-normal">
+                      {stripHtml(post.content).substring(0, 150)}
+                      {stripHtml(post.content).length > 150 ? '...' : ''}
+                    </p>
                   </div>
                   <div className="flex items-center justify-between mt-8 pt-4 border-t border-stone-100 text-xs text-stone-400">
                     <span>By {post.author}</span>

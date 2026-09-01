@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
+import BulkUploadModal from "../components/BulkUploadModal";
 import API from "../api";
-import { MdAdd, MdEdit, MdDelete, MdClose } from "react-icons/md";
+import { MdAdd, MdEdit, MdDelete, MdClose, MdCloudUpload, MdDownload, MdEditNote } from "react-icons/md";
 
 const INIT = {
   product_uid: "", name: "", description: "", price: "", discount_price: "",
@@ -19,6 +20,27 @@ export default function DigitalProducts() {
   const [form, setForm] = useState(INIT);
   const [editId, setEditId] = useState(null);
   const [search, setSearch] = useState("");
+  const [bulkModal, setBulkModal] = useState({ isOpen: false, type: "digital", mode: "upload" });
+  const [exporting, setExporting] = useState(false);
+
+  const handleExportCsv = async () => {
+    setExporting(true);
+    try {
+      const response = await API.get("/admin/products/digital/export", { responseType: "blob" });
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: "text/csv" }));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "digital_products.csv");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      alert("Export failed: " + (err.response?.data?.error || err.message));
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const load = async () => {
     const [p, c] = await Promise.all([
@@ -68,16 +90,41 @@ export default function DigitalProducts() {
       <div className="flex-1 flex flex-col">
         <Topbar title="Digital products" />
         <main className="p-6 flex flex-col gap-4">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <input value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Search digital products..."
               className="border border-gray-200 rounded-lg px-4 py-2 text-sm
                          focus:outline-none focus:ring-2 focus:ring-indigo-200 w-64" />
-            <button onClick={openAdd}
-              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700
-                         text-white text-sm px-4 py-2 rounded-lg transition">
-              <MdAdd /> Add digital product
-            </button>
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={handleExportCsv}
+                disabled={exporting}
+                className="flex items-center gap-1.5 bg-white border border-gray-300 hover:border-emerald-500 hover:text-emerald-700 text-gray-700 text-sm px-3.5 py-2 rounded-lg font-semibold shadow-xs transition"
+              >
+                <MdDownload className="text-base text-emerald-600" />
+                {exporting ? "Exporting..." : "Export All as CSV"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setBulkModal({ isOpen: true, type: "digital", mode: "upload" })}
+                className="flex items-center gap-1.5 bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 text-sm px-3.5 py-2 rounded-lg font-bold transition"
+              >
+                <MdCloudUpload className="text-base" /> Bulk Upload
+              </button>
+              <button
+                type="button"
+                onClick={() => setBulkModal({ isOpen: true, type: "digital", mode: "update" })}
+                className="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-sm px-3.5 py-2 rounded-lg font-bold transition"
+              >
+                <MdEditNote className="text-base" /> Bulk Update
+              </button>
+              <button onClick={openAdd}
+                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700
+                           text-white text-sm px-4 py-2 rounded-lg font-semibold transition shadow-xs">
+                <MdAdd /> Add digital product
+              </button>
+            </div>
           </div>
 
           <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
@@ -284,6 +331,14 @@ export default function DigitalProducts() {
               </div>
             </div>
           )}
+          {/* Bulk Upload / Update Modal */}
+          <BulkUploadModal
+            isOpen={bulkModal.isOpen}
+            onClose={() => setBulkModal({ ...bulkModal, isOpen: false })}
+            type="digital"
+            initialMode={bulkModal.mode}
+            onComplete={load}
+          />
         </main>
       </div>
     </div>

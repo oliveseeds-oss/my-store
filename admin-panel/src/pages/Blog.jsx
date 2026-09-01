@@ -1,13 +1,15 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
+import BulkUploadModal from "../components/BulkUploadModal";
 import API from "../api";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import DOMPurify from "dompurify";
 import { 
   MdAdd, MdEdit, MdDelete, MdClose, MdArticle, 
-  MdSearch, MdSettings, MdCode, MdRemoveRedEye, MdUploadFile, MdImage
+  MdSearch, MdSettings, MdCode, MdRemoveRedEye, MdUploadFile, MdImage,
+  MdCloudUpload, MdDownload, MdEditNote
 } from "react-icons/md";
 
 const INIT = { 
@@ -39,6 +41,27 @@ export default function Blog() {
   const [htmlView, setHtmlView] = useState(false);
   const [livePreview, setLivePreview] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [bulkModal, setBulkModal] = useState({ isOpen: false, type: "blog", mode: "upload" });
+  const [exporting, setExporting] = useState(false);
+
+  const handleExportCsv = async () => {
+    setExporting(true);
+    try {
+      const response = await API.get("/admin/blogs/export", { responseType: "blob" });
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: "text/csv" }));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "blogs.csv");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      alert("Export failed: " + (err.response?.data?.error || err.message));
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const quillRef = useRef(null);
 
@@ -269,11 +292,36 @@ export default function Blog() {
               <h1 className="text-xl font-bold text-gray-800">Blog Posts</h1>
               <p className="text-xs text-gray-500">HTML Rich Text Editor, Live SEO Meta Tags & AI Discovery Schema</p>
             </div>
-            <button onClick={openAdd}
-              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700
-                         text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-sm hover:shadow">
-              <MdAdd className="text-base" /> New Post
-            </button>
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={handleExportCsv}
+                disabled={exporting}
+                className="flex items-center gap-1.5 bg-white border border-gray-300 hover:border-emerald-500 hover:text-emerald-700 text-gray-700 text-xs font-semibold px-3.5 py-2.5 rounded-xl shadow-xs transition"
+              >
+                <MdDownload className="text-base text-emerald-600" />
+                {exporting ? "Exporting..." : "Export All as CSV"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setBulkModal({ isOpen: true, type: "blog", mode: "upload" })}
+                className="flex items-center gap-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold px-3.5 py-2.5 rounded-xl transition"
+              >
+                <MdCloudUpload className="text-base" /> Bulk Upload
+              </button>
+              <button
+                type="button"
+                onClick={() => setBulkModal({ isOpen: true, type: "blog", mode: "update" })}
+                className="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold px-3.5 py-2.5 rounded-xl transition"
+              >
+                <MdEditNote className="text-base" /> Bulk Update
+              </button>
+              <button onClick={openAdd}
+                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700
+                           text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-sm hover:shadow">
+                <MdAdd className="text-base" /> New Post
+              </button>
+            </div>
           </div>
 
           {/* Posts Grid */}
@@ -706,6 +754,14 @@ export default function Blog() {
               </div>
             </div>
           )}
+          {/* Bulk Upload / Update Modal */}
+          <BulkUploadModal
+            isOpen={bulkModal.isOpen}
+            onClose={() => setBulkModal({ ...bulkModal, isOpen: false })}
+            type="blog"
+            initialMode={bulkModal.mode}
+            onComplete={fetchBlogs}
+          />
         </main>
       </div>
     </div>

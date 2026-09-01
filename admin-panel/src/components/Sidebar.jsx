@@ -4,7 +4,7 @@ import {
   MdDashboard, MdShoppingBag, MdDownload, MdPeople,
   MdListAlt, MdArticle, MdMail, MdCampaign,
   MdNotifications, MdSettings, MdCategory,
-  MdPublic, MdLocalShipping, MdBarChart, MdReceipt, MdSearch, MdInsertPhoto, MdRssFeed, MdStar, MdMenu, MdClose
+  MdPublic, MdLocalShipping, MdBarChart, MdReceipt, MdSearch, MdInsertPhoto, MdRssFeed, MdStar, MdMenu, MdClose, MdUploadFile
 } from "react-icons/md";
 
 const links = [
@@ -16,6 +16,7 @@ const links = [
   { to: "/gallery", icon: <MdInsertPhoto />, label: "Gallery Showcase" },
   { to: "/portfolio", icon: <MdInsertPhoto className="text-indigo-500" />, label: "Portfolio Showcase" },
   { to: "/products", icon: <MdShoppingBag />, label: "Products" },
+  { to: "/bulk-tools", icon: <MdUploadFile className="text-emerald-600" />, label: "Templates & Bulk Tools" },
   { to: "/digital-products", icon: <MdDownload />, label: "Digital products" },
   { to: "/reviews", icon: <MdStar className="text-amber-500" />, label: "Reviews Manager" },
   { to: "/orders", icon: <MdListAlt />, label: "Orders" },
