@@ -10,7 +10,6 @@ import {
   MdArrowForward,
   MdShoppingBag,
   MdDownloadForOffline,
-  MdAutoFixHigh,
   MdArticle,
   MdInfo,
   MdHelpOutline,
@@ -74,51 +73,39 @@ export default function BulkTools() {
   const sections = [
     {
       id: "physical",
-      title: "Physical Products",
-      desc: "Standard e-commerce items (mugs, t-shirts, frames, accessories)",
+      title: "Products (Physical)",
+      desc: "Upload physical products in bulk. Includes all product types.",
       icon: <MdShoppingBag className="text-2xl text-indigo-600" />,
-      bg: "bg-indigo-50/60 border-indigo-100",
-      templateFile: "physical_products_template.csv",
+      templateFile: "products_template.csv",
       templateEndpoint: "/admin/products/physical/template",
       exportFile: "physical_products.csv",
       exportEndpoint: "/admin/products/physical/export",
       targetRoute: "/products",
+      tabName: "Products",
     },
     {
       id: "digital",
       title: "Digital Products",
-      desc: "Instant download assets (Notion templates, Figma UI, ZIPs, code packages)",
+      desc: "Upload digital download products.",
       icon: <MdDownloadForOffline className="text-2xl text-sky-600" />,
-      bg: "bg-sky-50/60 border-sky-100",
       templateFile: "digital_products_template.csv",
       templateEndpoint: "/admin/products/digital/template",
       exportFile: "digital_products.csv",
       exportEndpoint: "/admin/products/digital/export",
       targetRoute: "/digital-products",
-    },
-    {
-      id: "engraved",
-      title: "Engraved Products",
-      desc: "Laser engraved gifts with customizable text, material & logo parameters",
-      icon: <MdAutoFixHigh className="text-2xl text-amber-600" />,
-      bg: "bg-amber-50/60 border-amber-100",
-      templateFile: "engraved_products_template.csv",
-      templateEndpoint: "/admin/products/engraved/template",
-      exportFile: "engraved_products.csv",
-      exportEndpoint: "/admin/products/engraved/export",
-      targetRoute: "/products",
+      tabName: "Digital Products",
     },
     {
       id: "blog",
       title: "Blog Posts",
-      desc: "Articles & craftsmanship guides via CSV or multi-file HTML upload",
+      desc: "Upload multiple blog posts at once.",
       icon: <MdArticle className="text-2xl text-emerald-600" />,
-      bg: "bg-emerald-50/60 border-emerald-100",
       templateFile: "blogs_template.csv",
       templateEndpoint: "/admin/blogs/template",
       exportFile: "blogs.csv",
       exportEndpoint: "/admin/blogs/export",
       targetRoute: "/blog",
+      tabName: "Blog Manager",
     },
   ];
 
@@ -140,28 +127,28 @@ export default function BulkTools() {
                 Templates &amp; Bulk Upload Tools
               </h1>
               <p className="text-xs text-stone-500 mt-1 max-w-xl">
-                Download exact CSV templates, export live product data for batch editing, and launch one-click bulk imports.
+                Download exact CSV templates matching each form, export live data with IDs for batch updates, and perform fast imports.
               </p>
             </div>
           </div>
 
-          {/* 4 Type Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* 3 Type Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {sections.map((sec) => (
               <div
                 key={sec.id}
-                className={`rounded-3xl p-6 border bg-white shadow-sm flex flex-col justify-between hover:shadow-md transition`}
+                className="rounded-3xl p-6 border bg-white shadow-sm flex flex-col justify-between hover:shadow-md transition"
               >
                 <div>
                   <div className="flex items-center gap-3 mb-2">
                     <div className="p-2.5 rounded-2xl bg-stone-100">{sec.icon}</div>
                     <div>
                       <h3 className="text-base font-bold text-stone-900">{sec.title}</h3>
-                      <p className="text-xs text-stone-400">{sec.desc}</p>
+                      <p className="text-xs text-stone-400 mt-0.5">{sec.desc}</p>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2.5 mt-5">
+                  <div className="flex flex-col gap-2 mt-5">
                     <button
                       type="button"
                       disabled={downloading === sec.id + "_template"}
@@ -183,7 +170,7 @@ export default function BulkTools() {
                       className="inline-flex items-center justify-center gap-1.5 bg-stone-50 hover:bg-stone-100 text-stone-700 border border-stone-200 px-3 py-2.5 rounded-xl text-xs font-semibold shadow-xs transition"
                     >
                       <MdDownload className="text-base text-emerald-600" />
-                      {downloading === sec.id + "_export" ? "Exporting..." : "Export Current Records"}
+                      {downloading === sec.id + "_export" ? "Exporting..." : `Export Current ${sec.title} as CSV`}
                     </button>
                   </div>
                 </div>
@@ -192,7 +179,7 @@ export default function BulkTools() {
                   <button
                     type="button"
                     onClick={() => openBulkModal(sec.id, "upload")}
-                    className="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm"
+                    className="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition shadow-sm"
                   >
                     <MdFileUpload className="text-base" /> Quick Upload
                   </button>
@@ -202,7 +189,7 @@ export default function BulkTools() {
                     onClick={() => navigate(sec.targetRoute)}
                     className="inline-flex items-center gap-1 text-xs font-bold text-stone-600 hover:text-indigo-600 transition"
                   >
-                    Go to {sec.title} page <MdArrowForward />
+                    → Go to {sec.tabName} → Bulk Upload <MdArrowForward />
                   </button>
                 </div>
               </div>
@@ -214,50 +201,38 @@ export default function BulkTools() {
             <div className="lg:col-span-7 bg-white rounded-3xl p-6 border border-stone-200 shadow-sm space-y-4">
               <h3 className="text-sm font-bold text-stone-900 flex items-center gap-2">
                 <MdHelpOutline className="text-lg text-indigo-600" />
-                HOW TO USE BULK UPLOAD:
+                HOW TO BULK UPLOAD IN 5 STEPS:
               </h3>
               <ol className="space-y-2.5 text-xs text-stone-600 font-medium">
                 <li className="flex items-start gap-2.5">
                   <span className="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
-                    1
+                    1️⃣
                   </span>
-                  <span><strong>Download template</strong> for your product or blog type above.</span>
+                  <span><strong>Download the CSV template</strong> from the cards above.</span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <span className="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
-                    2
+                    2️⃣
                   </span>
-                  <span><strong>Open the file</strong> in Excel, Google Sheets, or any spreadsheet editor.</span>
+                  <span><strong>Open in Excel or Google Sheets</strong> to edit products.</span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <span className="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
-                    3
+                    3️⃣
                   </span>
-                  <span><strong>Fill in your product details</strong> — exactly one row per product.</span>
+                  <span><strong>Fill one row per product/blog</strong> (follow the instructions inside the template).</span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <span className="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
-                    4
+                    4️⃣
                   </span>
                   <span><strong>Save file as CSV format</strong> (UTF-8 encoding).</span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <span className="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
-                    5
+                    5️⃣
                   </span>
-                  <span><strong>Upload on the relevant page</strong> or via the Quick Upload modal.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <span className="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
-                    6
-                  </span>
-                  <span><strong>Check the results summary</strong> to inspect any row errors or validation notices.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <span className="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
-                    7
-                  </span>
-                  <span><strong>Add images</strong> to each product individually after import.</span>
+                  <span><strong>Upload on the relevant page</strong> via the Bulk Upload tab or Quick Upload button.</span>
                 </li>
               </ol>
             </div>
@@ -265,32 +240,28 @@ export default function BulkTools() {
             <div className="lg:col-span-5 bg-amber-50/50 rounded-3xl p-6 border border-amber-200/80 shadow-sm space-y-3">
               <h3 className="text-sm font-bold text-amber-900 flex items-center gap-2">
                 <MdInfo className="text-lg text-amber-600" />
-                IMPORTANT NOTES:
+                ⚠️ IMPORTANT NOTES:
               </h3>
               <ul className="space-y-2 text-xs text-amber-800 font-medium">
                 <li className="flex items-start gap-2">
                   <span className="text-amber-500 font-bold">•</span>
-                  <span><strong>Images cannot be bulk uploaded:</strong> please upload images per product after import.</span>
+                  <span><strong>Column headers must not be changed</strong> to ensure accurate database mapping.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-amber-500 font-bold">•</span>
-                  <span><strong>Always download template first:</strong> ensuring matching column headers.</span>
+                  <span><strong>Delete # instruction rows</strong> before uploading (the parser also auto-skips # comment rows).</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-amber-500 font-bold">•</span>
-                  <span><strong>Do not change column header names:</strong> the importer strictly validates names.</span>
+                  <span><strong>Images upload separately after import</strong>, or provide hosted image URLs directly in the CSV.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-amber-500 font-bold">•</span>
-                  <span><strong>Delete instruction rows:</strong> comment rows starting with # can also be safely left.</span>
+                  <span><strong>Maximum 500 rows per upload file</strong> to maintain fast processing without timeouts.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-amber-500 font-bold">•</span>
-                  <span><strong>Maximum 500 rows per upload:</strong> keeps processing fast and prevents server timeouts.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-amber-500 font-bold">•</span>
-                  <span><strong>Bulk Update Workflow:</strong> export current CSV, edit rows, and upload to update matching IDs.</span>
+                  <span><strong>Export first to see correct format</strong> and structure of your live data.</span>
                 </li>
               </ul>
             </div>

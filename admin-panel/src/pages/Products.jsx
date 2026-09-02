@@ -23,16 +23,14 @@ export default function Products() {
   const [bulkModal, setBulkModal] = useState({ isOpen: false, type: "physical", mode: "upload" });
   const [exporting, setExporting] = useState(false);
 
-  const handleExportCsv = async (type = "physical") => {
+  const handleExportCsv = async () => {
     setExporting(true);
     try {
-      const endpoint = type === "engraved" ? "/admin/products/engraved/export" : "/admin/products/physical/export";
-      const filename = type === "engraved" ? "engraved_products.csv" : "physical_products.csv";
-      const response = await API.get(endpoint, { responseType: "blob" });
+      const response = await API.get("/admin/products/physical/export", { responseType: "blob" });
       const url = window.URL.createObjectURL(new Blob([response.data], { type: "text/csv" }));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", filename);
+      link.setAttribute("download", "physical_products.csv");
       document.body.appendChild(link);
       link.click();
       link.remove();

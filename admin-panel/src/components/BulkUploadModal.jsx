@@ -41,35 +41,30 @@ export default function BulkUploadModal({
   const titles = {
     physical: "Physical Products",
     digital: "Digital Products",
-    engraved: "Engraved Products",
     blog: "Blog Posts",
   };
 
   const templateFilenames = {
-    physical: "physical_products_template.csv",
+    physical: "products_template.csv",
     digital: "digital_products_template.csv",
-    engraved: "engraved_products_template.csv",
     blog: "blogs_template.csv",
   };
 
   const templateEndpoints = {
     physical: "/admin/products/physical/template",
     digital: "/admin/products/digital/template",
-    engraved: "/admin/products/engraved/template",
     blog: "/admin/blogs/template",
   };
 
   const uploadEndpoints = {
     physical: "/admin/products/physical/bulk-upload",
     digital: "/admin/products/digital/bulk-upload",
-    engraved: "/admin/products/engraved/bulk-upload",
     blog: "/admin/blogs/bulk-upload-csv",
   };
 
   const updateEndpoints = {
     physical: "/admin/products/physical/bulk-update",
     digital: "/admin/products/digital/bulk-update",
-    engraved: "/admin/products/engraved/bulk-update",
     blog: "/admin/blogs/bulk-update",
   };
 

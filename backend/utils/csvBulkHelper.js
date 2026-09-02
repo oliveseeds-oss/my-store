@@ -31,13 +31,40 @@ const parseCsvFile = (fileBuffer) => {
 };
 
 /**
- * Validate required fields on a single row object
+ * Normalize key string to a clean snake_case identifier
+ */
+const normalizeKey = (key) => {
+  return String(key || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s*\*+\s*$/, "") // remove trailing asterisk
+    .replace(/[₹\(\)]/g, "")   // remove currency and parens
+    .replace(/[^a-z0-9]+/g, "_") // collapse punctuation
+    .replace(/^_+|_+$/g, "");
+};
+
+/**
+ * Normalizes all keys of a row object to lowercase snake_case
+ */
+const normalizeRow = (row) => {
+  if (!row || typeof row !== "object") return {};
+  const normalized = {};
+  for (const [k, v] of Object.entries(row)) {
+    const normK = normalizeKey(k);
+    normalized[normK] = v !== undefined && v !== null ? String(v).trim() : "";
+  }
+  return normalized;
+};
+
+/**
+ * Validate required fields on a single normalized row object
  */
 const validateRequired = (row, fields) => {
   const errors = [];
   fields.forEach((field) => {
-    if (row[field] === undefined || row[field] === null || String(row[field]).trim() === "") {
-      errors.push(`${field} is required`);
+    const val = row[field];
+    if (val === undefined || val === null || String(val).trim() === "") {
+      errors.push(`${field.replace(/_/g, " ")} is required`);
     }
   });
   return errors;
@@ -77,6 +104,8 @@ const buildCsv = (headers, rows) => {
 
 module.exports = {
   parseCsvFile,
+  normalizeKey,
+  normalizeRow,
   validateRequired,
   generateSlug,
   escapeCsvCell,
