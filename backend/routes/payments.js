@@ -15,6 +15,7 @@ router.post("/orders/create", async (req, res) => {
   const {
     member_id, guest_name, guest_email, guest_phone,
     items, address_line, currency_code, shipping_fee,
+    shipping_method_id, shipping_method_name, shipping_cost, shipping_zone, shipping_weight_grams,
     delivery_street, delivery_apt, delivery_city, delivery_state, delivery_country, delivery_pincode
   } = req.body;
 
@@ -149,6 +150,29 @@ router.post("/orders/create", async (req, res) => {
           targetCurrency, conversionRate, "Razorpay", null, "Pending", "Processing", rzpOrder.id
         ]
       );
+
+      // Save extended shipping charge fields if available (Step 9)
+      if (shipping_method_id || shipping_method_name || shipping_zone) {
+        await db.query(
+          `UPDATE physical_orders SET
+            shipping_method_id = COALESCE(?, shipping_method_id),
+            shipping_method_name = COALESCE(?, shipping_method_name),
+            shipping_cost = COALESCE(?, shipping_cost),
+            shipping_cost_currency = COALESCE(?, shipping_cost_currency),
+            shipping_weight_grams = COALESCE(?, shipping_weight_grams),
+            shipping_zone = COALESCE(?, shipping_zone)
+           WHERE order_uid = ?`,
+          [
+            shipping_method_id || null,
+            shipping_method_name || null,
+            shipping_cost !== undefined ? shipping_cost : shippingConverted,
+            targetCurrency || "INR",
+            shipping_weight_grams || null,
+            shipping_zone || null,
+            order_uid
+          ]
+        ).catch(() => {});
+      }
 
       for (const item of physicalItems) {
         const [itemRes] = await db.query(

@@ -102,11 +102,119 @@ function ReviewForm({ productId, onSubmit }) {
   );
 }
 
+// Step 6: Product Shipping Estimate Component
+function ProductShippingEstimate({ productId }) {
+  const { convert, selected } = useCurrency();
+  const [countries, setCountries] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState(() => {
+    return localStorage.getItem("preferred_shipping_country") || "IN";
+  });
+  const [shippingData, setShippingData] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    API.get("/shipping-countries/enabled")
+      .then((res) => {
+        setCountries(res.data || []);
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (!productId) return;
+    setLoading(true);
+
+    API.get(`/shipping-rates/product-weights/${productId}`)
+      .then((wRes) => {
+        const weight = wRes.data?.weight_grams || 500;
+        return API.get(
+          `/shipping-rates/country/${selectedCountry}?weight_grams=${weight}&currency_code=${selected.currency_code || "INR"}`
+        );
+      })
+      .then((res) => {
+        setShippingData(res.data);
+      })
+      .catch((err) => console.error("Error fetching product shipping estimate:", err))
+      .finally(() => setLoading(false));
+  }, [productId, selectedCountry, selected.currency_code]);
+
+  const handleCountryChange = (code) => {
+    setSelectedCountry(code);
+    localStorage.setItem("preferred_shipping_country", code);
+  };
+
+  const freeShippingThreshold = shippingData?.methods?.find((m) => m.free_shipping_above)?.free_shipping_above;
+
+  return (
+    <div className="border border-stone-200/80 bg-stone-50/60 p-4 rounded-2xl flex flex-col gap-2.5 mt-3 text-xs">
+      <div className="flex items-center justify-between">
+        <span className="font-bold text-stone-900 flex items-center gap-1.5 text-[13px]">
+          <span>🚚</span> Shipping Estimate
+        </span>
+        {shippingData?.zone && (
+          <span className="text-[10px] text-stone-500 font-semibold bg-white border px-2 py-0.5 rounded-full">
+            {shippingData.zone}
+          </span>
+        )}
+      </div>
+
+      <div>
+        <label className="text-[11px] text-stone-500 font-medium block mb-1">Select your country:</label>
+        <select
+          value={selectedCountry}
+          onChange={(e) => handleCountryChange(e.target.value)}
+          className="w-full px-2.5 py-1.5 text-xs font-bold bg-white border border-stone-200 rounded-xl focus:outline-none focus:border-amber-500"
+        >
+          {countries.length > 0 ? (
+            countries.map((c) => (
+              <option key={c.country_code} value={c.country_code}>
+                {c.country_name} ({c.country_code})
+              </option>
+            ))
+          ) : (
+            <option value="IN">India (IN)</option>
+          )}
+        </select>
+      </div>
+
+      {loading ? (
+        <div className="py-2.5 text-center text-[11px] text-stone-400 font-medium">
+          Loading shipping rates...
+        </div>
+      ) : shippingData?.methods && shippingData.methods.length > 0 ? (
+        <div className="flex flex-col gap-1.5 pt-1">
+          {shippingData.methods.map((m) => (
+            <div key={m.method_id} className="flex items-center justify-between py-1 border-b border-stone-200/50 last:border-b-0">
+              <div className="flex items-center gap-1.5">
+                <span className="font-semibold text-stone-800">{m.method_name}:</span>
+                <span className="text-[10px] text-stone-400">({m.estimated_days})</span>
+              </div>
+              <span className="font-bold font-mono text-stone-900">
+                {convert(m.shipping_cost_inr)}
+              </span>
+            </div>
+          ))}
+
+          {freeShippingThreshold && (
+            <div className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg mt-1 flex items-center gap-1">
+              <span>✅</span> Free shipping on orders above {convert(freeShippingThreshold)}
+            </div>
+          )}
+        </div>
+      ) : (
+        <p className="text-[11px] text-stone-500 italic py-1">
+          Shipping not available for this country.
+        </p>
+      )}
+    </div>
+  );
+}
+
 export default function ProductDetail() {
   const navigate = useNavigate();
   const { member } = useMember();
   const { id } = useParams();
-  const { convert } = useCurrency();
+  const { convert, selected } = useCurrency();
   const [product, setProduct] = useState(null);
   const [selectedImg, setSelectedImg] = useState(0);
   const [selectedSize, setSelectedSize] = useState("");
@@ -604,6 +712,9 @@ export default function ProductDetail() {
               )}
               <p className="text-xs text-stone-500 mt-0.5">Inclusive of all taxes</p>
             </div>
+
+            {/* Step 6: Shipping Estimate Section */}
+            {product && <ProductShippingEstimate productId={product.id} />}
 
             {/* Size selector */}
             {sizes.length > 0 && (

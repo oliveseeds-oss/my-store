@@ -51,7 +51,17 @@ export default function Checkout() {
   const { member } = useMember();
   const { convert, selected } = useCurrency();
   const navigate = useNavigate();
-  const shipping = total >= 999 ? 0 : 60;
+  
+  // Dynamic Shipping Charges Management (Step 5)
+  const [shippingMethods, setShippingMethods] = useState([]);
+  const [selectedMethod, setSelectedMethod] = useState(null);
+  const [shippingLoading, setShippingLoading] = useState(false);
+  const [shippingZoneInfo, setShippingZoneInfo] = useState("");
+  const [shippingError, setShippingError] = useState("");
+
+  const shipping = selectedMethod
+    ? (selectedMethod.is_free ? 0 : (selectedMethod.shipping_cost_inr !== undefined ? selectedMethod.shipping_cost_inr : selectedMethod.shipping_cost))
+    : (total >= 999 ? 0 : 60);
 
   const [form, setForm] = useState({
     name: member?.name || "",
@@ -152,6 +162,76 @@ export default function Checkout() {
         .catch((err) => console.error("Failed to load member profile info", err));
     }
   }, [member]);
+
+  // Step 5: Automatically calculate shipping rates when delivery country or cart changes
+  useEffect(() => {
+    if (!hasPhysicalItems) {
+      setShippingMethods([]);
+      setSelectedMethod(null);
+      setShippingZoneInfo("");
+      setShippingError("");
+      return;
+    }
+
+    let isMounted = true;
+    const fetchShippingRates = async () => {
+      setShippingLoading(true);
+      setShippingError("");
+
+      const countryName = form.delivery_country || "India";
+      const selectedCountryObj = Country.getAllCountries().find(
+        (c) =>
+          c.name.toLowerCase() === countryName.toLowerCase() ||
+          c.isoCode.toLowerCase() === countryName.toLowerCase()
+      );
+      const code = selectedCountryObj?.isoCode?.toUpperCase() || (countryName.toLowerCase() === "india" ? "IN" : "IN");
+
+      try {
+        const physicalItems = cart.filter((i) => i.type === "physical" || !i.type);
+        const weightPromises = physicalItems.map((item) =>
+          API.get(`/shipping-rates/product-weights/${item.id}`)
+            .then((res) => (parseInt(res.data?.weight_grams, 10) || 500) * (item.qty || 1))
+            .catch(() => 500 * (item.qty || 1))
+        );
+        const weights = await Promise.all(weightPromises);
+        const totalWeight = weights.reduce((acc, w) => acc + w, 0) || 500;
+
+        const res = await API.post("/shipping-rates/calculate", {
+          country_code: code,
+          total_weight_grams: totalWeight,
+          order_value: total,
+          currency_code: selected.currency_code || "INR"
+        });
+
+        if (!isMounted) return;
+
+        if (res.data && res.data.methods && res.data.methods.length > 0) {
+          setShippingMethods(res.data.methods);
+          setShippingZoneInfo(res.data.zone || "");
+          setSelectedMethod((prev) => {
+            const match = res.data.methods.find((m) => m.method_id === prev?.method_id);
+            return match || res.data.methods[0];
+          });
+        } else {
+          setShippingMethods([]);
+          setSelectedMethod(null);
+          setShippingZoneInfo("");
+          setShippingError("Shipping to your country is not available. Please contact us.");
+        }
+      } catch (err) {
+        if (!isMounted) return;
+        console.error("Shipping calculate error:", err);
+        setShippingError("Shipping calculation unavailable for this location.");
+      } finally {
+        if (isMounted) setShippingLoading(false);
+      }
+    };
+
+    fetchShippingRates();
+    return () => {
+      isMounted = false;
+    };
+  }, [form.delivery_country, cart, total, selected.currency_code, hasPhysicalItems]);
 
   useEffect(() => {
     if (!siteSettings || paymentMethod !== "paypal") return;
@@ -267,6 +347,10 @@ export default function Checkout() {
         delivery_country: form.delivery_country,
         delivery_pincode: form.delivery_pincode,
         shipping_fee: shipping,
+        shipping_method_id: selectedMethod?.method_id || null,
+        shipping_method_name: selectedMethod?.method_name || null,
+        shipping_cost: shipping,
+        shipping_zone: shippingZoneInfo || null,
         payment_mode: gatewayDetails?.mode || "COD",
         transaction_id: gatewayDetails?.transactionId || null,
         currency_code: selected.currency_code,
@@ -326,7 +410,11 @@ export default function Checkout() {
         delivery_country: form.delivery_country,
         delivery_pincode: form.delivery_pincode,
         currency_code: selected.currency_code || "INR",
-        shipping_fee: shipping
+        shipping_fee: shipping,
+        shipping_method_id: selectedMethod?.method_id || null,
+        shipping_method_name: selectedMethod?.method_name || null,
+        shipping_cost: shipping,
+        shipping_zone: shippingZoneInfo || null
       };
 
       const createRes = await API.post("/payments/orders/create", orderPayload);
@@ -455,6 +543,91 @@ export default function Checkout() {
               />
             )}
 
+            {/* Shipping Method Selection Section (Step 5) */}
+            {hasPhysicalItems && (
+              <div className="border-t border-stone-150 pt-5 mt-3 flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <h4 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-sm font-bold text-stone-800 flex items-center gap-2">
+                    <span>🚚</span> Select Shipping Method
+                  </h4>
+                  {shippingZoneInfo && (
+                    <span className="text-[10px] font-bold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
+                      {shippingZoneInfo}
+                    </span>
+                  )}
+                </div>
+
+                {shippingLoading ? (
+                  <div className="p-4 bg-stone-50 rounded-2xl border border-stone-200 text-xs text-stone-500 font-medium flex items-center justify-center gap-2">
+                    <span className="animate-spin">⏳</span> Calculating best shipping options for {form.delivery_country}...
+                  </div>
+                ) : shippingError ? (
+                  <div className="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-800 font-bold">
+                    ⚠️ {shippingError}
+                  </div>
+                ) : shippingMethods.length === 0 ? (
+                  <div className="p-4 bg-rose-50 rounded-2xl border border-rose-200 text-xs text-rose-700 font-bold">
+                    Shipping to your country is not available. Please contact us.
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-2.5">
+                    {/* Free shipping banner if applicable */}
+                    {selectedMethod?.is_free || shippingMethods.every(m => m.is_free) ? (
+                      <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2">
+                        <span>🎉</span> Free shipping on your order!
+                      </div>
+                    ) : selectedMethod?.free_shipping_above ? (
+                      <div className="bg-stone-50 border border-stone-200 text-stone-600 px-3.5 py-1.5 rounded-xl text-[11px] font-semibold flex items-center gap-1.5">
+                        <span>✅</span> Free shipping on orders above {convert(selectedMethod.free_shipping_above)}
+                      </div>
+                    ) : null}
+
+                    <div className="grid grid-cols-1 gap-2.5">
+                      {shippingMethods.map((m) => {
+                        const isSelected = selectedMethod?.method_id === m.method_id;
+                        return (
+                          <label
+                            key={m.method_id}
+                            className={`p-3.5 rounded-2xl border flex items-center justify-between cursor-pointer transition-all ${
+                              isSelected
+                                ? "border-amber-500 bg-amber-50/50 shadow-sm ring-1 ring-amber-300"
+                                : "border-stone-200 bg-white hover:bg-stone-50"
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <input
+                                type="radio"
+                                name="shippingMethod"
+                                checked={isSelected}
+                                onChange={() => setSelectedMethod(m)}
+                                className="text-amber-600 focus:ring-amber-500 cursor-pointer"
+                              />
+                              <div>
+                                <span className="font-bold text-xs text-stone-900 block">{m.method_name}</span>
+                                <span className="text-[10px] text-stone-500 font-medium">{m.estimated_days}</span>
+                              </div>
+                            </div>
+
+                            <div className="text-right">
+                              {m.is_free ? (
+                                <span className="text-xs font-black text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-md">
+                                  FREE
+                                </span>
+                              ) : (
+                                <span className="text-xs font-black text-stone-900 font-mono">
+                                  {convert(m.shipping_cost_inr)}
+                                </span>
+                              )}
+                            </div>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Payment Details */}
             <div className="border-t border-stone-150 pt-5 mt-3">
               <h4 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-sm font-bold text-stone-700 mb-3">Secure Payment Methods Available</h4>
@@ -516,7 +689,7 @@ export default function Checkout() {
 
               <div className="border-t border-stone-100 pt-4 flex flex-col gap-2.5">
                 <div className="flex justify-between text-xs font-semibold opacity-75">
-                  <span>Shipping Fee</span>
+                  <span>Shipping Fee {selectedMethod ? `(${selectedMethod.method_name})` : ""}</span>
                   <span>{shipping === 0 ? "Free" : convert(shipping)}</span>
                 </div>
                 {couponDiscount > 0 && (

@@ -28,6 +28,7 @@ import CouponsManager from "./pages/CouponsManager";
 import BulkInquiriesManager from "./pages/BulkInquiriesManager";
 import NewsletterManager from "./pages/NewsletterManager";
 import ShippingCountries from "./pages/ShippingCountries";
+import ShippingRates from "./pages/ShippingRates";
 import SendNotifications from "./pages/SendNotifications";
 
 const P = ({ children }) => <ProtectedRoute>{children}</ProtectedRoute>;
@@ -61,6 +62,7 @@ export default function App() {
           <Route path="/send-notifications" element={<P><SendNotifications /></P>} />
           <Route path="/currency" element={<P><CurrencySettings /></P>} />
           <Route path="/shipping-countries" element={<P><ShippingCountries /></P>} />
+          <Route path="/shipping-rates" element={<P><ShippingRates /></P>} />
           <Route path="/settings" element={<P><Settings /></P>} />
           <Route path="/reports" element={<P><Reports /></P>} />
           <Route path="/transactions" element={<P><Transactions /></P>} />

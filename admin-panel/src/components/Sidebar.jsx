@@ -34,6 +34,7 @@ const links = [
   { to: "/shipping-countries", icon: <MdLocalShipping />, label: "Shipping Countries" },
   { to: "/seo", icon: <MdSearch />, label: "SEO Manager" },
   { to: "/settings", icon: <MdSettings />, label: "Settings" },
+  { to: "/shipping-rates", icon: <MdLocalShipping className="text-amber-600" />, label: "Shipping Rates" },
 ];
 
 export default function Sidebar() {

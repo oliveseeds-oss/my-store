@@ -73,6 +73,14 @@ async function startServer() {
   app.use("/api/invoices", require("./routes/invoices"));
   app.use("/api/shipping", require("./routes/shipping"));
   app.use("/api", require("./routes/shippingCountries"));
+
+  // Shipping Charges Management System (New Addition)
+  const { initShippingCharges } = require("./initShippingCharges");
+  initShippingCharges().catch(err => console.error("Shipping charges init error:", err.message));
+  const { shippingRatesRouter, adminShippingRatesRouter } = require("./routes/shippingRates");
+  app.use("/api/shipping-rates", shippingRatesRouter);
+  app.use("/api/admin/shipping-rates", adminShippingRatesRouter);
+
   app.use("/api/payments", require("./routes/payments"));
   app.use("/api/wishlist", require("./routes/wishlist"));
   app.use("/api/transactions", require("./routes/transactions"));
