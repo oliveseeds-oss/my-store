@@ -477,20 +477,20 @@ export default function Checkout() {
       />
       <Navbar />
       
-      <div className="max-w-5xl mx-auto px-6 py-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <h1 
           style={{ fontFamily: "'Outfit', sans-serif" }}
-          className="text-3xl font-black mb-8 tracking-tight"
+          className="text-2xl sm:text-3xl font-black mb-6 sm:mb-8 tracking-tight"
         >
           Checkout
         </h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
 
           {/* Delivery Details Form */}
           <div 
             style={{ background: "white", borderColor: "rgba(27, 57, 49, 0.15)" }}
-            className="lg:col-span-2 rounded-3xl border p-6 md:p-8 shadow-sm flex flex-col gap-5"
+            className="lg:col-span-2 rounded-2xl sm:rounded-3xl border p-4 sm:p-6 md:p-8 shadow-sm flex flex-col gap-5"
           >
             <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-xl font-bold tracking-tight">Delivery Details</h3>
             
@@ -641,10 +641,10 @@ export default function Checkout() {
           </div>
 
           {/* Summary Sidebar */}
-          <div className="w-full">
+          <div className="w-full flex flex-col gap-6">
             <div 
               style={{ background: "white", borderColor: "rgba(27, 57, 49, 0.15)" }}
-              className="rounded-3xl border p-6 shadow-md sticky top-6 flex flex-col gap-4"
+              className="rounded-2xl sm:rounded-3xl border p-5 sm:p-6 shadow-md flex flex-col gap-4"
             >
               <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-lg font-black tracking-tight mb-2">Order summary</h3>
               
@@ -713,7 +713,7 @@ export default function Checkout() {
               {/* Payment Method Option Selector */}
               <div className="mt-4 mb-4">
                 <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-2 block">Choose Payment Gateway</label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <button
                     type="button"
                     onClick={() => setPaymentMethod("razorpay")}
@@ -765,7 +765,7 @@ export default function Checkout() {
             </div>
 
             {/* High-attention Square Brand Ad */}
-            <div className="mt-6">
+            <div className="w-full flex justify-center">
               <AdBanner placement="Square Tile" />
             </div>
           </div>
