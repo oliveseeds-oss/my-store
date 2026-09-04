@@ -42,30 +42,45 @@ export default function BulkUploadModal({
     physical: "Physical Products",
     digital: "Digital Products",
     blog: "Blog Posts",
+    catalog: "Catalog Collections",
+    gallery: "Showcase Gallery",
+    portfolio: "Portfolio Projects",
   };
 
   const templateFilenames = {
     physical: "products_template.csv",
     digital: "digital_products_template.csv",
     blog: "blogs_template.csv",
+    catalog: "catalog_template.csv",
+    gallery: "gallery_template.csv",
+    portfolio: "portfolio_template.csv",
   };
 
   const templateEndpoints = {
     physical: "/admin/products/physical/template",
     digital: "/admin/products/digital/template",
     blog: "/admin/blogs/template",
+    catalog: "/admin/catalog/template",
+    gallery: "/admin/gallery/template",
+    portfolio: "/admin/portfolio/template",
   };
 
   const uploadEndpoints = {
     physical: "/admin/products/physical/bulk-upload",
     digital: "/admin/products/digital/bulk-upload",
     blog: "/admin/blogs/bulk-upload-csv",
+    catalog: "/admin/catalog/bulk-upload",
+    gallery: "/admin/gallery/bulk-upload",
+    portfolio: "/admin/portfolio/bulk-upload",
   };
 
   const updateEndpoints = {
     physical: "/admin/products/physical/bulk-update",
     digital: "/admin/products/digital/bulk-update",
     blog: "/admin/blogs/bulk-update",
+    catalog: "/admin/catalog/bulk-update",
+    gallery: "/admin/gallery/bulk-update",
+    portfolio: "/admin/portfolio/bulk-update",
   };
 
   const handleDownloadTemplate = async () => {
@@ -402,7 +417,7 @@ export default function BulkUploadModal({
           {/* Important Notice */}
           <div className="bg-stone-50 rounded-xl p-3 border border-stone-200/80 text-[11px] text-stone-500 flex items-center justify-between">
             <span>
-              <strong>Note:</strong> Images must be uploaded separately per product after bulk import. Maximum 500 rows per CSV.
+              <strong>Note:</strong> Public image URLs can be included directly in the CSV or items can be updated individually. Maximum 500 rows per CSV.
             </span>
             {(file || htmlFiles.length > 0) && (
               <button

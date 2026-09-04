@@ -57,24 +57,43 @@ router.get("/download/:token", async (req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
-  const { category, search, tag, sort, minPrice, maxPrice, minRating } = req.query;
-  let sql = `SELECT d.*, c.name as category_name FROM digital_products d
-             LEFT JOIN categories c ON d.category_id = c.id WHERE d.is_active = TRUE`;
-  const params = [];
-  if (category) { sql += " AND c.name = ?"; params.push(category); }
-  if (search) { sql += " AND d.name LIKE ?"; params.push(`%${search}%`); }
-  if (minPrice) { sql += " AND COALESCE(d.discount_price,d.price) >= ?"; params.push(minPrice); }
-  if (maxPrice) { sql += " AND COALESCE(d.discount_price,d.price) <= ?"; params.push(maxPrice); }
-  if (minRating) { sql += " AND d.rating >= ?"; params.push(minRating); }
-  if (tag) { sql += " AND JSON_CONTAINS(d.tags, JSON_QUOTE(?))"; params.push(tag); }
-  if (sort === "price_asc") sql += " ORDER BY COALESCE(d.discount_price,d.price) ASC";
-  else if (sort === "price_desc") sql += " ORDER BY COALESCE(d.discount_price,d.price) DESC";
-  else if (sort === "rating") sql += " ORDER BY d.rating DESC";
-  else sql += " ORDER BY d.created_at DESC";
-  const [rows] = await db.query(sql, params);
-  res.json(rows.map(r => ({ ...r, images: parseJSON(r.images), tags: parseJSON(r.tags) })));
-});
+const getDigitalProductsList = async (req, res) => {
+  const { category, category_id, search, tag, sort, minPrice, maxPrice, minRating } = req.query;
+  const catParam = req.params.slug || category_id || category;
+  try {
+    let sql = `SELECT d.*, c.name as category_name FROM digital_products d
+               LEFT JOIN categories c ON d.category_id = c.id WHERE d.is_active = TRUE`;
+    const params = [];
+    if (catParam && catParam !== "all" && catParam !== "All Products") {
+      const cleanCat = String(catParam).trim();
+      if (/^\d+$/.test(cleanCat)) {
+        sql += " AND (d.category_id = ? OR c.id = ?)";
+        params.push(parseInt(cleanCat, 10), parseInt(cleanCat, 10));
+      } else {
+        const decoded = decodeURIComponent(cleanCat);
+        sql += " AND (LOWER(c.name) = LOWER(?) OR LOWER(REPLACE(c.name, ' ', '-')) = LOWER(?) OR LOWER(REPLACE(c.name, '-', ' ')) = LOWER(?))";
+        params.push(decoded, decoded, decoded);
+      }
+    }
+    if (search) { sql += " AND d.name LIKE ?"; params.push(`%${search}%`); }
+    if (minPrice) { sql += " AND COALESCE(d.discount_price,d.price) >= ?"; params.push(minPrice); }
+    if (maxPrice) { sql += " AND COALESCE(d.discount_price,d.price) <= ?"; params.push(maxPrice); }
+    if (minRating) { sql += " AND d.rating >= ?"; params.push(minRating); }
+    if (tag) { sql += " AND JSON_CONTAINS(d.tags, JSON_QUOTE(?))"; params.push(tag); }
+    if (sort === "price_asc") sql += " ORDER BY COALESCE(d.discount_price,d.price) ASC";
+    else if (sort === "price_desc") sql += " ORDER BY COALESCE(d.discount_price,d.price) DESC";
+    else if (sort === "rating") sql += " ORDER BY d.rating DESC";
+    else sql += " ORDER BY d.created_at DESC";
+    const [rows] = await db.query(sql, params);
+    res.json(rows.map(r => ({ ...r, images: parseJSON(r.images), tags: parseJSON(r.tags) })));
+  } catch (err) {
+    console.error("Error fetching digital products:", err);
+    res.status(500).json({ error: "Failed to fetch digital products" });
+  }
+};
+
+router.get("/", getDigitalProductsList);
+router.get("/category/:slug", getDigitalProductsList);
 
 router.get("/:id", async (req, res) => {
   const [rows] = await db.query(

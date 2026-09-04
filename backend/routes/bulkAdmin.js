@@ -1191,4 +1191,562 @@ router.post("/blogs/bulk-update", verifyAdmin, upload.single("file"), async (req
   }
 });
 
+// ═══════════════════════════════════════════════════════════════════════════
+// 4. CATALOG BULK SYSTEM
+// ═══════════════════════════════════════════════════════════════════════════
+
+// A. Download Template CSV
+router.get("/catalog/template", (req, res) => {
+  const content = [
+    "# OLIVE SEEDS STUDIO — Catalog Collections Bulk Upload Template",
+    "# HOW TO USE:",
+    "# 1. Fill each row as one catalog collection",
+    "# 2. Do not change column headers (Row 10)",
+    "# 3. Delete rows starting with # before uploading",
+    "# 4. Required fields marked with *",
+    "# 5. Collection Type allowed values: physical, digital, both (default: physical)",
+    "# 6. For Bulk Update, include the ID column. Leave ID empty for new collections.",
+    "#",
+    "ID (leave blank for new),Collection Name *,Collection Type,Image URL,Description",
+    '"","Custom Acrylic Keepsakes","physical","https://images.unsplash.com/photo-1544816155-12df9643f363","Heirloom personalized acrylic art with precision edge polishing"',
+    '"","Minimalist React UI Kits","digital","https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe","Ready-to-deploy Tailwind and React component templates"',
+    '"","Studio Signage & Branding","both","https://images.unsplash.com/photo-1513542789411-b6a5d4f31634","Complete corporate branding kits including signage and vector assets"',
+  ].join("\r\n");
+
+  res.setHeader("Content-Type", "text/csv; charset=utf-8");
+  res.setHeader("Content-Disposition", 'attachment; filename="catalog_template.csv"');
+  res.status(200).send(content);
+});
+
+// B. Bulk CSV Upload (New Collections)
+router.post("/catalog/bulk-upload", verifyAdmin, upload.single("file"), async (req, res) => {
+  try {
+    if (!req.file || !req.file.buffer) {
+      return res.status(400).json({ error: "Please upload a valid CSV file" });
+    }
+
+    const records = parseCsvFile(req.file.buffer);
+    if (!records.length) {
+      return res.status(400).json({ error: "No collection rows found in CSV (or all rows were comments)" });
+    }
+
+    if (records.length > MAX_ROWS) {
+      return res.status(400).json({ error: `Upload exceeds maximum allowed limit of ${MAX_ROWS} rows` });
+    }
+
+    let successCount = 0;
+    const errors = [];
+
+    for (let i = 0; i < records.length; i++) {
+      const rawRow = records[i];
+      const norm = normalizeRow(rawRow);
+      const rowNum = i + 1;
+
+      const name = norm.collection_name || norm.name;
+      if (!name) {
+        errors.push({ row: rowNum, error: "Collection Name is required" });
+        continue;
+      }
+
+      let type = norm.collection_type || norm.type || "physical";
+      type = String(type).toLowerCase().trim();
+      if (!["physical", "digital", "both"].includes(type)) {
+        type = "physical";
+      }
+
+      const imageUrl = norm.image_url || norm.image || null;
+      const description = norm.description || "";
+
+      try {
+        await db.query(
+          "INSERT INTO catalog (name, type, description, image_url) VALUES (?, ?, ?, ?)",
+          [name, type, description, imageUrl]
+        );
+        successCount++;
+      } catch (err) {
+        errors.push({ row: rowNum, error: err.message || "Failed to insert collection" });
+      }
+    }
+
+    res.json({
+      success: successCount,
+      errors: errors,
+      total: records.length,
+    });
+  } catch (err) {
+    console.error("Catalog bulk upload error:", err);
+    res.status(500).json({ error: "Failed to process catalog bulk upload: " + err.message });
+  }
+});
+
+// C. Bulk CSV Update
+router.post("/catalog/bulk-update", verifyAdmin, upload.single("file"), async (req, res) => {
+  try {
+    if (!req.file || !req.file.buffer) {
+      return res.status(400).json({ error: "Please upload a valid CSV file" });
+    }
+
+    const records = parseCsvFile(req.file.buffer);
+    if (!records.length) {
+      return res.status(400).json({ error: "No rows found in CSV" });
+    }
+
+    if (records.length > MAX_ROWS) {
+      return res.status(400).json({ error: `Upload exceeds maximum limit of ${MAX_ROWS} rows` });
+    }
+
+    let updatedCount = 0;
+    let createdCount = 0;
+    const errors = [];
+
+    for (let i = 0; i < records.length; i++) {
+      const rawRow = records[i];
+      const norm = normalizeRow(rawRow);
+      const rowNum = i + 1;
+
+      const name = norm.collection_name || norm.name;
+      if (!name) {
+        errors.push({ row: rowNum, error: "Collection Name is required" });
+        continue;
+      }
+
+      let type = norm.collection_type || norm.type || "physical";
+      type = String(type).toLowerCase().trim();
+      if (!["physical", "digital", "both"].includes(type)) {
+        type = "physical";
+      }
+
+      const imageUrl = norm.image_url || norm.image || null;
+      const description = norm.description || "";
+      const existingId = norm.id ? parseInt(String(norm.id).trim(), 10) : null;
+
+      try {
+        if (existingId && !isNaN(existingId)) {
+          const [check] = await db.query("SELECT id FROM catalog WHERE id = ?", [existingId]);
+          if (check.length > 0) {
+            await db.query(
+              "UPDATE catalog SET name = ?, type = ?, description = ?, image_url = ? WHERE id = ?",
+              [name, type, description, imageUrl, existingId]
+            );
+            updatedCount++;
+            continue;
+          }
+        }
+
+        await db.query(
+          "INSERT INTO catalog (name, type, description, image_url) VALUES (?, ?, ?, ?)",
+          [name, type, description, imageUrl]
+        );
+        createdCount++;
+      } catch (err) {
+        errors.push({ row: rowNum, error: err.message || "Operation failed" });
+      }
+    }
+
+    res.json({
+      success: updatedCount + createdCount,
+      updated: updatedCount,
+      created: createdCount,
+      errors: errors,
+      total: records.length,
+    });
+  } catch (err) {
+    console.error("Catalog bulk update error:", err);
+    res.status(500).json({ error: "Failed to process catalog bulk update: " + err.message });
+  }
+});
+
+// D. Export Catalog to CSV
+router.get("/catalog/export", verifyAdmin, async (req, res) => {
+  try {
+    const [rows] = await db.query("SELECT * FROM catalog ORDER BY id ASC");
+    const headers = ["ID", "Collection Name", "Collection Type", "Image URL", "Description"];
+    const exportRows = rows.map((c) => ({
+      ID: c.id,
+      "Collection Name": c.name || "",
+      "Collection Type": c.type || "physical",
+      "Image URL": c.image_url || "",
+      Description: c.description || "",
+    }));
+
+    const csvData = buildCsv(headers, exportRows);
+    res.setHeader("Content-Type", "text/csv; charset=utf-8");
+    res.setHeader("Content-Disposition", 'attachment; filename="catalog_export.csv"');
+    res.status(200).send(csvData);
+  } catch (err) {
+    console.error("Catalog export error:", err);
+    res.status(500).json({ error: "Failed to export catalog collections" });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 5. GALLERY BULK SYSTEM
+// ═══════════════════════════════════════════════════════════════════════════
+
+// A. Download Template CSV
+router.get("/gallery/template", (req, res) => {
+  const content = [
+    "# OLIVE SEEDS STUDIO — Showcase Gallery Bulk Upload Template",
+    "# HOW TO USE:",
+    "# 1. Fill each row as one showcase item",
+    "# 2. Do not change column headers (Row 9)",
+    "# 3. Delete rows starting with # before uploading",
+    "# 4. Required fields: Image URL *",
+    "# 5. For Bulk Update, include the ID column. Leave ID empty for new items.",
+    "#",
+    "ID (leave blank for new),Image URL *,Title / Caption,Style,Category,Industry,Material",
+    '"","https://images.unsplash.com/photo-1513519245088-0e12902e5a38","Modern Minimalist Desk Nameplate","Minimalist","Nameplate","Corporate","Teak Wood"',
+    '"","https://images.unsplash.com/photo-1544816155-12df9643f363","Geometric Acrylic Backlit Sign","Modern","Signage","Hospitality","Cast Acrylic"',
+    '"","https://images.unsplash.com/photo-1579783900882-c0d3dad7b119","Artisan Custom Keepsake Box","Vintage","Keepsake","Retail","Walnut Wood"',
+  ].join("\r\n");
+
+  res.setHeader("Content-Type", "text/csv; charset=utf-8");
+  res.setHeader("Content-Disposition", 'attachment; filename="gallery_template.csv"');
+  res.status(200).send(content);
+});
+
+// B. Bulk CSV Upload (New Gallery Items)
+router.post("/gallery/bulk-upload", verifyAdmin, upload.single("file"), async (req, res) => {
+  try {
+    if (!req.file || !req.file.buffer) {
+      return res.status(400).json({ error: "Please upload a valid CSV file" });
+    }
+
+    const records = parseCsvFile(req.file.buffer);
+    if (!records.length) {
+      return res.status(400).json({ error: "No gallery rows found in CSV" });
+    }
+
+    if (records.length > MAX_ROWS) {
+      return res.status(400).json({ error: `Upload exceeds maximum allowed limit of ${MAX_ROWS} rows` });
+    }
+
+    let successCount = 0;
+    const errors = [];
+
+    for (let i = 0; i < records.length; i++) {
+      const rawRow = records[i];
+      const norm = normalizeRow(rawRow);
+      const rowNum = i + 1;
+
+      const imageUrl = norm.image_url || norm.image;
+      if (!imageUrl) {
+        errors.push({ row: rowNum, error: "Image URL is required" });
+        continue;
+      }
+
+      const title = norm.title || norm.caption || norm.name || null;
+      const style = norm.style || null;
+      const category = norm.category || null;
+      const industry = norm.industry || null;
+      const material = norm.material || null;
+
+      try {
+        await db.query(
+          "INSERT INTO gallery (image_url, title, style, category, industry, material) VALUES (?, ?, ?, ?, ?, ?)",
+          [imageUrl, title, style, category, industry, material]
+        );
+        successCount++;
+      } catch (err) {
+        errors.push({ row: rowNum, error: err.message || "Failed to insert gallery item" });
+      }
+    }
+
+    res.json({
+      success: successCount,
+      errors: errors,
+      total: records.length,
+    });
+  } catch (err) {
+    console.error("Gallery bulk upload error:", err);
+    res.status(500).json({ error: "Failed to process gallery bulk upload: " + err.message });
+  }
+});
+
+// C. Bulk CSV Update
+router.post("/gallery/bulk-update", verifyAdmin, upload.single("file"), async (req, res) => {
+  try {
+    if (!req.file || !req.file.buffer) {
+      return res.status(400).json({ error: "Please upload a valid CSV file" });
+    }
+
+    const records = parseCsvFile(req.file.buffer);
+    if (!records.length) {
+      return res.status(400).json({ error: "No rows found in CSV" });
+    }
+
+    if (records.length > MAX_ROWS) {
+      return res.status(400).json({ error: `Upload exceeds maximum limit of ${MAX_ROWS} rows` });
+    }
+
+    let updatedCount = 0;
+    let createdCount = 0;
+    const errors = [];
+
+    for (let i = 0; i < records.length; i++) {
+      const rawRow = records[i];
+      const norm = normalizeRow(rawRow);
+      const rowNum = i + 1;
+
+      const imageUrl = norm.image_url || norm.image;
+      if (!imageUrl) {
+        errors.push({ row: rowNum, error: "Image URL is required" });
+        continue;
+      }
+
+      const title = norm.title || norm.caption || norm.name || null;
+      const style = norm.style || null;
+      const category = norm.category || null;
+      const industry = norm.industry || null;
+      const material = norm.material || null;
+      const existingId = norm.id ? parseInt(String(norm.id).trim(), 10) : null;
+
+      try {
+        if (existingId && !isNaN(existingId)) {
+          const [check] = await db.query("SELECT id FROM gallery WHERE id = ?", [existingId]);
+          if (check.length > 0) {
+            await db.query(
+              "UPDATE gallery SET image_url = ?, title = ?, style = ?, category = ?, industry = ?, material = ? WHERE id = ?",
+              [imageUrl, title, style, category, industry, material, existingId]
+            );
+            updatedCount++;
+            continue;
+          }
+        }
+
+        await db.query(
+          "INSERT INTO gallery (image_url, title, style, category, industry, material) VALUES (?, ?, ?, ?, ?, ?)",
+          [imageUrl, title, style, category, industry, material]
+        );
+        createdCount++;
+      } catch (err) {
+        errors.push({ row: rowNum, error: err.message || "Operation failed" });
+      }
+    }
+
+    res.json({
+      success: updatedCount + createdCount,
+      updated: updatedCount,
+      created: createdCount,
+      errors: errors,
+      total: records.length,
+    });
+  } catch (err) {
+    console.error("Gallery bulk update error:", err);
+    res.status(500).json({ error: "Failed to process gallery bulk update: " + err.message });
+  }
+});
+
+// D. Export Gallery to CSV
+router.get("/gallery/export", verifyAdmin, async (req, res) => {
+  try {
+    const [rows] = await db.query("SELECT * FROM gallery ORDER BY id ASC");
+    const headers = ["ID", "Image URL", "Title", "Style", "Category", "Industry", "Material"];
+    const exportRows = rows.map((g) => ({
+      ID: g.id,
+      "Image URL": g.image_url || "",
+      Title: g.title || "",
+      Style: g.style || "",
+      Category: g.category || "",
+      Industry: g.industry || "",
+      Material: g.material || "",
+    }));
+
+    const csvData = buildCsv(headers, exportRows);
+    res.setHeader("Content-Type", "text/csv; charset=utf-8");
+    res.setHeader("Content-Disposition", 'attachment; filename="gallery_export.csv"');
+    res.status(200).send(csvData);
+  } catch (err) {
+    console.error("Gallery export error:", err);
+    res.status(500).json({ error: "Failed to export gallery" });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 6. PORTFOLIO BULK SYSTEM
+// ═══════════════════════════════════════════════════════════════════════════
+
+// A. Download Template CSV
+router.get("/portfolio/template", (req, res) => {
+  const content = [
+    "# OLIVE SEEDS STUDIO — Portfolio Projects Bulk Upload Template",
+    "# HOW TO USE:",
+    "# 1. Fill each row as one portfolio project",
+    "# 2. Do not change column headers (Row 9)",
+    "# 3. Delete rows starting with # before uploading",
+    "# 4. Required fields: Image URL *, Project Title *",
+    "# 5. For Bulk Update, include the ID column. Leave ID empty for new projects.",
+    "#",
+    "ID (leave blank for new),Image URL *,Project Title *,Category,Description",
+    '"","https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe","Luxury SaaS UI/UX Redesign","React Apps","Comprehensive end-to-end design token architecture and dashboard templates"',
+    '"","https://images.unsplash.com/photo-1544816155-12df9643f363","Artisan Wooden Keepsake Boxes","Custom Crafts","Laser cut and engraved heirloom storage containers in polished walnut"',
+    '"","https://images.unsplash.com/photo-1513542789411-b6a5d4f31634","Corporate Identity Architecture","Branding","Complete corporate stationery, dimensional acrylic signage, and styleguide"',
+  ].join("\r\n");
+
+  res.setHeader("Content-Type", "text/csv; charset=utf-8");
+  res.setHeader("Content-Disposition", 'attachment; filename="portfolio_template.csv"');
+  res.status(200).send(content);
+});
+
+// B. Bulk CSV Upload (New Portfolio Projects)
+router.post("/portfolio/bulk-upload", verifyAdmin, upload.single("file"), async (req, res) => {
+  try {
+    if (!req.file || !req.file.buffer) {
+      return res.status(400).json({ error: "Please upload a valid CSV file" });
+    }
+
+    const records = parseCsvFile(req.file.buffer);
+    if (!records.length) {
+      return res.status(400).json({ error: "No portfolio rows found in CSV" });
+    }
+
+    if (records.length > MAX_ROWS) {
+      return res.status(400).json({ error: `Upload exceeds maximum allowed limit of ${MAX_ROWS} rows` });
+    }
+
+    let successCount = 0;
+    const errors = [];
+
+    for (let i = 0; i < records.length; i++) {
+      const rawRow = records[i];
+      const norm = normalizeRow(rawRow);
+      const rowNum = i + 1;
+
+      const imageUrl = norm.image_url || norm.image;
+      if (!imageUrl) {
+        errors.push({ row: rowNum, error: "Image URL is required" });
+        continue;
+      }
+
+      const title = norm.project_title || norm.title || norm.name;
+      if (!title) {
+        errors.push({ row: rowNum, error: "Project Title is required" });
+        continue;
+      }
+
+      const category = norm.category || null;
+      const description = norm.description || norm.concept || null;
+
+      try {
+        await db.query(
+          "INSERT INTO portfolio (image_url, title, description, category) VALUES (?, ?, ?, ?)",
+          [imageUrl, title, description, category]
+        );
+        successCount++;
+      } catch (err) {
+        errors.push({ row: rowNum, error: err.message || "Failed to insert portfolio item" });
+      }
+    }
+
+    res.json({
+      success: successCount,
+      errors: errors,
+      total: records.length,
+    });
+  } catch (err) {
+    console.error("Portfolio bulk upload error:", err);
+    res.status(500).json({ error: "Failed to process portfolio bulk upload: " + err.message });
+  }
+});
+
+// C. Bulk CSV Update
+router.post("/portfolio/bulk-update", verifyAdmin, upload.single("file"), async (req, res) => {
+  try {
+    if (!req.file || !req.file.buffer) {
+      return res.status(400).json({ error: "Please upload a valid CSV file" });
+    }
+
+    const records = parseCsvFile(req.file.buffer);
+    if (!records.length) {
+      return res.status(400).json({ error: "No rows found in CSV" });
+    }
+
+    if (records.length > MAX_ROWS) {
+      return res.status(400).json({ error: `Upload exceeds maximum limit of ${MAX_ROWS} rows` });
+    }
+
+    let updatedCount = 0;
+    let createdCount = 0;
+    const errors = [];
+
+    for (let i = 0; i < records.length; i++) {
+      const rawRow = records[i];
+      const norm = normalizeRow(rawRow);
+      const rowNum = i + 1;
+
+      const imageUrl = norm.image_url || norm.image;
+      if (!imageUrl) {
+        errors.push({ row: rowNum, error: "Image URL is required" });
+        continue;
+      }
+
+      const title = norm.project_title || norm.title || norm.name;
+      if (!title) {
+        errors.push({ row: rowNum, error: "Project Title is required" });
+        continue;
+      }
+
+      const category = norm.category || null;
+      const description = norm.description || norm.concept || null;
+      const existingId = norm.id ? parseInt(String(norm.id).trim(), 10) : null;
+
+      try {
+        if (existingId && !isNaN(existingId)) {
+          const [check] = await db.query("SELECT id FROM portfolio WHERE id = ?", [existingId]);
+          if (check.length > 0) {
+            await db.query(
+              "UPDATE portfolio SET image_url = ?, title = ?, description = ?, category = ? WHERE id = ?",
+              [imageUrl, title, description, category, existingId]
+            );
+            updatedCount++;
+            continue;
+          }
+        }
+
+        await db.query(
+          "INSERT INTO portfolio (image_url, title, description, category) VALUES (?, ?, ?, ?)",
+          [imageUrl, title, description, category]
+        );
+        createdCount++;
+      } catch (err) {
+        errors.push({ row: rowNum, error: err.message || "Operation failed" });
+      }
+    }
+
+    res.json({
+      success: updatedCount + createdCount,
+      updated: updatedCount,
+      created: createdCount,
+      errors: errors,
+      total: records.length,
+    });
+  } catch (err) {
+    console.error("Portfolio bulk update error:", err);
+    res.status(500).json({ error: "Failed to process portfolio bulk update: " + err.message });
+  }
+});
+
+// D. Export Portfolio to CSV
+router.get("/portfolio/export", verifyAdmin, async (req, res) => {
+  try {
+    const [rows] = await db.query("SELECT * FROM portfolio ORDER BY id ASC");
+    const headers = ["ID", "Image URL", "Project Title", "Category", "Description"];
+    const exportRows = rows.map((p) => ({
+      ID: p.id,
+      "Image URL": p.image_url || "",
+      "Project Title": p.title || "",
+      Category: p.category || "",
+      Description: p.description || "",
+    }));
+
+    const csvData = buildCsv(headers, exportRows);
+    res.setHeader("Content-Type", "text/csv; charset=utf-8");
+    res.setHeader("Content-Disposition", 'attachment; filename="portfolio_export.csv"');
+    res.status(200).send(csvData);
+  } catch (err) {
+    console.error("Portfolio export error:", err);
+    res.status(500).json({ error: "Failed to export portfolio projects" });
+  }
+});
+
 module.exports = router;

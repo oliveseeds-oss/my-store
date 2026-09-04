@@ -92,6 +92,7 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
 
   return (
     <div
+      className="product-card"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
@@ -101,6 +102,7 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
+        height: "100%",
         transition: "box-shadow 0.4s ease, transform 0.4s ease",
         boxShadow: hovered
           ? "0 24px 60px rgba(140,106,67,0.18)"
@@ -111,11 +113,12 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
     >
       {/* Image */}
       <Link to={`/products/${p.id}`} style={{ display: "block", position: "relative", overflow: "hidden" }}>
-        <div style={{ aspectRatio: "1.3/1", background: "#F0EBE3", overflow: "hidden", position: "relative" }}>
+        <div className="product-card-image-wrap" style={{ height: 220, width: "100%", background: "#F0EBE3", overflow: "hidden", position: "relative", flexShrink: 0 }}>
           {img ? (
             <img
               src={img}
               alt={p.name}
+              className="product-card-image"
               style={{
                 width: "100%",
                 height: "100%",
@@ -185,18 +188,18 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
           ))}
         </div>
 
-        {/* Wishlist */}
+        {/* Wishlist Button - minimum 44px tap target */}
         <button
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); onWishlist(); }}
           aria-label="Add to Wishlist"
           style={{
-            position: "absolute", top: 10, right: 10, zIndex: 25,
-            width: 34, height: 34, borderRadius: "50%",
+            position: "absolute", top: 8, right: 8, zIndex: 25,
+            width: 44, height: 44, borderRadius: "50%",
             background: "rgba(255,255,255,0.95)",
             backdropFilter: "blur(8px)",
             border: "1px solid rgba(0,0,0,0.08)", cursor: "pointer",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 16,
+            fontSize: 18,
             boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
             opacity: 1,
             transition: "all 0.2s ease",
@@ -209,7 +212,7 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
       </Link>
 
       {/* Card Body */}
-      <div style={{ padding: "20px 20px 22px", display: "flex", flexDirection: "column", flex: 1 }}>
+      <div className="product-card-content" style={{ padding: "20px 20px 22px", display: "flex", flexDirection: "column", flex: 1 }}>
         {p.category_name && (
           <p style={{
             fontSize: 10, textTransform: "uppercase", letterSpacing: "0.2em",
@@ -219,14 +222,15 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
           </p>
         )}
 
-        <Link to={`/products/${p.id}`}>
-          <h3 style={{
+        <Link to={`/products/${p.id}`} style={{ textDecoration: "none" }}>
+          <h3 className="product-card-name" style={{
             fontFamily: T.headingFont, fontWeight: 600,
             fontSize: 17, lineHeight: 1.4,
             color: hovered ? T.hover : T.text,
             transition: "color 0.3s ease",
             display: "-webkit-box", WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical", overflow: "hidden",
+            minHeight: "2.8em",
             marginBottom: 10,
           }}>
             {p.name}
@@ -255,7 +259,7 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
           )}
         </div>
 
-        <div style={{ display: "flex", alignItems: "flex-end", gap: 8, marginTop: 14 }}>
+        <div className="product-card-price" style={{ display: "flex", alignItems: "flex-end", gap: 8, marginTop: "auto", paddingTop: 14 }}>
           <span style={{
             fontFamily: T.headingFont, fontSize: 24, fontWeight: 700, color: T.text,
           }}>
@@ -276,8 +280,9 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
 
         <button
           onClick={handleAdd}
+          className="product-card-button"
           style={{
-            marginTop: 16,
+            marginTop: 14,
             width: "100%",
             padding: "10px 0",
             borderRadius: 100,
@@ -1010,6 +1015,17 @@ export default function ProductList() {
         .category-pills-bar::-webkit-scrollbar {
           display: none;
         }
+        .products-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+          gap: 20px;
+          align-items: stretch;
+        }
+        .product-card {
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+        }
         @media (min-width: 1024px) {
           .luxury-sidebar { display: flex !important; }
         }
@@ -1020,6 +1036,12 @@ export default function ProductList() {
           .products-grid {
             grid-template-columns: repeat(2, 1fr) !important;
             gap: 12px !important;
+          }
+          .product-card-image-wrap {
+            height: 180px !important;
+          }
+          .product-card-content {
+            padding: 12px !important;
           }
         }
       `}</style>

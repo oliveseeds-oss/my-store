@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import API from "../api";
-import { MdAdd, MdDelete, MdClose, MdFilterList } from "react-icons/md";
+import { MdAdd, MdDelete, MdClose, MdFilterList, MdDownload, MdCloudUpload, MdEditNote } from "react-icons/md";
+import BulkUploadModal from "../components/BulkUploadModal";
 
 const INIT = { image_url: "", title: "", description: "", category: "" };
 
@@ -11,6 +12,27 @@ export default function PortfolioAdmin() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(INIT);
   const [filter, setFilter] = useState({ category: "" });
+  const [bulkModal, setBulkModal] = useState({ isOpen: false, type: "portfolio", mode: "upload" });
+  const [exporting, setExporting] = useState(false);
+
+  const handleExportCsv = async () => {
+    setExporting(true);
+    try {
+      const response = await API.get("/admin/portfolio/export", { responseType: "blob" });
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: "text/csv" }));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "portfolio_projects.csv");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      alert("Export failed: " + (err.response?.data?.error || err.message));
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const load = () => {
     let url = "/portfolio/admin/all";
@@ -46,15 +68,40 @@ export default function PortfolioAdmin() {
         <Topbar title="Portfolio Designer Showcase Manager" />
         <main className="p-6 flex flex-col gap-6 max-w-7xl w-full mx-auto">
           
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h2 className="text-xl font-bold text-gray-800">Portfolio Showcase Items</h2>
               <p className="text-xs text-gray-400">Add reference photos showing off custom case studies and premium client project designs</p>
             </div>
-            <button onClick={() => setShowForm(true)}
-              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow">
-              <MdAdd className="text-lg" /> Add Portfolio Project
-            </button>
+            <div className="flex items-center flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={handleExportCsv}
+                disabled={exporting}
+                className="flex items-center gap-1.5 bg-white border border-gray-300 hover:border-emerald-500 hover:text-emerald-700 text-gray-700 text-xs px-3 py-2 rounded-xl font-semibold shadow-xs transition"
+              >
+                <MdDownload className="text-base text-emerald-600" />
+                {exporting ? "Exporting..." : "Export CSV"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setBulkModal({ isOpen: true, type: "portfolio", mode: "upload" })}
+                className="flex items-center gap-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs px-3 py-2 rounded-xl font-bold transition"
+              >
+                <MdCloudUpload className="text-base" /> Bulk Upload
+              </button>
+              <button
+                type="button"
+                onClick={() => setBulkModal({ isOpen: true, type: "portfolio", mode: "update" })}
+                className="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs px-3 py-2 rounded-xl font-bold transition"
+              >
+                <MdEditNote className="text-base" /> Bulk Update
+              </button>
+              <button onClick={() => setShowForm(true)}
+                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow">
+                <MdAdd className="text-lg" /> Add Project
+              </button>
+            </div>
           </div>
 
           {/* Filters Bar */}
@@ -138,6 +185,15 @@ export default function PortfolioAdmin() {
               </div>
             </div>
           )}
+
+          {/* Bulk Upload / Update Modal */}
+          <BulkUploadModal
+            isOpen={bulkModal.isOpen}
+            onClose={() => setBulkModal({ ...bulkModal, isOpen: false })}
+            type="portfolio"
+            initialMode={bulkModal.mode}
+            onComplete={load}
+          />
         </main>
       </div>
     </div>

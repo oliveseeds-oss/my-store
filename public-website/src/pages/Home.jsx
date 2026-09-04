@@ -208,7 +208,9 @@ function PremiumProductCard({ p, to, isDigital = false, onWishlist, isWishlisted
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
       style={{
-        display: "block",
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
         background: isDigital 
           ? (isHovered ? "rgba(255, 255, 255, 0.09)" : "rgba(255, 255, 255, 0.05)")
           : "var(--surface)",
@@ -226,11 +228,12 @@ function PremiumProductCard({ p, to, isDigital = false, onWishlist, isWishlisted
         position: "relative",
       }}
     >
-      <div style={{ height: "270px", overflow: "hidden", position: "relative" }}>
+      <div className="product-card-image-wrap" style={{ height: "220px", width: "100%", overflow: "hidden", position: "relative", flexShrink: 0 }}>
         {imgUrl ? (
           <img 
             src={imgUrl} 
             alt={p.name} 
+            className="product-card-image"
             style={{ 
               width: "100%", 
               height: "100%", 
@@ -284,7 +287,7 @@ function PremiumProductCard({ p, to, isDigital = false, onWishlist, isWishlisted
           fontSize: "9px", 
           fontWeight: 700, 
           letterSpacing: "0.18em", 
-          textTransform: "uppercase",
+          textTransform: "uppercase", 
           padding: "6px 14px", 
           borderRadius: "100px",
           backdropFilter: "blur(8px)",
@@ -294,7 +297,7 @@ function PremiumProductCard({ p, to, isDigital = false, onWishlist, isWishlisted
           {isDigital ? "Digital File" : "Premium Craft"}
         </span>
 
-        {/* Heart Wishlist Button */}
+        {/* Heart Wishlist Button - minimum 44px tap target */}
         <button
           onClick={(e) => {
             e.preventDefault();
@@ -303,14 +306,14 @@ function PremiumProductCard({ p, to, isDigital = false, onWishlist, isWishlisted
           }}
           style={{
             position: "absolute",
-            top: "14px",
-            right: "14px",
+            top: "10px",
+            right: "10px",
             zIndex: 10,
             background: "rgba(255, 255, 255, 0.95)",
             border: "none",
             borderRadius: "50%",
-            width: "36px",
-            height: "36px",
+            width: "44px",
+            height: "44px",
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
@@ -327,7 +330,7 @@ function PremiumProductCard({ p, to, isDigital = false, onWishlist, isWishlisted
         </button>
       </div>
 
-      <div style={{ padding: "24px" }}>
+      <div className="product-card-content" style={{ padding: "20px", display: "flex", flexDirection: "column", flex: 1 }}>
         <div style={{ 
           fontSize: "9px", 
           fontWeight: 700, 
@@ -336,23 +339,28 @@ function PremiumProductCard({ p, to, isDigital = false, onWishlist, isWishlisted
           color: "var(--gold)", 
           marginBottom: "8px" 
         }}>
-          {p.category}
+          {p.category || p.category_name}
         </div>
-        <h3 className="clash" style={{ 
+        <h3 className="clash product-card-name" style={{ 
           fontSize: "17px", 
           fontWeight: 600, 
           color: isDigital ? "#ffffff" : "var(--accent)", 
-          marginBottom: "20px",
+          marginBottom: "16px",
           lineHeight: 1.3,
-          minHeight: "44px"
+          display: "-webkit-box",
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: "vertical",
+          overflow: "hidden",
+          minHeight: "2.8em",
         }}>
           {p.name}
         </h3>
         
-        <div style={{
+        <div className="product-card-price" style={{
           display: "flex", 
           alignItems: "center", 
           justifyContent: "space-between",
+          marginTop: "auto",
           paddingTop: "16px", 
           borderTop: isDigital ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(15, 39, 68, 0.08)",
         }}>
@@ -604,6 +612,26 @@ export default function Home() {
             grid-template-columns: repeat(2, 1fr) !important;
             gap: 24px 12px !important;
             padding: 20px 12px !important;
+          }
+        }
+
+        /* Unified Product Grid for Homepage */
+        .homepage-products-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+          gap: 24px;
+          align-items: stretch;
+        }
+        @media (max-width: 768px) {
+          .homepage-products-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 12px !important;
+          }
+          .homepage-products-grid .product-card-image-wrap {
+            height: 180px !important;
+          }
+          .homepage-products-grid .product-card-content {
+            padding: 12px !important;
           }
         }
 
@@ -1547,7 +1575,7 @@ export default function Home() {
 
           {/* Products grid */}
           {products.length > 0 ? (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "32px" }}>
+            <div className="homepage-products-grid">
               {products.map((p, i) => (
                 <FadeUp key={p.id} delay={i * 0.08}>
                   <PremiumProductCard
@@ -1637,7 +1665,7 @@ export default function Home() {
           </FadeUp>
 
           {digitalProducts.length > 0 ? (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "32px" }}>
+            <div className="homepage-products-grid">
               {digitalProducts.map((p, i) => (
                 <FadeUp key={p.id} delay={i * 0.08}>
                   <PremiumProductCard

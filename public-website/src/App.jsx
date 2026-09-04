@@ -68,6 +68,7 @@ export default function App() {
                   <Route path="/products/:id"       element={<ProductDetail />} />
                   <Route path="/product/:id"        element={<ProductDetail />} />
                   <Route path="/digital"            element={<DigitalProductList />} />
+                  <Route path="/digital/category/:slug" element={<DigitalProductList />} />
                   <Route path="/digital/:id"        element={<DigitalProductDetail />} />
                   <Route path="/product/digital/:id" element={<DigitalProductDetail />} />
                   <Route path="/faq"                element={<FaqPage />} />

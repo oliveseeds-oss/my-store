@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import API from "../api";
-import { MdAdd, MdEdit, MdDelete, MdClose } from "react-icons/md";
+import { MdAdd, MdEdit, MdDelete, MdClose, MdDownload, MdCloudUpload, MdEditNote } from "react-icons/md";
+import BulkUploadModal from "../components/BulkUploadModal";
 
 const INIT = { name: "", type: "physical", description: "", image_url: "" };
 
@@ -11,6 +12,27 @@ export default function CatalogAdmin() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(INIT);
   const [editId, setEditId] = useState(null);
+  const [bulkModal, setBulkModal] = useState({ isOpen: false, type: "catalog", mode: "upload" });
+  const [exporting, setExporting] = useState(false);
+
+  const handleExportCsv = async () => {
+    setExporting(true);
+    try {
+      const response = await API.get("/admin/catalog/export", { responseType: "blob" });
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: "text/csv" }));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "catalog_collections.csv");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      alert("Export failed: " + (err.response?.data?.error || err.message));
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const load = () => API.get("/catalog/admin/all").then(r => setCategories(r.data));
   useEffect(() => { load(); }, []);
@@ -44,16 +66,41 @@ export default function CatalogAdmin() {
       <div className="flex-1 flex flex-col">
         <Topbar title="Catalog Collections Manager" />
         <main className="p-6 flex flex-col gap-4 max-w-7xl w-full mx-auto">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h2 className="text-xl font-bold text-gray-800">Website Catalog Collections</h2>
               <p className="text-xs text-gray-400">Add, edit or delete collections displayed on the public Catalog page</p>
             </div>
-            <button onClick={openAdd}
-              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700
-                         text-white text-sm font-bold px-4 py-2.5 rounded-xl transition shadow">
-              <MdAdd /> Add Catalog Collection
-            </button>
+            <div className="flex items-center flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={handleExportCsv}
+                disabled={exporting}
+                className="flex items-center gap-1.5 bg-white border border-gray-300 hover:border-emerald-500 hover:text-emerald-700 text-gray-700 text-xs px-3 py-2 rounded-xl font-semibold shadow-xs transition"
+              >
+                <MdDownload className="text-base text-emerald-600" />
+                {exporting ? "Exporting..." : "Export CSV"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setBulkModal({ isOpen: true, type: "catalog", mode: "upload" })}
+                className="flex items-center gap-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs px-3 py-2 rounded-xl font-bold transition"
+              >
+                <MdCloudUpload className="text-base" /> Bulk Upload
+              </button>
+              <button
+                type="button"
+                onClick={() => setBulkModal({ isOpen: true, type: "catalog", mode: "update" })}
+                className="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs px-3 py-2 rounded-xl font-bold transition"
+              >
+                <MdEditNote className="text-base" /> Bulk Update
+              </button>
+              <button onClick={openAdd}
+                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700
+                           text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow">
+                <MdAdd /> Add Collection
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -144,6 +191,15 @@ export default function CatalogAdmin() {
               </div>
             </div>
           )}
+
+          {/* Bulk Upload / Update Modal */}
+          <BulkUploadModal
+            isOpen={bulkModal.isOpen}
+            onClose={() => setBulkModal({ ...bulkModal, isOpen: false })}
+            type="catalog"
+            initialMode={bulkModal.mode}
+            onComplete={load}
+          />
         </main>
       </div>
     </div>

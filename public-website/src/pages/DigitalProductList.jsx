@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation, useParams } from "react-router-dom";
 import API from "../api";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -90,6 +90,9 @@ const GLOBAL_CSS = `
     border-radius: 24px;
     border: 1px solid var(--bd);
     background: var(--s1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     transition: transform 0.4s cubic-bezier(.22,.68,0,1.2),
                 box-shadow 0.4s ease,
                 border-color 0.4s ease;
@@ -114,9 +117,10 @@ const GLOBAL_CSS = `
  
   .dcard__img-wrap {
     position: relative;
-    aspect-ratio: 1.3/1;
+    height: 220px;
     overflow: hidden;
     background: #080f1e;
+    flex-shrink: 0;
   }
   .dcard__img {
     width: 100%;
@@ -322,6 +326,26 @@ const GLOBAL_CSS = `
       animation-delay: 4.5s !important;
     }
   }
+
+  .digital-products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    align-items: stretch;
+  }
+
+  @media (max-width: 768px) {
+    .digital-products-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 12px !important;
+    }
+    .dcard__img-wrap {
+      height: 180px !important;
+    }
+    .product-card-content {
+      padding: 12px !important;
+    }
+  }
 `;
 
 function injectStyles() {
@@ -390,7 +414,7 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
           )}
           <div className="dcard__img-overlay" />
 
-          {/* Wishlist Button Inside Image Wrap Top-Right */}
+          {/* Wishlist Button Inside Image Wrap Top-Right - minimum 44px tap target */}
           <button
             type="button"
             onClick={(e) => {
@@ -401,11 +425,11 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
             aria-label="Add to Wishlist"
             style={{
               position: "absolute",
-              top: 10,
-              right: 10,
+              top: 8,
+              right: 8,
               zIndex: 30,
-              width: 32,
-              height: 32,
+              width: 44,
+              height: 44,
               borderRadius: "50%",
               background: "rgba(15,23,42,0.85)",
               backdropFilter: "blur(8px)",
@@ -414,7 +438,7 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: 15,
+              fontSize: 18,
               boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
               color: isWishlisted ? "#f43f5e" : "#94a3b8",
               transition: "all 0.2s ease",
@@ -477,7 +501,7 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
       </Link>
 
       {/* Body */}
-      <div style={{ padding: "16px 18px 20px", display: "flex", flexDirection: "column", gap: 10 }}>
+      <div className="product-card-content" style={{ padding: "16px 18px 20px", display: "flex", flexDirection: "column", flex: 1, gap: 10 }}>
         {p.category_name && (
           <p style={{
             fontFamily: "Inter, sans-serif",
@@ -494,7 +518,7 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
 
         <Link to={`/digital/${p.id}`} style={{ textDecoration: "none" }}>
           <h3
-            className="sora"
+            className="sora product-card-name"
             style={{
               fontSize: 15,
               fontWeight: 700,
@@ -505,6 +529,7 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
               WebkitLineClamp: 2,
               WebkitBoxOrient: "vertical",
               overflow: "hidden",
+              minHeight: "2.8em",
             }}
           >
             {p.name}
@@ -535,7 +560,7 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
         </div>
 
         {/* Price */}
-        <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: 2 }}>
+        <div className="product-card-price" style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: "auto", paddingTop: 8 }}>
           <span
             className="sora"
             style={{
@@ -562,7 +587,7 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
 
         <button
           onClick={handleAdd}
-          className="cart-btn"
+          className="cart-btn product-card-button"
           style={{
             background: added
               ? `linear-gradient(90deg, ${T.accent3}, #00b899)`
@@ -571,7 +596,8 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
             boxShadow: added
               ? "0 8px 24px rgba(0,212,166,0.28)"
               : "0 8px 24px rgba(110,231,249,0.22)",
-            marginTop: 4,
+            marginTop: 8,
+            width: "100%",
           }}
         >
           {added ? "✓ Added to Cart" : "Add to Cart"}
@@ -609,6 +635,8 @@ export default function DigitalProductList() {
   injectStyles();
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const { slug } = useParams();
   const { member } = useMember();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -624,6 +652,13 @@ export default function DigitalProductList() {
     maxPrice: "",
     minRating: "",
   });
+
+  /* ── Sync category from URL search query or route parameter ── */
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const cat = slug || urlParams.get("category") || urlParams.get("category_id") || "";
+    setFilters((f) => ({ ...f, category: cat }));
+  }, [location.search, slug]);
 
   const loadWishlist = useCallback(async () => {
     if (!member) {
@@ -1150,29 +1185,58 @@ export default function DigitalProductList() {
               </div>
             </div>
 
+            {/* Horizontal Category Filter Pills (Mobile & Desktop quick filter) */}
+            <div className="cats-scroll" style={{
+              display: "flex",
+              gap: 8,
+              overflowX: "auto",
+              WebkitOverflowScrolling: "touch",
+              paddingBottom: 14,
+              marginBottom: 24,
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+            }}>
+              {[{ id: "", name: "All Products" }, ...categories].map((c) => {
+                const isActive = filters.category === c.name || (!filters.category && c.id === "");
+                return (
+                  <button
+                    key={c.id || "all"}
+                    onClick={() => setFilter("category", c.id === "" ? "" : c.name)}
+                    className={`vault-pill${isActive ? " active" : ""}`}
+                    style={{ flexShrink: 0 }}
+                  >
+                    {c.name}
+                  </button>
+                );
+              })}
+            </div>
+
             {/* Grid */}
             {loading ? (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 20 }}>
+              <div className="digital-products-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 20 }}>
                 {[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}
               </div>
             ) : products.length === 0 ? (
               <div style={{
-                padding: "80px 24px",
+                padding: "60px 20px",
                 textAlign: "center",
                 borderRadius: 20,
                 border: `1px solid ${T.border}`,
                 background: T.surface1,
+                color: "#888",
               }}>
                 <div style={{ fontSize: 48, opacity: 0.15, marginBottom: 16 }}>⬡</div>
                 <p className="sora" style={{ fontSize: 18, fontWeight: 700, color: T.textPrimary, margin: "0 0 8px" }}>
-                  No products found
+                  No Products Found
                 </p>
-                <p style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: T.textSecondary, margin: 0 }}>
-                  Try adjusting your filters or search terms.
+                <p style={{ fontFamily: "Inter, sans-serif", fontSize: "1.1rem", color: "#888", margin: 0 }}>
+                  {filters.category
+                    ? "No products found in this category yet."
+                    : "Try adjusting your filters or search terms."}
                 </p>
               </div>
             ) : (
-              <div style={{
+              <div className="digital-products-grid" style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
                 gap: 20,
