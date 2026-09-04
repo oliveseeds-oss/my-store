@@ -14,15 +14,26 @@ function generateProductUid() {
 }
 
 // PUBLIC — list with filters
-router.get("/", async (req, res) => {
-  const { category, search, tag, sort, minPrice, maxPrice, minRating } = req.query;
+const getProductsList = async (req, res) => {
+  const { category, category_id, search, tag, sort, minPrice, maxPrice, minRating } = req.query;
+  const catParam = req.params.slug || category_id || category;
   try {
     let sql = `SELECT p.*, c.name as category_name
                FROM products p
                LEFT JOIN categories c ON p.category_id = c.id
                WHERE p.is_active = TRUE`;
     const params = [];
-    if (category) { sql += " AND (c.name = ? OR p.category = ?)"; params.push(category, category); }
+    if (catParam && catParam !== "all" && catParam !== "All Products") {
+      const cleanCat = String(catParam).trim();
+      if (/^\d+$/.test(cleanCat)) {
+        sql += " AND (p.category_id = ? OR c.id = ?)";
+        params.push(parseInt(cleanCat, 10), parseInt(cleanCat, 10));
+      } else {
+        const decoded = decodeURIComponent(cleanCat);
+        sql += " AND (LOWER(c.name) = LOWER(?) OR LOWER(REPLACE(c.name, ' ', '-')) = LOWER(?) OR LOWER(REPLACE(c.name, '-', ' ')) = LOWER(?))";
+        params.push(decoded, decoded, decoded);
+      }
+    }
     if (search) { sql += " AND p.name LIKE ?"; params.push(`%${search}%`); }
     if (minPrice) { sql += " AND COALESCE(p.discount_price, p.price) >= ?"; params.push(minPrice); }
     if (maxPrice) { sql += " AND COALESCE(p.discount_price, p.price) <= ?"; params.push(maxPrice); }
@@ -33,16 +44,27 @@ router.get("/", async (req, res) => {
     else if (sort === "rating") sql += " ORDER BY p.rating DESC";
     else sql += " ORDER BY p.created_at DESC";
     
-    let [rows] = await db.query(sql, params).catch(() => [[]]);
+    let [rows] = await db.query(sql, params).catch(err => {
+      console.error("Products query error:", err);
+      return [[]];
+    });
     if (!rows || !rows.length) {
-      // Fallback query on physical_products (ignore active flag if none returned)
-      let physSql = "SELECT * FROM physical_products WHERE 1=1";
-      const physParams = [];
-      if (category) { physSql += " AND category = ?"; physParams.push(category); }
-      if (search) { physSql += " AND name LIKE ?"; physParams.push(`%${search}%`); }
-      physSql += " ORDER BY id DESC";
-      const [pRows] = await db.query(physSql, physParams).catch(() => [[]]);
-      rows = pRows || [];
+      // Fallback query on physical_products if legacy table exists
+      try {
+        let physSql = "SELECT * FROM physical_products WHERE 1=1";
+        const physParams = [];
+        if (catParam && catParam !== "all" && catParam !== "All Products") {
+          physSql += " AND (category = ? OR category_id = ?)";
+          physParams.push(catParam, catParam);
+        }
+        if (search) { physSql += " AND name LIKE ?"; physParams.push(`%${search}%`); }
+        physSql += " ORDER BY id DESC";
+        const [pRows] = await db.query(physSql, physParams);
+        if (pRows && pRows.length) rows = pRows;
+      } catch {
+        // Ignore if physical_products doesn't exist
+      }
+      if (!rows) rows = [];
     }
 
     res.json(rows.map(r => ({ ...r, images: parseJSON(r.images), sizes: parseJSON(r.sizes), tags: parseJSON(r.tags) })));
@@ -50,7 +72,10 @@ router.get("/", async (req, res) => {
     console.error("Error fetching products:", err);
     res.status(500).json({ error: "Failed to fetch products" });
   }
-});
+};
+
+router.get("/", getProductsList);
+router.get("/category/:slug", getProductsList);
 
 // PUBLIC — single product
 router.get("/:id", async (req, res) => {

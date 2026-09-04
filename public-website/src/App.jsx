@@ -63,6 +63,8 @@ export default function App() {
                 <Routes>
                   <Route path="/"                   element={<Home />} />
                   <Route path="/products"           element={<ProductList />} />
+                  <Route path="/category/:slug"     element={<ProductList />} />
+                  <Route path="/categories/:slug"   element={<ProductList />} />
                   <Route path="/products/:id"       element={<ProductDetail />} />
                   <Route path="/product/:id"        element={<ProductDetail />} />
                   <Route path="/digital"            element={<DigitalProductList />} />

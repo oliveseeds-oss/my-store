@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation, useParams } from "react-router-dom";
 import API from "../api";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -308,6 +308,8 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
 /* ─── Main Export ─────────────────────────────────────────────────────── */
 export default function ProductList() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { slug } = useParams();
   const { member } = useMember();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -325,7 +327,14 @@ export default function ProductList() {
     minRating: "",
   });
 
-  /* ── Unchanged data-loading logic ── */
+  /* ── Sync category from URL search query or route parameter ── */
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const cat = slug || urlParams.get("category") || urlParams.get("category_id") || "";
+    setFilters((f) => ({ ...f, category: cat }));
+  }, [location.search, slug]);
+
+  /* ── Data-loading logic ── */
   const load = useCallback(async () => {
     setLoading(true);
     const params = new URLSearchParams();
@@ -340,14 +349,6 @@ export default function ProductList() {
   }, [filters]);
 
   useEffect(() => { load(); }, [load]);
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const cat = urlParams.get("category");
-    if (cat) {
-      setFilters(f => ({ ...f, category: cat }));
-    }
-  }, []);
 
 
 
@@ -696,9 +697,50 @@ export default function ProductList() {
             </div>
           </div>
 
+          {/* Horizontal Category Filter Pills (Mobile & Desktop quick filter) */}
+          <div className="category-pills-bar" style={{
+            display: "flex",
+            gap: "8px",
+            overflowX: "auto",
+            WebkitOverflowScrolling: "touch",
+            paddingBottom: "14px",
+            marginBottom: "24px",
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}>
+            {[{ id: "", name: "All Products" }, ...categories].map((c) => {
+              const isActive = filters.category === c.name || (!filters.category && c.id === "");
+              return (
+                <button
+                  key={c.id || "all"}
+                  onClick={() => setFilter("category", c.id === "" ? "" : c.name)}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    padding: "8px 18px",
+                    borderRadius: "999px",
+                    fontSize: "13px",
+                    fontWeight: isActive ? 600 : 500,
+                    fontFamily: T.bodyFont,
+                    border: `1px solid ${isActive ? T.accent : T.border}`,
+                    background: isActive ? "#FFF8EC" : T.card,
+                    color: isActive ? T.accent : T.textSec,
+                    cursor: "pointer",
+                    whiteSpace: "nowrap",
+                    flexShrink: 0,
+                    transition: "all 0.2s ease",
+                    boxShadow: isActive ? "0 2px 8px rgba(140,106,67,0.15)" : "none",
+                  }}
+                >
+                  {c.name}
+                </button>
+              );
+            })}
+          </div>
+
           {/* Product Grid */}
           {loading ? (
-            <div style={{
+            <div className="products-grid" style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
               gap: 24,
@@ -719,19 +761,22 @@ export default function ProductList() {
             </div>
           ) : products.length === 0 ? (
             <div style={{
-              background: T.card, borderRadius: 20, padding: "80px 24px",
+              background: T.card, borderRadius: 20, padding: "60px 20px",
               textAlign: "center", border: `1px solid ${T.border}`,
+              color: "#888",
             }}>
               <p style={{ fontSize: 48, marginBottom: 16 }}>🪵</p>
-              <p style={{ fontFamily: T.headingFont, fontStyle: "italic", fontSize: 28, color: T.text, marginBottom: 8 }}>
+              <p style={{ fontFamily: T.headingFont, fontStyle: "italic", fontSize: 26, color: T.text, marginBottom: 8 }}>
                 No Products Found
               </p>
-              <p style={{ fontFamily: T.bodyFont, fontSize: 14, color: T.textSec }}>
-                Try adjusting your filters or browse all products.
+              <p style={{ fontSize: "1.1rem", color: "#888", fontFamily: T.bodyFont }}>
+                {filters.category
+                  ? "No products found in this category yet."
+                  : "Try adjusting your filters or browse all products."}
               </p>
             </div>
           ) : (
-            <div style={{
+            <div className="products-grid" style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
               gap: 24,
@@ -962,15 +1007,19 @@ export default function ProductList() {
           0%, 100% { opacity: 1; }
           50%       { opacity: 0.5; }
         }
+        .category-pills-bar::-webkit-scrollbar {
+          display: none;
+        }
         @media (min-width: 1024px) {
           .luxury-sidebar { display: flex !important; }
         }
         @media (max-width: 1023px) {
           .mobile-filter-btn { display: block !important; }
         }
-        @media (max-width: 600px) {
-          #product-grid > div > div[style*="grid-template-columns"] {
+        @media (max-width: 768px) {
+          .products-grid {
             grid-template-columns: repeat(2, 1fr) !important;
+            gap: 12px !important;
           }
         }
       `}</style>

@@ -13,6 +13,37 @@ router.get("/", async (req, res) => {
   res.json(rows);
 });
 
+// PUBLIC — products for a specific category id or slug
+router.get("/:id/products", async (req, res) => {
+  const catParam = req.params.id;
+  try {
+    let sql = `SELECT p.*, c.name as category_name
+               FROM products p
+               LEFT JOIN categories c ON p.category_id = c.id
+               WHERE p.is_active = TRUE`;
+    const params = [];
+    if (/^\d+$/.test(catParam)) {
+      sql += " AND (p.category_id = ? OR c.id = ?)";
+      params.push(parseInt(catParam, 10), parseInt(catParam, 10));
+    } else {
+      const decoded = decodeURIComponent(catParam);
+      sql += " AND (LOWER(c.name) = LOWER(?) OR LOWER(REPLACE(c.name, ' ', '-')) = LOWER(?))";
+      params.push(decoded, decoded);
+    }
+    sql += " ORDER BY p.created_at DESC";
+    const [rows] = await db.query(sql, params);
+    const parseJSON = (val) => {
+      if (Array.isArray(val)) return val;
+      if (!val) return [];
+      try { return JSON.parse(val); } catch { return []; }
+    };
+    res.json((rows || []).map(r => ({ ...r, images: parseJSON(r.images), sizes: parseJSON(r.sizes), tags: parseJSON(r.tags) })));
+  } catch (err) {
+    console.error("Error fetching category products:", err);
+    res.status(500).json({ error: "Failed to fetch category products" });
+  }
+});
+
 // ADMIN — all
 router.get("/admin/all", verifyAdmin, async (req, res) => {
   const [rows] = await db.query("SELECT * FROM categories ORDER BY name");
