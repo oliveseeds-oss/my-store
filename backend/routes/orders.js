@@ -6,7 +6,7 @@ const createNotification = require("../utils/createNotification");
 
 async function verifyPayPalOrder(orderId) {
   const [rows] = await db.query("SELECT paypal_client_id, paypal_client_secret FROM settings WHERE id = 1");
-  const clientId = rows[0]?.paypal_client_id || process.env.PAYPAL_CLIENT_ID;
+  let clientId = rows[0]?.paypal_client_id || process.env.PAYPAL_CLIENT_ID;
   let clientSecret = rows[0]?.paypal_client_secret;
   
   if (clientSecret) {
@@ -15,6 +15,9 @@ async function verifyPayPalOrder(orderId) {
   } else {
     clientSecret = process.env.PAYPAL_CLIENT_SECRET;
   }
+
+  clientId = (clientId || "").trim();
+  clientSecret = (clientSecret || "").trim();
   
   if (!clientId || !clientSecret) {
     throw new Error("PayPal credentials missing in production. Cannot verify transaction.");

@@ -39,6 +39,9 @@ const NotificationBell = () => {
       setUnreadCount(res.data.count || 0)
     } catch (err) {
       // Silent fail — do not show error to user
+      if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+        setUnreadCount(0);
+      }
     }
   }
 

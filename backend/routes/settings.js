@@ -19,9 +19,11 @@ router.get("/", async (req, res) => {
     settings.paypal_client_secret = "••••••••";
   }
   
+  const isLive = !settings.paypal_client_id?.startsWith("sb") && process.env.PAYPAL_MODE !== "sandbox";
   res.json({
     ...settings,
     paypal_client_id: settings.paypal_client_id || process.env.PAYPAL_CLIENT_ID || "sb",
+    paypal_mode: isLive ? "production" : "sandbox",
     google_client_id: process.env.GOOGLE_CLIENT_ID || "874744414734-mockclientid.apps.googleusercontent.com"
   });
 });

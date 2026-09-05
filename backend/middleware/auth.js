@@ -23,8 +23,8 @@ function verifyMember(req, res, next) {
     req.member = { ...decoded, member_uid };
     next();
   } catch (err) {
-    console.error("verifyMember failed:", err.message, "Token:", token);
-    res.status(403).json({ error: "Invalid or expired token" });
+    console.error("verifyMember failed:", err.message);
+    res.status(401).json({ error: "Invalid or expired token" });
   }
 }
 

@@ -50,7 +50,10 @@ function PayPalButtonSection({
   const isSupported = PAYPAL_SUPPORTED_CURRENCIES.has(selected?.currency_code);
   const activePaypalCurrency = isSupported ? selected.currency_code : "USD";
 
-  const payableInINR = Math.max(1, total + shipping - (couponDiscount || 0));
+  const cleanTotal = Number(total) || 0;
+  const cleanShipping = Number(shipping) || 0;
+  const cleanDiscount = Number(couponDiscount) || 0;
+  const payableInINR = Math.max(1, cleanTotal + cleanShipping - cleanDiscount);
 
   let rateMultiplier = 0.012;
   if (isSupported && selected?.rate_to_inr && selected.currency_code !== "INR") {
@@ -62,7 +65,10 @@ function PayPalButtonSection({
     }
   }
 
-  const convertedVal = Math.max(0.5, payableInINR * rateMultiplier).toFixed(2);
+  const rawConverted = payableInINR * rateMultiplier;
+  const convertedVal = (!rawConverted || isNaN(rawConverted) || rawConverted < 0.5)
+    ? "0.50"
+    : rawConverted.toFixed(2);
 
   if (loadingStatus === INSTANCE_LOADING_STATE.PENDING) {
     return (
@@ -88,11 +94,28 @@ function PayPalButtonSection({
             if (!checkShippingEligibility()) {
               throw new Error("Please complete required shipping details first.");
             }
-            const res = await API.post("/payments/paypal/create-order", {
-              currency_code: activePaypalCurrency,
-              amount: convertedVal
-            });
-            return { orderId: res.data.orderId };
+            try {
+              const res = await API.post("/payments/paypal/create-order", {
+                currency_code: activePaypalCurrency,
+                amount: convertedVal
+              });
+              if (!res.data?.orderId) {
+                throw new Error(res.data?.error || "Failed to create PayPal order.");
+              }
+              return { orderId: res.data.orderId };
+            } catch (createErr) {
+              const msg = createErr.response?.data?.error || createErr.message || "PayPal checkout failed.";
+              console.error("PayPal createOrder error:", msg);
+              if (msg.includes("DOMESTIC_TRANSACTION_NOT_ALLOWED") || msg.includes("domestic")) {
+                alert("PayPal India cannot process domestic transactions between Indian accounts under RBI regulations. Please choose Razorpay (Cards, UPI, Netbanking).");
+                setPaymentMethod("razorpay");
+              } else if (msg.includes("PAYEE_ACCOUNT_RESTRICTED") || msg.includes("restricted")) {
+                alert("PayPal merchant account is currently restricted. Please use Razorpay or contact store support.");
+              } else {
+                alert(`PayPal error: ${msg}`);
+              }
+              throw createErr;
+            }
           }}
           onApprove={async (data) => {
             try {
@@ -111,7 +134,11 @@ function PayPalButtonSection({
           onError={(err) => {
             console.error("PayPal processing error:", err);
             const errStr = String(err?.message || err || "");
-            if (errStr.includes("Please complete required shipping details") || errStr.includes("do not ship")) {
+            if (
+              errStr.includes("Please complete required shipping details") ||
+              errStr.includes("do not ship") ||
+              errStr.includes("PayPal error:")
+            ) {
               return;
             }
             if (errStr.includes("DOMESTIC_TRANSACTION_NOT_ALLOWED") || errStr.includes("domestic")) {
@@ -798,7 +825,7 @@ export default function Checkout() {
                     ) : siteSettings.paypal_client_id && siteSettings.paypal_client_id !== "sb" && !siteSettings.paypal_client_id.includes("your_paypal") ? (
                       <PayPalProvider
                         clientId={siteSettings.paypal_client_id}
-                        environment={siteSettings.paypal_client_id.startsWith("sb") || siteSettings.paypal_client_id.includes("sandbox") ? "sandbox" : "production"}
+                        environment={siteSettings.paypal_mode || (siteSettings.paypal_client_id.startsWith("sb") || siteSettings.paypal_client_id.includes("sandbox") ? "sandbox" : "production")}
                         components={["paypal-payments"]}
                         pageType="checkout"
                       >

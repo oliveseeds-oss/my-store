@@ -597,7 +597,7 @@ router.post("/razorpay/webhook", async (req, res) => {
 // Helper to get PayPal Access Token
 async function getPayPalAccessToken() {
   const [rows] = await db.query("SELECT paypal_client_id, paypal_client_secret FROM settings WHERE id = 1");
-  const clientId = rows[0]?.paypal_client_id || process.env.PAYPAL_CLIENT_ID;
+  let clientId = rows[0]?.paypal_client_id || process.env.PAYPAL_CLIENT_ID;
   let clientSecret = rows[0]?.paypal_client_secret;
 
   if (clientSecret) {
@@ -606,6 +606,9 @@ async function getPayPalAccessToken() {
   } else {
     clientSecret = process.env.PAYPAL_CLIENT_SECRET;
   }
+
+  clientId = (clientId || "").trim();
+  clientSecret = (clientSecret || "").trim();
 
   if (!clientId || !clientSecret) {
     throw new Error("PayPal credentials missing in store settings.");
@@ -640,14 +643,24 @@ router.post("/paypal/create-order", async (req, res) => {
   try {
     const { accessToken, baseUrl } = await getPayPalAccessToken();
 
+    let numAmount = parseFloat(amount);
+    if (!numAmount || isNaN(numAmount) || numAmount <= 0) {
+      numAmount = 1.00;
+    }
+    const formattedAmount = numAmount.toFixed(2);
+    const validCurrency = (currency_code && typeof currency_code === "string" && currency_code.trim()) 
+      ? currency_code.trim().toUpperCase() 
+      : "USD";
+
     const orderPayload = {
       intent: "CAPTURE",
       purchase_units: [
         {
+          reference_id: "default",
           description: "Olive Seeds Studio Order",
           amount: {
-            currency_code: currency_code || "USD",
-            value: String(amount || "1.00")
+            currency_code: validCurrency,
+            value: formattedAmount
           }
         }
       ]
@@ -664,8 +677,16 @@ router.post("/paypal/create-order", async (req, res) => {
 
     const orderData = await orderRes.json();
     if (!orderRes.ok) {
-      console.error("PayPal order create error:", orderData);
-      return res.status(orderRes.status).json({ error: orderData.message || "Failed to create PayPal order." });
+      console.error("PayPal order create error:", JSON.stringify(orderData, null, 2));
+      const issueDetails = Array.isArray(orderData.details)
+        ? orderData.details.map(d => `${d.issue || d.field || ""}: ${d.description || ""}`).join("; ")
+        : "";
+      return res.status(orderRes.status).json({ 
+        error: issueDetails || orderData.message || "Failed to create PayPal order.",
+        details: orderData.details,
+        name: orderData.name,
+        debug_id: orderData.debug_id
+      });
     }
 
     return res.json({ orderId: orderData.id });
