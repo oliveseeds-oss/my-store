@@ -1,9 +1,12 @@
 const router = require("express").Router();
 const db = require("../db");
-const { verifyMember, verifyAdmin } = require("../middleware/auth");
+const { verifyMember, verifyAdmin, optionalMember } = require("../middleware/auth");
 
-// GET /api/notifications/unread-count - Auth required
-router.get("/unread-count", verifyMember, async (req, res) => {
+// GET /api/notifications/unread-count - Optional auth (returns 0 if guest/invalid token)
+router.get("/unread-count", optionalMember, async (req, res) => {
+  if (!req.member || !req.member.id) {
+    return res.json({ count: 0 });
+  }
   try {
     const userId = req.member.id;
     const [rows] = await db.query(

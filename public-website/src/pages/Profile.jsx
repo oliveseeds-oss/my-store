@@ -99,17 +99,19 @@ export default function Profile() {
     // Load full member profile details
     API.get("/members/profile")
       .then((r) => {
-        setProfile({
-          full_name: r.data.full_name || r.data.name || "",
-          email: r.data.email || "",
-          phone: r.data.phone || "",
-          street_address: r.data.street_address || "",
-          apt_suite: r.data.apt_suite || "",
-          city: r.data.city || "",
-          state: r.data.state || "",
-          country: r.data.country || "India",
-          pincode: r.data.pincode || ""
-        });
+        if (r.data) {
+          setProfile({
+            full_name: r.data.full_name || r.data.name || member?.name || "",
+            email: r.data.email || member?.email || "",
+            phone: r.data.phone || member?.phone || "",
+            street_address: r.data.street_address || r.data.address || "",
+            apt_suite: r.data.apt_suite || "",
+            city: r.data.city || "",
+            state: r.data.state || "",
+            country: r.data.country || "India",
+            pincode: r.data.pincode || ""
+          });
+        }
       })
       .catch((err) => console.error("Failed to load profile details:", err));
 
@@ -124,19 +126,28 @@ export default function Profile() {
     setSuccessMsg("");
     try {
       await API.put("/members/profile", profile);
-      setSuccessMsg("Profile updated successfully!");
+      setSuccessMsg("Profile and address saved successfully!");
 
       // Update the local member context to keep Navbar and Profile headers synced in real time
       const stored = JSON.parse(localStorage.getItem("member") || "{}");
-      login({
-        ...stored,
-        member: {
-          ...stored.member,
-          name: profile.full_name,
-          email: profile.email,
-          phone: profile.phone
-        }
-      });
+      if (stored.member) {
+        login({
+          ...stored,
+          member: {
+            ...stored.member,
+            name: profile.full_name || stored.member.name,
+            email: profile.email || stored.member.email,
+            phone: profile.phone || stored.member.phone
+          }
+        });
+      } else if (stored.token) {
+        login({
+          ...stored,
+          name: profile.full_name || stored.name,
+          email: profile.email || stored.email,
+          phone: profile.phone || stored.phone
+        });
+      }
 
       setTimeout(() => setSuccessMsg(""), 4000);
     } catch (err) {
@@ -146,12 +157,26 @@ export default function Profile() {
     }
   };
 
-  const handleRemoveWishlist = async (id) => {
+  const handleRemoveWishlist = async (itemOrId) => {
+    const targetId = typeof itemOrId === "object" ? (itemOrId.product_uid || itemOrId.slug || itemOrId.id || itemOrId.wishlist_id) : itemOrId;
+    // Optimistic removal from UI state
+    setWishlist((prev) =>
+      prev.filter((item) => {
+        if (typeof itemOrId === "object") {
+          if (itemOrId.wishlist_id && item.wishlist_id && item.wishlist_id === itemOrId.wishlist_id) return false;
+          if (itemOrId.product_uid && item.product_uid && item.product_uid === itemOrId.product_uid) return false;
+          if (itemOrId.id && item.id && String(item.id) === String(itemOrId.id)) return false;
+        }
+        if (targetId && (item.product_uid === targetId || String(item.id) === String(targetId) || String(item.wishlist_id) === String(targetId))) return false;
+        return true;
+      })
+    );
+
     try {
-      await API.delete(`/wishlist/${id}`);
-      fetchWishlist();
+      await API.delete(`/wishlist/${targetId}`);
     } catch (err) {
       console.error("Failed to remove wishlist item:", err);
+      fetchWishlist();
     }
   };
 
@@ -558,6 +583,25 @@ export default function Profile() {
                   </div>
                 )}
 
+                {/* Active Saved Address Summary Card */}
+                {(profile.street_address || profile.city) && (
+                  <div className="max-w-2xl bg-stone-50 border border-stone-200/80 rounded-2xl p-5 mb-8 shadow-sm">
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <span className="text-[10px] uppercase tracking-wider font-extrabold bg-[#0D1512] text-[#FAF9F6] px-2.5 py-0.5 rounded-md">
+                        Default Shipping Address
+                      </span>
+                      <span className="text-xs font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded-full border border-green-200">
+                        ✓ Saved & Active
+                      </span>
+                    </div>
+                    <p className="font-bold text-sm text-[#0D1512]">{profile.full_name || member?.name || "Member"}</p>
+                    <p className="text-xs text-stone-600 mt-1 leading-relaxed">
+                      {[profile.street_address, profile.apt_suite, profile.city, profile.state, profile.pincode, profile.country].filter(Boolean).join(", ")}
+                    </p>
+                    {profile.phone && <p className="text-xs text-stone-500 font-mono mt-1">📞 {profile.phone}</p>}
+                  </div>
+                )}
+
                 <form onSubmit={handleSave} className="max-w-2xl space-y-5">
                   <SmartAddressForm
                     form={{
@@ -571,17 +615,17 @@ export default function Profile() {
                       delivery_pincode: profile.pincode
                     }}
                     onChange={(updated) => {
-                      setProfile({
-                        ...profile,
-                        full_name: updated.name || profile.full_name,
-                        phone: updated.phone,
-                        street_address: updated.delivery_street,
-                        apt_suite: updated.delivery_apt,
-                        city: updated.delivery_city,
-                        state: updated.delivery_state,
-                        country: updated.country,
-                        pincode: updated.delivery_pincode
-                      });
+                      setProfile((prev) => ({
+                        ...prev,
+                        full_name: updated.name !== undefined ? updated.name : (updated.full_name !== undefined ? updated.full_name : prev.full_name),
+                        phone: updated.phone !== undefined ? updated.phone : prev.phone,
+                        street_address: updated.delivery_street !== undefined ? updated.delivery_street : (updated.street_address !== undefined ? updated.street_address : prev.street_address),
+                        apt_suite: updated.delivery_apt !== undefined ? updated.delivery_apt : (updated.apt_suite !== undefined ? updated.apt_suite : prev.apt_suite),
+                        city: updated.delivery_city !== undefined ? updated.delivery_city : (updated.city !== undefined ? updated.city : prev.city),
+                        state: updated.delivery_state !== undefined ? updated.delivery_state : (updated.state !== undefined ? updated.state : prev.state),
+                        country: updated.country || prev.country,
+                        pincode: updated.delivery_pincode !== undefined ? updated.delivery_pincode : (updated.pincode !== undefined ? updated.pincode : prev.pincode)
+                      }));
                     }}
                     isPhysical={false}
                   />
@@ -709,7 +753,7 @@ export default function Profile() {
                               🛒 Add to Cart
                             </button>
                             <button
-                              onClick={() => handleRemoveWishlist(targetUid)}
+                              onClick={() => handleRemoveWishlist(item)}
                               className="p-2 text-red-500 hover:bg-red-50 rounded-xl border border-transparent hover:border-red-200 transition cursor-pointer text-xs font-bold"
                               title="Remove item"
                             >

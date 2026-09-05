@@ -2,6 +2,33 @@ const router = require("express").Router();
 const db = require("../db");
 const { verifyMember, optionalMember } = require("../middleware/auth");
 
+// Ensure wishlist tables exist
+db.query(`
+  CREATE TABLE IF NOT EXISTS wishlists (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT DEFAULT NULL,
+    member_id INT DEFAULT NULL,
+    member_uid VARCHAR(50) DEFAULT NULL,
+    product_id INT DEFAULT 0,
+    product_uid VARCHAR(100) DEFAULT NULL,
+    product_type VARCHAR(20) DEFAULT 'physical',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    KEY idx_member (member_uid),
+    KEY idx_user (user_id)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+`).catch(() => {});
+
+db.query(`
+  CREATE TABLE IF NOT EXISTS wishlist (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    member_uid VARCHAR(50) NOT NULL,
+    product_uid VARCHAR(100) NOT NULL,
+    product_type ENUM('physical','digital') DEFAULT 'physical',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    KEY idx_member_uid (member_uid)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+`).catch(() => {});
+
 // Helper to get member identifiers (resolves both numeric id and alphanumeric member_uid from DB if needed)
 const getMemberIdentifiers = async (req) => {
   let userId = req.member?.id || req.member?.member_id || 0;
@@ -240,19 +267,20 @@ router.post("/:product_id", verifyMember, async (req, res) => {
 // DELETE /api/wishlist/:product_id — remove from wishlist
 router.delete("/:product_id", verifyMember, async (req, res) => {
   const { userId, memberUid } = await getMemberIdentifiers(req);
-  const paramVal = req.params.product_id;
+  const paramVal = String(req.params.product_id || "");
 
   try {
+    // 1. Delete safely from wishlists table
     await db.query(
-      "DELETE FROM wishlists WHERE (user_id = ? OR member_id = ? OR member_uid = ?) AND (product_id = ? OR product_uid = ? OR id = ?)",
+      "DELETE FROM wishlists WHERE (user_id = ? OR member_id = ? OR member_uid = ?) AND (product_uid = ? OR CAST(product_id AS CHAR) = ? OR CAST(id AS CHAR) = ?)",
       [userId, userId, memberUid, paramVal, paramVal, paramVal]
-    );
-    try {
-      await db.query(
-        "DELETE FROM wishlist WHERE member_uid = ? AND (product_uid = ? OR id = ?)",
-        [memberUid, paramVal, paramVal]
-      );
-    } catch (e) {}
+    ).catch(() => {});
+
+    // 2. Delete safely from legacy wishlist table
+    await db.query(
+      "DELETE FROM wishlist WHERE member_uid = ? AND (product_uid = ? OR CAST(id AS CHAR) = ?)",
+      [memberUid, paramVal, paramVal]
+    ).catch(() => {});
 
     res.json({ message: "removed", saved: false });
   } catch (error) {

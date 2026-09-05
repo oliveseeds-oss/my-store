@@ -33,12 +33,24 @@ export default function WishlistPage() {
     fetchWishlist();
   }, [member]);
 
-  const removeFromWishlist = async (productId) => {
+  const removeFromWishlist = async (p) => {
+    const identifier = p.product_uid || p.slug || p.product_id || p.id || p.wishlist_id;
+    // Optimistic removal from UI
+    setWishlistItems((prev) =>
+      prev.filter((item) => {
+        if (p.wishlist_id && item.wishlist_id && item.wishlist_id === p.wishlist_id) return false;
+        if (p.product_uid && item.product_uid && item.product_uid === p.product_uid) return false;
+        if (p.id && item.id && String(item.id) === String(p.id)) return false;
+        if (identifier && (item.product_uid === identifier || String(item.id) === String(identifier) || String(item.wishlist_id) === String(identifier))) return false;
+        return true;
+      })
+    );
+
     try {
-      await API.delete(`/wishlist/${productId}`);
-      setWishlistItems((prev) => prev.filter((item) => item.id !== productId));
+      await API.delete(`/wishlist/${identifier}`);
     } catch (err) {
       console.error("Failed to remove from wishlist:", err);
+      fetchWishlist();
     }
   };
 
@@ -113,7 +125,7 @@ export default function WishlistPage() {
                       View Product
                     </Link>
                     <button
-                      onClick={() => removeFromWishlist(targetUid)}
+                      onClick={() => removeFromWishlist(p)}
                       className="p-2.5 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition cursor-pointer"
                       title="Remove from wishlist"
                     >

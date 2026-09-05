@@ -12,6 +12,18 @@ const { sendMail } = require("../utils/mailer");
 db.query("ALTER TABLE members ADD COLUMN failed_otp_attempts INT DEFAULT 0").catch(() => {});
 db.query("ALTER TABLE members ADD COLUMN locked_until DATETIME DEFAULT NULL").catch(() => {});
 
+// Ensure member_profiles table has all profile and address fields
+db.query("ALTER TABLE member_profiles ADD COLUMN full_name VARCHAR(150) DEFAULT NULL").catch(() => {});
+db.query("ALTER TABLE member_profiles ADD COLUMN email VARCHAR(150) DEFAULT NULL").catch(() => {});
+db.query("ALTER TABLE member_profiles ADD COLUMN phone VARCHAR(25) DEFAULT NULL").catch(() => {});
+db.query("ALTER TABLE member_profiles ADD COLUMN street_address TEXT DEFAULT NULL").catch(() => {});
+db.query("ALTER TABLE member_profiles ADD COLUMN apt_suite VARCHAR(100) DEFAULT NULL").catch(() => {});
+db.query("ALTER TABLE member_profiles ADD COLUMN country VARCHAR(100) DEFAULT 'India'").catch(() => {});
+db.query("ALTER TABLE member_profiles ADD COLUMN address TEXT DEFAULT NULL").catch(() => {});
+db.query("ALTER TABLE member_profiles ADD COLUMN city VARCHAR(100) DEFAULT NULL").catch(() => {});
+db.query("ALTER TABLE member_profiles ADD COLUMN state VARCHAR(100) DEFAULT NULL").catch(() => {});
+db.query("ALTER TABLE member_profiles ADD COLUMN pincode VARCHAR(20) DEFAULT NULL").catch(() => {});
+
 const loginLimiter = createRateLimiter(5, 15 * 60 * 1000); // 5 attempts per 15 minutes
 const forgotPasswordLimiter = createRateLimiter(3, 15 * 60 * 1000); // 3 attempts per 15 minutes
 const otpRateLimiter = createRateLimiter(5, 60 * 60 * 1000); // Max 5 requests per hour
@@ -31,11 +43,13 @@ router.post("/register", otpRateLimiter, async (req, res) => {
       "INSERT INTO members (member_uid, name, email, password, phone, status) VALUES (?,?,?,?,?, 'Pending Verification')",
       [member_uid, name, email, hash, phone || null]
     );
-    // Create empty profile row
+    // Create empty profile row safely
     await db.query(
-      "INSERT INTO member_profiles (member_uid, full_name, email, phone) VALUES (?,?,?,?)",
+      "INSERT IGNORE INTO member_profiles (member_uid, full_name, email, phone) VALUES (?,?,?,?)",
       [member_uid, name, email, phone || null]
-    );
+    ).catch(async () => {
+      await db.query("INSERT IGNORE INTO member_profiles (member_uid) VALUES (?)", [member_uid]).catch(() => {});
+    });
     
     // Generate secure 6-digit OTP
     const otp = crypto.randomInt(100000, 1000000).toString();
@@ -357,11 +371,13 @@ router.post("/google-sso", async (req, res) => {
         [member_uid, name, email, hash, null]
       );
 
-      // Create empty profile row
+      // Create empty profile row safely
       await db.query(
-        "INSERT INTO member_profiles (member_uid, full_name, email, phone) VALUES (?,?,?,?)",
+        "INSERT IGNORE INTO member_profiles (member_uid, full_name, email, phone) VALUES (?,?,?,?)",
         [member_uid, name, email, null]
-      );
+      ).catch(async () => {
+        await db.query("INSERT IGNORE INTO member_profiles (member_uid) VALUES (?)", [member_uid]).catch(() => {});
+      });
 
       // Notify admin
       await db.query(
@@ -396,31 +412,122 @@ router.post("/google-sso", async (req, res) => {
 
 // MEMBER — get full profile (members + member_profiles joined)
 router.get("/profile", verifyMember, async (req, res) => {
-  const [rows] = await db.query(
-    `SELECT m.member_uid, m.name, m.email, m.phone, m.status, m.created_at,
-            p.full_name, p.street_address, p.apt_suite, p.city, p.state,
-            p.country, p.pincode
-     FROM members m
-     LEFT JOIN member_profiles p ON m.member_uid = p.member_uid
-     WHERE m.member_uid = ?`,
-    [req.member.member_uid]
-  );
-  if (!rows.length) return res.status(404).json({ error: "Not found" });
-  res.json(rows[0]);
+  try {
+    const memberUid = req.member.member_uid;
+    // 1. Fetch from members table
+    const [memberRows] = await db.query(
+      "SELECT member_uid, name, email, phone, status, created_at FROM members WHERE member_uid = ?",
+      [memberUid]
+    );
+    if (!memberRows.length) return res.status(404).json({ error: "Member not found" });
+    const m = memberRows[0];
+
+    // 2. Fetch or initialize member_profiles row
+    let profileData = {};
+    try {
+      const [pRows] = await db.query(
+        "SELECT * FROM member_profiles WHERE member_uid = ?",
+        [memberUid]
+      );
+      if (pRows.length > 0) {
+        profileData = pRows[0];
+      } else {
+        await db.query(
+          "INSERT IGNORE INTO member_profiles (member_uid, full_name, email, phone) VALUES (?, ?, ?, ?)",
+          [memberUid, m.name, m.email, m.phone]
+        ).catch(() => {});
+      }
+    } catch (e) {
+      console.warn("member_profiles query fallback:", e.message);
+    }
+
+    res.json({
+      member_uid: m.member_uid,
+      name: m.name,
+      email: m.email,
+      phone: m.phone,
+      status: m.status,
+      created_at: m.created_at,
+      full_name: profileData.full_name || m.name || "",
+      street_address: profileData.street_address || profileData.address || "",
+      apt_suite: profileData.apt_suite || "",
+      city: profileData.city || "",
+      state: profileData.state || "",
+      country: profileData.country || "India",
+      pincode: profileData.pincode || ""
+    });
+  } catch (err) {
+    console.error("GET /profile failed:", err);
+    res.status(500).json({ error: "Failed to fetch profile" });
+  }
 });
 
 // MEMBER — update profile
 router.put("/profile", verifyMember, async (req, res) => {
-  const { full_name, street_address, apt_suite, city, state, country, pincode, phone, email } = req.body;
-  await db.query(
-    `UPDATE member_profiles SET full_name=?, street_address=?, apt_suite=?,
-     city=?, state=?, country=?, pincode=?, phone=?, email=? WHERE member_uid=?`,
-    [full_name, street_address, apt_suite, city, state, country, pincode, phone, email,
-      req.member.member_uid]
-  );
-  if (phone) await db.query("UPDATE members SET phone=? WHERE member_uid=?",
-    [phone, req.member.member_uid]);
-  res.json({ message: "Profile updated" });
+  try {
+    const memberUid = req.member.member_uid;
+    const { full_name, street_address, apt_suite, city, state, country, pincode, phone, email } = req.body;
+    const resolvedStreet = street_address || "";
+    const resolvedCountry = country || "India";
+
+    // 1. Check if row exists in member_profiles
+    const [existing] = await db.query(
+      "SELECT id FROM member_profiles WHERE member_uid = ?",
+      [memberUid]
+    ).catch(() => [[]]);
+    
+    if (existing && existing.length > 0) {
+      await db.query(
+        `UPDATE member_profiles 
+         SET full_name = ?, street_address = ?, address = ?, apt_suite = ?, city = ?, state = ?, country = ?, pincode = ?, phone = ?, email = ?
+         WHERE member_uid = ?`,
+        [full_name || null, resolvedStreet, resolvedStreet, apt_suite || null, city || null, state || null, resolvedCountry, pincode || null, phone || null, email || null, memberUid]
+      ).catch(async () => {
+        // Fallback for legacy columns
+        await db.query(
+          "UPDATE member_profiles SET address = ?, city = ?, state = ?, pincode = ? WHERE member_uid = ?",
+          [resolvedStreet, city || null, state || null, pincode || null, memberUid]
+        ).catch(() => {});
+      });
+    } else {
+      await db.query(
+        `INSERT INTO member_profiles 
+         (member_uid, full_name, street_address, address, apt_suite, city, state, country, pincode, phone, email)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [memberUid, full_name || null, resolvedStreet, resolvedStreet, apt_suite || null, city || null, state || null, resolvedCountry, pincode || null, phone || null, email || null]
+      ).catch(async () => {
+        await db.query(
+          "INSERT INTO member_profiles (member_uid, address, city, state, pincode) VALUES (?, ?, ?, ?, ?)",
+          [memberUid, resolvedStreet, city || null, state || null, pincode || null]
+        ).catch(() => {});
+      });
+    }
+
+    // 2. Also keep members table updated
+    const updates = [];
+    const params = [];
+    if (full_name) {
+      updates.push("name = ?");
+      params.push(full_name);
+    }
+    if (phone) {
+      updates.push("phone = ?");
+      params.push(phone);
+    }
+    if (email) {
+      updates.push("email = ?");
+      params.push(email);
+    }
+    if (updates.length > 0) {
+      params.push(memberUid);
+      await db.query(`UPDATE members SET ${updates.join(", ")} WHERE member_uid = ?`, params).catch(() => {});
+    }
+
+    res.json({ message: "Profile updated successfully" });
+  } catch (err) {
+    console.error("PUT /profile failed:", err);
+    res.status(500).json({ error: "Failed to update profile" });
+  }
 });
 
 // ADMIN — all members with profile

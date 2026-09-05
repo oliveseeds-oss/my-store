@@ -22,18 +22,10 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle 401 and 403 globally — do not force page redirects for guest users
+// Handle global responses without arbitrarily clearing member session on background requests
 API.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-      const url = error.config?.url || "";
-      if (url.includes("/members") || url.includes("/notifications")) {
-        try {
-          localStorage.removeItem("member");
-        } catch {}
-      }
-    }
     return Promise.reject(error);
   }
 );
