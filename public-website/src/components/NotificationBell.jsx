@@ -27,6 +27,13 @@ const NotificationBell = () => {
   }, [])
 
   const fetchUnreadCount = async () => {
+    const member = JSON.parse(localStorage.getItem('member') || '{}')
+    const admin = JSON.parse(localStorage.getItem('admin') || '{}')
+    const token = member.token || admin.token || (typeof admin === 'string' ? admin : null)
+    if (!token) {
+      setUnreadCount(0)
+      return
+    }
     try {
       const res = await API.get('/notifications/unread-count')
       setUnreadCount(res.data.count || 0)
@@ -36,12 +43,19 @@ const NotificationBell = () => {
   }
 
   const fetchNotifications = async () => {
+    const member = JSON.parse(localStorage.getItem('member') || '{}')
+    const admin = JSON.parse(localStorage.getItem('admin') || '{}')
+    const token = member.token || admin.token || (typeof admin === 'string' ? admin : null)
+    if (!token) {
+      setNotifications([])
+      return
+    }
     setLoading(true)
     try {
       const res = await API.get('/notifications')
       setNotifications(res.data || [])
     } catch (err) {
-      console.error('Notifications error:', err)
+      // Silent fail
     }
     setLoading(false)
   }

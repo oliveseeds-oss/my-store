@@ -322,11 +322,29 @@ router.post(["/global", "/api/seo/global"], verifyAdmin, async (req, res) => {
 router.get(["/page/:pageKey", "/api/seo/page/:pageKey"], async (req, res) => {
   try {
     const pageKey = req.params.pageKey;
-    const [rows] = await db.query(
-      "SELECT * FROM seo_settings WHERE page_key = ? OR page_name = ?",
-      [pageKey, pageKey]
-    );
-    if (rows.length > 0) {
+    let rows = [];
+    try {
+      [rows] = await db.query(
+        "SELECT * FROM seo_settings WHERE page_key = ? OR page_name = ?",
+        [pageKey, pageKey]
+      );
+    } catch (colErr) {
+      if (colErr.code === "ER_BAD_FIELD_ERROR" || colErr.errno === 1054 || String(colErr.message).includes("page_key")) {
+        // Automatically ensure page_key column exists
+        await db.query("ALTER TABLE seo_settings ADD COLUMN page_key VARCHAR(255) UNIQUE").catch(() => {});
+        try {
+          [rows] = await db.query(
+            "SELECT * FROM seo_settings WHERE page_name = ?",
+            [pageKey]
+          );
+        } catch {
+          rows = [];
+        }
+      } else {
+        throw colErr;
+      }
+    }
+    if (rows && rows.length > 0) {
       const row = rows[0];
       res.json({
         ...row,
@@ -350,8 +368,8 @@ router.get(["/page/:pageKey", "/api/seo/page/:pageKey"], async (req, res) => {
       res.json({});
     }
   } catch (err) {
-    console.error("Error reading page SEO:", err);
-    res.status(500).json({ error: "Failed to read page SEO" });
+    console.warn("SEO fetch warning for page:", req.params.pageKey, err.message);
+    res.json({}); // Graceful fallback: return empty object instead of 500
   }
 });
 

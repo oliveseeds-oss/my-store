@@ -136,20 +136,55 @@ router.post("/orders/create", async (req, res) => {
       const amountInMinorUnits = getSubunits(finalTotalConverted, targetCurrency);
       const rzpOrder = await createRazorpayOrder(amountInMinorUnits, targetCurrency, order_uid);
 
-      await db.query(
-        `INSERT INTO physical_orders
-         (order_uid, invoice_uid, member_uid, guest_name, guest_email, guest_phone,
-          delivery_name, delivery_street, delivery_apt, delivery_city, delivery_state,
-          delivery_country, delivery_pincode, subtotal, tax_amount, shipping_fee, total,
-          currency_code, currency_rate, payment_mode, transaction_id, payment_status, status, razorpay_order_id)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-        [
-          order_uid, invoice_uid, member_uid, guest_name || "Guest", guest_email || "", guest_phone || "",
-          guest_name || "Guest", streetVal, aptVal, cityVal, stateVal,
-          countryVal, pincodeVal, subtotalConverted, taxConverted, shippingConverted, finalTotalConverted,
-          targetCurrency, conversionRate, "Razorpay", null, "Pending", "Processing", rzpOrder.id
-        ]
-      );
+      const insertPhysicalOrder = async (includeRazorpayCol = true) => {
+        if (includeRazorpayCol) {
+          return await db.query(
+            `INSERT INTO physical_orders
+             (order_uid, invoice_uid, member_uid, guest_name, guest_email, guest_phone,
+              delivery_name, delivery_street, delivery_apt, delivery_city, delivery_state,
+              delivery_country, delivery_pincode, subtotal, tax_amount, shipping_fee, total,
+              currency_code, currency_rate, payment_mode, transaction_id, payment_status, status, razorpay_order_id)
+             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+            [
+              order_uid, invoice_uid, member_uid, guest_name || "Guest", guest_email || "", guest_phone || "",
+              guest_name || "Guest", streetVal, aptVal, cityVal, stateVal,
+              countryVal, pincodeVal, subtotalConverted, taxConverted, shippingConverted, finalTotalConverted,
+              targetCurrency, conversionRate, "Razorpay", rzpOrder.id, "Pending", "Processing", rzpOrder.id
+            ]
+          );
+        } else {
+          return await db.query(
+            `INSERT INTO physical_orders
+             (order_uid, invoice_uid, member_uid, guest_name, guest_email, guest_phone,
+              delivery_name, delivery_street, delivery_apt, delivery_city, delivery_state,
+              delivery_country, delivery_pincode, subtotal, tax_amount, shipping_fee, total,
+              currency_code, currency_rate, payment_mode, transaction_id, payment_status, status)
+             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+            [
+              order_uid, invoice_uid, member_uid, guest_name || "Guest", guest_email || "", guest_phone || "",
+              guest_name || "Guest", streetVal, aptVal, cityVal, stateVal,
+              countryVal, pincodeVal, subtotalConverted, taxConverted, shippingConverted, finalTotalConverted,
+              targetCurrency, conversionRate, "Razorpay", rzpOrder.id, "Pending", "Processing"
+            ]
+          );
+        }
+      };
+
+      try {
+        await insertPhysicalOrder(true);
+      } catch (insertErr) {
+        if (insertErr.code === "ER_BAD_FIELD_ERROR" || insertErr.errno === 1054 || String(insertErr.message).includes("razorpay_order_id")) {
+          console.warn("Attempting schema recovery for physical_orders missing column...");
+          await db.query("ALTER TABLE physical_orders ADD COLUMN razorpay_order_id VARCHAR(255) DEFAULT NULL").catch(() => {});
+          try {
+            await insertPhysicalOrder(true);
+          } catch (retryErr) {
+            await insertPhysicalOrder(false);
+          }
+        } else {
+          throw insertErr;
+        }
+      }
 
       // Save extended shipping charge fields if available (Step 9)
       if (shipping_method_id || shipping_method_name || shipping_zone) {
@@ -249,18 +284,51 @@ router.post("/orders/create", async (req, res) => {
       const amountInMinorUnits = getSubunits(finalTotalConverted, targetCurrency);
       const rzpOrder = await createRazorpayOrder(amountInMinorUnits, targetCurrency, order_uid);
 
-      await db.query(
-        `INSERT INTO digital_orders
-         (order_uid, invoice_uid, member_uid, guest_name, guest_email,
-          subtotal, tax_amount, total, currency_code, currency_rate,
-          payment_mode, transaction_id, payment_status, status, razorpay_order_id)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-        [
-          order_uid, invoice_uid, member_uid, guest_name || "Guest", guest_email || "",
-          subtotalConverted, taxConverted, finalTotalConverted, targetCurrency, conversionRate,
-          "Razorpay", null, "Pending", "Completed", rzpOrder.id
-        ]
-      );
+      const insertDigitalOrder = async (includeRazorpayCol = true) => {
+        if (includeRazorpayCol) {
+          return await db.query(
+            `INSERT INTO digital_orders
+             (order_uid, invoice_uid, member_uid, guest_name, guest_email,
+              subtotal, tax_amount, total, currency_code, currency_rate,
+              payment_mode, transaction_id, payment_status, status, razorpay_order_id)
+             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+            [
+              order_uid, invoice_uid, member_uid, guest_name || "Guest", guest_email || "",
+              subtotalConverted, taxConverted, finalTotalConverted, targetCurrency, conversionRate,
+              "Razorpay", rzpOrder.id, "Pending", "Completed", rzpOrder.id
+            ]
+          );
+        } else {
+          return await db.query(
+            `INSERT INTO digital_orders
+             (order_uid, invoice_uid, member_uid, guest_name, guest_email,
+              subtotal, tax_amount, total, currency_code, currency_rate,
+              payment_mode, transaction_id, payment_status, status)
+             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+            [
+              order_uid, invoice_uid, member_uid, guest_name || "Guest", guest_email || "",
+              subtotalConverted, taxConverted, finalTotalConverted, targetCurrency, conversionRate,
+              "Razorpay", rzpOrder.id, "Pending", "Completed"
+            ]
+          );
+        }
+      };
+
+      try {
+        await insertDigitalOrder(true);
+      } catch (insertErr) {
+        if (insertErr.code === "ER_BAD_FIELD_ERROR" || insertErr.errno === 1054 || String(insertErr.message).includes("razorpay_order_id")) {
+          console.warn("Attempting schema recovery for digital_orders missing column...");
+          await db.query("ALTER TABLE digital_orders ADD COLUMN razorpay_order_id VARCHAR(255) DEFAULT NULL").catch(() => {});
+          try {
+            await insertDigitalOrder(true);
+          } catch (retryErr) {
+            await insertDigitalOrder(false);
+          }
+        } else {
+          throw insertErr;
+        }
+      }
 
       for (const item of digitalItems) {
         await db.query(
@@ -304,11 +372,32 @@ router.post("/verify", async (req, res) => {
 
     // 2. Find matching order record (idempotency check)
     let orderTable = "physical_orders";
-    let [orders] = await db.query("SELECT * FROM physical_orders WHERE razorpay_order_id = ?", [razorpay_order_id]);
+    let orders = [];
+    try {
+      [orders] = await db.query(
+        "SELECT * FROM physical_orders WHERE razorpay_order_id = ? OR transaction_id = ?",
+        [razorpay_order_id, razorpay_order_id]
+      );
+    } catch {
+      [orders] = await db.query(
+        "SELECT * FROM physical_orders WHERE transaction_id = ?",
+        [razorpay_order_id]
+      );
+    }
     
     if (!orders.length) {
       orderTable = "digital_orders";
-      [orders] = await db.query("SELECT * FROM digital_orders WHERE razorpay_order_id = ?", [razorpay_order_id]);
+      try {
+        [orders] = await db.query(
+          "SELECT * FROM digital_orders WHERE razorpay_order_id = ? OR transaction_id = ?",
+          [razorpay_order_id, razorpay_order_id]
+        );
+      } catch {
+        [orders] = await db.query(
+          "SELECT * FROM digital_orders WHERE transaction_id = ?",
+          [razorpay_order_id]
+        );
+      }
     }
 
     if (!orders.length) {
@@ -327,10 +416,17 @@ router.post("/verify", async (req, res) => {
     await verifyPaymentOnRazorpay(razorpay_payment_id, expectedAmountMinor, order.currency_code);
 
     // 4. Update Database
-    await db.query(
-      `UPDATE ${orderTable} SET payment_status = 'Paid', transaction_id = ?, razorpay_payment_id = ?, razorpay_signature = ?, payment_verified_at = NOW() WHERE id = ?`,
-      [razorpay_payment_id, razorpay_payment_id, razorpay_signature, order.id]
-    );
+    try {
+      await db.query(
+        `UPDATE ${orderTable} SET payment_status = 'Paid', transaction_id = ?, razorpay_payment_id = ?, razorpay_signature = ?, payment_verified_at = NOW() WHERE id = ?`,
+        [razorpay_payment_id, razorpay_payment_id, razorpay_signature, order.id]
+      );
+    } catch (updateErr) {
+      await db.query(
+        `UPDATE ${orderTable} SET payment_status = 'Paid', transaction_id = ? WHERE id = ?`,
+        [razorpay_payment_id, order.id]
+      );
+    }
 
     // Sync to legacy shipments table if physical order (prepaid ready)
     if (orderTable === "physical_orders") {
@@ -346,7 +442,12 @@ router.post("/verify", async (req, res) => {
     await db.query(
       "INSERT INTO notifications (type, title, message, link) VALUES ('payment', 'Payment Verified', ?, '/orders')",
       [`Payment of ${order.currency_code} ${order.total} verified successfully for Order #${order.order_uid}`]
-    );
+    ).catch(() => {
+      return db.query(
+        "INSERT INTO notifications (type, title, message) VALUES ('payment', 'Payment Verified', ?)",
+        [`Payment of ${order.currency_code} ${order.total} verified successfully for Order #${order.order_uid}`]
+      ).catch(() => {});
+    });
 
     // Trigger email confirmation & invoice dispatch (background)
     const { sendOrderConfirmation } = require("../utils/orderNotification");

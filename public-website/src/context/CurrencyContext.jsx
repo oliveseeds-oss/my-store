@@ -33,7 +33,8 @@ export function CurrencyProvider({ children }) {
             // 2. Default must be based on region of member profile if logged in
             const stored = JSON.parse(localStorage.getItem("member") || "null");
             const memberProfile = stored ? (stored.member || stored) : null;
-            if (memberProfile) {
+            const token = stored?.token || stored?.member?.token;
+            if (memberProfile && token) {
                 API.get("/members/profile")
                     .then((profileRes) => {
                         const country = profileRes.data.country;
