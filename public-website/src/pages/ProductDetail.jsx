@@ -419,7 +419,10 @@ export default function ProductDetail() {
   const related = Array.isArray(product.related) ? product.related : [];
 
   const handleAddToCart = () => {
-    if (sizes.length && !selectedSize) return;
+    if (sizes.length && !selectedSize) {
+      alert("Please select a size first");
+      return false;
+    }
 
     // Customization fields validation
     const hasTemplates = product.enable_personalization && product.templates && product.templates.length > 0;
@@ -444,7 +447,7 @@ export default function ProductDetail() {
     if (Object.keys(errors).length > 0) {
       setCustomErrors(errors);
       alert("Please resolve customization errors before adding to cart");
-      return;
+      return false;
     }
     
     const itemCustomizations = hasTemplates ? currentTemplate.fields.map(f => ({
@@ -466,6 +469,15 @@ export default function ProductDetail() {
     });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
+    return true;
+  };
+
+  const handleDirectCheckout = (gateway = "paypal") => {
+    if (product.stock === 0) return;
+    const ok = handleAddToCart();
+    if (ok) {
+      navigate(`/checkout?method=${gateway}`);
+    }
   };
 
   // Rating breakdown
@@ -964,7 +976,7 @@ export default function ProductDetail() {
               <button
                 className="w-full py-4 font-bold text-xs uppercase tracking-widest bg-stone-950 hover:bg-stone-900 text-white transition-all shadow-lg rounded-full cursor-pointer"
                 style={{ fontFamily: "'Outfit', sans-serif" }}
-                onClick={() => { handleAddToCart(); window.location.href = "/checkout"; }}>
+                onClick={() => handleDirectCheckout("paypal")}>
                 Buy Now — Secure Checkout
               </button>
             </div>
@@ -976,15 +988,15 @@ export default function ProductDetail() {
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
-                  onClick={() => alert("Razorpay checkout selected. You can proceed with Card/UPI/NetBanking at checkout.")}
-                  className="flex items-center justify-center gap-2 py-3 px-3 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50/50 transition cursor-pointer text-xs font-bold text-stone-700"
+                  onClick={() => handleDirectCheckout("razorpay")}
+                  className="flex items-center justify-center gap-2 py-3 px-3 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50/50 transition cursor-pointer text-xs font-bold text-stone-700 shadow-sm"
                 >
                   💳 Razorpay
                 </button>
                 <button
                   type="button"
-                  onClick={() => alert("PayPal checkout selected. You can proceed with International cards/PayPal at checkout.")}
-                  className="flex items-center justify-center gap-2 py-3 px-3 border border-stone-200 rounded-xl hover:border-blue-500 hover:bg-blue-50/50 transition cursor-pointer text-xs font-bold text-stone-700"
+                  onClick={() => handleDirectCheckout("paypal")}
+                  className="flex items-center justify-center gap-2 py-3 px-3 border border-stone-200 rounded-xl hover:border-blue-500 hover:bg-blue-50/50 transition cursor-pointer text-xs font-bold text-stone-700 shadow-sm"
                 >
                   🅿️ PayPal
                 </button>

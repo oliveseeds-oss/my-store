@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useMember } from "../context/MemberContext";
 import { useCurrency } from "../context/CurrencyContext";
@@ -168,6 +168,7 @@ export default function Checkout() {
   const { member } = useMember();
   const { convert, selected, currencies } = useCurrency();
   const navigate = useNavigate();
+  const location = useLocation();
   
   // Dynamic Shipping Charges Management (Step 5)
   const [shippingMethods, setShippingMethods] = useState([]);
@@ -195,7 +196,21 @@ export default function Checkout() {
   const [hasSavedAddress, setHasSavedAddress] = useState(false);
   const [enabledCountryCodes, setEnabledCountryCodes] = useState([]);
   const [placing, setPlacing] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState(selected.currency_code === "INR" ? "razorpay" : "paypal");
+  const [paymentMethod, setPaymentMethod] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    const m = params.get("method") || params.get("gateway");
+    if (m === "paypal" || m === "razorpay") return m;
+    return selected.currency_code === "INR" ? "razorpay" : "paypal";
+  });
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const m = params.get("method") || params.get("gateway");
+    if (m === "paypal" || m === "razorpay") {
+      setPaymentMethod(m);
+    }
+  }, [location.search]);
+
   const [siteSettings, setSiteSettings] = useState(null);
 
   // Coupon state

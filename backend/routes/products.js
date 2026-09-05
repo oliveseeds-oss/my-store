@@ -77,8 +77,23 @@ const getProductsList = async (req, res) => {
     if (maxPrice) { sql += " AND COALESCE(p.discount_price, p.price) <= ?"; params.push(maxPrice); }
     if (minRating) { sql += " AND p.rating >= ?"; params.push(minRating); }
     if (tag) {
-      sql += " AND (JSON_CONTAINS(p.tags, JSON_QUOTE(?)) OR p.tags LIKE ? OR p.tags LIKE ?)";
-      params.push(tag, `%"${tag}"%`, `%${tag}%`);
+      const cleanTag = String(tag).trim();
+      if (cleanTag === "Best Seller" || cleanTag === "best-sellers" || cleanTag === "best-seller") {
+        sql += " AND (p.tags LIKE '%Best Seller%' OR p.tags LIKE '%best seller%')";
+      } else if (cleanTag === "New Arrival" || cleanTag === "new-arrival") {
+        sql += " AND (p.tags LIKE '%New Arrival%' OR p.tags LIKE '%new arrival%')";
+      } else if (cleanTag === "Limited Edition" || cleanTag === "limited-edition") {
+        sql += " AND (p.tags LIKE '%Limited Edition%' OR p.tags LIKE '%limited edition%')";
+      } else if (cleanTag === "Top Rated" || cleanTag === "top-rated") {
+        sql += " AND (p.tags LIKE '%Top Rated%' OR p.tags LIKE '%top rated%' OR COALESCE(p.rating, 0) >= 4)";
+      } else if (cleanTag === "Flash Sale" || cleanTag === "flash-sale") {
+        sql += " AND (p.tags LIKE '%Flash Sale%' OR p.tags LIKE '%flash sale%' OR (p.discount_price IS NOT NULL AND p.discount_price > 0))";
+      } else if (cleanTag === "Staff Pick" || cleanTag === "staff-pick") {
+        sql += " AND (p.tags LIKE '%Staff Pick%' OR p.tags LIKE '%staff pick%')";
+      } else {
+        sql += " AND (p.tags LIKE ? OR p.tags LIKE ?)";
+        params.push(`%"${cleanTag}"%`, `%${cleanTag}%`);
+      }
     }
     if (sort === "price_asc") sql += " ORDER BY COALESCE(p.discount_price,p.price) ASC";
     else if (sort === "price_desc") sql += " ORDER BY COALESCE(p.discount_price,p.price) DESC";
@@ -101,6 +116,7 @@ const getProductsList = async (req, res) => {
           physParams.push(catParam, catParam);
         }
         if (search) { physSql += " AND name LIKE ?"; physParams.push(`%${search}%`); }
+        if (tag) { physSql += " AND tags LIKE ?"; physParams.push(`%${tag}%`); }
         if (isBestSellerFilter) {
           const [physTagCheck] = await db.query(
             "SELECT COUNT(*) as cnt FROM physical_products WHERE (tags LIKE '%Best Seller%' OR tags LIKE '%best seller%')"

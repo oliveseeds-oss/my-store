@@ -310,6 +310,16 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
   );
 }
 
+const BADGE_FILTERS = [
+  { id: "", name: "All Products", icon: "✨" },
+  { id: "Best Seller", name: "Best Seller", icon: "⭐" },
+  { id: "New Arrival", name: "New Arrival", icon: "🆕" },
+  { id: "Limited Edition", name: "Limited Edition", icon: "💎" },
+  { id: "Top Rated", name: "Top Rated", icon: "★" },
+  { id: "Flash Sale", name: "Flash Sale", icon: "⚡" },
+  { id: "Staff Pick", name: "Staff Pick", icon: "🏷️" },
+];
+
 /* ─── Main Export ─────────────────────────────────────────────────────── */
 export default function ProductList() {
   const navigate = useNavigate();
@@ -326,20 +336,23 @@ export default function ProductList() {
   const [filters, setFilters] = useState({
     search: "",
     category: "",
+    tag: "",
     sort: "newest",
     minPrice: "",
     maxPrice: "",
     minRating: "",
   });
 
-  /* ── Sync category from URL search query or route parameter ── */
+  /* ── Sync category & tag from URL search query or route parameter ── */
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const cat = slug || urlParams.get("category") || urlParams.get("category_id") || "";
     const isBestSeller = cat && ["best-sellers", "best-seller", "best sellers", "best seller"].includes(cat.toLowerCase());
+    const tagParam = urlParams.get("tag") || (isBestSeller ? "Best Seller" : "");
     setFilters((f) => ({
       ...f,
-      category: isBestSeller ? "Best Sellers" : cat,
+      category: isBestSeller ? "" : cat,
+      tag: tagParam,
       sort: isBestSeller ? "rating" : f.sort,
     }));
   }, [location.search, slug]);
@@ -522,7 +535,8 @@ export default function ProductList() {
               onClick={() => {
                 setFilters((f) => ({
                   ...f,
-                  category: "Best Sellers",
+                  tag: "Best Seller",
+                  category: "",
                   sort: "rating",
                 }));
                 document.getElementById("product-grid")?.scrollIntoView({ behavior: "smooth" });
@@ -580,14 +594,10 @@ export default function ProductList() {
           <SidebarPanel title="Categories">
             {[
               { id: "", name: "All Products" },
-              { id: "best-sellers", name: "⭐ Best Sellers" },
               ...categories,
             ].map((c) => {
-              const isBestSellerOption = c.id === "best-sellers";
               const isAllOption = c.id === "";
-              const isActive = isBestSellerOption
-                ? (filters.category === "Best Sellers" || filters.category === "best-sellers")
-                : isAllOption
+              const isActive = isAllOption
                 ? (!filters.category)
                 : filters.category === c.name;
               return (
@@ -596,11 +606,7 @@ export default function ProductList() {
                   label={c.name}
                   active={isActive}
                   onClick={() => {
-                    if (isBestSellerOption) {
-                      setFilters((f) => ({ ...f, category: "Best Sellers", sort: "rating" }));
-                    } else {
-                      setFilters((f) => ({ ...f, category: isAllOption ? "" : c.name, sort: isAllOption ? "newest" : f.sort }));
-                    }
+                    setFilters((f) => ({ ...f, category: isAllOption ? "" : c.name, sort: isAllOption ? "newest" : f.sort }));
                   }}
                 />
               );
@@ -669,7 +675,9 @@ export default function ProductList() {
                 fontSize: "clamp(24px, 4vw, 38px)", fontWeight: 400,
                 color: T.text, marginBottom: 4,
               }}>
-                {filters.category === "Best Sellers" || filters.category === "best-sellers"
+                {filters.tag
+                  ? `${filters.tag} Engraved Products`
+                  : filters.category === "Best Sellers" || filters.category === "best-sellers"
                   ? "⭐ Best Selling Engraved Products"
                   : filters.category || "All Engraved Products"}
               </h2>
@@ -735,7 +743,7 @@ export default function ProductList() {
             </div>
           </div>
 
-          {/* Horizontal Category Filter Pills (Mobile & Desktop quick filter) */}
+          {/* Horizontal Badge & Collection Filter Pills (corner round buttons) */}
           <div className="category-pills-bar" style={{
             display: "flex",
             gap: "8px",
@@ -746,31 +754,22 @@ export default function ProductList() {
             scrollbarWidth: "none",
             msOverflowStyle: "none",
           }}>
-            {[
-              { id: "", name: "All Products" },
-              { id: "best-sellers", name: "⭐ Best Sellers" },
-              ...categories,
-            ].map((c) => {
-              const isBestSellerOption = c.id === "best-sellers";
-              const isAllOption = c.id === "";
-              const isActive = isBestSellerOption
-                ? (filters.category === "Best Sellers" || filters.category === "best-sellers")
-                : isAllOption
-                ? (!filters.category)
-                : filters.category === c.name;
+            {BADGE_FILTERS.map((badge) => {
+              const isActive = (!filters.tag && !badge.id) || filters.tag === badge.id;
               return (
                 <button
-                  key={c.id || "all"}
+                  key={badge.id || "all"}
                   onClick={() => {
-                    if (isBestSellerOption) {
-                      setFilters((f) => ({ ...f, category: "Best Sellers", sort: "rating" }));
-                    } else {
-                      setFilters((f) => ({ ...f, category: isAllOption ? "" : c.name, sort: isAllOption ? "newest" : f.sort }));
-                    }
+                    setFilters((f) => ({
+                      ...f,
+                      tag: f.tag === badge.id ? "" : badge.id,
+                      sort: badge.id === "Best Seller" ? "rating" : f.sort,
+                    }));
                   }}
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
+                    gap: "6px",
                     padding: "8px 18px",
                     borderRadius: "999px",
                     fontSize: "13px",
@@ -786,7 +785,8 @@ export default function ProductList() {
                     boxShadow: isActive ? "0 2px 8px rgba(140,106,67,0.15)" : "none",
                   }}
                 >
-                  {c.name}
+                  <span>{badge.icon}</span>
+                  <span>{badge.name}</span>
                 </button>
               );
             })}
@@ -824,12 +824,33 @@ export default function ProductList() {
                 No Products Found
               </p>
               <p style={{ fontSize: "1.1rem", color: "#888", fontFamily: T.bodyFont }}>
-                {filters.category === "Best Sellers" || filters.category === "best-sellers"
+                {filters.tag
+                  ? `No products found under "${filters.tag}" right now. Try another filter or browse all products.`
+                  : filters.category === "Best Sellers" || filters.category === "best-sellers"
                   ? "No best seller products found right now. Check back soon or browse all collections."
                   : filters.category
-                  ? "No products found in this category yet."
+                  ? `No products found in "${filters.category}" yet.`
                   : "Try adjusting your filters or browse all products."}
               </p>
+              {(filters.tag || filters.category) && (
+                <button
+                  onClick={() => setFilters(f => ({ ...f, tag: "", category: "", search: "" }))}
+                  style={{
+                    marginTop: 16,
+                    padding: "10px 24px",
+                    borderRadius: 50,
+                    background: T.accent,
+                    color: "#fff",
+                    border: "none",
+                    cursor: "pointer",
+                    fontSize: 12,
+                    fontWeight: 600,
+                    fontFamily: T.bodyFont
+                  }}
+                >
+                  View All Products
+                </button>
+              )}
             </div>
           ) : (
             <div className="products-grid" style={{

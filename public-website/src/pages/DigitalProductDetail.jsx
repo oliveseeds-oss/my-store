@@ -362,7 +362,10 @@ export default function DigitalProductDetail() {
               <button
                 className="w-full py-4 text-xs font-bold uppercase tracking-widest transition-all rounded-full cursor-pointer hover:brightness-110 shadow-lg shadow-sky-500/10"
                 style={{ background: "linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)", color: "white", border: "none", fontFamily: "'Space Mono', monospace" }}
-                onClick={() => { addToCart({ ...product, type: "digital" }); window.location.href = "/checkout"; }}
+                onClick={() => {
+                  addToCart({ ...product, type: "digital" });
+                  navigate("/checkout?method=paypal");
+                }}
               >
                 BUY NOW — INSTANT DOWNLOAD
               </button>
@@ -375,16 +378,22 @@ export default function DigitalProductDetail() {
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
-                  onClick={() => alert("Razorpay checkout selected. Complete your transaction securely.")}
-                  className="flex items-center justify-center gap-2 py-3 px-3 rounded-xl transition cursor-pointer text-xs font-bold text-[#38bdf8] hover:bg-sky-500/10"
+                  onClick={() => {
+                    addToCart({ ...product, type: "digital" });
+                    navigate("/checkout?method=razorpay");
+                  }}
+                  className="flex items-center justify-center gap-2 py-3 px-3 rounded-xl transition cursor-pointer text-xs font-bold text-[#38bdf8] hover:bg-sky-500/10 shadow-sm"
                   style={{ background: "#020617", border: "1px solid rgba(56,189,248,0.2)" }}
                 >
                   💳 Razorpay
                 </button>
                 <button
                   type="button"
-                  onClick={() => alert("PayPal checkout selected. Complete your transaction securely.")}
-                  className="flex items-center justify-center gap-2 py-3 px-3 rounded-xl transition cursor-pointer text-xs font-bold text-[#38bdf8] hover:bg-blue-500/10"
+                  onClick={() => {
+                    addToCart({ ...product, type: "digital" });
+                    navigate("/checkout?method=paypal");
+                  }}
+                  className="flex items-center justify-center gap-2 py-3 px-3 rounded-xl transition cursor-pointer text-xs font-bold text-[#38bdf8] hover:bg-blue-500/10 shadow-sm"
                   style={{ background: "#020617", border: "1px solid rgba(56,189,248,0.2)" }}
                 >
                   🅿️ PayPal
