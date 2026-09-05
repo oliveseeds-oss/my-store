@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import API from "../api";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -48,9 +48,22 @@ const Icons = {
 };
 
 export default function Catalog() {
+  const location = useLocation();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+
+  // Initialize search from URL ?category= or ?search= or ?q=
+  const [searchQuery, setSearchQuery] = useState(() => {
+    const p = new URLSearchParams(window.location.search);
+    return p.get("category") || p.get("search") || p.get("q") || "";
+  });
+
+  // Sync searchQuery when URL query string changes
+  useEffect(() => {
+    const p = new URLSearchParams(location.search);
+    const q = p.get("category") || p.get("search") || p.get("q") || "";
+    setSearchQuery(q);
+  }, [location.search]);
 
   const loadCatalog = () => {
     setLoading(true);
@@ -69,11 +82,17 @@ export default function Catalog() {
     loadCatalog();
   }, []);
 
-  // Filter Categories by Name or Description (Search Engine)
-  const filteredCategories = categories.filter(c => 
-    c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    (c.description && c.description.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  // Filter Categories by Name or Description (Smart Keyword Search Engine)
+  const q = searchQuery.toLowerCase().trim();
+  const qWords = q.split(/[\s-]+/).filter(w => w.length > 2 && !["and", "for", "the", "collection", "products"].includes(w));
+  const filteredCategories = categories.filter(c => {
+    if (!q) return true;
+    const name = (c.name || "").toLowerCase();
+    const desc = (c.description || "").toLowerCase();
+    if (name.includes(q) || desc.includes(q)) return true;
+    if (q.includes(name)) return true;
+    return qWords.some(w => name.includes(w) || desc.includes(w));
+  });
 
   return (
     <div style={{ background: "#F6F3EE", minHeight: "100vh", fontFamily: "'Inter', sans-serif" }}>
@@ -120,6 +139,27 @@ export default function Catalog() {
               )}
             </div>
           </div>
+
+          {searchQuery && (
+            <div className="mt-4 flex items-center justify-center gap-3 flex-wrap text-xs">
+              <span className="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-3.5 py-1 rounded-full flex items-center gap-2 font-medium">
+                <span>Filtered by: <strong>{searchQuery}</strong></span>
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="hover:text-white transition ml-1"
+                  title="Clear filter"
+                >
+                  ✕
+                </button>
+              </span>
+              <Link
+                to={`/products?category=${encodeURIComponent(searchQuery)}`}
+                className="text-amber-400 hover:text-amber-300 font-semibold underline flex items-center gap-1"
+              >
+                View matching products in shop →
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 
@@ -136,10 +176,26 @@ export default function Catalog() {
             ))}
           </div>
         ) : filteredCategories.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-3xl border border-stone-200/60 shadow-sm">
+          <div className="text-center py-16 px-6 bg-white rounded-3xl border border-stone-200/60 shadow-sm max-w-lg mx-auto">
             <span className="text-5xl block mb-4">🔍</span>
-            <h3 className="text-xl font-bold text-stone-700 mb-2">No Matching Collections</h3>
-            <p className="text-stone-400 text-xs">Try searching for other keywords, or adjust your spelling filters.</p>
+            <h3 className="text-xl font-bold text-stone-700 mb-2">No Specific Categories for "{searchQuery}"</h3>
+            <p className="text-stone-400 text-xs mb-6 leading-relaxed">
+              We couldn't find a dedicated category page for this collection yet, but you can explore all available products or clear the filter.
+            </p>
+            <div className="flex justify-center gap-3 flex-wrap">
+              <Link
+                to={`/products?category=${encodeURIComponent(searchQuery)}`}
+                className="bg-stone-900 hover:bg-stone-850 text-amber-400 text-xs font-bold px-6 py-2.5 rounded-full transition shadow-sm"
+              >
+                Browse Products in Shop →
+              </Link>
+              <button
+                onClick={() => setSearchQuery("")}
+                className="bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold px-6 py-2.5 rounded-full transition"
+              >
+                View All Categories
+              </button>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">

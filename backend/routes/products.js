@@ -23,25 +23,68 @@ const getProductsList = async (req, res) => {
                LEFT JOIN categories c ON p.category_id = c.id
                WHERE p.is_active = TRUE`;
     const params = [];
-    if (catParam && catParam !== "all" && catParam !== "All Products") {
+    const isBestSellerFilter = catParam && [
+      "best sellers",
+      "best-sellers",
+      "best seller",
+      "best-seller",
+      "⭐ best sellers"
+    ].includes(String(catParam).trim().toLowerCase());
+
+    if (isBestSellerFilter) {
+      // Check if any products have the "Best Seller" tag
+      const [tagCheck] = await db.query(
+        "SELECT COUNT(*) as cnt FROM products WHERE is_active = TRUE AND (tags LIKE '%Best Seller%' OR tags LIKE '%best seller%')"
+      ).catch(() => [[{ cnt: 0 }]]);
+      const hasTaggedBestSellers = tagCheck && tagCheck[0] && tagCheck[0].cnt > 0;
+      if (hasTaggedBestSellers) {
+        sql += " AND (p.tags LIKE '%Best Seller%' OR p.tags LIKE '%best seller%')";
+      }
+    } else if (catParam && catParam !== "all" && catParam !== "All Products") {
       const cleanCat = String(catParam).trim();
       if (/^\d+$/.test(cleanCat)) {
         sql += " AND (p.category_id = ? OR c.id = ?)";
         params.push(parseInt(cleanCat, 10), parseInt(cleanCat, 10));
       } else {
         const decoded = decodeURIComponent(cleanCat);
-        sql += " AND (LOWER(c.name) = LOWER(?) OR LOWER(REPLACE(c.name, ' ', '-')) = LOWER(?) OR LOWER(REPLACE(c.name, '-', ' ')) = LOWER(?))";
-        params.push(decoded, decoded, decoded);
+        // Check if an exact match exists in categories table
+        const [catCheck] = await db.query(
+          "SELECT COUNT(*) as cnt FROM categories WHERE (LOWER(name) = LOWER(?) OR LOWER(REPLACE(name, ' ', '-')) = LOWER(?) OR LOWER(REPLACE(name, '-', ' ')) = LOWER(?))",
+          [decoded, decoded, decoded]
+        ).catch(() => [[{ cnt: 0 }]]);
+        const hasExactCategory = catCheck && catCheck[0] && catCheck[0].cnt > 0;
+
+        if (hasExactCategory) {
+          sql += " AND (LOWER(c.name) = LOWER(?) OR LOWER(REPLACE(c.name, ' ', '-')) = LOWER(?) OR LOWER(REPLACE(c.name, '-', ' ')) = LOWER(?))";
+          params.push(decoded, decoded, decoded);
+        } else {
+          // Flexible fallback: match keywords across category name, tags, or product name
+          const stopWords = ["and", "for", "the", "collection", "products", "item", "items"];
+          const keywords = decoded.toLowerCase().split(/[\s-]+/).filter(w => w.length > 2 && !stopWords.includes(w));
+          if (keywords.length > 0) {
+            const kwClauses = keywords.map(() => "(LOWER(c.name) LIKE ? OR LOWER(p.tags) LIKE ? OR LOWER(p.name) LIKE ?)").join(" OR ");
+            sql += ` AND (${kwClauses})`;
+            keywords.forEach(w => params.push(`%${w}%`, `%${w}%`, `%${w}%`));
+          } else {
+            sql += " AND (LOWER(c.name) = LOWER(?) OR LOWER(REPLACE(c.name, ' ', '-')) = LOWER(?))";
+            params.push(decoded, decoded);
+          }
+        }
       }
     }
     if (search) { sql += " AND p.name LIKE ?"; params.push(`%${search}%`); }
     if (minPrice) { sql += " AND COALESCE(p.discount_price, p.price) >= ?"; params.push(minPrice); }
     if (maxPrice) { sql += " AND COALESCE(p.discount_price, p.price) <= ?"; params.push(maxPrice); }
     if (minRating) { sql += " AND p.rating >= ?"; params.push(minRating); }
-    if (tag) { sql += " AND JSON_CONTAINS(p.tags, JSON_QUOTE(?))"; params.push(tag); }
+    if (tag) {
+      sql += " AND (JSON_CONTAINS(p.tags, JSON_QUOTE(?)) OR p.tags LIKE ? OR p.tags LIKE ?)";
+      params.push(tag, `%"${tag}"%`, `%${tag}%`);
+    }
     if (sort === "price_asc") sql += " ORDER BY COALESCE(p.discount_price,p.price) ASC";
     else if (sort === "price_desc") sql += " ORDER BY COALESCE(p.discount_price,p.price) DESC";
-    else if (sort === "rating") sql += " ORDER BY p.rating DESC";
+    else if (sort === "rating" || isBestSellerFilter) {
+      sql += " ORDER BY (CASE WHEN p.tags LIKE '%Best Seller%' OR p.tags LIKE '%best seller%' THEN 1 ELSE 0 END) DESC, COALESCE(p.rating, 0) DESC, p.created_at DESC";
+    }
     else sql += " ORDER BY p.created_at DESC";
     
     let [rows] = await db.query(sql, params).catch(err => {
@@ -53,12 +96,22 @@ const getProductsList = async (req, res) => {
       try {
         let physSql = "SELECT * FROM physical_products WHERE 1=1";
         const physParams = [];
-        if (catParam && catParam !== "all" && catParam !== "All Products") {
+        if (catParam && catParam !== "all" && catParam !== "All Products" && !isBestSellerFilter) {
           physSql += " AND (category = ? OR category_id = ?)";
           physParams.push(catParam, catParam);
         }
         if (search) { physSql += " AND name LIKE ?"; physParams.push(`%${search}%`); }
-        physSql += " ORDER BY id DESC";
+        if (isBestSellerFilter) {
+          const [physTagCheck] = await db.query(
+            "SELECT COUNT(*) as cnt FROM physical_products WHERE (tags LIKE '%Best Seller%' OR tags LIKE '%best seller%')"
+          ).catch(() => [[{ cnt: 0 }]]);
+          if (physTagCheck && physTagCheck[0] && physTagCheck[0].cnt > 0) {
+            physSql += " AND (tags LIKE '%Best Seller%' OR tags LIKE '%best seller%')";
+          }
+          physSql += " ORDER BY (CASE WHEN tags LIKE '%Best Seller%' OR tags LIKE '%best seller%' THEN 1 ELSE 0 END) DESC, COALESCE(rating, 0) DESC, id DESC";
+        } else {
+          physSql += " ORDER BY id DESC";
+        }
         const [pRows] = await db.query(physSql, physParams);
         if (pRows && pRows.length) rows = pRows;
       } catch {

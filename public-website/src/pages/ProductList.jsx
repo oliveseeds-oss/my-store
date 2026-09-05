@@ -336,7 +336,12 @@ export default function ProductList() {
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const cat = slug || urlParams.get("category") || urlParams.get("category_id") || "";
-    setFilters((f) => ({ ...f, category: cat }));
+    const isBestSeller = cat && ["best-sellers", "best-seller", "best sellers", "best seller"].includes(cat.toLowerCase());
+    setFilters((f) => ({
+      ...f,
+      category: isBestSeller ? "Best Sellers" : cat,
+      sort: isBestSeller ? "rating" : f.sort,
+    }));
   }, [location.search, slug]);
 
   /* ── Data-loading logic ── */
@@ -491,7 +496,10 @@ export default function ProductList() {
 
           <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
             <button
-              onClick={() => document.getElementById("product-grid")?.scrollIntoView({ behavior: "smooth" })}
+              onClick={() => {
+                setFilters((f) => ({ ...f, category: "", sort: "newest" }));
+                document.getElementById("product-grid")?.scrollIntoView({ behavior: "smooth" });
+              }}
               style={{
                 padding: "16px 36px",
                 background: T.highlight,
@@ -512,7 +520,11 @@ export default function ProductList() {
             </button>
             <button
               onClick={() => {
-                setFilter("category", "Best Sellers");
+                setFilters((f) => ({
+                  ...f,
+                  category: "Best Sellers",
+                  sort: "rating",
+                }));
                 document.getElementById("product-grid")?.scrollIntoView({ behavior: "smooth" });
               }}
               style={{
@@ -566,14 +578,33 @@ export default function ProductList() {
         >
           {/* Categories */}
           <SidebarPanel title="Categories">
-            {[{ id: "", name: "All Products" }, ...categories].map((c) => (
-              <SidebarBtn
-                key={c.id}
-                label={c.name}
-                active={filters.category === c.name || (!filters.category && c.id === "")}
-                onClick={() => setFilter("category", c.id === "" ? "" : c.name)}
-              />
-            ))}
+            {[
+              { id: "", name: "All Products" },
+              { id: "best-sellers", name: "⭐ Best Sellers" },
+              ...categories,
+            ].map((c) => {
+              const isBestSellerOption = c.id === "best-sellers";
+              const isAllOption = c.id === "";
+              const isActive = isBestSellerOption
+                ? (filters.category === "Best Sellers" || filters.category === "best-sellers")
+                : isAllOption
+                ? (!filters.category)
+                : filters.category === c.name;
+              return (
+                <SidebarBtn
+                  key={c.id || "all"}
+                  label={c.name}
+                  active={isActive}
+                  onClick={() => {
+                    if (isBestSellerOption) {
+                      setFilters((f) => ({ ...f, category: "Best Sellers", sort: "rating" }));
+                    } else {
+                      setFilters((f) => ({ ...f, category: isAllOption ? "" : c.name, sort: isAllOption ? "newest" : f.sort }));
+                    }
+                  }}
+                />
+              );
+            })}
           </SidebarPanel>
 
           {/* Price Range */}
@@ -638,7 +669,9 @@ export default function ProductList() {
                 fontSize: "clamp(24px, 4vw, 38px)", fontWeight: 400,
                 color: T.text, marginBottom: 4,
               }}>
-                {filters.category || "All Engraved Products"}
+                {filters.category === "Best Sellers" || filters.category === "best-sellers"
+                  ? "⭐ Best Selling Engraved Products"
+                  : filters.category || "All Engraved Products"}
               </h2>
               <p style={{ fontFamily: T.bodyFont, fontSize: 13, color: T.textSec }}>
                 {loading ? "Loading collection…" : `${products.length} premium products available`}
@@ -713,12 +746,28 @@ export default function ProductList() {
             scrollbarWidth: "none",
             msOverflowStyle: "none",
           }}>
-            {[{ id: "", name: "All Products" }, ...categories].map((c) => {
-              const isActive = filters.category === c.name || (!filters.category && c.id === "");
+            {[
+              { id: "", name: "All Products" },
+              { id: "best-sellers", name: "⭐ Best Sellers" },
+              ...categories,
+            ].map((c) => {
+              const isBestSellerOption = c.id === "best-sellers";
+              const isAllOption = c.id === "";
+              const isActive = isBestSellerOption
+                ? (filters.category === "Best Sellers" || filters.category === "best-sellers")
+                : isAllOption
+                ? (!filters.category)
+                : filters.category === c.name;
               return (
                 <button
                   key={c.id || "all"}
-                  onClick={() => setFilter("category", c.id === "" ? "" : c.name)}
+                  onClick={() => {
+                    if (isBestSellerOption) {
+                      setFilters((f) => ({ ...f, category: "Best Sellers", sort: "rating" }));
+                    } else {
+                      setFilters((f) => ({ ...f, category: isAllOption ? "" : c.name, sort: isAllOption ? "newest" : f.sort }));
+                    }
+                  }}
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
@@ -775,7 +824,9 @@ export default function ProductList() {
                 No Products Found
               </p>
               <p style={{ fontSize: "1.1rem", color: "#888", fontFamily: T.bodyFont }}>
-                {filters.category
+                {filters.category === "Best Sellers" || filters.category === "best-sellers"
+                  ? "No best seller products found right now. Check back soon or browse all collections."
+                  : filters.category
                   ? "No products found in this category yet."
                   : "Try adjusting your filters or browse all products."}
               </p>
@@ -943,14 +994,34 @@ export default function ProductList() {
 
             {/* Categories */}
             <SidebarPanel title="Categories">
-              {[{ id: "", name: "All Products" }, ...categories].map((c) => (
-                <SidebarBtn
-                  key={c.id}
-                  label={c.name}
-                  active={filters.category === c.name || (!filters.category && c.id === "")}
-                  onClick={() => { setFilter("category", c.id === "" ? "" : c.name); setShowMobileFilters(false); }}
-                />
-              ))}
+              {[
+                { id: "", name: "All Products" },
+                { id: "best-sellers", name: "⭐ Best Sellers" },
+                ...categories,
+              ].map((c) => {
+                const isBestSellerOption = c.id === "best-sellers";
+                const isAllOption = c.id === "";
+                const isActive = isBestSellerOption
+                  ? (filters.category === "Best Sellers" || filters.category === "best-sellers")
+                  : isAllOption
+                  ? (!filters.category)
+                  : filters.category === c.name;
+                return (
+                  <SidebarBtn
+                    key={c.id || "all"}
+                    label={c.name}
+                    active={isActive}
+                    onClick={() => {
+                      if (isBestSellerOption) {
+                        setFilters((f) => ({ ...f, category: "Best Sellers", sort: "rating" }));
+                      } else {
+                        setFilters((f) => ({ ...f, category: isAllOption ? "" : c.name, sort: isAllOption ? "newest" : f.sort }));
+                      }
+                      setShowMobileFilters(false);
+                    }}
+                  />
+                );
+              })}
             </SidebarPanel>
 
             {/* Price Range */}

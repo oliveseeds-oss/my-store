@@ -21,16 +21,25 @@ router.get("/:id/products", async (req, res) => {
                FROM products p
                LEFT JOIN categories c ON p.category_id = c.id
                WHERE p.is_active = TRUE`;
-    const params = [];
-    if (/^\d+$/.test(catParam)) {
+    const isBestSeller = ["best-sellers", "best-seller", "best sellers", "best seller", "⭐ best sellers"].includes(String(catParam).trim().toLowerCase());
+    if (isBestSeller) {
+      const [tagCheck] = await db.query(
+        "SELECT COUNT(*) as cnt FROM products WHERE is_active = TRUE AND (tags LIKE '%Best Seller%' OR tags LIKE '%best seller%')"
+      ).catch(() => [[{ cnt: 0 }]]);
+      if (tagCheck && tagCheck[0] && tagCheck[0].cnt > 0) {
+        sql += " AND (p.tags LIKE '%Best Seller%' OR p.tags LIKE '%best seller%')";
+      }
+      sql += " ORDER BY (CASE WHEN p.tags LIKE '%Best Seller%' OR p.tags LIKE '%best seller%' THEN 1 ELSE 0 END) DESC, COALESCE(p.rating, 0) DESC, p.created_at DESC";
+    } else if (/^\d+$/.test(catParam)) {
       sql += " AND (p.category_id = ? OR c.id = ?)";
       params.push(parseInt(catParam, 10), parseInt(catParam, 10));
+      sql += " ORDER BY p.created_at DESC";
     } else {
       const decoded = decodeURIComponent(catParam);
       sql += " AND (LOWER(c.name) = LOWER(?) OR LOWER(REPLACE(c.name, ' ', '-')) = LOWER(?))";
       params.push(decoded, decoded);
+      sql += " ORDER BY p.created_at DESC";
     }
-    sql += " ORDER BY p.created_at DESC";
     const [rows] = await db.query(sql, params);
     const parseJSON = (val) => {
       if (Array.isArray(val)) return val;

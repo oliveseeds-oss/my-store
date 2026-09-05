@@ -44,6 +44,12 @@ const FadeUp = ({ children, delay = 0, className = "", style = {} }) => (
       <circle cx="16.5" cy="10.5" r="5" />
     </svg>
   ),
+  GraduationCap: ({ color = "var(--gold)", size = 24 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+      <path d="M6 12v5c3 3 9 3 12 0v-5" />
+    </svg>
+  ),
   Box: ({ color = "var(--gold)", size = 24 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
@@ -124,10 +130,30 @@ const FadeUp = ({ children, delay = 0, className = "", style = {} }) => (
 };
 
 const COLLECTIONS = [
-  { title: "Corporate Excellence", sub: "Elevate your brand identity", icon: "Trophy" },
-  { title: "Modern Workspace", sub: "Desk accessories & name plates", icon: "Pen" },
-  { title: "Wedding Collection", sub: "Timeless keepsakes for love", icon: "Rings" },
-  { title: "Business Branding", sub: "Custom branding at scale", icon: "Box" },
+  {
+    title: "Corporate Excellence",
+    sub: "Elevate your brand identity",
+    icon: "Trophy",
+    link: "/catalog?category=Corporate+Excellence",
+  },
+  {
+    title: "Modern Workspace",
+    sub: "Desk accessories & name plates",
+    icon: "Pen",
+    link: "/catalog?category=Modern+Workspace",
+  },
+  {
+    title: "Wedding Collection",
+    sub: "Timeless keepsakes for love",
+    icon: "Rings",
+    link: "/catalog?category=Wedding+Collection",
+  },
+  {
+    title: "Education Products",
+    sub: "Academic awards, kits & student essentials",
+    icon: "GraduationCap",
+    link: "/catalog?category=Education+Products",
+  },
 ];
 
 function CollectionCard({ col }) {
@@ -135,7 +161,7 @@ function CollectionCard({ col }) {
   const IconComponent = Icons[col.icon] || Icons.Sparkles;
   return (
     <Link
-      to="/catalog"
+      to={col.link || "/catalog"}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
