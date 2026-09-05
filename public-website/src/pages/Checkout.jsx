@@ -11,6 +11,13 @@ import SmartAddressForm from "../components/SmartAddressForm";
 import { Country } from "country-state-city";
 import { trackGA4Event } from "../utils/ga4";
 
+import {
+  PayPalProvider,
+  PayPalOneTimePaymentButton,
+  usePayPal,
+  INSTANCE_LOADING_STATE,
+} from "@paypal/react-paypal-js/sdk-v6";
+
 const loadRazorpayScript = () => {
   return new Promise((resolve) => {
     if (window.Razorpay) return resolve(true);
@@ -28,33 +35,106 @@ const PAYPAL_SUPPORTED_CURRENCIES = new Set([
   "SEK", "CHF", "THB", "USD"
 ]);
 
-const loadPayPalScript = (clientId, currency = "USD") => {
-  return new Promise((resolve) => {
-    const validCurrency = PAYPAL_SUPPORTED_CURRENCIES.has(currency) ? currency : "USD";
-    const id = "paypal-sdk-script";
-    const existing = document.getElementById(id);
-    if (existing) {
-      if (existing.src.includes(`currency=${validCurrency}`) && window.paypal) {
-        return resolve(true);
-      }
-      existing.remove();
-      if (window.paypal) {
-        try {
-          delete window.paypal;
-        } catch (e) {
-          window.paypal = undefined;
-        }
-      }
+function PayPalButtonSection({
+  total,
+  shipping,
+  couponDiscount,
+  selected,
+  currencies,
+  form,
+  placeOrder,
+  setPaymentMethod,
+  checkShippingEligibility
+}) {
+  const { loadingStatus, error } = usePayPal();
+  const isSupported = PAYPAL_SUPPORTED_CURRENCIES.has(selected?.currency_code);
+  const activePaypalCurrency = isSupported ? selected.currency_code : "USD";
+
+  const payableInINR = Math.max(1, total + shipping - (couponDiscount || 0));
+
+  let rateMultiplier = 0.012;
+  if (isSupported && selected?.rate_to_inr && selected.currency_code !== "INR") {
+    rateMultiplier = parseFloat(selected.rate_to_inr) || 0.012;
+  } else if (Array.isArray(currencies) && currencies.length > 0) {
+    const usdMatch = currencies.find((c) => c.currency_code === "USD");
+    if (usdMatch?.rate_to_inr) {
+      rateMultiplier = parseFloat(usdMatch.rate_to_inr) || 0.012;
     }
-    
-    const script = document.createElement("script");
-    script.id = id;
-    script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=${validCurrency}&intent=capture`;
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
-  });
-};
+  }
+
+  const convertedVal = Math.max(0.5, payableInINR * rateMultiplier).toFixed(2);
+
+  if (loadingStatus === INSTANCE_LOADING_STATE.PENDING) {
+    return (
+      <div className="text-center py-4 text-xs text-stone-500 font-bold flex items-center justify-center gap-2 animate-pulse">
+        <span>⏳</span> Initializing PayPal secure payment...
+      </div>
+    );
+  }
+
+  if (loadingStatus === INSTANCE_LOADING_STATE.REJECTED) {
+    return (
+      <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 font-bold text-center">
+        Failed to load PayPal: {error?.message || "Please refresh or try Razorpay"}
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full flex flex-col items-center">
+      <div className="w-full">
+        <PayPalOneTimePaymentButton
+          createOrder={async () => {
+            if (!checkShippingEligibility()) {
+              throw new Error("Please complete required shipping details first.");
+            }
+            const res = await API.post("/payments/paypal/create-order", {
+              currency_code: activePaypalCurrency,
+              amount: convertedVal
+            });
+            return { orderId: res.data.orderId };
+          }}
+          onApprove={async (data) => {
+            try {
+              await API.post("/payments/paypal/capture-order", {
+                orderId: data.orderId
+              });
+              await placeOrder({
+                mode: "PayPal",
+                transactionId: data.orderId
+              });
+            } catch (captureErr) {
+              console.error("PayPal capture error:", captureErr);
+              alert("PayPal payment capture failed: " + (captureErr.response?.data?.error || captureErr.message));
+            }
+          }}
+          onError={(err) => {
+            console.error("PayPal processing error:", err);
+            const errStr = String(err?.message || err || "");
+            if (errStr.includes("Please complete required shipping details") || errStr.includes("do not ship")) {
+              return;
+            }
+            if (errStr.includes("DOMESTIC_TRANSACTION_NOT_ALLOWED") || errStr.includes("domestic")) {
+              alert("PayPal India cannot process domestic transactions between Indian accounts under RBI regulations. Please choose Razorpay (Cards, UPI, Netbanking) for domestic orders.");
+              setPaymentMethod("razorpay");
+            } else {
+              alert("PayPal encountered a processing error. If paying from India, please select Razorpay for instant checkout.");
+            }
+          }}
+          presentationMode="auto"
+        />
+      </div>
+      <p className="text-[9px] text-stone-400 text-center font-bold uppercase tracking-widest mt-2">
+        Pay via PayPal, Credit/Debit cards
+      </p>
+      {form.delivery_country === "India" && (
+        <div className="w-full mt-2.5 p-2.5 bg-amber-50 border border-amber-200/80 rounded-xl text-[10px] text-amber-900 leading-relaxed text-left">
+          ℹ️ <strong>Notice for India:</strong> PayPal does not allow domestic transactions within India under RBI regulations. If paying from India, please select <strong>Razorpay</strong> (Cards, UPI, Netbanking) above.
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Checkout() {
   const { cart, total, clearCart } = useCart();
@@ -89,7 +169,6 @@ export default function Checkout() {
   const [enabledCountryCodes, setEnabledCountryCodes] = useState([]);
   const [placing, setPlacing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState(selected.currency_code === "INR" ? "razorpay" : "paypal");
-  const [paypalLoaded, setPaypalLoaded] = useState(false);
   const [siteSettings, setSiteSettings] = useState(null);
 
   // Coupon state
@@ -247,88 +326,7 @@ export default function Checkout() {
     };
   }, [form.delivery_country, cart, total, selected.currency_code, hasPhysicalItems]);
 
-  useEffect(() => {
-    if (!siteSettings || paymentMethod !== "paypal") return;
-    const isSupported = PAYPAL_SUPPORTED_CURRENCIES.has(selected?.currency_code);
-    const paypalCurrency = isSupported ? selected.currency_code : "USD";
-    const clientId = siteSettings.paypal_client_id;
-    if (!clientId || clientId === "sb" || clientId.includes("your_paypal")) {
-      console.warn("PayPal Client ID is missing or default. PayPal Gateway disabled.");
-      return;
-    }
-    setPaypalLoaded(false);
-    loadPayPalScript(clientId, paypalCurrency)
-      .then(success => {
-        if (success && window.paypal) {
-          setPaypalLoaded(true);
-        }
-      });
-  }, [siteSettings, selected.currency_code, paymentMethod]);
 
-  useEffect(() => {
-    if (paymentMethod === "paypal" && paypalLoaded && window.paypal && document.getElementById("paypal-button-container")) {
-      document.getElementById("paypal-button-container").innerHTML = "";
-      try {
-        const isSupported = PAYPAL_SUPPORTED_CURRENCIES.has(selected?.currency_code);
-        const currencyCode = isSupported ? selected.currency_code : "USD";
-        
-        // Authoritative base amount in INR
-        const payableInINR = Math.max(1, (total + shipping - (couponDiscount || 0)));
-
-        // Resolve rate multiplier
-        let rateMultiplier = 0.012;
-        if (isSupported && selected?.rate_to_inr && selected.currency_code !== "INR") {
-          rateMultiplier = parseFloat(selected.rate_to_inr) || 0.012;
-        } else if (Array.isArray(currencies) && currencies.length > 0) {
-          const usdMatch = currencies.find(c => c.currency_code === "USD");
-          if (usdMatch?.rate_to_inr) {
-            rateMultiplier = parseFloat(usdMatch.rate_to_inr) || 0.012;
-          }
-        }
-
-        const convertedVal = Math.max(0.50, payableInINR * rateMultiplier).toFixed(2);
-
-        window.paypal.Buttons({
-          createOrder: (data, actions) => {
-            return actions.order.create({
-              intent: "CAPTURE",
-              purchase_units: [{
-                description: "Olive Seeds Studio Order",
-                amount: {
-                  currency_code: currencyCode,
-                  value: String(convertedVal)
-                }
-              }]
-            });
-          },
-          onApprove: async (data, actions) => {
-            try {
-              const details = await actions.order.capture();
-              await placeOrder({
-                mode: "PayPal",
-                transactionId: details.id
-              });
-            } catch (captureErr) {
-              console.error("PayPal capture error:", captureErr);
-              alert("PayPal capture failed: " + (captureErr.message || "Please try again"));
-            }
-          },
-          onError: (err) => {
-            console.error("PayPal processing error:", err);
-            const errStr = String(err?.message || err || "");
-            if (errStr.includes("DOMESTIC_TRANSACTION_NOT_ALLOWED") || errStr.includes("domestic")) {
-              alert("PayPal India cannot process domestic transactions between Indian accounts under RBI regulations. Please choose Razorpay (Cards, UPI, Netbanking) for domestic orders.");
-              setPaymentMethod("razorpay");
-            } else {
-              alert("PayPal encountered a processing error. If paying from India, please select Razorpay for instant checkout.");
-            }
-          }
-        }).render("#paypal-button-container");
-      } catch (e) {
-        console.error("Failed to render PayPal buttons:", e);
-      }
-    }
-  }, [paymentMethod, paypalLoaded, total, shipping, couponDiscount, selected, currencies]);
 
   const checkShippingEligibility = () => {
     if (!form.name || !form.email || !form.delivery_street || !form.delivery_city || !form.delivery_state) {
@@ -792,19 +790,33 @@ export default function Checkout() {
                     </p>
                   </>
                 ) : (
-                  <div className="mt-1">
-                    {!paypalLoaded ? (
-                      <div className="text-center py-3 text-xs text-stone-400 font-bold">
-                        ⏳ Loading PayPal checkout Buttons...
+                  <div className="mt-1 w-full">
+                    {!siteSettings ? (
+                      <div className="text-center py-4 text-xs text-stone-400 font-bold animate-pulse">
+                        ⏳ Loading PayPal configuration...
                       </div>
-                    ) : null}
-                    <div id="paypal-button-container" className="min-h-[50px] w-full"></div>
-                    <p className="text-[9px] text-stone-400 text-center font-bold uppercase tracking-widest mt-1.5">
-                      Pay via PayPal, Credit/Debit cards
-                    </p>
-                    {form.delivery_country === "India" && (
-                      <div className="mt-2 p-2.5 bg-amber-50 border border-amber-200/80 rounded-xl text-[10px] text-amber-900 leading-relaxed">
-                        ℹ️ <strong>Notice:</strong> For payments within India, please choose <strong>Razorpay</strong> (Cards, UPI, Netbanking). PayPal is configured for international customers.
+                    ) : siteSettings.paypal_client_id && siteSettings.paypal_client_id !== "sb" && !siteSettings.paypal_client_id.includes("your_paypal") ? (
+                      <PayPalProvider
+                        clientId={siteSettings.paypal_client_id}
+                        environment={siteSettings.paypal_client_id.startsWith("sb") || siteSettings.paypal_client_id.includes("sandbox") ? "sandbox" : "production"}
+                        components={["paypal-payments"]}
+                        pageType="checkout"
+                      >
+                        <PayPalButtonSection
+                          total={total}
+                          shipping={shipping}
+                          couponDiscount={couponDiscount}
+                          selected={selected}
+                          currencies={currencies}
+                          form={form}
+                          placeOrder={placeOrder}
+                          setPaymentMethod={setPaymentMethod}
+                          checkShippingEligibility={checkShippingEligibility}
+                        />
+                      </PayPalProvider>
+                    ) : (
+                      <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 font-semibold text-center">
+                        PayPal gateway is currently unavailable or disabled in store settings.
                       </div>
                     )}
                   </div>

@@ -594,4 +594,119 @@ router.post("/razorpay/webhook", async (req, res) => {
   }
 });
 
+// Helper to get PayPal Access Token
+async function getPayPalAccessToken() {
+  const [rows] = await db.query("SELECT paypal_client_id, paypal_client_secret FROM settings WHERE id = 1");
+  const clientId = rows[0]?.paypal_client_id || process.env.PAYPAL_CLIENT_ID;
+  let clientSecret = rows[0]?.paypal_client_secret;
+
+  if (clientSecret) {
+    const { decrypt } = require("../utils/shiprocket");
+    clientSecret = decrypt(clientSecret);
+  } else {
+    clientSecret = process.env.PAYPAL_CLIENT_SECRET;
+  }
+
+  if (!clientId || !clientSecret) {
+    throw new Error("PayPal credentials missing in store settings.");
+  }
+
+  const isLive = !clientId.startsWith("sb") && process.env.PAYPAL_MODE !== "sandbox";
+  const baseUrl = isLive ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
+
+  const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
+  const tokenRes = await fetch(`${baseUrl}/v1/oauth2/token`, {
+    method: "POST",
+    body: "grant_type=client_credentials",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Authorization": `Basic ${auth}`
+    }
+  });
+
+  if (!tokenRes.ok) {
+    const errText = await tokenRes.text();
+    console.error("PayPal token request failed:", errText);
+    throw new Error("Failed to authenticate with PayPal.");
+  }
+
+  const tokenData = await tokenRes.json();
+  return { accessToken: tokenData.access_token, baseUrl };
+}
+
+// 5. PayPal v2 Server-Side Order Creation (for React SDK v6)
+router.post("/paypal/create-order", async (req, res) => {
+  const { amount, currency_code } = req.body;
+  try {
+    const { accessToken, baseUrl } = await getPayPalAccessToken();
+
+    const orderPayload = {
+      intent: "CAPTURE",
+      purchase_units: [
+        {
+          description: "Olive Seeds Studio Order",
+          amount: {
+            currency_code: currency_code || "USD",
+            value: String(amount || "1.00")
+          }
+        }
+      ]
+    };
+
+    const orderRes = await fetch(`${baseUrl}/v2/checkout/orders`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(orderPayload)
+    });
+
+    const orderData = await orderRes.json();
+    if (!orderRes.ok) {
+      console.error("PayPal order create error:", orderData);
+      return res.status(orderRes.status).json({ error: orderData.message || "Failed to create PayPal order." });
+    }
+
+    return res.json({ orderId: orderData.id });
+  } catch (err) {
+    console.error("Server PayPal create order error:", err.message);
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// 6. PayPal v2 Server-Side Order Capture (for React SDK v6)
+router.post("/paypal/capture-order", async (req, res) => {
+  const { orderId } = req.body;
+  if (!orderId) {
+    return res.status(400).json({ error: "PayPal order ID is required." });
+  }
+
+  try {
+    const { accessToken, baseUrl } = await getPayPalAccessToken();
+
+    const captureRes = await fetch(`${baseUrl}/v2/checkout/orders/${orderId}/capture`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Content-Type": "application/json"
+      }
+    });
+
+    const captureData = await captureRes.json();
+    if (!captureRes.ok) {
+      if (captureData.details && captureData.details.some(d => d.issue === "ORDER_ALREADY_CAPTURED")) {
+        return res.json({ success: true, alreadyCaptured: true });
+      }
+      console.error("PayPal capture error:", captureData);
+      return res.status(captureRes.status).json({ error: captureData.message || "Failed to capture PayPal payment." });
+    }
+
+    return res.json({ success: true, captureId: captureData.id, status: captureData.status });
+  } catch (err) {
+    console.error("Server PayPal capture error:", err.message);
+    return res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
