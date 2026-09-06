@@ -170,6 +170,9 @@ export default function Checkout() {
   const navigate = useNavigate();
   const location = useLocation();
   
+  // Check if cart contains physical items
+  const hasPhysicalItems = cart.some(i => i.type === "physical" || (!i.type && !i.is_digital));
+
   // Dynamic Shipping Charges Management (Step 5)
   const [shippingMethods, setShippingMethods] = useState([]);
   const [selectedMethod, setSelectedMethod] = useState(null);
@@ -177,9 +180,11 @@ export default function Checkout() {
   const [shippingZoneInfo, setShippingZoneInfo] = useState("");
   const [shippingError, setShippingError] = useState("");
 
-  const shipping = selectedMethod
-    ? (selectedMethod.is_free ? 0 : (selectedMethod.shipping_cost_inr !== undefined ? selectedMethod.shipping_cost_inr : selectedMethod.shipping_cost))
-    : (total >= 999 ? 0 : 60);
+  const shipping = hasPhysicalItems
+    ? (selectedMethod
+      ? (selectedMethod.is_free ? 0 : (selectedMethod.shipping_cost_inr !== undefined ? selectedMethod.shipping_cost_inr : selectedMethod.shipping_cost))
+      : (total >= 999 ? 0 : 60))
+    : 0;
 
   const [form, setForm] = useState({
     name: member?.name || "",
@@ -241,9 +246,6 @@ export default function Checkout() {
       setCouponErr(err.response?.data?.error || "Invalid coupon code");
     }
   };
-
-  // Check if cart contains physical items
-  const hasPhysicalItems = cart.some(i => i.type === "physical" || !i.type);
 
   useEffect(() => {
     if (!member) {
@@ -371,21 +373,28 @@ export default function Checkout() {
 
 
   const checkShippingEligibility = () => {
-    if (!form.name || !form.email || !form.delivery_street || !form.delivery_city || !form.delivery_state) {
-      alert("Please fill in all required delivery details first.");
+    if (!form.name || !form.email) {
+      alert("Please provide your name and email address for order processing.");
       return false;
     }
 
-    if (hasPhysicalItems && enabledCountryCodes.length > 0) {
-      const selectedCountryObj = Country.getAllCountries().find(
-        (c) =>
-          c.name.toLowerCase() === (form.delivery_country || "").toLowerCase() ||
-          c.isoCode.toLowerCase() === (form.delivery_country || "").toLowerCase()
-      );
-      const iso = selectedCountryObj?.isoCode?.toUpperCase();
-      if (iso && !enabledCountryCodes.includes(iso)) {
-        alert("We currently do not ship physical products to your country.");
+    if (hasPhysicalItems) {
+      if (!form.delivery_street || !form.delivery_city || !form.delivery_state) {
+        alert("Please fill in all required delivery details first.");
         return false;
+      }
+
+      if (enabledCountryCodes.length > 0) {
+        const selectedCountryObj = Country.getAllCountries().find(
+          (c) =>
+            c.name.toLowerCase() === (form.delivery_country || "").toLowerCase() ||
+            c.isoCode.toLowerCase() === (form.delivery_country || "").toLowerCase()
+        );
+        const iso = selectedCountryObj?.isoCode?.toUpperCase();
+        if (iso && !enabledCountryCodes.includes(iso)) {
+          alert("We currently do not ship physical products to your country.");
+          return false;
+        }
       }
     }
     return true;
@@ -575,7 +584,9 @@ export default function Checkout() {
             style={{ background: "white", borderColor: "rgba(27, 57, 49, 0.15)" }}
             className="lg:col-span-2 rounded-2xl sm:rounded-3xl border p-4 sm:p-6 md:p-8 shadow-sm flex flex-col gap-5"
           >
-            <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-xl font-bold tracking-tight">Delivery Details</h3>
+            <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-xl font-bold tracking-tight">
+              {hasPhysicalItems ? "Delivery Details" : "Contact & Digital Delivery Details"}
+            </h3>
             
             {hasSavedAddress ? (
               <div className="bg-stone-50 border border-stone-200 rounded-2xl p-5 text-xs text-[#0D1512] space-y-3">
@@ -771,10 +782,17 @@ export default function Checkout() {
               </div>
 
               <div className="border-t border-stone-100 pt-4 flex flex-col gap-2.5">
-                <div className="flex justify-between text-xs font-semibold opacity-75">
-                  <span>Shipping Fee {selectedMethod ? `(${selectedMethod.method_name})` : ""}</span>
-                  <span>{shipping === 0 ? "Free" : convert(shipping)}</span>
-                </div>
+                {hasPhysicalItems ? (
+                  <div className="flex justify-between text-xs font-semibold opacity-75">
+                    <span>Shipping Fee {selectedMethod ? `(${selectedMethod.method_name})` : ""}</span>
+                    <span>{shipping === 0 ? "Free" : convert(shipping)}</span>
+                  </div>
+                ) : (
+                  <div className="flex justify-between text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-2 rounded-xl border border-emerald-100">
+                    <span className="flex items-center gap-1.5">⚡ Digital Delivery</span>
+                    <span className="font-bold">Instant Download (Free)</span>
+                  </div>
+                )}
                 {couponDiscount > 0 && (
                   <div className="flex justify-between text-xs font-bold text-emerald-600">
                     <span>Coupon Discount</span>
@@ -789,7 +807,7 @@ export default function Checkout() {
 
               {selected.currency_code !== "INR" && (
                 <div className="bg-[#FAF9F6]/60 border border-[#0D1512]/10 rounded-xl p-3 text-[10px] leading-relaxed text-[#0D1512]/75">
-                  ℹ️ Transactions are processed securely in your currency: <strong>{convert(total + shipping)}</strong>.
+                  ℹ️ Transactions are processed securely in your currency: <strong>{convert(Math.max(0, total + shipping - couponDiscount))}</strong>.
                 </div>
               )}
 

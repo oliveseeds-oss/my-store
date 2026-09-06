@@ -9,6 +9,8 @@ export default function Cart() {
   const { cart, removeFromCart, updateQty, total, count } = useCart();
   const { convert } = useCurrency();
   const navigate = useNavigate();
+  const hasPhysicalItems = cart.some(i => i.type === "physical" || (!i.type && !i.is_digital));
+  const shippingCharge = hasPhysicalItems ? (total >= 999 ? 0 : 60) : 0;
 
   return (
     <div style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }} className="min-h-screen">
@@ -122,15 +124,22 @@ export default function Cart() {
                     <span>Subtotal</span>
                     <span>{convert(total)}</span>
                   </div>
-                  <div className="flex justify-between opacity-80 font-medium">
-                    <span>Shipping</span>
-                    <span>{total >= 999 ? "Free" : convert(60)}</span>
-                  </div>
+                  {hasPhysicalItems ? (
+                    <div className="flex justify-between opacity-80 font-medium">
+                      <span>Shipping</span>
+                      <span>{shippingCharge === 0 ? "Free" : convert(shippingCharge)}</span>
+                    </div>
+                  ) : (
+                    <div className="flex justify-between text-emerald-700 font-medium">
+                      <span>Delivery</span>
+                      <span className="font-bold text-xs uppercase tracking-wide">Instant Download (Free)</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex justify-between font-black text-[#0D1512] text-lg">
                   <span>Total</span>
-                  <span>{convert(total + (total >= 999 ? 0 : 60))}</span>
+                  <span>{convert(total + shippingCharge)}</span>
                 </div>
 
                 <button

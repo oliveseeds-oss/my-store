@@ -178,109 +178,121 @@ export default function SmartAddressForm({
         )}
       </div>
 
-      {/* 3. Address Line 1 */}
-      <div>
-        <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">
-          Address Line 1 *
-        </label>
-        <input
-          type="text"
-          required
-          disabled={readOnly}
-          value={form.delivery_street || form.street_address || ""}
-          onChange={(e) => onChange({ ...form, delivery_street: e.target.value, street_address: e.target.value })}
-          className="w-full bg-[#FAF9F6]/20 border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] disabled:bg-stone-100 disabled:cursor-not-allowed"
-          placeholder="Flat / House No., Street Name, Area"
-        />
-      </div>
-
-      {/* 4. Address Line 2 (Optional) */}
-      <div>
-        <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">
-          Address Line 2 (Optional)
-        </label>
-        <input
-          type="text"
-          disabled={readOnly}
-          value={form.delivery_apt || form.apt_suite || ""}
-          onChange={(e) => onChange({ ...form, delivery_apt: e.target.value, apt_suite: e.target.value })}
-          className="w-full bg-[#FAF9F6]/20 border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] disabled:bg-stone-100 disabled:cursor-not-allowed"
-          placeholder="Apt, Suite, Unit, Building Floor"
-        />
-      </div>
-
-      {/* Grid for City, State, ZIP, Country */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* 5. City / Town / Suburb */}
-        <div>
-          <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">
-            City / Town / Suburb *
-          </label>
-          <input
-            type="text"
-            required
-            disabled={readOnly}
-            value={form.delivery_city || form.city || ""}
-            onChange={(e) => onChange({ ...form, delivery_city: e.target.value, city: e.target.value })}
-            className="w-full bg-[#FAF9F6]/20 border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] disabled:bg-stone-100 disabled:cursor-not-allowed"
-            placeholder="City Name"
-          />
+      {!isPhysical && (
+        <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-2xl p-3.5 text-xs flex items-center gap-3">
+          <span className="text-xl">⚡</span>
+          <div>
+            <p className="font-bold text-emerald-900">Digital Product Order</p>
+            <p className="text-[11px] text-emerald-700 mt-0.5 leading-relaxed">
+              No physical delivery is needed. All download files, source assets, and license keys will be instantly delivered to your registered email upon payment.
+            </p>
+          </div>
         </div>
+      )}
 
-        {/* 6. State / Province / Region */}
-        <div>
-          <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">
-            {stateLabel} *
-          </label>
-          {statesList.length > 0 ? (
-            <select
-              disabled={readOnly}
-              value={form.delivery_state || form.state || ""}
-              onChange={(e) => onChange({ ...form, delivery_state: e.target.value, state: e.target.value })}
-              className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] disabled:bg-stone-100 disabled:cursor-not-allowed"
-            >
-              {statesList.map((s) => (
-                <option key={s.isoCode || s.name} value={s.name}>
-                  {s.name}
-                </option>
-              ))}
-            </select>
-          ) : (
+      {/* 3. Physical Address Fields (Hidden for digital products) */}
+      {isPhysical && (
+        <>
+          <div>
+            <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">
+              Address Line 1 *
+            </label>
             <input
               type="text"
               required
               disabled={readOnly}
-              value={form.delivery_state || form.state || ""}
-              onChange={(e) => onChange({ ...form, delivery_state: e.target.value, state: e.target.value })}
+              value={form.delivery_street || form.street_address || ""}
+              onChange={(e) => onChange({ ...form, delivery_street: e.target.value, street_address: e.target.value })}
               className="w-full bg-[#FAF9F6]/20 border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] disabled:bg-stone-100 disabled:cursor-not-allowed"
-              placeholder="State / Region Name"
+              placeholder="Flat / House No., Street Name, Area"
             />
-          )}
-        </div>
+          </div>
 
-        {/* 7. Postal / ZIP Code (Hidden if country does not use ZIP) */}
-        {showZip && (
           <div>
             <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">
-              {zipLabel} *
+              Address Line 2 (Optional)
             </label>
             <input
               type="text"
-              required={showZip}
               disabled={readOnly}
-              value={form.delivery_pincode || form.pincode || ""}
-              onChange={(e) => onChange({ ...form, delivery_pincode: e.target.value, pincode: e.target.value })}
+              value={form.delivery_apt || form.apt_suite || ""}
+              onChange={(e) => onChange({ ...form, delivery_apt: e.target.value, apt_suite: e.target.value })}
               className="w-full bg-[#FAF9F6]/20 border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] disabled:bg-stone-100 disabled:cursor-not-allowed"
-              placeholder="110001"
+              placeholder="Apt, Suite, Unit, Building Floor"
             />
           </div>
-        )}
 
-        {/* 8. Country Dropdown */}
-        <div className={showZip ? "" : "md:col-span-2"}>
-          <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">
-            Country *
-          </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">
+                City / Town / Suburb *
+              </label>
+              <input
+                type="text"
+                required
+                disabled={readOnly}
+                value={form.delivery_city || form.city || ""}
+                onChange={(e) => onChange({ ...form, delivery_city: e.target.value, city: e.target.value })}
+                className="w-full bg-[#FAF9F6]/20 border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] disabled:bg-stone-100 disabled:cursor-not-allowed"
+                placeholder="City Name"
+              />
+            </div>
+
+            <div>
+              <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">
+                {stateLabel} *
+              </label>
+              {statesList.length > 0 ? (
+                <select
+                  disabled={readOnly}
+                  value={form.delivery_state || form.state || ""}
+                  onChange={(e) => onChange({ ...form, delivery_state: e.target.value, state: e.target.value })}
+                  className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] disabled:bg-stone-100 disabled:cursor-not-allowed"
+                >
+                  {statesList.map((s) => (
+                    <option key={s.isoCode || s.name} value={s.name}>
+                      {s.name}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  required
+                  disabled={readOnly}
+                  value={form.delivery_state || form.state || ""}
+                  onChange={(e) => onChange({ ...form, delivery_state: e.target.value, state: e.target.value })}
+                  className="w-full bg-[#FAF9F6]/20 border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] disabled:bg-stone-100 disabled:cursor-not-allowed"
+                  placeholder="State / Region Name"
+                />
+              )}
+            </div>
+
+            {showZip && (
+              <div>
+                <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">
+                  {zipLabel} *
+                </label>
+                <input
+                  type="text"
+                  required={showZip}
+                  disabled={readOnly}
+                  value={form.delivery_pincode || form.pincode || ""}
+                  onChange={(e) => onChange({ ...form, delivery_pincode: e.target.value, pincode: e.target.value })}
+                  className="w-full bg-[#FAF9F6]/20 border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] disabled:bg-stone-100 disabled:cursor-not-allowed"
+                  placeholder="110001"
+                />
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* Country Dropdown */}
+      <div>
+        <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">
+          Country {isPhysical ? "*" : "(Billing / Region)"}
+        </label>
           <select
             disabled={readOnly}
             value={currentCountryObj?.isoCode}
