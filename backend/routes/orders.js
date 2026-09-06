@@ -107,7 +107,8 @@ router.post("/", async (req, res) => {
     const digitalItems = [];
 
     for (const item of items) {
-      if (item.type === "digital" || (item.digital_product_id && !item.product_id)) {
+      const isDigital = item.type === "digital" || item.product_type === "digital" || (item.digital_product_id && !item.product_id) || String(item.product_uid || item.id || "").startsWith("DPD-");
+      if (isDigital) {
         // Resolve digital product_uid from id if missing
         let product_uid = item.product_uid;
         if (!product_uid && (item.digital_product_id || item.product_id)) {

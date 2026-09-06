@@ -186,8 +186,10 @@ export default function DigitalProductDetail() {
     ...(Array.isArray(product.images) ? product.images : []),
   ].filter(Boolean);
 
-  const finalPrice = product.discount_price || product.price;
-  const discount = product.discount_price ? Math.round((1 - product.discount_price / product.price) * 100) : 0;
+  const finalPrice = (product.discount_price !== null && product.discount_price !== undefined && product.discount_price !== "")
+    ? Number(product.discount_price)
+    : Number(product.price || 0);
+  const discount = (product.discount_price && product.price) ? Math.round((1 - product.discount_price / product.price) * 100) : 0;
   const tags = Array.isArray(product.tags) ? product.tags : [];
   const reviews = Array.isArray(product.reviews) ? product.reviews : [];
   const related = Array.isArray(product.related) ? product.related : [];
@@ -348,7 +350,7 @@ export default function DigitalProductDetail() {
 
              <div className="flex flex-col gap-3 pt-4">
               <button
-                onClick={() => { addToCart({ ...product, type: "digital" }); setAdded(true); setTimeout(() => setAdded(false), 2000); }}
+                onClick={() => { addToCart({ ...product, price: finalPrice, type: "digital" }); setAdded(true); setTimeout(() => setAdded(false), 2000); }}
                 className="w-full py-4 text-xs font-bold uppercase tracking-widest transition-all rounded-full cursor-pointer"
                 style={{
                   background: added ? "#0ea5e9" : "transparent",
@@ -363,43 +365,45 @@ export default function DigitalProductDetail() {
                 className="w-full py-4 text-xs font-bold uppercase tracking-widest transition-all rounded-full cursor-pointer hover:brightness-110 shadow-lg shadow-sky-500/10"
                 style={{ background: "linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)", color: "white", border: "none", fontFamily: "'Space Mono', monospace" }}
                 onClick={() => {
-                  addToCart({ ...product, type: "digital" });
-                  navigate("/checkout?method=paypal");
+                  addToCart({ ...product, price: finalPrice, type: "digital" });
+                  navigate(finalPrice === 0 ? "/checkout" : "/checkout?method=paypal");
                 }}
               >
-                BUY NOW — INSTANT DOWNLOAD
+                {finalPrice === 0 ? "⚡ GET FREE INSTANT DOWNLOAD" : "BUY NOW — INSTANT DOWNLOAD"}
               </button>
             </div>
 
-            {/* Payment Integration UI */}
-            <div className="p-5 flex flex-col gap-3.5 rounded-2xl mt-4" style={{ background: "#0f172a", border: "1px solid rgba(56,189,248,0.15)" }}>
-              <span className="text-[10px] font-extrabold uppercase tracking-widest block" style={{ color: "#38bdf8", fontFamily: "'Space Mono', monospace", letterSpacing: "0.1em" }}>{"// SECURE CHECKOUT"}</span>
-              <p className="text-[11.5px] leading-normal" style={{ color: "#64748b" }}>Choose gateway to authenticate payment instantly:</p>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    addToCart({ ...product, type: "digital" });
-                    navigate("/checkout?method=razorpay");
-                  }}
-                  className="flex items-center justify-center gap-2 py-3 px-3 rounded-xl transition cursor-pointer text-xs font-bold text-[#38bdf8] hover:bg-sky-500/10 shadow-sm"
-                  style={{ background: "#020617", border: "1px solid rgba(56,189,248,0.2)" }}
-                >
-                  💳 Razorpay
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    addToCart({ ...product, type: "digital" });
-                    navigate("/checkout?method=paypal");
-                  }}
-                  className="flex items-center justify-center gap-2 py-3 px-3 rounded-xl transition cursor-pointer text-xs font-bold text-[#38bdf8] hover:bg-blue-500/10 shadow-sm"
-                  style={{ background: "#020617", border: "1px solid rgba(56,189,248,0.2)" }}
-                >
-                  🅿️ PayPal
-                </button>
+            {/* Payment Integration UI (Hidden if 0 rupees / free) */}
+            {finalPrice > 0 && (
+              <div className="p-5 flex flex-col gap-3.5 rounded-2xl mt-4" style={{ background: "#0f172a", border: "1px solid rgba(56,189,248,0.15)" }}>
+                <span className="text-[10px] font-extrabold uppercase tracking-widest block" style={{ color: "#38bdf8", fontFamily: "'Space Mono', monospace", letterSpacing: "0.1em" }}>{"// SECURE CHECKOUT"}</span>
+                <p className="text-[11.5px] leading-normal" style={{ color: "#64748b" }}>Choose gateway to authenticate payment instantly:</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      addToCart({ ...product, price: finalPrice, type: "digital" });
+                      navigate("/checkout?method=razorpay");
+                    }}
+                    className="flex items-center justify-center gap-2 py-3 px-3 rounded-xl transition cursor-pointer text-xs font-bold text-[#38bdf8] hover:bg-sky-500/10 shadow-sm"
+                    style={{ background: "#020617", border: "1px solid rgba(56,189,248,0.2)" }}
+                  >
+                    💳 Razorpay
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      addToCart({ ...product, price: finalPrice, type: "digital" });
+                      navigate("/checkout?method=paypal");
+                    }}
+                    className="flex items-center justify-center gap-2 py-3 px-3 rounded-xl transition cursor-pointer text-xs font-bold text-[#38bdf8] hover:bg-blue-500/10 shadow-sm"
+                    style={{ background: "#020617", border: "1px solid rgba(56,189,248,0.2)" }}
+                  >
+                    🅿️ PayPal
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Perks */}
             <div className="flex flex-col gap-2.5 text-xs"

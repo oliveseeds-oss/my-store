@@ -54,21 +54,24 @@ router.post("/orders/create", async (req, res) => {
     let subtotalInBase = 0;
 
     for (const item of items) {
-      if (item.type === "digital" || (item.digital_product_id && !item.product_id)) {
+      const isDigital = item.type === "digital" || item.product_type === "digital" || (item.digital_product_id && !item.product_id) || String(item.product_uid || item.id || "").startsWith("DPD-");
+      if (isDigital) {
         const [products] = await db.query(
-          "SELECT id, product_uid, name, price, is_active FROM digital_products WHERE id = ? OR product_uid = ?",
+          "SELECT id, product_uid, name, price, discount_price, is_active FROM digital_products WHERE id = ? OR product_uid = ?",
           [item.digital_product_id || item.product_id, item.product_uid || null]
         );
         if (!products.length || !products[0].is_active) {
-          return res.status(400).json({ error: `Digital asset ${item.product_name} is unavailable.` });
+          return res.status(400).json({ error: `Digital asset ${item.product_name || "item"} is unavailable.` });
         }
         const product = products[0];
-        const price = parseFloat(product.price);
-        subtotalInBase += price * item.qty;
+        const effectivePrice = (product.discount_price !== null && product.discount_price !== undefined && product.discount_price !== "")
+          ? parseFloat(product.discount_price)
+          : parseFloat(product.price);
+        subtotalInBase += effectivePrice * (item.qty || 1);
         digitalItems.push({
           ...item,
           product_uid: product.product_uid,
-          price // Overwrite with server authoritative price
+          price: effectivePrice // Overwrite with server authoritative price
         });
       } else {
         const [products] = await db.query(
@@ -94,10 +97,20 @@ router.post("/orders/create", async (req, res) => {
     }
 
     // Calculations in Base (INR)
+    const hasPhysical = physicalItems.length > 0;
     const taxInBase = Math.round(subtotalInBase * 0.18);
     const configuredShipping = parseFloat(storeSettings.shipping_fee) || 60;
     const freeShippingThreshold = parseFloat(storeSettings.free_shipping_above) || 999;
-    const finalShippingInBase = subtotalInBase >= freeShippingThreshold ? 0 : configuredShipping;
+    
+    // Digital products NEVER have shipping charges
+    let finalShippingInBase = 0;
+    if (hasPhysical) {
+      if (shipping_fee !== undefined && !isNaN(parseFloat(shipping_fee))) {
+        finalShippingInBase = Math.max(0, parseFloat(shipping_fee));
+      } else {
+        finalShippingInBase = subtotalInBase >= freeShippingThreshold ? 0 : configuredShipping;
+      }
+    }
 
     // Apply conversion to target currency
     const totalInBase = subtotalInBase + taxInBase + finalShippingInBase;
@@ -111,6 +124,35 @@ router.post("/orders/create", async (req, res) => {
     if (member_id) {
       const [members] = await db.query("SELECT member_uid FROM members WHERE id = ? OR member_uid = ?", [member_id, member_id]);
       if (members.length) member_uid = members[0].member_uid;
+    }
+
+    // Handle 100% Free Digital Orders directly without payment gateway
+    if (finalTotalConverted <= 0 && digitalItems.length > 0 && physicalItems.length === 0) {
+      const { order_uid, invoice_uid } = await generateOrderUid("digital");
+      await db.query(
+        `INSERT INTO digital_orders
+         (order_uid, invoice_uid, member_uid, guest_name, guest_email,
+          subtotal, tax_amount, total, currency_code, currency_rate,
+          payment_mode, transaction_id, payment_status, status)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+        [
+          order_uid, invoice_uid, member_uid, guest_name || "Guest", guest_email || "",
+          0, 0, 0, targetCurrency, conversionRate,
+          "Free", `FREE-${Date.now()}`, "Paid", "Completed"
+        ]
+      );
+      for (const item of digitalItems) {
+        await db.query(
+          `INSERT INTO digital_order_items (order_uid, product_uid, product_name, price, qty, tax_rate)
+           VALUES (?,?,?,?,?,?)`,
+          [order_uid, item.product_uid, item.product_name, 0, item.qty || 1, 0]
+        );
+      }
+      return res.json({
+        success: true,
+        is_free: true,
+        order_id: order_uid
+      });
     }
 
     // Process order generation

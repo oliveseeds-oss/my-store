@@ -169,9 +169,14 @@ export default function Checkout() {
   const { convert, selected, currencies } = useCurrency();
   const navigate = useNavigate();
   const location = useLocation();
-  
-  // Check if cart contains physical items
-  const hasPhysicalItems = cart.some(i => i.type === "physical" || (!i.type && !i.is_digital));
+  // Comprehensive digital product detection
+  const isDigitalItem = (i) => {
+    if (i.type === "digital" || i.is_digital || i.product_type === "digital") return true;
+    if (i.file_url || i.file_format || i.file_size) return true;
+    if (String(i.id || "").startsWith("DPD-") || String(i.product_uid || "").startsWith("DPD-")) return true;
+    return false;
+  };
+  const hasPhysicalItems = cart.some(i => !isDigitalItem(i));
 
   // Dynamic Shipping Charges Management (Step 5)
   const [shippingMethods, setShippingMethods] = useState([]);
@@ -185,6 +190,18 @@ export default function Checkout() {
       ? (selectedMethod.is_free ? 0 : (selectedMethod.shipping_cost_inr !== undefined ? selectedMethod.shipping_cost_inr : selectedMethod.shipping_cost))
       : (total >= 999 ? 0 : 60))
     : 0;
+
+  const [siteSettings, setSiteSettings] = useState(null);
+
+  // Coupon state
+  const [couponCode, setCouponCode] = useState("");
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [couponMsg, setCouponMsg] = useState("");
+  const [couponErr, setCouponErr] = useState("");
+  const [couponApplied, setCouponApplied] = useState(false);
+
+  const payableTotal = Math.max(0, total + shipping - couponDiscount);
+  const isFreeOrder = payableTotal === 0;
 
   const [form, setForm] = useState({
     name: member?.name || "",
@@ -215,15 +232,6 @@ export default function Checkout() {
       setPaymentMethod(m);
     }
   }, [location.search]);
-
-  const [siteSettings, setSiteSettings] = useState(null);
-
-  // Coupon state
-  const [couponCode, setCouponCode] = useState("");
-  const [couponDiscount, setCouponDiscount] = useState(0);
-  const [couponMsg, setCouponMsg] = useState("");
-  const [couponErr, setCouponErr] = useState("");
-  const [couponApplied, setCouponApplied] = useState(false);
 
   const applyCoupon = async () => {
     if (!couponCode.trim()) return;
@@ -414,17 +422,20 @@ export default function Checkout() {
 
     setPlacing(true);
     try {
-      const items = cart.map((i) => ({
-        product_id: i.type === "physical" ? i.id : null,
-        digital_product_id: i.type === "digital" ? i.id : null,
-        product_uid: i.product_uid,
-        product_name: i.name,
-        price: i.price,
-        qty: i.qty,
-        type: i.type,
-        selected_size: i.selectedSize || null,
-        customizations: i.customizations || []
-      }));
+      const items = cart.map((i) => {
+        const isDigital = isDigitalItem(i);
+        return {
+          product_id: isDigital ? null : i.id,
+          digital_product_id: isDigital ? i.id : null,
+          product_uid: i.product_uid,
+          product_name: i.name,
+          price: Number(i.price) || 0,
+          qty: Number(i.qty) || 1,
+          type: isDigital ? "digital" : (i.type || "physical"),
+          selected_size: i.selectedSize || null,
+          customizations: i.customizations || []
+        };
+      });
       const res = await API.post("/orders", {
         member_id: member?.id || null,
         guest_name: form.name,
@@ -483,17 +494,20 @@ export default function Checkout() {
         guest_name: form.name,
         guest_email: form.email,
         guest_phone: form.phone,
-        items: cart.map(i => ({
-          product_id: i.type === "physical" ? i.id : null,
-          digital_product_id: i.type === "digital" ? i.id : null,
-          product_uid: i.product_uid,
-          product_name: i.name,
-          price: i.price,
-          qty: i.qty,
-          type: i.type,
-          selected_size: i.selectedSize || null,
-          customizations: i.customizations || []
-        })),
+        items: cart.map(i => {
+          const isDigital = isDigitalItem(i);
+          return {
+            product_id: isDigital ? null : i.id,
+            digital_product_id: isDigital ? i.id : null,
+            product_uid: i.product_uid,
+            product_name: i.name,
+            price: Number(i.price) || 0,
+            qty: Number(i.qty) || 1,
+            type: isDigital ? "digital" : (i.type || "physical"),
+            selected_size: i.selectedSize || null,
+            customizations: i.customizations || []
+          };
+        }),
         address_line: formattedAddressLine,
         delivery_street: form.delivery_street,
         delivery_apt: form.delivery_apt,
@@ -510,6 +524,11 @@ export default function Checkout() {
       };
 
       const createRes = await API.post("/payments/orders/create", orderPayload);
+      if (createRes.data.is_free) {
+        clearCart();
+        navigate(`/order-success?id=${createRes.data.order_id}`);
+        return;
+      }
       const { razorpay_order_id, amount, currency, key_id, order_id } = createRes.data;
 
       const options = {
@@ -812,44 +831,64 @@ export default function Checkout() {
               )}
 
               {/* Payment Method Option Selector */}
-              <div className="mt-4 mb-4">
-                <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-2 block">Choose Payment Gateway</label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {isFreeOrder ? (
+                <div className="mt-4 mb-2 flex flex-col gap-3">
+                  <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-3">
+                    <span className="text-2xl">🎉</span>
+                    <div>
+                      <p className="text-xs font-bold text-emerald-900">100% Free Order</p>
+                      <p className="text-[11px] text-emerald-700">No payment card required. Immediate file download upon completion!</p>
+                    </div>
+                  </div>
                   <button
                     type="button"
-                    onClick={() => setPaymentMethod("razorpay")}
-                    className={`p-3.5 rounded-xl border text-left transition-all ${paymentMethod === "razorpay" ? "border-amber-500 bg-amber-50/50 shadow-sm" : "border-stone-200 bg-white hover:bg-stone-50"}`}
+                    onClick={() => placeOrder({ mode: "Free", transactionId: `FREE-${Date.now()}` })}
+                    disabled={placing || cart.length === 0}
+                    className="w-full py-4 rounded-xl font-black text-xs uppercase tracking-wider shadow-lg bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <div className="font-bold text-xs text-stone-800">💳 Razorpay</div>
-                    <div className="text-[9px] text-stone-500 mt-0.5">Cards, UPI, Netbanking</div>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod("paypal")}
-                    className={`p-3.5 rounded-xl border text-left transition-all ${paymentMethod === "paypal" ? "border-amber-500 bg-amber-50/50 shadow-sm" : "border-stone-200 bg-white hover:bg-stone-50"}`}
-                  >
-                    <div className="font-bold text-xs text-stone-800">🅿️ PayPal</div>
-                    <div className="text-[9px] text-stone-500 mt-0.5">International Wallet & Cards</div>
+                    {placing ? "Processing Order..." : "⚡ Complete Free Order & Download"}
                   </button>
                 </div>
-              </div>
+              ) : (
+                <>
+                  <div className="mt-4 mb-4">
+                    <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-2 block">Choose Payment Gateway</label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod("razorpay")}
+                        className={`p-3.5 rounded-xl border text-left transition-all ${paymentMethod === "razorpay" ? "border-amber-500 bg-amber-50/50 shadow-sm" : "border-stone-200 bg-white hover:bg-stone-50"}`}
+                      >
+                        <div className="font-bold text-xs text-stone-800">💳 Razorpay</div>
+                        <div className="text-[9px] text-stone-500 mt-0.5">Cards, UPI, Netbanking</div>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod("paypal")}
+                        className={`p-3.5 rounded-xl border text-left transition-all ${paymentMethod === "paypal" ? "border-amber-500 bg-amber-50/50 shadow-sm" : "border-stone-200 bg-white hover:bg-stone-50"}`}
+                      >
+                        <div className="font-bold text-xs text-stone-800">🅿️ PayPal</div>
+                        <div className="text-[9px] text-stone-500 mt-0.5">International Wallet & Cards</div>
+                      </button>
+                    </div>
+                  </div>
 
-              <div className="mt-2">
-                {paymentMethod === "razorpay" ? (
-                  <>
-                    <button
-                      onClick={handleRazorpayPayment}
-                      disabled={placing || cart.length === 0}
-                      style={{ background: "#d97706", color: "#ffffff" }}
-                      className="w-full py-4 rounded-xl font-black text-xs uppercase tracking-wider shadow-lg hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
-                    >
-                      {placing ? "Processing..." : `Pay ${convert(Math.max(0, total + shipping - couponDiscount))} via Razorpay`}
-                    </button>
-                    <p className="text-[9px] text-stone-400 text-center font-bold uppercase tracking-widest mt-1.5">
-                      Secure Debit/Credit Card, UPI, Netbanking
-                    </p>
-                  </>
-                ) : (
+                  <div className="mt-2">
+                    {paymentMethod === "razorpay" ? (
+                      <>
+                        <button
+                          onClick={handleRazorpayPayment}
+                          disabled={placing || cart.length === 0}
+                          style={{ background: "#d97706", color: "#ffffff" }}
+                          className="w-full py-4 rounded-xl font-black text-xs uppercase tracking-wider shadow-lg hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
+                        >
+                          {placing ? "Processing..." : `Pay ${convert(payableTotal)} via Razorpay`}
+                        </button>
+                        <p className="text-[9px] text-stone-400 text-center font-bold uppercase tracking-widest mt-1.5">
+                          Secure Debit/Credit Card, UPI, Netbanking
+                        </p>
+                      </>
+                    ) : (
                   <div className="mt-1 w-full">
                     {!siteSettings ? (
                       <div className="text-center py-4 text-xs text-stone-400 font-bold animate-pulse">
@@ -882,7 +921,9 @@ export default function Checkout() {
                   </div>
                 )}
               </div>
-            </div>
+            </>
+          )}
+        </div>
 
             {/* High-attention Square Brand Ad */}
             <div className="w-full flex justify-center">

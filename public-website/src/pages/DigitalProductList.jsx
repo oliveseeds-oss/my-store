@@ -379,15 +379,17 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
   const [added, setAdded] = useState(false);
 
   const img = p.thumbnail_url || (p.images && p.images[0]);
-  const finalPrice = p.discount_price || p.price;
-  const discount = p.discount_price
+  const finalPrice = (p.discount_price !== null && p.discount_price !== undefined && p.discount_price !== "")
+    ? Number(p.discount_price)
+    : Number(p.price || 0);
+  const discount = (p.discount_price && p.price)
     ? Math.round((1 - p.discount_price / p.price) * 100)
     : 0;
   const tags = Array.isArray(p.tags) ? p.tags : [];
 
   const handleAdd = (e) => {
     e.preventDefault();
-    addToCart({ ...p, type: "digital" });
+    addToCart({ ...p, price: finalPrice, type: "digital" });
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
   };
