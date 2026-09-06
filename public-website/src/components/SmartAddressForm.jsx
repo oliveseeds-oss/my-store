@@ -70,26 +70,11 @@ export default function SmartAddressForm({
 
   const { stateLabel, zipLabel, showZip } = getFieldLabels(currentCountryObj?.isoCode);
 
-  // Phone dial code extraction
-  const dialCode = useMemo(() => {
-    if (!currentCountryObj) return "+91";
-    try {
-      return "+" + getCountryCallingCode(currentCountryObj.isoCode);
-    } catch {
-      return "+1";
-    }
-  }, [currentCountryObj]);
-
   // Handle Country selection change
   const handleCountryChange = (e) => {
     const selectedIso = e.target.value;
     const countryObj = allCountries.find(c => c.isoCode === selectedIso);
     if (!countryObj) return;
-
-    let newDialCode = "+1";
-    try {
-      newDialCode = "+" + getCountryCallingCode(countryObj.isoCode);
-    } catch {}
 
     const newStates = State.getStatesOfCountry(countryObj.isoCode);
     const defaultState = newStates.length > 0 ? newStates[0].name : "";
@@ -293,29 +278,28 @@ export default function SmartAddressForm({
         <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">
           Country {isPhysical ? "*" : "(Billing / Region)"}
         </label>
-          <select
-            disabled={readOnly}
-            value={currentCountryObj?.isoCode}
-            onChange={handleCountryChange}
-            className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] disabled:bg-stone-100 disabled:cursor-not-allowed"
-          >
-            {allCountries.map((c) => {
-              const upperIso = c.isoCode.toUpperCase();
-              const isEnabled = !isPhysical || enabledCountryCodes.includes(upperIso);
+        <select
+          disabled={readOnly}
+          value={currentCountryObj?.isoCode}
+          onChange={handleCountryChange}
+          className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] disabled:bg-stone-100 disabled:cursor-not-allowed"
+        >
+          {allCountries.map((c) => {
+            const upperIso = c.isoCode.toUpperCase();
+            const isEnabled = !isPhysical || enabledCountryCodes.includes(upperIso);
 
-              return (
-                <option
-                  key={c.isoCode}
-                  value={c.isoCode}
-                  disabled={!isEnabled}
-                  className={!isEnabled ? "text-gray-400 bg-gray-100" : ""}
-                >
-                  {c.flag || getFlagEmoji(c.isoCode)} {c.name} {!isEnabled ? " (Shipping Disabled)" : ""}
-                </option>
-              );
-            })}
-          </select>
-        </div>
+            return (
+              <option
+                key={c.isoCode}
+                value={c.isoCode}
+                disabled={!isEnabled}
+                className={!isEnabled ? "text-gray-400 bg-gray-100" : ""}
+              >
+                {c.flag || getFlagEmoji(c.isoCode)} {c.name} {!isEnabled ? " (Shipping Disabled)" : ""}
+              </option>
+            );
+          })}
+        </select>
       </div>
     </div>
   );
