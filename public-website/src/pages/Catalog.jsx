@@ -97,9 +97,9 @@ export default function Catalog() {
   return (
     <div style={{ background: "#F6F3EE", minHeight: "100vh", fontFamily: "'Inter', sans-serif" }}>
       <SEO 
-        title="Full Engraving Workshop Catalog | Olive Seeds"
-        description="Explore our full collection of premium custom-engraved categories including wooden name boards, backlit acrylic signs, custom plaques, and corporate keepsakes."
-        keywords="wood engraving catalog, acrylic signs, custom corporate gifts, personal engraving collection"
+        title="Studio Collection Catalog | Olive Seeds Studio"
+        description="Explore our curated collection of bespoke design objects, hand-finished timber pieces, architectural acrylics, and distinguished corporate gifts."
+        keywords="bespoke catalog, architectural acrylic, custom corporate gifts, executive collections"
       />
       <Navbar />
 
@@ -107,12 +107,12 @@ export default function Catalog() {
       <section className="relative overflow-hidden bg-gradient-to-r from-stone-900 via-stone-850 to-stone-950 text-stone-100 py-20 px-6">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(198,167,125,0.15),transparent_50%)] pointer-events-none" />
         <div className="max-w-5xl mx-auto relative z-10 text-center">
-          <span className="text-[10px] text-amber-400 font-extrabold uppercase tracking-widest block mb-3">Precision Laser Craftsmanship</span>
+          <span className="text-[10px] text-amber-400 font-extrabold uppercase tracking-widest block mb-3">Bespoke Studio Craftsmanship</span>
           <h1 className="text-4xl md:text-5xl font-light italic font-serif text-white tracking-tight mb-4">
-            Full Workshop Catalog
+            Studio Catalog
           </h1>
           <p className="text-stone-400 text-sm max-w-xl mx-auto leading-relaxed mb-8">
-            Browse our creative collection by category. Click any template to inspect custom materials, styles, and options, or place personalized orders.
+            Browse our curated collection by category. Explore bespoke materials, hand-finished objects, and tailored options for your organisation.
           </p>
 
           {/* Search Engine row */}

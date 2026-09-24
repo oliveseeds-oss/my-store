@@ -45,11 +45,11 @@ const zoneGroups = [
 ];
 
 const importantNotes = [
-  { icon: "📦", title: "Packaging", desc: "All items are packed in premium protective packaging to ensure safe delivery. Fragile engraved items use bubble wrap and custom-fit foam inserts." },
+  { icon: "📦", title: "Packaging", desc: "All items are packed in premium protective packaging to ensure safe delivery. Fragile hand-finished pieces use custom-fit protective foam inserts." },
   { icon: "🚚", title: "Carriers", desc: "We partner with India Post, BlueDart, FedEx International, and DHL for domestic and international shipments. Carrier selection is based on your location and order size." },
   { icon: "📍", title: "Tracking", desc: "Once shipped, you will receive a tracking number via email and SMS. Use it on the carrier's website to track your order in real time." },
   { icon: "🛃", title: "Customs & Duties", desc: "For international orders, customs duties, import taxes, or handling fees may be levied by your country's customs authority. These charges are the buyer's responsibility and are not included in our shipping fee." },
-  { icon: "⏳", title: "Production time", desc: "Engraved products require 4–7 business days for production before dispatch. Total delivery time = production time + shipping time shown above." },
+  { icon: "⏳", title: "Production time", desc: "Custom physical products require 10–15 business days for production before dispatch. Total delivery time = production time + shipping time shown above." },
   { icon: "📅", title: "Business days", desc: "Business days exclude weekends and public holidays in India. Orders placed on weekends are processed on the next business day." },
 ];
 

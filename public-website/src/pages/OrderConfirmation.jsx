@@ -38,8 +38,8 @@ export default function OrderConfirmation() {
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center text-4xl mx-auto mb-4 animate-bounce">
             🎉
           </div>
-          <h1 className="text-2xl font-black text-gray-800">Order Confirmed!</h1>
-          <p className="text-gray-500 mt-2">Your order has been placed successfully. We'll notify you once it ships.</p>
+          <h1 className="text-2xl font-black text-gray-800">Order Confirmed</h1>
+          <p className="text-gray-500 mt-2">Your order has been placed successfully. We shall notify you once dispatch commences.</p>
         </div>
 
         {/* Order Card */}

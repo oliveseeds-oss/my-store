@@ -10,6 +10,7 @@ import SEO from "../components/SEO";
 import AdBanner from "../components/AdBanner";
 import CuteLoader from "../components/CuteLoader";
 import ReviewSection from "../components/ReviewSection";
+import { getAllProductImages } from "../utils/imageHelper";
 
 function ReviewForm({ productId, onSubmit }) {
   const { member } = useMember();
@@ -26,7 +27,7 @@ function ReviewForm({ productId, onSubmit }) {
 
   if (done) return (
     <div className="p-4 text-xs" style={{ background: "#0c1445", border: "1px solid rgba(56,189,248,0.3)", color: "#38bdf8" }}>
-      ✓ Review submitted successfully. Thank you!
+      ✓ Review submitted successfully. Thank you.
     </div>
   );
 
@@ -181,10 +182,7 @@ export default function DigitalProductDetail() {
 
   if (!product) return <CuteLoader />;
 
-  const allImages = [
-    ...(product.thumbnail_url ? [product.thumbnail_url] : []),
-    ...(Array.isArray(product.images) ? product.images : []),
-  ].filter(Boolean);
+  const allImages = getAllProductImages(product);
 
   const finalPrice = (product.discount_price !== null && product.discount_price !== undefined && product.discount_price !== "")
     ? Number(product.discount_price)
@@ -204,9 +202,9 @@ export default function DigitalProductDetail() {
     <div className="min-h-screen" style={{ background: "#020617" }}>
       <Navbar />
       <SEO 
-        title={`${product.name} - Premium Digital Studio`} 
-        description={product.description?.substring(0, 160) || "Download premium custom React apps, Notion templates, Figma UI kits, and vector masterworks at Olive Seeds."}
-        keywords={`${product.category_name || "digital template"}, Notion templates, Figma kit, React developer tools, Olive Seeds`}
+        title={`${product.name} | Olive Seeds Studio`} 
+        description={product.description?.substring(0, 150) || "Download bespoke digital design suites, presentation templates, and brand identity kits at Olive Seeds Studio."}
+        keywords={`${product.category_name || "digital template"}, brand identity kit, digital design suites, Olive Seeds`}
         ogImage={product.thumbnail_url}
         imageAlt={product.image_alt || product.name}
       />
@@ -350,7 +348,17 @@ export default function DigitalProductDetail() {
 
              <div className="flex flex-col gap-3 pt-4">
               <button
-                onClick={() => { addToCart({ ...product, price: finalPrice, type: "digital" }); setAdded(true); setTimeout(() => setAdded(false), 2000); }}
+                onClick={() => {
+                  addToCart({
+                    ...product,
+                    price: finalPrice,
+                    original_price: Number(product.price),
+                    discount_price: product.discount_price ? Number(product.discount_price) : null,
+                    type: "digital"
+                  });
+                  setAdded(true);
+                  setTimeout(() => setAdded(false), 2000);
+                }}
                 className="w-full py-4 text-xs font-bold uppercase tracking-widest transition-all rounded-full cursor-pointer"
                 style={{
                   background: added ? "#0ea5e9" : "transparent",
@@ -359,17 +367,23 @@ export default function DigitalProductDetail() {
                   fontFamily: "'Space Mono', monospace",
                   boxShadow: "0 4px 14px rgba(14,165,233,0.15)"
                 }}>
-                {added ? "✓ ADDED TO CART" : "ADD TO CART"}
+                {added ? "✓ ADDED TO ORDER" : "ADD TO ORDER"}
               </button>
               <button
                 className="w-full py-4 text-xs font-bold uppercase tracking-widest transition-all rounded-full cursor-pointer hover:brightness-110 shadow-lg shadow-sky-500/10"
                 style={{ background: "linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)", color: "white", border: "none", fontFamily: "'Space Mono', monospace" }}
                 onClick={() => {
-                  addToCart({ ...product, price: finalPrice, type: "digital" });
+                  addToCart({
+                    ...product,
+                    price: finalPrice,
+                    original_price: Number(product.price),
+                    discount_price: product.discount_price ? Number(product.discount_price) : null,
+                    type: "digital"
+                  });
                   navigate(finalPrice === 0 ? "/checkout" : "/checkout?method=paypal");
                 }}
               >
-                {finalPrice === 0 ? "⚡ GET FREE INSTANT DOWNLOAD" : "BUY NOW — INSTANT DOWNLOAD"}
+                {finalPrice === 0 ? "⚡ DOWNLOAD ASSET" : "ACQUIRE ASSET — SECURE CHECKOUT"}
               </button>
             </div>
 
@@ -382,7 +396,13 @@ export default function DigitalProductDetail() {
                   <button
                     type="button"
                     onClick={() => {
-                      addToCart({ ...product, price: finalPrice, type: "digital" });
+                      addToCart({
+                        ...product,
+                        price: finalPrice,
+                        original_price: Number(product.price),
+                        discount_price: product.discount_price ? Number(product.discount_price) : null,
+                        type: "digital"
+                      });
                       navigate("/checkout?method=razorpay");
                     }}
                     className="flex items-center justify-center gap-2 py-3 px-3 rounded-xl transition cursor-pointer text-xs font-bold text-[#38bdf8] hover:bg-sky-500/10 shadow-sm"
@@ -393,7 +413,13 @@ export default function DigitalProductDetail() {
                   <button
                     type="button"
                     onClick={() => {
-                      addToCart({ ...product, price: finalPrice, type: "digital" });
+                      addToCart({
+                        ...product,
+                        price: finalPrice,
+                        original_price: Number(product.price),
+                        discount_price: product.discount_price ? Number(product.discount_price) : null,
+                        type: "digital"
+                      });
                       navigate("/checkout?method=paypal");
                     }}
                     className="flex items-center justify-center gap-2 py-3 px-3 rounded-xl transition cursor-pointer text-xs font-bold text-[#38bdf8] hover:bg-blue-500/10 shadow-sm"

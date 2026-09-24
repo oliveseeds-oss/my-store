@@ -41,6 +41,7 @@ async function initializeDatabase() {
   // 2. Settings table gateway columns
   await runSafe("ALTER TABLE settings ADD COLUMN paypal_client_id VARCHAR(255) DEFAULT NULL");
   await runSafe("ALTER TABLE settings ADD COLUMN paypal_client_secret VARCHAR(255) DEFAULT NULL");
+  await runSafe("ALTER TABLE settings ADD COLUMN paypal_mode VARCHAR(20) DEFAULT 'sandbox'");
   await runSafe("ALTER TABLE settings ADD COLUMN razorpay_key VARCHAR(255) DEFAULT NULL");
   await runSafe("ALTER TABLE settings ADD COLUMN razorpay_secret VARCHAR(255) DEFAULT NULL");
   await runSafe("ALTER TABLE settings ADD COLUMN shiprocket_email VARCHAR(255) DEFAULT NULL");
@@ -48,6 +49,7 @@ async function initializeDatabase() {
   await runSafe("ALTER TABLE settings ADD COLUMN shiprocket_token TEXT DEFAULT NULL");
   await runSafe("ALTER TABLE settings ADD COLUMN shiprocket_token_expires TIMESTAMP NULL DEFAULT NULL");
   await runSafe("INSERT IGNORE INTO settings (id, site_name) VALUES (1, 'My Engraving Store')");
+  await runSafe("ALTER TABLE gallery ADD COLUMN description TEXT DEFAULT NULL");
 
   // 3. SEO Settings Table & Schema
   await runSafe(`

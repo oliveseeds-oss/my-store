@@ -21,7 +21,7 @@ function NewsletterForm() {
 
     try {
       const res = await API.post("/newsletter/subscribe", { email });
-      setMsg(res.data.message || "You are subscribed!");
+      setMsg(res.data.message || "You are subscribed.");
       setEmail("");
     } catch (error) {
       setErr(error.response?.data?.error || "Subscription failed");
@@ -80,7 +80,7 @@ export default function Footer({ settings = {}, dark = false }) {
               Olive Seeds
             </p>
             <p className="text-xs md:text-sm leading-relaxed text-[#0D1512]/85 font-medium">
-              Personalized luxury laser engraved masterpieces and premium downloadable digital assets created by designers crafting in the Olive Seeds studio.
+              We craft bespoke design objects, custom brand expressions, and curated visual experiences for discerning clients who understand that quality is never an accident.
             </p>
 
             {/* Social Icons */}
@@ -111,20 +111,20 @@ export default function Footer({ settings = {}, dark = false }) {
               className="text-xs font-extrabold uppercase tracking-[0.15em] mb-3 md:mb-5 text-[#0D1512]"
               style={{ fontFamily: "'Outfit', sans-serif" }}
             >
-              Shop Catalog
+              Shop Collections
             </p>
             <div className="flex flex-col gap-2 md:gap-3">
               <Link to="/products" className="text-xs md:text-sm text-[#0D1512]/85 font-semibold hover:text-[#0D1512] hover:underline transition-all">
-                Engraved Keepsakes
+                Bespoke Commissions
               </Link>
               <Link to="/digital" className="text-xs md:text-sm text-[#0D1512]/85 font-semibold hover:text-[#0D1512] hover:underline transition-all">
-                Digital Templates
+                Digital Design Suites
               </Link>
               <Link to="/catalog" className="text-xs md:text-sm text-[#0D1512]/85 font-semibold hover:text-[#0D1512] hover:underline transition-all">
-                Workshop Catalog
+                Atelier Catalog
               </Link>
               <Link to="/about" className="text-xs md:text-sm text-[#0D1512]/85 font-semibold hover:text-[#0D1512] hover:underline transition-all">
-                About Studio
+                About the Studio
               </Link>
             </div>
           </div>
@@ -135,23 +135,23 @@ export default function Footer({ settings = {}, dark = false }) {
               className="text-xs font-extrabold uppercase tracking-[0.15em] mb-3 md:mb-5 text-[#0D1512]"
               style={{ fontFamily: "'Outfit', sans-serif" }}
             >
-              Company
+              The Studio
             </p>
             <div className="flex flex-col gap-2 md:gap-3">
               <Link to="/blog" className="text-xs md:text-sm text-[#0D1512]/85 font-semibold hover:text-[#0D1512] hover:underline transition-all">
                 Studio Journal
               </Link>
               <Link to="/faq" className="text-xs md:text-sm text-[#0D1512]/85 font-semibold hover:text-[#0D1512] hover:underline transition-all">
-                Help & FAQ
+                Questions &amp; Enquiries
               </Link>
               <Link to="/contact" className="text-xs md:text-sm text-[#0D1512]/85 font-semibold hover:text-[#0D1512] hover:underline transition-all">
-                Contact Us
+                Contact the Studio
               </Link>
               <Link to="/bulk-order" className="text-xs md:text-sm text-[#0D1512]/85 font-semibold hover:text-[#0D1512] hover:underline transition-all">
-                Bulk & Wholesale
+                B2B &amp; Corporate Orders
               </Link>
               <Link to="/shipping" className="text-xs md:text-sm text-[#0D1512]/85 font-semibold hover:text-[#0D1512] hover:underline transition-all">
-                Delivery Policy
+                Worldwide Delivery
               </Link>
             </div>
           </div>
@@ -162,7 +162,7 @@ export default function Footer({ settings = {}, dark = false }) {
               className="text-xs font-extrabold uppercase tracking-[0.15em] mb-3 md:mb-5 text-[#0D1512]"
               style={{ fontFamily: "'Outfit', sans-serif" }}
             >
-              Legal & Terms
+              Legal &amp; Terms
             </p>
             <div className="flex flex-col gap-2 md:gap-3">
               <Link to="/privacy" className="text-xs md:text-sm text-[#0D1512]/85 font-semibold hover:text-[#0D1512] hover:underline transition-all">
@@ -186,10 +186,10 @@ export default function Footer({ settings = {}, dark = false }) {
               className="text-xs font-extrabold uppercase tracking-[0.15em] mb-1 text-[#0D1512]"
               style={{ fontFamily: "'Outfit', sans-serif" }}
             >
-              Stay Updated
+              Studio Gazette
             </p>
             <p className="text-xs text-[#0D1512]/85 font-medium">
-              Get exclusive offers, new product alerts, and creative design updates.
+              Curated dispatches, seasonal commissions, and atelier perspectives delivered to your inbox.
             </p>
 
             <NewsletterForm />
@@ -202,9 +202,9 @@ export default function Footer({ settings = {}, dark = false }) {
           className="pt-6 md:pt-8 flex flex-col md:flex-row justify-between items-center gap-3 text-[11px] md:text-xs text-[#0D1512]/75 font-semibold"
           style={{ borderTop: "1px solid rgba(27, 57, 49, 0.12)" }}
         >
-          <p>© {new Date().getFullYear()} Olive Seeds Studio. All rights reserved.</p>
-          <p className="flex items-center gap-1">
-            Made with ❤️ by Olive Seeds Studio
+          <p>© {new Date().getFullYear()} Olive Seeds Design Studio. All rights reserved.</p>
+          <p className="tracking-wide text-[#0D1512]/80">
+            Designed with intention. Delivered with care.
           </p>
         </div>
 

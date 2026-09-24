@@ -13,8 +13,8 @@ const timeline = [
 ];
 
 const faqItems = [
-  { q: "Can I cancel my order after placing it?", a: "Physical orders can be cancelled within 2 hours of placement, before production begins. After engraving starts, cancellation is not possible. Digital orders cannot be cancelled once payment is confirmed and the file is available for download." },
-  { q: "What if I made a spelling mistake in my engraving text?", a: "Unfortunately, we cannot offer refunds for engraving errors made by the customer (typos, wrong names, incorrect dates). We strongly urge you to double-check all text before submitting. However, if the error was on our end, we will replace the item free of charge." },
+  { q: "Can I cancel my order after placing it?", a: "Physical orders can be cancelled within 2 hours of placement, before production begins. After custom production starts, cancellation is not possible. Digital orders cannot be cancelled once payment is confirmed and the file is available for download." },
+  { q: "What if I made a spelling mistake in my submitted text?", a: "Unfortunately, we cannot offer refunds for customisation errors made by the customer (typos, wrong names, incorrect dates). We strongly urge you to double-check all text before submitting. However, if the error was on our end, we will replace the item free of charge." },
   { q: "I received a broken item. What do I do?", a: "Take clear photographs of the damage and packaging within 24 hours of delivery and email them to contact@oliveseedsdesignstudio.com with your Order ID. We will arrange a free replacement immediately." },
   { q: "Do digital products qualify for refunds?", a: "Digital products are non-refundable once the download link has been accessed. If you have not yet downloaded the file and face a technical issue, contact us within 24 hours and we will assist." },
   { q: "How long does a refund take to appear?", a: "Once approved, refunds are processed within 2–3 business days. Depending on your bank or payment provider, the amount may take an additional 5–7 business days to reflect in your account." },
@@ -94,7 +94,7 @@ export default function RefundPolicy() {
         {/* Physical products policy */}
         <section style={{ marginBottom: "48px" }}>
           <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "26px", color: "#0D1512", fontWeight: 900, marginBottom: "20px" }}>
-            Physical Engraved Products
+            Physical Bespoke Products
           </h2>
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             {[
@@ -104,7 +104,7 @@ export default function RefundPolicy() {
                 items: [
                   "Item arrived damaged or broken",
                   "Wrong product delivered",
-                  "Engraving error made by our team (incorrect text, wrong design)",
+                  "Customisation error made by our team (incorrect text, wrong design)",
                   "Significant quality defect in materials or finish",
                 ],
               },

@@ -84,7 +84,7 @@ export default function OrderSuccess() {
         <div className="bg-emerald-50 border border-emerald-200 rounded-3xl p-8 text-center mb-8 no-print shadow-sm">
           <div className="text-5xl mb-3">🎉</div>
           <h1 className="text-2xl font-black text-emerald-900" style={{ fontFamily: "'Outfit', sans-serif" }}>
-            Order Placed Successfully!
+            Order Placed Successfully
           </h1>
           <p className="text-sm text-emerald-800 font-medium mt-1">
             Your unique invoice <strong>{order.invoice_uid}</strong> is ready.
@@ -124,8 +124,8 @@ export default function OrderSuccess() {
           {/* Header Row */}
           <div className="flex justify-between items-start border-b border-stone-250 pb-6">
             <div>
-              <h2 className="text-xl font-extrabold text-amber-700 uppercase tracking-tight">OLIVESEEDS CUSTOMS</h2>
-              <p className="text-xs text-stone-500 font-semibold mt-1">Unique Laser Engravings & Digital Goods</p>
+              <h2 className="text-xl font-extrabold text-amber-700 uppercase tracking-tight">OLIVESEEDS DESIGN STUDIO</h2>
+              <p className="text-xs text-stone-500 font-semibold mt-1">Bespoke Design Objects &amp; Digital Assets</p>
               <p className="text-[10px] text-stone-400 font-medium mt-0.5">GSTIN: 27AABCO1234F1Z0 | Reg Office: Mumbai, India</p>
             </div>
             <div className="text-right">

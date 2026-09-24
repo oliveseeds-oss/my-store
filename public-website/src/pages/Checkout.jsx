@@ -119,12 +119,16 @@ function PayPalButtonSection({
           }}
           onApprove={async (data) => {
             try {
+              const orderId = data?.orderId || data?.orderID;
+              if (!orderId) {
+                throw new Error("No PayPal order confirmation ID returned from PayPal.");
+              }
               await API.post("/payments/paypal/capture-order", {
-                orderId: data.orderId
+                orderId
               });
               await placeOrder({
                 mode: "PayPal",
-                transactionId: data.orderId
+                transactionId: orderId
               });
             } catch (captureErr) {
               console.error("PayPal capture error:", captureErr);
@@ -187,8 +191,8 @@ export default function Checkout() {
 
   const shipping = hasPhysicalItems
     ? (selectedMethod
-      ? (selectedMethod.is_free ? 0 : (selectedMethod.shipping_cost_inr !== undefined ? selectedMethod.shipping_cost_inr : selectedMethod.shipping_cost))
-      : (total >= 999 ? 0 : 60))
+      ? (selectedMethod.is_free ? 0 : (selectedMethod.shipping_cost_inr !== undefined ? Number(selectedMethod.shipping_cost_inr) : Number(selectedMethod.shipping_cost)))
+      : (parseFloat(siteSettings?.shipping_fee) || 60))
     : 0;
 
   const [siteSettings, setSiteSettings] = useState(null);
@@ -583,8 +587,8 @@ export default function Checkout() {
     <div style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }} className="min-h-screen">
       <SEO 
         title="Secure Checkout" 
-        description="Complete your order securely and verify your details for custom-engraved premium designs and digital assets." 
-        keywords="checkout, pay commission, billing details"
+        description="Complete your order securely and verify your details for bespoke design objects and digital assets." 
+        keywords="checkout, payment, order verification"
       />
       <Navbar />
       
@@ -684,16 +688,6 @@ export default function Checkout() {
                   </div>
                 ) : (
                   <div className="flex flex-col gap-2.5">
-                    {/* Free shipping banner if applicable */}
-                    {selectedMethod?.is_free || shippingMethods.every(m => m.is_free) ? (
-                      <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2">
-                        <span>🎉</span> Free shipping on your order!
-                      </div>
-                    ) : selectedMethod?.free_shipping_above ? (
-                      <div className="bg-stone-50 border border-stone-200 text-stone-600 px-3.5 py-1.5 rounded-xl text-[11px] font-semibold flex items-center gap-1.5">
-                        <span>✅</span> Free shipping on orders above {convert(selectedMethod.free_shipping_above)}
-                      </div>
-                    ) : null}
 
                     <div className="grid grid-cols-1 gap-2.5">
                       {shippingMethods.map((m) => {
@@ -764,9 +758,16 @@ export default function Checkout() {
               <div className="flex flex-col gap-3 max-h-48 overflow-y-auto pr-1">
                 {cart.map((i) => (
                   <div key={`${i.id}-${i.type}-${i.selectedSize || ""}-${i.customizationSummary || ""}`} className="flex flex-col text-xs font-semibold border-b border-stone-50 pb-1.5 mb-1.5 last:border-b-0 last:pb-0 last:mb-0">
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-baseline">
                       <span className="truncate flex-1 mr-2 opacity-85">{i.name} × {i.qty}</span>
-                      <span className="text-[#0D1512]">{convert(i.price * i.qty)}</span>
+                      <div className="text-right shrink-0">
+                        {i.original_price && Number(i.original_price) > Number(i.price) && (
+                          <span className="line-through text-stone-400 text-[10px] mr-1.5 font-normal">
+                            {convert(i.original_price * i.qty)}
+                          </span>
+                        )}
+                        <span className="text-[#0D1512]">{convert(i.price * i.qty)}</span>
+                      </div>
                     </div>
                     {i.customizationSummary && (
                       <span className="text-[10px] text-amber-800 font-bold mt-0.5">✒️ {i.customizationSummary}</span>
@@ -836,8 +837,8 @@ export default function Checkout() {
                   <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-3">
                     <span className="text-2xl">🎉</span>
                     <div>
-                      <p className="text-xs font-bold text-emerald-900">100% Free Order</p>
-                      <p className="text-[11px] text-emerald-700">No payment card required. Immediate file download upon completion!</p>
+                      <p className="text-xs font-bold text-emerald-900">Complimentary Commission</p>
+                      <p className="text-[11px] text-emerald-700">No payment card required. Direct file download upon completion.</p>
                     </div>
                   </div>
                   <button
@@ -894,7 +895,7 @@ export default function Checkout() {
                       <div className="text-center py-4 text-xs text-stone-400 font-bold animate-pulse">
                         ⏳ Loading PayPal configuration...
                       </div>
-                    ) : siteSettings.paypal_client_id && siteSettings.paypal_client_id !== "sb" && !siteSettings.paypal_client_id.includes("your_paypal") ? (
+                    ) : siteSettings.paypal_client_id && !siteSettings.paypal_client_id.includes("your_paypal") ? (
                       <PayPalProvider
                         clientId={siteSettings.paypal_client_id}
                         environment={siteSettings.paypal_mode || (siteSettings.paypal_client_id.startsWith("sb") || siteSettings.paypal_client_id.includes("sandbox") ? "sandbox" : "production")}

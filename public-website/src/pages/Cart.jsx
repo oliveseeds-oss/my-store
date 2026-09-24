@@ -16,8 +16,8 @@ export default function Cart() {
     <div style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }} className="min-h-screen">
       <SEO 
         title="Your Shopping Cart" 
-        description="Review your selected premium laser-engraved custom creations, acrylic blocks, and professional digital developer resources." 
-        keywords="cart, checkout queue, purchase summary"
+        description="Review your selected bespoke design objects, hand-finished pieces, and professional digital design systems." 
+        keywords="cart, purchase summary, bespoke orders"
       />
       <Navbar />
       
@@ -76,7 +76,14 @@ export default function Cart() {
                         ✒️ Custom: {item.customizationSummary}
                       </p>
                     )}
-                    <p className="text-sm font-black text-[#0D1512] mt-2">{convert(item.price)}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-sm font-black text-[#0D1512]">{convert(item.price)}</span>
+                      {item.original_price && item.original_price > item.price && (
+                        <span className="text-xs text-stone-400 line-through font-semibold">
+                          {convert(item.original_price)}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <div className="flex items-center justify-between w-full sm:w-auto gap-4 mt-4 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-t-0 border-[#0D1512]/10">
@@ -125,9 +132,11 @@ export default function Cart() {
                     <span>{convert(total)}</span>
                   </div>
                   {hasPhysicalItems ? (
-                    <div className="flex justify-between opacity-80 font-medium">
+                    <div className="flex justify-between opacity-80 font-medium items-center">
                       <span>Shipping</span>
-                      <span>{shippingCharge === 0 ? "Free" : convert(shippingCharge)}</span>
+                      <span className="text-xs font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/60">
+                        Calculated at checkout
+                      </span>
                     </div>
                   ) : (
                     <div className="flex justify-between text-emerald-700 font-medium">
@@ -139,8 +148,13 @@ export default function Cart() {
 
                 <div className="flex justify-between font-black text-[#0D1512] text-lg">
                   <span>Total</span>
-                  <span>{convert(total + shippingCharge)}</span>
+                  <span>{convert(total)}</span>
                 </div>
+                {hasPhysicalItems && (
+                  <p className="text-[11px] text-stone-500 font-medium leading-relaxed">
+                    * Final delivery charges will be calculated and added based on your selected shipping method (Standard, Express, etc.) at checkout.
+                  </p>
+                )}
 
                 <button
                   onClick={() => navigate("/checkout")}

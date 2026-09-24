@@ -1,12 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import API from "../api";
 
 export default function WhatsAppChat() {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState("ai"); // "ai" or "whatsapp"
   const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState([
-    { sender: "bot", text: "Hello! I am your Olive Seeds design assistant. I can recommend engraving templates, estimate shipping times, or format custom request text before routing you to our workshop. We accept debit/credit cards, UPI, netbanking via Razorpay, and global currencies via PayPal securely. What are you looking to customize?" }
+    { sender: "bot", text: "Welcome to Olive Seeds Design Studio. I am your studio concierge. I can recommend bespoke design objects, provide production timelines, or assist in preparing commission briefs for our design team. What kind of project are you looking to create?" }
   ]);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef(null);
@@ -36,7 +35,7 @@ export default function WhatsAppChat() {
         setChatHistory(prev => [
           ...prev,
           { sender: "user", text },
-          { sender: "bot", text: `I see you are interested in customization! Here is a starting template for your custom request: "${text}". Let me know if you would like to edit it or proceed directly to our workshop chat!` }
+          { sender: "bot", text: `Thank you for specifying your requirements. Here is a starting brief for your commission: "${text}". Let us know if you wish to refine this or proceed directly to our studio consultation.` }
         ]);
       } else {
         setOpen(true);
@@ -73,27 +72,27 @@ export default function WhatsAppChat() {
       let responseText = "";
 
       if (lower.includes("hi") || lower.includes("hello") || lower.includes("hey") || lower.includes("greetings")) {
-        responseText = "Hello there! I'm your Olive Seeds design assistant. How can I help you customize your physical crafts or digital systems today?";
+        responseText = "Good day. I am the Olive Seeds studio concierge. How may I assist you with our bespoke commissions, corporate gifting, or digital design suites today?";
       } else if (lower.includes("wood") || lower.includes("teak") || lower.includes("plaque")) {
-        responseText = "We specialize in custom wood engravings! We craft custom Teakwood nameplates, wedding keepsake frames, and customized plaques. Would you like me to prepare an inquiry to send directly to our WhatsApp workshop team?";
+        responseText = "We specialise in hand-finished timber objects and bespoke commissions, crafting architectural teakwood pieces, ceremonial keepsakes, and executive plaques. Would you like to prepare an enquiry for our studio team?";
       } else if (lower.includes("acrylic") || lower.includes("glass")) {
-        responseText = "Our optical acrylic pieces are polished with high precision and laser etched for crisp corporate logos or wedding blocks. I can package this requirement and route you to WhatsApp anytime.";
+        responseText = "Our architectural acrylic pieces are finished with precision and tailored for corporate insignia or ceremonial recognition. I can structure your brief and connect you with our studio team.";
       } else if (lower.includes("shipping") || lower.includes("delivery") || lower.includes("days") || lower.includes("time")) {
-        responseText = "We ship worldwide (USA, UK, Canada, Australia, Singapore, Europe, etc.). Laser engraving takes 2-4 business days, and delivery takes about 7-14 business days. Would you like to connect with a shipping agent via WhatsApp?";
+        responseText = "We dispatch worldwide, including the United Kingdom, United States, Australia, Europe, and Asia-Pacific. Standard bespoke production requires 10 to 15 business days, with transit taking approximately seven to 14 business days. Would you like to consult our team directly?";
       } else if (lower.includes("bulk") || lower.includes("corporate") || lower.includes("wholesale") || lower.includes("quantity")) {
-        responseText = "We support corporate volume orders and bulk custom engraving! You can check our personalization workflows, materials, and fill out our dedicated query form on our Engraving Solutions page (/engraving). Would you like to review that?";
+        responseText = "We regularly fulfil corporate volume commissions and bespoke orders. You may explore our material specifications and complete an initial brief on our Bespoke Objects page (/engraving). Would you like to proceed there?";
       } else if (lower.includes("engrav") || lower.includes("how it works") || lower.includes("material")) {
-        responseText = "To read all about our precision engraving specifications (Wood, Acrylic, Leather, Glass, MDF) and customization journey, feel free to visit our dedicated Engraving Solutions page (/engraving).";
+        responseText = "To explore our material specifications (Timber, Acrylic, Leather, Glass) and bespoke craft journey, you are welcome to visit our Bespoke Objects page (/engraving).";
       } else if (lower.includes("currency") || lower.includes("price") || lower.includes("cost") || lower.includes("how much")) {
-        responseText = "We display prices in local currency automatically using geo-location detection. Physical nameplates start at ₹1,299, acrylic designs at ₹1,999, and digital assets start at ₹499. Do you have a specific product in mind?";
+        responseText = "Prices are automatically displayed in your local currency. Bespoke physical commissions start from ₹1,299, and digital design suites begin at ₹499. Do you have a specific commission in mind?";
       } else if (lower.includes("who are you") || lower.includes("name") || lower.includes("bot")) {
-        responseText = "I'm the Olive Seeds Design Studio AI assistant! I'm here to guide you through our collections and help prepare customization drafts.";
+        responseText = "I am the Olive Seeds Design Studio concierge. I assist in introducing our collections and structuring bespoke commission briefs.";
       } else if (lower.includes("refund") || lower.includes("return") || lower.includes("cancel")) {
-        responseText = "For custom engraved physical items, returns aren't supported once processed, but we share a design mockup proof with you before engraving. Digital products are instant downloads and non-refundable.";
+        responseText = "For bespoke physical commissions, returns are not accepted once crafting commences, though comprehensive digital proofs are shared for approval prior to production. Digital design suites are delivered immediately upon order.";
       } else {
         // Highly contextual fallback helper to avoid repetition
         const sanitized = userText.length > 50 ? userText.slice(0, 47) + "..." : userText;
-        responseText = `I'd love to assist you with "${sanitized}"! Could you clarify if you are interested in a custom physical engraving (like wood or acrylic nameplates) or one of our digital workspace templates? I can also package this directly as a WhatsApp draft.`;
+        responseText = `I would be pleased to assist you with "${sanitized}". Could you clarify whether your interest lies in a bespoke physical commission (timber or acrylic pieces) or one of our digital design systems? I can package this directly as an enquiry draft for our team.`;
       }
 
       setTimeout(() => {
@@ -102,14 +101,14 @@ export default function WhatsAppChat() {
       }, 750);
 
     } catch (err) {
-      setChatHistory(prev => [...prev, { sender: "bot", text: "I apologize, our design system indexer is offline. Would you like to switch to direct WhatsApp mode to chat with our live workshop agents?" }]);
+      setChatHistory(prev => [...prev, { sender: "bot", text: "Our concierge system is momentarily unavailable. Would you like to connect directly via WhatsApp to speak with our studio team?" }]);
       setLoading(false);
     }
   };
 
   const handleRouteToWhatsApp = () => {
     // Collect last user prompts or default template
-    const lastUserMsg = chatHistory.filter(c => c.sender === "user").pop()?.text || "Hi Olive Seeds, I would like to design a custom product.";
+    const lastUserMsg = chatHistory.filter(c => c.sender === "user").pop()?.text || "Hello Olive Seeds, I would like to enquire about a bespoke commission.";
     const phone = "919442943394";
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(lastUserMsg)}`;
     window.open(url, "_blank");
@@ -123,7 +122,7 @@ export default function WhatsAppChat() {
         <button
           onClick={() => setOpen(true)}
           className="flex items-center justify-center w-14 h-14 bg-[#0D1512] hover:bg-emerald-800 text-white rounded-full shadow-2xl transition duration-300 transform hover:scale-105 active:scale-95 cursor-pointer relative group"
-          title="Olive Seeds AI Assistant"
+          title="Olive Seeds Studio Concierge"
         >
           {/* Avatar Image representation */}
           <div className="w-10 h-10 rounded-full overflow-hidden bg-stone-700 flex items-center justify-center border border-emerald-400">
@@ -134,7 +133,7 @@ export default function WhatsAppChat() {
             />
           </div>
           <span className="absolute right-full mr-3 bg-stone-900 text-white text-xs py-1.5 px-3 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap shadow-md">
-            Ask AI Assistant
+            Studio Concierge
           </span>
         </button>
       )}
@@ -153,9 +152,9 @@ export default function WhatsAppChat() {
                 />
               </div>
               <div>
-                <div className="text-xs font-black tracking-wide">Olive Seeds AI Assistant</div>
+                <div className="text-xs font-black tracking-wide">Olive Seeds Studio Concierge</div>
                 <div className="text-[10px] text-emerald-400 font-bold flex items-center gap-1.5 mt-0.5">
-                  <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping" /> Online • Product Expert
+                  <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping" /> Online • Studio Concierge
                 </div>
               </div>
             </div>
@@ -173,13 +172,13 @@ export default function WhatsAppChat() {
               onClick={() => setMode("ai")}
               className={`flex-1 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg transition ${mode === "ai" ? "bg-white text-stone-900 shadow-sm" : "text-stone-400 hover:text-stone-600"}`}
             >
-              👩‍💼 Ask Assistant
+              Studio Concierge
             </button>
             <button 
               onClick={() => setMode("whatsapp")}
               className={`flex-1 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg transition ${mode === "whatsapp" ? "bg-emerald-600 text-white shadow-sm" : "text-stone-400 hover:text-stone-600"}`}
             >
-              💬 WhatsApp Direct
+              WhatsApp Atelier
             </button>
           </div>
 
@@ -208,12 +207,12 @@ export default function WhatsAppChat() {
           {/* Connect to WhatsApp shortcut in AI mode */}
           {mode === "ai" && chatHistory.length > 1 && (
             <div className="bg-emerald-50 p-2.5 border-t border-emerald-100 flex items-center justify-between">
-              <span className="text-[10px] text-emerald-800 font-bold">Ready to consult workshop?</span>
+              <span className="text-[10px] text-emerald-800 font-bold">Connect directly with our studio:</span>
               <button 
                 onClick={handleRouteToWhatsApp}
                 className="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black uppercase tracking-wider px-3.5 py-1.5 rounded-lg shadow-md transition"
               >
-                📲 Route to WhatsApp
+                Direct WhatsApp Enquiry
               </button>
             </div>
           )}
@@ -225,7 +224,7 @@ export default function WhatsAppChat() {
               type="text"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder={mode === "ai" ? "Ask AI about materials, prices..." : "Type message for WhatsApp..."}
+              placeholder={mode === "ai" ? "Enquire about materials, dimensions, timelines..." : "Type your enquiry for WhatsApp..."}
               className="flex-1 bg-stone-100 border border-stone-250 rounded-xl px-4 py-2.5 text-xs text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
             />
             <button

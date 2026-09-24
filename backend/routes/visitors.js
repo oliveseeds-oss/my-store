@@ -1,10 +1,11 @@
 const router = require("express").Router();
 const db = require("../db");
 const { verifyAdmin } = require("../middleware/auth");
+const { createRateLimiter } = require("../middleware/rateLimiter");
 
 // ─── LOG VISITOR (PUBLIC — called from frontend) ───────────────────────────
-// POST /api/visitors/track
-router.post("/track", async (req, res) => {
+// POST /api/visitors/track — Rate limited (60 requests per minute)
+router.post("/track", createRateLimiter(60, 60 * 1000), async (req, res) => {
   const {
     page, referrer, session_id,
     geo_country, geo_city, geo_region,

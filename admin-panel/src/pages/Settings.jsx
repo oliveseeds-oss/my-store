@@ -23,6 +23,7 @@ export default function Settings() {
     razorpay_secret: "",
     paypal_client_id: "",
     paypal_client_secret: "",
+    paypal_mode: "sandbox",
     shiprocket_email: "",
     shiprocket_password: "",
     admin_password: "",
@@ -44,6 +45,7 @@ export default function Settings() {
           razorpay_secret: res.data.razorpay_secret || "",
           paypal_client_id: res.data.paypal_client_id || "",
           paypal_client_secret: res.data.paypal_client_secret || "",
+          paypal_mode: res.data.paypal_mode || "sandbox",
           shiprocket_email: res.data.shiprocket_email || "",
           shiprocket_password: res.data.shiprocket_password || "",
           admin_password: "",
@@ -75,6 +77,7 @@ export default function Settings() {
         razorpay_secret: settings.razorpay_secret,
         paypal_client_id: settings.paypal_client_id,
         paypal_client_secret: settings.paypal_client_secret,
+        paypal_mode: settings.paypal_mode,
         shiprocket_email: settings.shiprocket_email,
         shiprocket_password: settings.shiprocket_password,
       };
@@ -140,7 +143,8 @@ export default function Settings() {
     try {
       const res = await API.post("/settings/test-paypal", {
         paypal_client_id: settings.paypal_client_id,
-        paypal_client_secret: settings.paypal_client_secret
+        paypal_client_secret: settings.paypal_client_secret,
+        paypal_mode: settings.paypal_mode
       });
       if (res.data.success) {
         alert("✅ " + res.data.message);
@@ -272,7 +276,7 @@ export default function Settings() {
               <Field
                 label="PayPal Client ID"
                 fieldKey="paypal_client_id"
-                placeholder="AbcDe123... (Standard Live Client ID)"
+                placeholder="AbcDe123... (PayPal REST Client ID)"
               />
               <Field
                 label="PayPal Client Secret Key"
@@ -280,6 +284,17 @@ export default function Settings() {
                 type="password"
                 placeholder="••••••••••••••••••••••••"
               />
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wider">PayPal Environment</label>
+                <select
+                  value={settings.paypal_mode || "sandbox"}
+                  onChange={(e) => update("paypal_mode", e.target.value)}
+                  className="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-amber-500"
+                >
+                  <option value="sandbox">Sandbox (Testing / Development)</option>
+                  <option value="production">Live / Production</option>
+                </select>
+              </div>
               <button
                 type="button"
                 onClick={handleTestPayPal}

@@ -8,6 +8,7 @@ import { useMember } from "../context/MemberContext";
 import { useCurrency } from "../context/CurrencyContext";
 import SEO from "../components/SEO";
 import AdBanner from "../components/AdBanner";
+import { getProductMainImage } from "../utils/imageHelper";
 
 /* ─── Google Fonts injected once ─────────────────────────── */
 if (typeof document !== "undefined" && !document.getElementById("olive-fonts")) {
@@ -364,11 +365,30 @@ function injectStyles() {
 
 /* ─── Featured collections ───────────────────────────────── */
 const COLLECTIONS = [
-  { icon: "🤖", title: "AI Automation Vault", desc: "Next-gen agent workflows & AI systems", accent: T.accent1 },
-  { icon: "🚀", title: "Startup Launch Kit", desc: "Everything to launch fast and look great", accent: T.accent2 },
-  { icon: "🎨", title: "Creator Toolkit", desc: "Assets built for content creators", accent: T.accent3 },
-  { icon: "🧩", title: "Design System Collection", desc: "Scalable component systems & libraries", accent: "#F59E0B" },
-  { icon: "⚙️", title: "Business Automation", desc: "Automate ops with N8N & AI", accent: "#F472B6" },
+  {
+    icon: "📊",
+    title: "Presentation Templates",
+    desc: "Designed for executives and corporate teams who present at the highest level. Clean architecture, considered typography, and a visual language that commands the room — without saying a word.",
+    accent: T.accent1,
+  },
+  {
+    icon: "✨",
+    title: "Brand Identity Kits",
+    desc: "Complete brand starter systems for organisations ready to establish a distinguished visual presence. Includes logo frameworks, colour systems, typography guides, and application examples.",
+    accent: T.accent2,
+  },
+  {
+    icon: "📄",
+    title: "Business Stationery Suites",
+    desc: "Letterheads, business card layouts, email signatures, and document templates — produced as a unified system that carries your identity consistently across every professional communication.",
+    accent: T.accent3,
+  },
+  {
+    icon: "📱",
+    title: "Social Media Design Systems",
+    desc: "Structured visual systems for organisations that take their digital presence seriously. Template sets designed for consistency, adaptability, and a presence that reads as premium across every platform.",
+    accent: "#F59E0B",
+  },
 ];
 
 
@@ -378,7 +398,7 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
   const { convert } = useCurrency();
   const [added, setAdded] = useState(false);
 
-  const img = p.thumbnail_url || (p.images && p.images[0]);
+  const img = getProductMainImage(p);
   const finalPrice = (p.discount_price !== null && p.discount_price !== undefined && p.discount_price !== "")
     ? Number(p.discount_price)
     : Number(p.price || 0);
@@ -389,7 +409,13 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
 
   const handleAdd = (e) => {
     e.preventDefault();
-    addToCart({ ...p, price: finalPrice, type: "digital" });
+    addToCart({
+      ...p,
+      price: finalPrice,
+      original_price: Number(p.price),
+      discount_price: p.discount_price ? Number(p.discount_price) : null,
+      type: "digital"
+    });
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
   };
@@ -402,7 +428,7 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
       <Link to={`/digital/${p.id}`} style={{ display: "block" }}>
         <div className="dcard__img-wrap" style={{ position: "relative" }}>
           {img ? (
-            <img src={img} alt={p.name} className="dcard__img" />
+            <img src={img} alt={p.name} className="dcard__img" loading="lazy" decoding="async" />
           ) : (
             <div
               style={{
@@ -602,7 +628,7 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
             width: "100%",
           }}
         >
-          {added ? "✓ Added to Cart" : "Add to Cart"}
+          {added ? "✓ Added to Order" : "Add to Order"}
         </button>
       </div>
     </div>
@@ -654,6 +680,15 @@ export default function DigitalProductList() {
     maxPrice: "",
     minRating: "",
   });
+
+  /* ── Page Title & Meta ── */
+  useEffect(() => {
+    document.title = "Digital Design Templates | Olive Seeds Studio";
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute("content", "Acquire studio-grade digital design templates, presentation systems, brand identity kits, and stationery suites crafted for executive distinction.");
+    }
+  }, []);
 
   /* ── Sync category from URL search query or route parameter ── */
   useEffect(() => {
@@ -764,9 +799,9 @@ export default function DigitalProductList() {
       }}
     >
       <SEO
-        title="Digital Products — Instant Download | Figma Templates, Web Templates & More | Olive Seeds"
-        description="Download premium Figma UI templates, website templates, printables, 3D models and n8n automation tools instantly. Commercial license included. Designed for creators and businesses."
-        keywords="buy Figma templates online, instant download design templates, UI kit download for designers, website template instant download, printable design assets download, n8n automation workflow template, 3D model files instant download, branding kit download, social media template pack, Figma UI components download, web design templates purchase"
+        title="Digital Design Templates | Olive Seeds Studio"
+        description="Acquire studio-grade digital design templates, presentation systems, brand identity kits, and stationery suites crafted for executive distinction."
+        keywords="digital design templates, brand identity design, presentation systems, business stationery suites, digital assets"
       />
 
       <style>{`
@@ -877,7 +912,7 @@ export default function DigitalProductList() {
                   whiteSpace: "nowrap",
                 }}>
                   <span style={{ width: 6, height: 6, borderRadius: "50%", background: T.accent1, display: "inline-block" }} />
-                  Premium Digital Vault
+                  Olive Seeds Design Studio
                 </span>
               </div>
 
@@ -892,15 +927,7 @@ export default function DigitalProductList() {
                   letterSpacing: "-2px",
                 }}
               >
-                Digital Assets That
-                <span style={{
-                  display: "block",
-                  background: `linear-gradient(90deg, ${T.accent1}, ${T.accent2})`,
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }}>
-                  Accelerate Creation.
-                </span>
+                Digital Products
               </h1>
 
               <p
@@ -910,10 +937,10 @@ export default function DigitalProductList() {
                   lineHeight: 1.7,
                   color: T.textSecondary,
                   margin: "20px 0 36px",
-                  maxWidth: 480,
+                  maxWidth: 520,
                 }}
               >
-                Premium templates, AI systems, automation workflows, and creative resources built for professionals and businesses.
+                Studio-quality design, instantly available. Each digital product is crafted to the same exacting standard as our commissioned work — built for professionals who understand that presentation shapes perception.
               </p>
 
               <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
@@ -982,10 +1009,10 @@ export default function DigitalProductList() {
             {/* Right: floating preview cards */}
             <div style={{ position: "relative", height: 360, display: "flex", alignItems: "center", justifyContent: "center" }}>
               {[
-                { label: "Figma Template", icon: "🎨", x: 0, y: 0, accent: T.accent1 },
-                { label: "AI Agent", icon: "🤖", x: 160, y: -50, accent: T.accent2 },
-                { label: "3D Asset", icon: "⬡", x: 30, y: 140, accent: T.accent3 },
-                { label: "N8N Workflow", icon: "⚙️", x: 200, y: 90, accent: "#F59E0B" },
+                { label: "Presentation Templates", icon: "📊", x: 0, y: 0, accent: T.accent1 },
+                { label: "Brand Identity Kits", icon: "✨", x: 160, y: -50, accent: T.accent2 },
+                { label: "Business Stationery", icon: "📄", x: 30, y: 140, accent: T.accent3 },
+                { label: "Social Media Systems", icon: "📱", x: 200, y: 90, accent: "#F59E0B" },
               ].map((card, i) => (
                 <div
                   key={card.label}
@@ -1042,18 +1069,36 @@ export default function DigitalProductList() {
         <div style={{ maxWidth: 1280, margin: "0 auto", display: "flex", gap: 28 }}>
 
           {/* ── Sidebar ── */}
-          <aside style={{ width: 240, flexShrink: 0, display: "none" }} className="vault-sidebar">
+          <aside style={{ width: 250, flexShrink: 0, display: "none" }} className="vault-sidebar">
             <style>{`
               @media(min-width:1024px){.vault-sidebar{display:block!important;}}
+              .vault-sidebar-inner::-webkit-scrollbar {
+                width: 5px;
+              }
+              .vault-sidebar-inner::-webkit-scrollbar-track {
+                background: transparent;
+              }
+              .vault-sidebar-inner::-webkit-scrollbar-thumb {
+                background: rgba(110,231,249,0.3);
+                border-radius: 10px;
+              }
             `}</style>
-            <div style={{
-              position: "sticky",
-              top: 72,
-              borderRadius: 18,
-              border: `1px solid ${T.border}`,
-              background: T.surface1,
-              overflow: "hidden",
-            }}>
+            <div
+              className="vault-sidebar-inner"
+              style={{
+                position: "sticky",
+                top: 88,
+                maxHeight: "calc(100vh - 108px)",
+                overflowY: "auto",
+                overflowX: "hidden",
+                overscrollBehavior: "contain",
+                borderRadius: 18,
+                border: `1px solid ${T.border}`,
+                background: T.surface1,
+                scrollbarWidth: "thin",
+                scrollbarColor: "rgba(110,231,249,0.3) transparent",
+              }}
+            >
               {/* Categories */}
               <div style={{ padding: "20px 16px" }}>
                 <p className="sora" style={{
@@ -1105,6 +1150,80 @@ export default function DigitalProductList() {
                     className={`filter-btn${filters.sort === o.value ? " active" : ""}`}
                   >
                     {o.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Divider */}
+              <div style={{ height: 1, background: T.border, margin: "0 16px" }} />
+
+              {/* Price Range */}
+              <div style={{ padding: "16px" }}>
+                <p className="sora" style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  letterSpacing: "0.22em",
+                  textTransform: "uppercase",
+                  color: T.accent1,
+                  marginBottom: 12,
+                }}>
+                  Price Range
+                </p>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <input
+                    type="number"
+                    placeholder="Min"
+                    value={filters.minPrice}
+                    onChange={(e) => setFilter("minPrice", e.target.value)}
+                    className="vault-input"
+                    style={{ width: "100%", paddingRight: 8, fontSize: 12 }}
+                  />
+                  <input
+                    type="number"
+                    placeholder="Max"
+                    value={filters.maxPrice}
+                    onChange={(e) => setFilter("maxPrice", e.target.value)}
+                    className="vault-input"
+                    style={{ width: "100%", paddingRight: 8, fontSize: 12 }}
+                  />
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div style={{ height: 1, background: T.border, margin: "0 16px" }} />
+
+              {/* Customer Rating */}
+              <div style={{ padding: "16px" }}>
+                <p className="sora" style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  letterSpacing: "0.22em",
+                  textTransform: "uppercase",
+                  color: T.accent1,
+                  marginBottom: 12,
+                }}>
+                  Customer Rating
+                </p>
+                {[4, 3, 2, 1].map((r) => (
+                  <button
+                    key={r}
+                    onClick={() => setFilter("minRating", filters.minRating === r ? "" : r)}
+                    className={`filter-btn${filters.minRating === r ? " active" : ""}`}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      width: "100%",
+                      textAlign: "left",
+                      marginBottom: 4,
+                    }}
+                  >
+                    <span>
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <span key={i} style={{ color: i <= r ? "#FBBF24" : "rgba(255,255,255,0.12)", fontSize: 12 }}>★</span>
+                      ))}
+                    </span>
+                    & Up
                   </button>
                 ))}
               </div>
@@ -1295,6 +1414,30 @@ export default function DigitalProductList() {
                 <div style={{ height: 2, borderRadius: 2, background: `linear-gradient(90deg, ${col.accent}, transparent)`, width: "40%" }} />
               </div>
             ))}
+          </div>
+
+          {/* Trust Note */}
+          <div style={{
+            marginTop: 40,
+            padding: "24px 32px",
+            borderRadius: 16,
+            background: "rgba(110,231,249,0.04)",
+            border: `1px solid rgba(110,231,249,0.2)`,
+            display: "flex",
+            alignItems: "center",
+            gap: 16,
+          }}>
+            <span style={{ fontSize: 24, flexShrink: 0 }}>🛡️</span>
+            <p style={{
+              fontFamily: "Inter, sans-serif",
+              fontSize: 13.5,
+              color: T.textSecondary,
+              lineHeight: 1.7,
+              margin: 0,
+            }}>
+              <strong style={{ color: T.textPrimary }}>Studio Quality &amp; Licensing: </strong>
+              All digital products are designed in-studio by our creative team. Files are delivered in professional formats — fully editable, clearly structured, and accompanied by usage guidance. Licensing for commercial and organisational use is included with every purchase.
+            </p>
           </div>
         </div>
       </section>
@@ -1568,7 +1711,7 @@ export default function DigitalProductList() {
                   <div style={{ fontSize: "48px", color: T.accent1, marginBottom: "16px" }}>✓</div>
                   <h3 style={{ fontSize: "20px", fontWeight: 700, color: T.textPrimary, marginBottom: "10px" }}>Enquiry Received</h3>
                   <p style={{ fontSize: "14.5px", color: T.textSecondary, lineHeight: 1.6 }}>
-                    Thank you for reaching out! Our creative director will review your project details and get in touch within 24 hours.
+                    Thank you for your enquiry. Our creative director will review your brief and respond within 24 hours.
                   </p>
                 </div>
               ) : (

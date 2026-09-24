@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import API from "../api";
@@ -7,6 +7,14 @@ import SEO from "../components/SEO";
 export default function Contact() {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    document.title = "Contact Us | Olive Seeds Bespoke Design Studio";
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute("content", "Initiate a project enquiry with Olive Seeds Design Studio. We welcome bespoke commissions, brand consultations, and corporate gifting partnerships.");
+    }
+  }, []);
 
   const [form, setForm] = useState({
     firstName: "",
@@ -80,9 +88,9 @@ export default function Contact() {
   return (
     <div style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }} className="min-h-screen overflow-hidden">
       <SEO
-        title="Contact Our Studio"
-        description="Reach out to the Olive Seeds creative team for corporate luxury engraving quotes, brand identity commissions, or digital asset customization."
-        keywords="contact us, custom order request, corporate premium quotes, customer care"
+        title="Contact Us | Olive Seeds Bespoke Design Studio"
+        description="Initiate a project enquiry with Olive Seeds Design Studio. We welcome bespoke commissions, brand consultations, and corporate gifting partnerships."
+        keywords="contact bespoke design studio, corporate design enquiries, b2b orders, olive seeds design studio"
       />
       <Navbar />
 
@@ -110,7 +118,7 @@ export default function Contact() {
               >
                 <div className="w-2 h-2 bg-[#FAF9F6] rounded-full animate-pulse" />
                 <span style={{ color: "#FAF9F6" }} className="text-xs font-bold uppercase tracking-widest">
-                  Premium Contact Experience
+                  Bespoke Enquiries
                 </span>
               </div>
 
@@ -118,20 +126,24 @@ export default function Contact() {
                 style={{ fontFamily: "'Outfit', sans-serif" }}
                 className="text-4xl md:text-6xl font-black leading-tight text-white tracking-tight"
               >
-                Let’s Build <span style={{ color: "#FAF9F6" }}>Luxury Digital</span> & Engraved Designs.
+                Let's Begin
               </h1>
 
-              <p className="text-sm md:text-base leading-relaxed text-white/80 max-w-xl">
-                Premium custom engraving products, ecommerce portals, UI/UX design and professional corporate identity solutions crafted with extreme precision.
+              <p className="text-sm md:text-base leading-relaxed text-white/90 max-w-xl font-medium">
+                Whether you have a detailed brief or an early-stage idea — we welcome your enquiry. Our studio responds to all messages within one business day.
               </p>
 
-              {/* Grid Features */}
-              <div className="grid grid-cols-2 gap-4 mt-6">
+              <p className="text-xs md:text-sm leading-relaxed text-white/70 max-w-xl">
+                We work with a select number of clients at any one time. If you are considering a commission, a bulk order, or a longer-term creative partnership — share what you have in mind and we will respond with clarity and honesty.
+              </p>
+
+              {/* Grid Features / Trust Lines */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                 {[
-                  "Fast Response",
-                  "Premium Products",
-                  "Digital Solution",
-                  "Trusted Partner",
+                  "All enquiries are treated with complete confidentiality.",
+                  "We respond within one business day.",
+                  "B2B and volume orders welcome.",
+                  "Bespoke design consultations.",
                 ].map((item) => (
                   <div
                     key={item}
@@ -153,16 +165,16 @@ export default function Contact() {
                 {sent ? (
                   <div className="text-center py-12 flex flex-col gap-4">
                     <span className="text-6xl">📨</span>
-                    <h2 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-2xl font-black">Message Sent!</h2>
+                    <h2 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-2xl font-black">Enquiry Sent</h2>
                     <p className="text-sm opacity-80 max-w-xs mx-auto">
-                      Thank you for reaching out to us. Our studio will get back to you shortly.
+                      Thank you for reaching out to Olive Seeds Design Studio. We will respond within one business day.
                     </p>
                   </div>
                 ) : (
                   <>
                     <div className="mb-6">
-                      <h2 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-2xl font-black">Get in Touch</h2>
-                      <p className="text-xs opacity-60 mt-1">Fill out the form below to begin a luxury custom commission.</p>
+                      <h2 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-2xl font-black">Send Your Enquiry</h2>
+                      <p className="text-xs opacity-60 mt-1">Share what you have in mind and we will respond with clarity and honesty.</p>
                     </div>
 
                     <div className="flex flex-col gap-4">
@@ -193,7 +205,7 @@ export default function Contact() {
 
                       {/* Phone fields */}
                       <div>
-                        <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Phone Number</label>
+                        <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Contact Number (optional)</label>
                         <div className="flex gap-2">
                           <select
                             value={form.countryCode}
@@ -246,7 +258,7 @@ export default function Contact() {
                             type="text"
                             value={form.subject}
                             onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                            placeholder="Custom Engraving Quote"
+                            placeholder="Bespoke Commission Enquiry"
                             className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
                           />
                         </div>
@@ -254,12 +266,12 @@ export default function Contact() {
 
                       {/* Message field */}
                       <div>
-                        <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Project Details</label>
+                        <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Tell Us About Your Project</label>
                         <textarea
                           rows={4}
                           value={form.message}
                           onChange={(e) => setForm({ ...form, message: e.target.value })}
-                          placeholder="Tell us about the custom keepsake or digital system you wish to commission..."
+                          placeholder="Share what you have in mind — materials, quantities, timelines, or your custom brief..."
                           className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] resize-none"
                         />
                       </div>
@@ -271,7 +283,7 @@ export default function Contact() {
                         style={{ background: "#0D1512", color: "#FAF9F6" }}
                         className="w-full rounded-xl py-4 font-black tracking-wider uppercase text-xs shadow-lg active:scale-95 transition-all mt-2 disabled:opacity-50"
                       >
-                        {loading ? "Sending..." : "Send Message"}
+                        {loading ? "Sending..." : "Send Your Enquiry"}
                       </button>
 
                     </div>
@@ -289,9 +301,9 @@ export default function Contact() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { title: "Bespoke Engraving", desc: "Premium -finished best quality wood, mfd, bamboo, acryli and etc." },
-              { title: "Dynamic Agency Tools", desc: "Modern ecommerce platforms, React architectures, AI Agents and more." },
-              { title: "Dedicated Support", desc: "Consistent guidance from discovery to fulfillment." }
+              { title: "Bespoke Product Design", desc: "Hand-finished objects and collections in timber, architectural acrylic, and fine materials." },
+              { title: "Brand & Spatial Systems", desc: "Enduring identity systems, spatial décor, and cohesive visual touchpoints." },
+              { title: "B2B & Volume Delivery", desc: "Structured for seamless delivery across corporate orders and private commissions." }
             ].map((item) => (
               <div
                 key={item.title}

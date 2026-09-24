@@ -310,9 +310,9 @@ export default function BlogList() {
   return (
     <div style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }} className="min-h-screen overflow-x-hidden">
       <SEO
-        title="Studio Journal & Musings"
-        description="Read about precision laser engraving sciences, sustainable teakwood designs, creative branding, and luxury design philosophies on Olive Seeds Journal."
-        keywords="precision laser calibration, design journal, corporate gift ideas, circular branding, sustainable bamboo, Olive Seeds"
+        title="Studio Journal | Olive Seeds Design Studio"
+        description="Read about precision craft techniques, sustainable timber design, creative branding, and luxury design philosophies on the Olive Seeds Journal."
+        keywords="design journal, bespoke objects, corporate design, creative branding, sustainable timber, Olive Seeds"
       />
       <Navbar />
 

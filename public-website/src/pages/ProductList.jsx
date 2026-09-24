@@ -8,6 +8,7 @@ import { useCurrency } from "../context/CurrencyContext";
 import { useMember } from "../context/MemberContext";
 import SEO from "../components/SEO";
 import AdBanner from "../components/AdBanner";
+import { getProductMainImage } from "../utils/imageHelper";
 
 /* ─── Google Fonts ────────────────────────────────────────────────────── */
 const FontLink = () => {
@@ -76,16 +77,24 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
   const [added, setAdded] = useState(false);
   const [hovered, setHovered] = useState(false);
 
-  const img = p.image_url || (p.images && p.images[0]);
-  const finalPrice = p.discount_price || p.price;
-  const discount = p.discount_price
-    ? Math.round((1 - p.discount_price / p.price) * 100)
+  const img = getProductMainImage(p);
+  const finalPrice = (p.discount_price && Number(p.discount_price) > 0 && Number(p.discount_price) < Number(p.price))
+    ? Number(p.discount_price)
+    : Number(p.price);
+  const discount = (p.discount_price && Number(p.discount_price) < Number(p.price))
+    ? Math.round((1 - Number(p.discount_price) / Number(p.price)) * 100)
     : 0;
   const tags = Array.isArray(p.tags) ? p.tags : [];
 
   const handleAdd = (e) => {
     e.preventDefault();
-    addToCart({ ...p, type: "physical" });
+    addToCart({
+      ...p,
+      type: "physical",
+      price: finalPrice,
+      original_price: Number(p.price),
+      discount_price: p.discount_price ? Number(p.discount_price) : null
+    });
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
   };
@@ -119,6 +128,8 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
               src={img}
               alt={p.name}
               className="product-card-image"
+              loading="lazy"
+              decoding="async"
               style={{
                 width: "100%",
                 height: "100%",
@@ -246,7 +257,7 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
             background: "#F0EBE3", color: T.accent,
             fontFamily: T.bodyFont, fontWeight: 600, letterSpacing: "0.08em",
           }}>
-            🔏 Engravable
+            ✨ Precision-Marked
           </span>
           {tags.includes("Best Seller") && (
             <span style={{
@@ -303,7 +314,7 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
               : `0 6px 16px rgba(140,106,67,0.2)`,
           }}
         >
-          {added ? "✓ Added to Cart" : "Add to Cart"}
+          {added ? "✓ Added to Order" : "Add to Order"}
         </button>
       </div>
     </div>
@@ -342,6 +353,15 @@ export default function ProductList() {
     maxPrice: "",
     minRating: "",
   });
+
+  /* ── Page Title & Meta ── */
+  useEffect(() => {
+    document.title = "Bespoke Design Products | Olive Seeds Studio";
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute("content", "Explore our curated collection of premium design products, bespoke personalised objects, and custom corporate gifts crafted for distinguished spaces.");
+    }
+  }, []);
 
   /* ── Sync category & tag from URL search query or route parameter ── */
   useEffect(() => {
@@ -435,9 +455,9 @@ export default function ProductList() {
       <FontLink />
 
       <SEO
-        title="Buy Custom Engraved Products Online | MDF, Acrylic, Wood & Leather | Olive Seeds"
-        description="Shop premium custom laser-engraved name plates, corporate gifts, wooden plaques and leather products. Personalized to order with worldwide shipping. Fast delivery guaranteed."
-        keywords="custom engraved name plates online, laser engraved gifts worldwide shipping, personalized MDF name plate, buy acrylic engraved products online, custom wooden engraved gifts, corporate engraved gifts with logo"
+        title="Bespoke Design Products | Olive Seeds Studio"
+        description="Explore our curated collection of premium design products, bespoke personalised objects, and custom corporate gifts crafted for distinguished spaces."
+        keywords="bespoke design products, custom corporate gifts, branded décor, premium design objects, olive seeds design studio"
       />
 
       <Navbar />
@@ -478,7 +498,7 @@ export default function ProductList() {
             letterSpacing: "0.4em", textTransform: "uppercase",
             color: T.highlight, marginBottom: 20,
           }}>
-            Olive Seeds · Premium Collection
+            Olive Seeds · The Collection
           </p>
 
           <h1 style={{
@@ -491,20 +511,29 @@ export default function ProductList() {
             maxWidth: 700,
             marginBottom: 24,
           }}>
-            Uniquely Designed.<br />
-            <em style={{ color: T.highlight }}>Expertly Engraved.</em>
+            The Collection
           </h1>
 
           <p style={{
             fontFamily: T.bodyFont,
             fontSize: 16,
             lineHeight: 1.8,
-            color: "rgba(246,243,238,0.72)",
-            maxWidth: 520,
+            color: "rgba(246,243,238,0.85)",
+            maxWidth: 640,
+            marginBottom: 14,
+          }}>
+            Each piece in our collection is designed to carry meaning — for the organisations that commission them and the people who receive them.
+          </p>
+
+          <p style={{
+            fontFamily: T.bodyFont,
+            fontSize: 14,
+            lineHeight: 1.7,
+            color: "rgba(246,243,238,0.65)",
+            maxWidth: 620,
             marginBottom: 40,
           }}>
-            Premium personalized products designed to leave lasting impressions.
-            Every piece crafted with precision and care.
+            We produce custom design objects for corporate gifting, spatial identity, event experiences, and lifestyle collections. All products are available for bespoke customisation and bulk B2B ordering. Contact us to discuss your requirements.
           </p>
 
           <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
@@ -529,18 +558,10 @@ export default function ProductList() {
                 transition: "all 0.3s ease",
               }}
             >
-              Shop Collection
+              Explore the Collection
             </button>
-            <button
-              onClick={() => {
-                setFilters((f) => ({
-                  ...f,
-                  tag: "Best Seller",
-                  category: "",
-                  sort: "rating",
-                }));
-                document.getElementById("product-grid")?.scrollIntoView({ behavior: "smooth" });
-              }}
+            <Link
+              to="/contact"
               style={{
                 padding: "16px 36px",
                 background: "transparent",
@@ -553,11 +574,14 @@ export default function ProductList() {
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
                 cursor: "pointer",
+                textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
                 transition: "all 0.3s ease",
               }}
             >
-              Explore Best Sellers
-            </button>
+              Begin Your Enquiry
+            </Link>
           </div>
         </div>
       </section>
@@ -584,9 +608,16 @@ export default function ProductList() {
         {/* ── SIDEBAR ── */}
         <aside style={{
           display: "none", /* shown via media query override below */
-          width: 240, flexShrink: 0,
-          position: "sticky", top: 80,
-          flexDirection: "column", gap: 20,
+          width: 250, flexShrink: 0,
+          position: "sticky", top: 88,
+          maxHeight: "calc(100vh - 108px)",
+          overflowY: "auto",
+          overflowX: "hidden",
+          overscrollBehavior: "contain",
+          flexDirection: "column", gap: 16,
+          paddingRight: 6,
+          scrollbarWidth: "thin",
+          scrollbarColor: "#C6A77D transparent",
         }}
           className="luxury-sidebar"
         >
@@ -676,13 +707,13 @@ export default function ProductList() {
                 color: T.text, marginBottom: 4,
               }}>
                 {filters.tag
-                  ? `${filters.tag} Engraved Products`
+                  ? `${filters.tag} Objects`
                   : filters.category === "Best Sellers" || filters.category === "best-sellers"
-                  ? "⭐ Best Selling Engraved Products"
-                  : filters.category || "All Engraved Products"}
+                  ? "⭐ Best Selling Pieces"
+                  : filters.category || "The Collection"}
               </h2>
               <p style={{ fontFamily: T.bodyFont, fontSize: 13, color: T.textSec }}>
-                {loading ? "Loading collection…" : `${products.length} premium products available`}
+                {loading ? "Loading collection…" : `${products.length} bespoke pieces available`}
               </p>
             </div>
 
@@ -898,19 +929,18 @@ export default function ProductList() {
             boxShadow: "0 24px 60px rgba(0,0,0,0.5)",
             backdropFilter: "blur(20px)"
           }}>
-            <p style={{ ...eyebrow(true), color: "#C9A86A", marginBottom: "12px" }}>Stay Inspired</p>
+            <p style={{ ...eyebrow(true), color: "#C9A86A", marginBottom: "12px" }}>B2B &amp; Volume Orders</p>
             <h2 className="clash" style={{
               fontWeight: 400, fontSize: "clamp(28px, 4vw, 44px)",
               color: "#ffffff", lineHeight: 1.15, marginBottom: "16px",
             }}>
-              Design Inspiration &amp;<br />Exclusive Launches
+              Ordering for Your Organisation?
             </h2>
             <p style={{
               fontFamily: T.bodyFont, fontSize: "14px", color: "rgba(255,255,255,0.8)",
               lineHeight: 1.7, marginBottom: "32px",
             }}>
-              Join our community of design lovers. Be first to discover new collections,
-              engraving techniques, and bespoke launch offers.
+              We welcome B2B enquiries for bulk, corporate, and institutional orders. Whether you require 50 pieces or 5,000 — our studio manages production, customisation, and delivery with the same precision applied to every individual commission.
             </p>
             <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: "32px" }}>
               <input
@@ -962,7 +992,7 @@ export default function ProductList() {
                 boxShadow: "0 6px 20px rgba(201,168,106,0.25)",
                 transition: "all 0.3s ease",
               }}>
-                Bulk Order Form
+                Request a B2B Proposal
               </Link>
               <Link to="/engraving" style={{
                 display: "inline-flex",
@@ -983,7 +1013,7 @@ export default function ProductList() {
                 onMouseEnter={e => { e.currentTarget.style.borderColor = "#ffffff"; e.currentTarget.style.background = "rgba(255,255,255,0.12)"; }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = "#C9A86A"; e.currentTarget.style.background = "rgba(255,255,255,0.08)"; }}
               >
-                Learn About Engraving
+                Learn About Our Craft
               </Link>
             </div>
           </div>
@@ -1096,6 +1126,70 @@ export default function ProductList() {
         </div>
       )}
 
+      {/* ─── B2B Ordering Strip ─── */}
+      <section style={{
+        background: "#0D1512",
+        color: "#F6F3EE",
+        padding: "60px 24px",
+        borderTop: "1px solid rgba(198,167,125,0.2)",
+      }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 24 }}>
+          <div style={{ maxWidth: 720 }}>
+            <span style={{
+              fontFamily: T.bodyFont,
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              color: T.highlight,
+              display: "block",
+              marginBottom: 8,
+            }}>
+              Corporate & Institutional
+            </span>
+            <h2 style={{
+              fontFamily: T.headingFont,
+              fontSize: "clamp(26px, 3.5vw, 38px)",
+              fontWeight: 400,
+              color: "#FFFFFF",
+              marginBottom: 12,
+            }}>
+              Ordering for Your Organisation?
+            </h2>
+            <p style={{
+              fontFamily: T.bodyFont,
+              fontSize: 15,
+              lineHeight: 1.75,
+              color: "rgba(246,243,238,0.75)",
+            }}>
+              We welcome B2B enquiries for bulk, corporate, and institutional orders. Whether you require 50 pieces or 5,000 — our studio manages production, customisation, and delivery with the same precision applied to every individual commission.
+            </p>
+          </div>
+          <div>
+            <Link
+              to="/contact"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                padding: "16px 36px",
+                background: T.highlight,
+                color: "#1B1510",
+                borderRadius: 50,
+                fontFamily: T.bodyFont,
+                fontSize: 13,
+                fontWeight: 700,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                textDecoration: "none",
+                boxShadow: "0 10px 28px rgba(198,167,125,0.3)",
+              }}
+            >
+              Request a B2B Quote
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <Footer />
 
       {/* ─── Inline responsive styles ─────────────────── */}
@@ -1117,6 +1211,16 @@ export default function ProductList() {
           display: flex;
           flex-direction: column;
           height: 100%;
+        }
+        .luxury-sidebar::-webkit-scrollbar {
+          width: 5px;
+        }
+        .luxury-sidebar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .luxury-sidebar::-webkit-scrollbar-thumb {
+          background: #C6A77D;
+          border-radius: 10px;
         }
         @media (min-width: 1024px) {
           .luxury-sidebar { display: flex !important; }

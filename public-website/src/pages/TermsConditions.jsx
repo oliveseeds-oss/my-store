@@ -11,7 +11,7 @@ const sections = [
     title: "Acceptance of Terms",
     content: `By accessing or placing an order on Olive Seeds, you confirm that you have read, understood, and agree to be bound by these Terms & Conditions. If you do not agree with any part of these terms, please refrain from using our website or services.
 
-These terms apply to all visitors, users, and customers of Olive Seeds, including those who browse, purchase physical engraved products, or download digital design products from our platform.`,
+These terms apply to all visitors, users, and customers of Olive Seeds, including those who browse, purchase physical bespoke products, or download digital design products from our platform.`,
   },
   {
     id: "products",
@@ -19,7 +19,7 @@ These terms apply to all visitors, users, and customers of Olive Seeds, includin
     title: "Products & Services",
     content: `Olive Seeds offers two categories of products:
 
-Physical Engraved Products — Custom laser-engraved items including nameboards, keychains, mugs, photo frames, and corporate gifts. Each physical product is handcrafted and personalised to your specifications. Due to the custom nature of engraving, minor variations in wood grain, colour tone, and finish may occur and are considered part of the product's natural character.
+Physical Bespoke Products — Hand-finished, precision-crafted objects including architectural plaques, presentation boxes, display pieces, and corporate gifting collections. Each physical object is handcrafted and personalised to your specifications. Due to the custom nature of physical craft and organic materials, minor variations in wood grain, colour tone, and finish may occur and are considered part of the product's natural character.
 
 Digital Products — Downloadable design files including logo kits, templates, social media packs, and mockup bundles. Digital products are delivered electronically and are not physical goods.
 
@@ -40,12 +40,12 @@ In the event of a pricing error, we reserve the right to cancel an order and iss
   {
     id: "customisation",
     number: "04",
-    title: "Custom Engraving & Personalisation",
-    content: `You are solely responsible for the accuracy of any text, names, dates, or designs submitted for engraving. We do not proofread or validate customer-submitted content. Please review your order details carefully before submitting.
+    title: "Bespoke Commissions & Personalisation",
+    content: `You are solely responsible for the accuracy of any text, names, dates, or designs submitted for customisation. We do not proofread or validate customer-submitted content. Please review your order details carefully before submitting.
 
-Olive Seeds reserves the right to refuse engraving of content that is offensive, unlawful, or infringes third-party intellectual property rights. In such cases, you will be contacted and offered a refund.
+Olive Seeds reserves the right to refuse customisation of content that is offensive, unlawful, or infringes third-party intellectual property rights. In such cases, you will be contacted and offered a refund.
 
-Engraving placement and proportions may be adjusted slightly by our craftspeople to ensure the best aesthetic outcome on the chosen material. This is considered part of our standard craftsmanship process and does not constitute an error.`,
+Detailing placement and proportions may be adjusted slightly by our craftspeople to ensure the best aesthetic outcome on the chosen material. This is considered part of our standard craftsmanship process and does not constitute an error.`,
   },
   {
     id: "intellectual",
@@ -55,7 +55,7 @@ Engraving placement and proportions may be adjusted slightly by our craftspeople
 
 Digital products purchased from Olive Seeds are licensed for personal and commercial use by the buyer only. Resale, redistribution, sublicensing, or sharing of digital files is strictly prohibited.
 
-By submitting your own designs or text for engraving, you confirm that you hold the necessary rights or permissions for that content and that its use does not infringe any third-party rights.`,
+By submitting your own designs or text for custom commissions, you confirm that you hold the necessary rights or permissions for that content and that its use does not infringe any third-party rights.`,
   },
   {
     id: "liability",

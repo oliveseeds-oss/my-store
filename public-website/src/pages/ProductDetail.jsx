@@ -11,6 +11,7 @@ import AdBanner from "../components/AdBanner";
 import RecentlyViewed, { trackRecentlyViewed } from "../components/RecentlyViewed";
 import ReviewSection from "../components/ReviewSection";
 import { trackGA4Event } from "../utils/ga4";
+import { getAllProductImages, resolveImageUrl } from "../utils/imageHelper";
 
 function Stars({ rating, size = "md" }) {
   const sz = size === "sm" ? "text-xs" : "text-base";
@@ -37,7 +38,7 @@ function ReviewForm({ productId, onSubmit }) {
 
   if (done) return (
     <div className="bg-emerald-50 border border-emerald-200 p-4 text-xs font-bold text-emerald-800 rounded-lg">
-      ✓ Thank you for your review! It will appear once approved by admin.
+      ✓ Thank you for your review. It will appear once approved by the studio.
     </div>
   );
 
@@ -276,10 +277,10 @@ export default function ProductDetail() {
 
   useEffect(() => {
     if (product) {
-      document.title = `${product.name} | Custom Engravings | Oliveseeds Studio`;
+      document.title = `${product.name} | Olive Seeds Design Studio`;
       const metaDesc = document.querySelector('meta[name="description"]');
       if (metaDesc) {
-        metaDesc.setAttribute("content", `${product.name} at Oliveseeds Studio. ${product.description || ""}`);
+        metaDesc.setAttribute("content", `${product.name} — bespoke design piece by Olive Seeds Design Studio. ${product.description || ""}`);
       }
 
       // Inject JSON-LD Structured Data
@@ -405,14 +406,13 @@ export default function ProductDetail() {
     </div>
   );
 
-  const allImages = [
-    ...(product.image_url ? [product.image_url] : []),
-    ...(Array.isArray(product.images) ? product.images : []),
-  ].filter(Boolean);
+  const allImages = getAllProductImages(product);
 
-  const finalPrice = product.discount_price || product.price;
-  const discount = product.discount_price
-    ? Math.round((1 - product.discount_price / product.price) * 100) : 0;
+  const finalPrice = (product.discount_price && Number(product.discount_price) > 0 && Number(product.discount_price) < Number(product.price))
+    ? Number(product.discount_price)
+    : Number(product.price);
+  const discount = (product.discount_price && Number(product.discount_price) < Number(product.price))
+    ? Math.round((1 - Number(product.discount_price) / Number(product.price)) * 100) : 0;
   const tags = Array.isArray(product.tags) ? product.tags : [];
   const sizes = Array.isArray(product.sizes) ? product.sizes : [];
   const reviews = Array.isArray(product.reviews) ? product.reviews : [];
@@ -462,6 +462,9 @@ export default function ProductDetail() {
     addToCart({ 
       ...product, 
       type: "physical", 
+      price: finalPrice,
+      original_price: Number(product.price),
+      discount_price: product.discount_price ? Number(product.discount_price) : null,
       selectedSize, 
       qty,
       customizations: itemCustomizations,
@@ -492,7 +495,7 @@ export default function ProductDetail() {
       <SEO 
         title={product.name} 
         description={product.description ? product.description.substring(0, 160) : ""} 
-        keywords={`${product.category_name || "laser engraving"}, dynamic keepsakes, organic wood carvings, custom gift`} 
+        keywords={`${product.category_name || "bespoke objects"}, dynamic keepsakes, architectural finish, bespoke commissions`} 
         ogImage={product.image_url}
         imageAlt={product.image_alt || product.name}
         isProduct={true}
@@ -569,7 +572,7 @@ export default function ProductDetail() {
                         if (["image", "file"].includes(f.type)) {
                           const imgUrl = customValues[f.field_key] || f.default_value || "";
                           if (!imgUrl) return null;
-                          const resolvedSrc = imgUrl.startsWith("http") ? imgUrl : `http://localhost:5000${imgUrl}`;
+                          const resolvedSrc = resolveImageUrl(imgUrl);
                           const style = {
                             position: "absolute",
                             left: `${(f.x_pos / 500) * 100}%`,
@@ -682,7 +685,7 @@ export default function ProductDetail() {
               <button
                 onClick={() => {
                   navigator.clipboard.writeText(window.location.href);
-                  alert("Copied!");
+                  alert("Link copied to clipboard.");
                 }}
                 className="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center text-xs font-bold bg-stone-200 text-stone-700 rounded-xl hover:bg-stone-300 transition"
               >
@@ -714,7 +717,7 @@ export default function ProductDetail() {
               {/* FEATURE 6: Live Stock Counter */}
               {product.stock > 0 && product.stock <= 10 && (
                 <p className="text-xs font-bold text-orange-600 mt-2">
-                  Only {product.stock} left in stock!
+                  Only {product.stock} pieces remaining in studio stock.
                 </p>
               )}
               {product.stock === 0 && (
@@ -768,7 +771,7 @@ export default function ProductDetail() {
                 </div>
                 <p className={`text-sm ${product.stock <= 5 ? "text-red-600 font-semibold" : "text-green-700"}`}>
                   {product.stock === 0 ? "Out of stock"
-                    : product.stock <= 5 ? `Only ${product.stock} left in stock!`
+                    : product.stock <= 5 ? `Only ${product.stock} pieces remaining in studio stock.`
                       : "In stock"}
                 </p>
               </div>
@@ -782,8 +785,8 @@ export default function ProductDetail() {
             {product.enable_personalization && product.templates?.length > 0 && (
               <div className="border border-stone-200 bg-white p-4 flex flex-col gap-4 mb-2" style={{ borderRadius: "2px" }}>
                 <div>
-                  <span className="text-[10px] text-amber-700 font-extrabold uppercase tracking-wider block">✏️ Custom Engraving Details</span>
-                  <h3 className="text-lg font-bold text-stone-850">Customize Your Product</h3>
+                  <span className="text-[10px] text-amber-700 font-extrabold uppercase tracking-wider block">✏️ Customisation Details</span>
+                  <h3 className="text-lg font-bold text-stone-850">Personalise Your Piece</h3>
                 </div>
 
                 {/* Template selector */}
@@ -948,7 +951,7 @@ export default function ProductDetail() {
                               </label>
                             </div>
                             {f.type === "image" && value && (
-                              <img src={`http://localhost:5000${value}`} alt="" className="w-16 h-16 object-cover rounded border bg-stone-50" />
+                              <img src={resolveImageUrl(value)} alt="" className="w-16 h-16 object-cover rounded border bg-stone-50" />
                             )}
                           </div>
                         )}
@@ -971,13 +974,13 @@ export default function ProductDetail() {
                     : product.stock === 0 ? "bg-stone-200 text-stone-400 cursor-not-allowed"
                       : "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white"}`}
                 style={{ fontFamily: "'Outfit', sans-serif" }}>
-                {added ? "✓ Added to Cart" : "Add to Cart"}
+                {added ? "✓ Added to Order" : "Add to Order"}
               </button>
               <button
                 className="w-full py-4 font-bold text-xs uppercase tracking-widest bg-stone-950 hover:bg-stone-900 text-white transition-all shadow-lg rounded-full cursor-pointer"
                 style={{ fontFamily: "'Outfit', sans-serif" }}
                 onClick={() => handleDirectCheckout("paypal")}>
-                Buy Now — Secure Checkout
+                Commission This Piece — Secure Checkout
               </button>
             </div>
 
@@ -1006,10 +1009,10 @@ export default function ProductDetail() {
             {/* Perks */}
             <div className="border border-stone-200/60 bg-white p-5 flex flex-col gap-3 rounded-2xl shadow-sm mt-1">
               {[
-                ["🚚", "Free delivery above ₹999"],
-                ["🔄", "7-day easy returns policy"],
-                ["🔒", "Secure payment via Razorpay / PayPal"],
-                ["✏️", "100% custom micron laser engraving"],
+                ["🚚", "Complimentary delivery on qualifying orders"],
+                ["🔄", "Seven-day studio review policy"],
+                ["🔒", "Encrypted payment via Razorpay & PayPal"],
+                ["✏️", "Bespoke precision-crafted detailing"],
               ].map(([icon, text]) => (
                 <div key={text} className="flex items-center gap-2.5 text-xs text-stone-600">
                   <span>{icon}</span> {text}
@@ -1027,7 +1030,7 @@ export default function ProductDetail() {
         {/* ── Description ── */}
         <div className="mt-10 border-t border-stone-200 pt-8">
           <h2 className="text-xl font-bold text-stone-800 mb-4">
-            Product description
+            Studio Description & Details
           </h2>
           <p className="text-stone-600 leading-relaxed whitespace-pre-wrap text-sm">
             {product.description}

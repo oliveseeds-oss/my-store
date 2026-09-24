@@ -1,12 +1,13 @@
 const router = require("express").Router();
 const db = require("../db");
 const { verifyAdmin } = require("../middleware/auth");
+const { createRateLimiter } = require("../middleware/rateLimiter");
 
-// POST /api/coupons/validate — check if coupon code is valid
-router.post("/validate", async (req, res) => {
+// POST /api/coupons/validate — Rate-limited check if coupon code is valid (anti brute-force)
+router.post("/validate", createRateLimiter(15, 15 * 60 * 1000), async (req, res) => {
   const { code, cart_total, user_id } = req.body;
 
-  if (!code) {
+  if (!code || typeof code !== "string" || !code.trim() || code.trim().length > 50) {
     return res.status(400).json({ error: "Coupon code is required" });
   }
 

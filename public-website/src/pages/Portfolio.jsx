@@ -75,9 +75,9 @@ export default function Portfolio() {
   return (
     <div style={{ background: "#060913", color: "#F8FAFC", minHeight: "100vh", fontFamily: "'Inter', sans-serif" }}>
       <SEO 
-        title="Premium Studio Showcase | Olive Seeds"
-        description="Explore our design studio projects: Figma design systems, Notion operating workspaces, and professional React application engineering."
-        keywords="Figma UI kits, Notion systems, React engineering studio, UI UX design services"
+        title="Portfolio Showcase | Olive Seeds Studio"
+        description="Explore our curated studio portfolio: brand identity systems, architectural spatial design, and bespoke physical commissions for global clients."
+        keywords="bespoke design portfolio, brand identity systems, spatial design, olive seeds design studio"
       />
       <Navbar />
 

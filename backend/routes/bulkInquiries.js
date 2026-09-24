@@ -2,27 +2,40 @@ const router = require("express").Router();
 const db = require("../db");
 const mailer = require("../utils/mailer");
 const { verifyAdmin } = require("../middleware/auth");
+const { createRateLimiter } = require("../middleware/rateLimiter");
 
-// POST /api/bulk-inquiry — submit inquiry (public, no auth needed)
-router.post("/", async (req, res) => {
+// POST /api/bulk-inquiry — submit inquiry (public, rate limited)
+router.post("/", createRateLimiter(5, 15 * 60 * 1000), async (req, res) => {
   const { full_name, email, phone, company_name, product_interest, quantity, message } = req.body;
 
-  if (!full_name || !email) {
-    return res.status(400).json({ error: "Full Name and Email are required" });
+  if (!full_name || typeof full_name !== "string" || !full_name.trim()) {
+    return res.status(400).json({ error: "Full Name is required" });
   }
+
+  if (!email || typeof email !== "string" || !/\S+@\S+\.\S+/.test(email.trim())) {
+    return res.status(400).json({ error: "A valid email address is required" });
+  }
+
+  const cleanName = full_name.trim().slice(0, 255);
+  const cleanEmail = email.trim().toLowerCase().slice(0, 255);
+  const cleanPhone = phone ? String(phone).trim().slice(0, 50) : null;
+  const cleanCompany = company_name ? String(company_name).trim().slice(0, 255) : null;
+  const cleanInterest = product_interest ? String(product_interest).trim().slice(0, 500) : null;
+  const cleanQty = quantity ? Math.max(1, parseInt(quantity, 10) || 1) : null;
+  const cleanMessage = message ? String(message).trim().slice(0, 5000) : null;
 
   try {
     const [result] = await db.query(
       `INSERT INTO bulk_inquiries (full_name, email, phone, company_name, product_interest, quantity, message, status)
        VALUES (?, ?, ?, ?, ?, ?, ?, 'new')`,
       [
-        full_name,
-        email,
-        phone || null,
-        company_name || null,
-        product_interest || null,
-        quantity ? parseInt(quantity) : null,
-        message || null
+        cleanName,
+        cleanEmail,
+        cleanPhone,
+        cleanCompany,
+        cleanInterest,
+        cleanQty,
+        cleanMessage
       ]
     );
 

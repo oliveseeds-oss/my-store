@@ -25,9 +25,9 @@ export default function CategoryCatalog() {
   return (
     <div style={{ background: "#FAF9F6", minHeight: "100vh", fontFamily: "'Inter', sans-serif" }}>
       <SEO 
-        title="Browse Categories | Olive Seeds"
-        description="Browse all our premium laser-engraved products, digital design templates, and custom studio categories."
-        keywords="custom laser gifts, notion workspace templates, figma branding kits, category list"
+        title="Browse Categories | Olive Seeds Design Studio"
+        description="Browse our bespoke design objects, digital design systems, and custom studio collections."
+        keywords="bespoke commissions, digital templates, brand systems, category collection"
       />
       <Navbar />
 
@@ -41,7 +41,7 @@ export default function CategoryCatalog() {
           <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--gold)", letterSpacing: "0.2em", textTransform: "uppercase", display: "block", marginBottom: "8px" }}>Catalog Directory</span>
           <h1 className="clash" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 700, marginBottom: "12px" }}>Browse By Category</h1>
           <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "14px", maxWidth: "520px", margin: "0 auto", lineHeight: 1.6 }}>
-            Select a specialized category to explore handcrafted physical items, premium digital templates, and custom studio solutions.
+            Select a category to explore hand-finished physical objects, premium digital design systems, and bespoke studio solutions.
           </p>
         </div>
       </section>
@@ -57,7 +57,7 @@ export default function CategoryCatalog() {
           <div style={{ textAlign: "center", padding: "80px 24px", background: "#FFF", borderRadius: "24px", border: "1px solid var(--border)" }}>
             <span style={{ fontSize: "48px" }}>🪵</span>
             <h3 style={{ fontSize: "18px", fontWeight: 750, color: "var(--accent)", marginTop: "16px" }}>No Categories Created Yet</h3>
-            <p style={{ fontSize: "13px", color: "var(--text-2)", marginTop: "6px" }}>Check back soon as we add premium laser crafts and digital tools.</p>
+            <p style={{ fontSize: "13px", color: "var(--text-2)", marginTop: "6px" }}>Check back soon as we add bespoke objects and digital design systems.</p>
           </div>
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "28px" }}>

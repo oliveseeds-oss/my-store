@@ -170,10 +170,17 @@ export default function CatalogAdmin() {
                     </select>
                   </div>
                   <div>
-                    <label className="text-[10px] text-gray-400 uppercase tracking-wider mb-1 block">Image URL</label>
-                    <input type="text" value={form.image_url} onChange={e => setForm({ ...form, image_url: e.target.value })}
-                      placeholder="e.g. https://images.unsplash.com/..."
-                      className="w-full border border-gray-200 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-indigo-300" />
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-[10px] text-gray-400 uppercase tracking-wider block">Image URL(s)</label>
+                      <span className="text-[9px] text-indigo-500 font-normal">Single URL or multiple URLs (comma/line separated)</span>
+                    </div>
+                    <textarea
+                      rows="2"
+                      value={form.image_url}
+                      onChange={e => setForm({ ...form, image_url: e.target.value })}
+                      placeholder="https://images.unsplash.com/photo-1&#10;https://images.unsplash.com/photo-2"
+                      className="w-full border border-gray-200 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-indigo-300 resize-none font-mono text-[11px]"
+                    />
                   </div>
                   <div>
                     <label className="text-[10px] text-gray-400 uppercase tracking-wider mb-1 block">Short Description</label>

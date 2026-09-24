@@ -204,7 +204,7 @@ const ReviewSection = ({ productId, dark = false }) => {
           color: '#888',
           marginBottom: '32px'
         }}>
-          No reviews yet. Be the first to review!
+          No reviews yet. Share your experience with this piece.
         </div>
       ) : (
         <div style={{ marginBottom: '32px' }}>
@@ -290,7 +290,7 @@ const ReviewSection = ({ productId, dark = false }) => {
             color: '#4a7a4a',
             padding: '16px'
           }}>
-            Thank you! Your review is pending approval and will appear shortly.
+            Thank you. Your review is pending approval and will appear shortly.
           </div>
         ) : (
           <div>

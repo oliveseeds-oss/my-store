@@ -42,7 +42,7 @@ export default function AdBanner({ placement, priority }) {
   const type = placement || "Horizontal Banner";
   const currentAd = ad || fallbacks[type] || fallbacks["Horizontal Banner"];
 
-  // Layout sizing wrappers mapping perfectly to their suggested dimensions!
+  // Layout sizing wrappers mapping to suggested dimensions
   let layoutClasses = "";
   if (type === "Horizontal Banner") {
     layoutClasses = "w-full h-32 md:h-24";

@@ -37,15 +37,6 @@ function computeShippingCost({
 }) {
   const weight = Math.max(1, parseInt(totalWeightGrams, 10) || 500);
   const val = parseFloat(orderValue) || 0;
-  const freeAbove = freeShippingAbove !== null && freeShippingAbove !== undefined ? parseFloat(freeShippingAbove) : null;
-
-  if (freeAbove !== null && freeAbove > 0 && val >= freeAbove) {
-    return {
-      shippingCost: 0,
-      isFree: true,
-      breakdown: { baseRate: 0, firstWeightCost: 0, extraWeightCost: 0, extraUnits: 0, reason: "Order value qualifies for free shipping" }
-    };
-  }
 
   const base = parseFloat(baseRate) || 0;
   const firstSlabGrams = parseInt(firstWeightGrams, 10) || 500;

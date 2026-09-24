@@ -90,42 +90,42 @@ const MATERIALS = [
   { 
     icon: "Sparkles", 
     name: "Frosted & Clear Acrylic", 
-    desc: "Sleek, glass-like transparency with safe polished edges. Popular for signage and modern awards.",
+    desc: "Sleek, glass-like transparency with safe polished edges. Popular for architectural signage and modern awards.",
     img: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=800&auto=format&fit=crop" 
   },
   { 
     icon: "Pen", 
     name: "Genuine Leather", 
-    desc: "High-contrast tactile burns on rich leather skins. Excellent for bespoke tech sleeves & notebooks.",
+    desc: "High-contrast tactile markings on rich leather skins. Excellent for bespoke tech sleeves & notebooks.",
     img: "https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?q=80&w=800&auto=format&fit=crop" 
   },
   { 
     icon: "Globe", 
     name: "Tempered Glass & Crystal", 
-    desc: "Frost-engraved patterns refracting light at high clarity. Premium choice for executive awards.",
+    desc: "Precision-frosted patterns refracting light at high clarity. Premium choice for executive awards.",
     img: "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?q=80&w=800&auto=format&fit=crop" 
   },
   { 
     icon: "Box", 
     name: "Premium Finished MDF", 
-    desc: "Ultra-smooth density cores carved with laser precision. Excellent for geometric wall decors.",
+    desc: "Ultra-smooth density cores carved with precision. Excellent for geometric wall decors.",
     img: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?q=80&w=800&auto=format&fit=crop" 
   },
 ];
 
 const WHY_US = [
-  { icon: "Wood", title: "Micro-Precision Cutting", desc: "Advanced CO2 and Fiber lasers calibrated for micron accuracy." },
-  { icon: "Sparkles", title: "Premium Finished Wood", desc: "Strictly select organic Teakwood, Bamboo and high-grade Acrylic panels." },
+  { icon: "Wood", title: "Micro-Precision Detailing", desc: "Advanced calibrated instruments calibrated for micron accuracy." },
+  { icon: "Sparkles", title: "Hand-Finished Timber", desc: "Strictly select organic Teakwood, Bamboo and architectural Acrylic panels." },
   { icon: "Globe", title: "Worldwide Shipping", desc: "Insured safe box deliveries globally across 25+ target regions." },
-  { icon: "Box", title: "Pre-Production Approvals", desc: "We coordinate and share detailed design mockup blueprints before engraving." },
-  { icon: "Support", title: "Enterprise Pricing", desc: "Dedicated managers and custom volume discounts for corporate events." },
-  { icon: "Trophy", title: "Bespoke Engraving Art", desc: "Expert craft team ensuring high contrast and clean edges on every piece." },
+  { icon: "Box", title: "Pre-Production Approvals", desc: "We coordinate and share detailed design mockup blueprints before production." },
+  { icon: "Support", title: "Enterprise Pricing", desc: "Dedicated managers and custom volume structures for corporate events." },
+  { icon: "Trophy", title: "Bespoke Object Craft", desc: "Expert craft team ensuring high contrast and clean edges on every piece." },
 ];
 
 const STEPS = [
   { num: "01", title: "Share Design & Spec", desc: "Provide your dimensions, select materials, and upload vector artwork/logos." },
   { num: "02", title: "Mockup Approval", desc: "Our craft designers render a digital preview proof file for your confirmation." },
-  { num: "03", title: "Laser Calibrations", desc: "We run deep-relief engravings with precision laser machines in our studio." },
+  { num: "03", title: "Studio Detailing", desc: "We execute deep-relief detailing with micron precision in our studio." },
   { num: "04", title: "Insured Delivery", desc: "Every unit is hand-polished, packaged in protective crates, and dispatched." },
 ];
 
@@ -186,9 +186,9 @@ export default function Engraving() {
   return (
     <div style={{ background: "#FAF9F6", color: "#1E2522", minHeight: "100vh", fontFamily: "'Outfit', sans-serif" }}>
       <SEO
-        title="Custom Laser Engraving Solutions & Bulk Orders | Olive Seeds"
-        description="Learn about our high-precision laser engraving customization journey, tactile materials, and request a personalized or bulk corporate order quote."
-        keywords="laser engraving, custom engravings, custom corporate gifting, wholesale nameplates, wood laser engraving, acrylic trophies"
+        title="Bespoke Objects & Collections | Olive Seeds Studio"
+        description="Discover our precision craft journey, tactile materials, and request a tailored proposal for bespoke corporate commissions and volume orders."
+        keywords="bespoke objects, custom corporate collections, architectural nameplates, hand-finished timber, acrylic collection"
       />
 
       <Navbar />
@@ -283,18 +283,18 @@ export default function Engraving() {
               textTransform: "uppercase", color: "var(--gold)", marginBottom: "28px",
               marginInline: "auto"
             }} className="mx-auto lg:ml-0">
-              ⚡ High-Precision Laser Studio
+              ⚡ High-Precision Studio
             </span>
             <h1 className="clash" style={{ fontSize: "clamp(2.4rem, 4.5vw, 4rem)", fontWeight: 700, lineHeight: 1.15, marginBottom: "24px", width: "100%" }}>
               Bespoke Custom <br />
-              <span style={{ background: "linear-gradient(135deg, var(--gold) 0%, #f0cd84 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Engraving Services</span>
+              <span style={{ background: "linear-gradient(135deg, var(--gold) 0%, #f0cd84 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Object Solutions</span>
             </h1>
             <p style={{ color: "rgba(255,255,255,0.72)", fontSize: "16px", lineHeight: 1.7, maxWidth: "560px", marginBottom: "40px" }}>
-              Transform organic teakwood, premium acrylic blocks, custom leather, and tempered crystal trophies into masterfully engraved luxury keepsakes. Trusted by global brands and events.
+              Transform organic teakwood, premium acrylic blocks, custom leather, and tempered crystal trophies into masterfully finished luxury keepsakes. Trusted by global brands and events.
             </p>
             <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", width: "100%", justifyContent: "center" }} className="lg:justify-start">
               <a href="#bulk-order" className="btn-gold" style={{ padding: "16px 32px" }}>
-                Request Custom Quote
+                Request a Proposal
               </a>
               <a href="#materials" className="btn-secondary" style={{ padding: "16px 32px", borderColor: "rgba(255,255,255,0.2)", color: "#fff" }}>
                 Explore Materials
@@ -306,7 +306,7 @@ export default function Engraving() {
           <div className="hero-img-box">
             <img 
               src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop" 
-              alt="Laser engraving machine calibrating depth on solid teakwood template"
+              alt="Precision craft tools calibrating depth on solid teakwood template"
               style={{ width: "100%", height: "100%", objectFit: "cover" }} 
             />
             {/* Glass badge */}
@@ -337,20 +337,20 @@ export default function Engraving() {
             <div style={{ position: "relative", borderRadius: "24px", overflow: "hidden", boxShadow: "0 20px 40px rgba(0,0,0,0.06)", height: "380px" }}>
               <img 
                 src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=800&auto=format&fit=crop" 
-                alt="Personalized laser engraved gift boxes ready for dispatch" 
+                alt="Personalised presentation boxes ready for dispatch" 
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
             </div>
             <div style={{ padding: "20px" }}>
               <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold)", display: "block", marginBottom: "12px" }}>Artisan Studio</span>
-              <h2 className="clash" style={{ fontSize: "clamp(2rem, 3.5vw, 2.6rem)", fontWeight: 700, color: "#0A1424", marginBottom: "20px", lineHeight: 1.25 }}>Exceptional Contrast & Crisp Tactile Finishes</h2>
+              <h2 className="clash" style={{ fontSize: "clamp(2rem, 3.5vw, 2.6rem)", fontWeight: 700, color: "#0A1424", marginBottom: "20px", lineHeight: 1.25 }}>Exceptional Contrast &amp; Crisp Tactile Finishes</h2>
               <p style={{ color: "#666", fontSize: "15px", lineHeight: 1.7, marginBottom: "24px" }}>
-                Laser engraving is not just about burning surfaces—it is an art of speed, power, and focal calibrations. Our state-of-the-art machines carefully carve custom vector graphics, high-end typography, and complex brand logo signatures with zero fraying or rough margins.
+                Considered object design is not just about surfaces — it is an art of speed, power, and focal calibrations. Our studio instruments carefully craft custom vector graphics, high-end typography, and complex brand logo signatures with zero fraying or rough margins.
               </p>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                 <div style={{ borderLeft: "3.5px solid var(--gold)", paddingLeft: "14px" }}>
                   <p style={{ fontWeight: 800, fontSize: "14px", margin: 0, color: "#0A1424" }}>Teakwood nameplates</p>
-                  <p style={{ fontSize: "12px", color: "#666", margin: "4px 0 0" }}>Deep 3D tactile burns</p>
+                  <p style={{ fontSize: "12px", color: "#666", margin: "4px 0 0" }}>Deep 3D tactile detail</p>
                 </div>
                 <div style={{ borderLeft: "3.5px solid var(--gold)", paddingLeft: "14px" }}>
                   <p style={{ fontWeight: 800, fontSize: "14px", margin: 0, color: "#0A1424" }}>Frosted acrylic blocks</p>
@@ -367,7 +367,7 @@ export default function Engraving() {
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: "60px" }}>
             <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold)", display: "block", marginBottom: "8px" }}>Selected Materials</span>
-            <h2 className="clash" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 700, color: "#0A1424", marginBottom: "16px" }}>Explore Engravable Media</h2>
+            <h2 className="clash" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 700, color: "#0A1424", marginBottom: "16px" }}>Explore Architectural Materials</h2>
             <p style={{ fontSize: "15px", color: "#666", maxWidth: "560px", margin: "0 auto", lineHeight: 1.7 }}>
               We handpick and finish every raw panel to ensure optimal density, structure, and high contrast vector responses.
             </p>
@@ -478,9 +478,9 @@ export default function Engraving() {
             }}>
               Custom Consultation
             </span>
-            <h2 className="clash" style={{ fontSize: "clamp(2rem, 3.5vw, 2.8rem)", fontWeight: 700 }}>Request a Bulk Engraving Quote</h2>
+            <h2 className="clash" style={{ fontSize: "clamp(2rem, 3.5vw, 2.8rem)", fontWeight: 700 }}>Request a B2B &amp; Volume Proposal</h2>
             <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "14px", marginTop: "12px", lineHeight: 1.6 }}>
-              Ordering customized nameplates, plaques, gifts or signage for your office or events? Fill out the brief below. (Minimum bulk volume: 10 units)
+              Ordering bespoke nameplates, plaques, awards or architectural signage for your organisation or events? Fill out the brief below. (Minimum volume: 10 units)
             </p>
           </div>
 
@@ -495,7 +495,7 @@ export default function Engraving() {
             >
               <h3 className="clash" style={{ fontSize: "22px", color: "var(--gold)", marginBottom: "12px" }}>✓ Specs Received</h3>
               <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.8)", lineHeight: 1.6, margin: 0 }}>
-                Thank you! Our design director will review your specifications and get in touch within 24 hours with design drafts and bulk price adjustments.
+                Thank you for your submission. Our design director will review your specifications and respond within 24 hours with conceptual proposals and volume terms.
               </p>
             </motion.div>
           ) : (
@@ -591,10 +591,10 @@ export default function Engraving() {
                     value={formData.product_type}
                     onChange={(e) => setFormData({ ...formData, product_type: e.target.value })}
                   >
-                    <option value="Wooden Plaques">Wooden Plaques &amp; Signs</option>
-                    <option value="Acrylic Products">Acrylic Blocks &amp; Keepsakes</option>
+                    <option value="Wooden Plaques">Hand-Finished Timber Plaques &amp; Signs</option>
+                    <option value="Acrylic Products">Architectural Acrylic Blocks &amp; Keepsakes</option>
                     <option value="Leather Items">Leather Coasters &amp; Sleeves</option>
-                    <option value="Other Crafts">Other Material Cutting</option>
+                    <option value="Other Crafts">Bespoke Architectural Pieces</option>
                   </select>
                 </div>
                 <div>
@@ -611,11 +611,11 @@ export default function Engraving() {
               </div>
 
               <div>
-                <label className="bulk-label">Project Brief &amp; Text to Engrave *</label>
+                <label className="bulk-label">Project Brief &amp; Customisation Details *</label>
                 <textarea
                   rows="4"
                   required
-                  placeholder="Tell us what you want to engrave. Include text details, size limits, logo assets availability, or specialized finishes..."
+                  placeholder="Tell us about your project. Include customization details, size specifications, brand asset availability, or required finishes..."
                   className="bulk-input"
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
@@ -631,7 +631,7 @@ export default function Engraving() {
                   opacity: submitting ? 0.7 : 1, padding: "16px 0"
                 }}
               >
-                {submitting ? "Submitting Inquiry..." : "Submit Inquiry Brief"}
+                {submitting ? "Submitting Inquiry..." : "Submit Project Brief"}
               </button>
             </form>
           )}

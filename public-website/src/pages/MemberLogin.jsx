@@ -154,9 +154,9 @@ export default function MemberLogin() {
         email: otpEmail,
         purpose: otpPurpose
       });
-      setSuccess(`A new OTP has been sent!`);
+      setSuccess(`A new OTP has been dispatched.`);
       if (res.data.dev_otp) {
-        setSuccess(`A new OTP has been sent! Code: ${res.data.dev_otp}`);
+        setSuccess(`A new OTP has been dispatched. Code: ${res.data.dev_otp}`);
       }
     } catch (e) {
       setError(e.response?.data?.error || "Failed to resend OTP");
@@ -230,9 +230,9 @@ export default function MemberLogin() {
   return (
     <div style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }} className="min-h-screen flex flex-col justify-between overflow-hidden">
       <SEO 
-        title="Secure Member Access" 
-        description="Log in to your Olive Seeds dashboard to monitor physical order tracking, download your digital assets, and update profile settings with active OTP security." 
-        keywords="login, client login, sso google login, account register, physical order tracking, secure access, otp security"
+        title="Member Access | Olive Seeds Studio" 
+        description="Log in to your Olive Seeds dashboard to monitor bespoke orders, download acquired digital assets, and manage account preferences securely." 
+        keywords="member login, client access, bespoke order tracking, olive seeds studio"
       />
       <Navbar />
 

@@ -5,7 +5,7 @@ import API from "../api";
 import { MdAdd, MdDelete, MdClose, MdFilterList, MdDownload, MdCloudUpload, MdEditNote } from "react-icons/md";
 import BulkUploadModal from "../components/BulkUploadModal";
 
-const INIT = { image_url: "", title: "", style: "", category: "", industry: "", material: "" };
+const INIT = { image_url: "", title: "", style: "", category: "", industry: "", material: "", description: "" };
 
 export default function GalleryAdmin() {
   const [items, setItems] = useState([]);
@@ -176,16 +176,33 @@ export default function GalleryAdmin() {
 
                 <div className="flex flex-col gap-3 text-xs font-semibold text-gray-600">
                   <div>
-                    <label className="text-[10px] text-gray-400 uppercase tracking-wider mb-1 block">Image URL *</label>
-                    <input type="text" value={form.image_url} onChange={e => setForm({ ...form, image_url: e.target.value })}
-                      placeholder="e.g. https://images.unsplash.com/..."
-                      className="w-full border border-gray-200 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-indigo-300" />
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-[10px] text-gray-400 uppercase tracking-wider block">Image URL(s) *</label>
+                      <span className="text-[9px] text-indigo-500 font-normal">Supports multiple URLs (comma or line separated)</span>
+                    </div>
+                    <textarea
+                      rows="3"
+                      value={form.image_url}
+                      onChange={e => setForm({ ...form, image_url: e.target.value })}
+                      placeholder="https://images.unsplash.com/photo-1&#10;https://images.unsplash.com/photo-2"
+                      className="w-full border border-gray-200 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-indigo-300 resize-none font-mono text-[11px]"
+                    />
                   </div>
                   <div>
                     <label className="text-[10px] text-gray-400 uppercase tracking-wider mb-1 block">Title / Caption</label>
                     <input type="text" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })}
                       placeholder="e.g. Premium Teakwood Doorplate"
                       className="w-full border border-gray-200 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-indigo-300" />
+                  </div>
+                  <div>
+                    <label className="text-[10px] text-gray-400 uppercase tracking-wider mb-1 block">Custom Description / Details</label>
+                    <textarea
+                      rows="2"
+                      value={form.description}
+                      onChange={e => setForm({ ...form, description: e.target.value })}
+                      placeholder="Enter custom description or details about this craft..."
+                      className="w-full border border-gray-200 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-indigo-300 resize-none"
+                    />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>

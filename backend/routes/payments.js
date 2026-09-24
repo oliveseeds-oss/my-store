@@ -75,7 +75,7 @@ router.post("/orders/create", async (req, res) => {
         });
       } else {
         const [products] = await db.query(
-          "SELECT id, product_uid, name, price, stock, is_active FROM products WHERE id = ? OR product_uid = ?",
+          "SELECT id, product_uid, name, price, discount_price, stock, is_active FROM products WHERE id = ? OR product_uid = ?",
           [item.product_id, item.product_uid || null]
         );
         if (!products.length || !products[0].is_active) {
@@ -86,12 +86,14 @@ router.post("/orders/create", async (req, res) => {
           return res.status(400).json({ error: `Insufficient stock for product: ${product.name}` });
         }
         
-        const price = parseFloat(product.price);
-        subtotalInBase += price * item.qty;
+        const effectivePrice = (product.discount_price !== null && product.discount_price !== undefined && product.discount_price !== "" && parseFloat(product.discount_price) > 0)
+          ? parseFloat(product.discount_price)
+          : parseFloat(product.price);
+        subtotalInBase += effectivePrice * item.qty;
         physicalItems.push({
           ...item,
           product_uid: product.product_uid,
-          price // Overwrite with server authoritative price
+          price: effectivePrice // Overwrite with server authoritative discounted price
         });
       }
     }
@@ -100,15 +102,16 @@ router.post("/orders/create", async (req, res) => {
     const hasPhysical = physicalItems.length > 0;
     const taxInBase = Math.round(subtotalInBase * 0.18);
     const configuredShipping = parseFloat(storeSettings.shipping_fee) || 60;
-    const freeShippingThreshold = parseFloat(storeSettings.free_shipping_above) || 999;
     
-    // Digital products NEVER have shipping charges
+    // Digital products NEVER have shipping charges; physical products charge the shipping option price
     let finalShippingInBase = 0;
     if (hasPhysical) {
       if (shipping_fee !== undefined && !isNaN(parseFloat(shipping_fee))) {
         finalShippingInBase = Math.max(0, parseFloat(shipping_fee));
+      } else if (shipping_cost !== undefined && !isNaN(parseFloat(shipping_cost))) {
+        finalShippingInBase = Math.max(0, parseFloat(shipping_cost));
       } else {
-        finalShippingInBase = subtotalInBase >= freeShippingThreshold ? 0 : configuredShipping;
+        finalShippingInBase = configuredShipping;
       }
     }
 
@@ -638,9 +641,10 @@ router.post("/razorpay/webhook", async (req, res) => {
 
 // Helper to get PayPal Access Token
 async function getPayPalAccessToken() {
-  const [rows] = await db.query("SELECT paypal_client_id, paypal_client_secret FROM settings WHERE id = 1");
+  const [rows] = await db.query("SELECT paypal_client_id, paypal_client_secret, paypal_mode FROM settings WHERE id = 1");
   let clientId = rows[0]?.paypal_client_id || process.env.PAYPAL_CLIENT_ID;
   let clientSecret = rows[0]?.paypal_client_secret;
+  const configuredMode = rows[0]?.paypal_mode;
 
   if (clientSecret) {
     const { decrypt } = require("../utils/shiprocket");
@@ -656,7 +660,7 @@ async function getPayPalAccessToken() {
     throw new Error("PayPal credentials missing in store settings.");
   }
 
-  const isLive = !clientId.startsWith("sb") && process.env.PAYPAL_MODE !== "sandbox";
+  const isLive = configuredMode === "production" || (!configuredMode && !clientId.startsWith("sb") && process.env.PAYPAL_MODE === "production");
   const baseUrl = isLive ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
 
   const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");

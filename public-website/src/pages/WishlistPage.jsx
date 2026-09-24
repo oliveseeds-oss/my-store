@@ -63,13 +63,13 @@ export default function WishlistPage() {
         <div className="flex items-center justify-between border-b border-[#0D1512]/10 pb-6 mb-8">
           <div>
             <h1 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-3xl font-black text-[#0D1512] flex items-center gap-3">
-              <MdFavorite className="text-rose-500" /> My Saved Wishlist
+              <MdFavorite className="text-rose-500" /> Saved Commissions &amp; Objects
             </h1>
-            <p className="text-xs text-[#0D1512]/60 mt-1">Keep track of your favorite custom products and order when ready.</p>
+            <p className="text-xs text-[#0D1512]/60 mt-1">Curate your shortlisted bespoke pieces and studio assets.</p>
           </div>
 
           <span className="bg-[#0D1512]/5 text-[#0D1512] text-xs font-bold px-3.5 py-1.5 rounded-full border border-[#0D1512]/10">
-            {wishlistItems.length} Saved Items
+            {wishlistItems.length} Saved Pieces
           </span>
         </div>
 
@@ -77,7 +77,7 @@ export default function WishlistPage() {
           <div className="bg-white rounded-3xl border border-[#0D1512]/10 p-12 text-center space-y-4 shadow-sm max-w-md mx-auto my-8">
             <MdFavoriteBorder className="text-5xl text-stone-300 mx-auto" />
             <h3 className="font-bold text-[#0D1512]">Login to View Wishlist</h3>
-            <p className="text-xs text-stone-500">Please sign in to access your saved products across devices.</p>
+            <p className="text-xs text-stone-500">Please sign in to view your curated pieces across devices.</p>
             <Link to="/login" className="inline-block bg-[#0D1512] text-white text-xs font-bold px-6 py-3 rounded-xl shadow-sm hover:bg-stone-800 transition">
               Sign In to Your Account
             </Link>
@@ -87,10 +87,10 @@ export default function WishlistPage() {
         ) : wishlistItems.length === 0 ? (
           <div className="bg-white rounded-3xl border border-[#0D1512]/10 p-12 text-center space-y-4 shadow-sm max-w-md mx-auto my-8">
             <MdShoppingBag className="text-5xl text-stone-300 mx-auto" />
-            <h3 className="font-bold text-[#0D1512]">Your Wishlist is Empty</h3>
-            <p className="text-xs text-stone-500">Explore our catalog and click the heart icon to save products here.</p>
+            <h3 className="font-bold text-[#0D1512]">Your Saved Collection is Empty</h3>
+            <p className="text-xs text-stone-500">Explore our collection and select the heart icon to curate pieces here.</p>
             <Link to="/products" className="inline-block bg-[#0D1512] text-white text-xs font-bold px-6 py-3 rounded-xl shadow-sm hover:bg-stone-800 transition">
-              Browse Products
+              Explore Collection
             </Link>
           </div>
         ) : (
@@ -122,12 +122,12 @@ export default function WishlistPage() {
 
                   <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
                     <Link to={productLink} className="bg-[#0D1512] text-white text-xs font-bold px-4 py-2.5 rounded-xl hover:bg-stone-800 transition shadow-sm">
-                      View Product
+                      View Piece
                     </Link>
                     <button
                       onClick={() => removeFromWishlist(p)}
                       className="p-2.5 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition cursor-pointer"
-                      title="Remove from wishlist"
+                      title="Remove from saved pieces"
                     >
                       <MdFavorite className="text-xl text-rose-500" />
                     </button>

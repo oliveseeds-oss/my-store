@@ -66,14 +66,14 @@ export default function SEO({ title, description, keywords, ogImage, imageAlt, p
     const siteUrl = (process.env.SITE_URL || process.env.REACT_APP_SITE_URL || window.location.origin).replace(/\/$/, "");
     const currentUrl = `${siteUrl}${window.location.pathname}${window.location.search}`;
 
-    const siteName = globalSeo.site_name || "Olive Seeds Studio";
+    const siteName = globalSeo.site_name || "Olive Seeds Design Studio";
     const separator = globalSeo.title_separator || "|";
 
-    const rawTitle = dbSeo?.meta_title || title || "Custom Printed Products & Digital Downloads";
-    const activeTitle = rawTitle.includes(siteName) ? rawTitle : `${rawTitle} ${separator} ${siteName}`;
+    const rawTitle = dbSeo?.meta_title || title || "Olive Seeds | Bespoke Luxury Design Studio";
+    const activeTitle = (rawTitle.includes(siteName) || rawTitle.includes("Olive Seeds")) ? rawTitle : `${rawTitle} ${separator} ${siteName}`;
 
-    const activeDesc = dbSeo?.meta_description || description || globalSeo.default_meta_description || "Custom printed products including t-shirts, mugs, canvas prints and digital downloads. Ships worldwide to 17 countries.";
-    const activeKeywords = dbSeo?.keywords || keywords || "custom t-shirts, personalized mugs, canvas prints, digital download art, custom gifts";
+    const activeDesc = dbSeo?.meta_description || description || globalSeo.default_meta_description || "Bespoke design studio crafting distinguished products, corporate gifts, and brand assets for corporate and hospitality clients worldwide.";
+    const activeKeywords = dbSeo?.keywords || keywords || "bespoke design studio, custom brand expressions, luxury keepsakes, corporate gifting, digital design systems, bespoke commissions";
     const activeImage = dbSeo?.og_image || ogImage || globalSeo.default_og_image || `${siteUrl}/logo192.png`;
     const isNoIndex = dbSeo?.no_index;
 

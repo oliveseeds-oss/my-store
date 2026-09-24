@@ -1,4 +1,13 @@
 {
+  "name": "my-store",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js",
+    "build": "npm --prefix public-website run build && npm --prefix admin-panel run build",
+    "build:public": "npm --prefix public-website run build",
+    "build:admin": "npm --prefix admin-panel run build"
+  },
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",

@@ -126,7 +126,7 @@ export default function Profile() {
     setSuccessMsg("");
     try {
       await API.put("/members/profile", profile);
-      setSuccessMsg("Profile and address saved successfully!");
+      setSuccessMsg("Profile and address saved successfully.");
 
       // Update the local member context to keep Navbar and Profile headers synced in real time
       const stored = JSON.parse(localStorage.getItem("member") || "{}");

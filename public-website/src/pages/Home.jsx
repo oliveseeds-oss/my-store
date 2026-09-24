@@ -464,10 +464,10 @@ export default function Home() {
 
   useEffect(() => {
     // Dynamic SEO Metadata Injection
-    document.title = "Oliveseeds Creative Studio | Premium Custom Engravings & UI/UX Services";
+    document.title = "Olive Seeds | Bespoke Luxury Design Studio";
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute("content", "Oliveseeds Creative Studio offers premium personalized laser engravings, custom gifts, acrylic and wood keepsakes, alongside professional UI/UX design systems.");
+      metaDesc.setAttribute("content", "Olive Seeds Design Studio crafts bespoke design objects, corporate gifting collections, and curated brand experiences for discerning clients worldwide.");
     }
 
     API.get("/products")
@@ -868,9 +868,9 @@ export default function Home() {
       `}</style>
 
       <SEO
-        title="Olive Seeds Design Studio — Engraved Products, Digital Templates & Design Services"
-        description="Olive Seeds Design Studio offers custom laser-engraved products, instant-download digital templates, and professional design services. Worldwide shipping available. Shop or hire us today."
-        keywords="custom engraved products online, digital design templates instant download, professional design services, laser engraved gifts worldwide shipping, Figma templates for designers, UI UX design service"
+        title="Olive Seeds | Bespoke Luxury Design Studio"
+        description="Olive Seeds Design Studio crafts bespoke design objects, corporate gifting collections, and curated brand experiences for discerning clients worldwide."
+        keywords="bespoke luxury design studio, bespoke corporate gifting, custom brand expressions, spatial design objects, interior signage systems, event design suites"
       />
 
       {/* Organization + WebSite Schema for Google & AI (Part 2) */}
@@ -987,7 +987,7 @@ export default function Home() {
                   backdropFilter: "blur(8px)",
                 }}>
                   <Icons.Sparkles size={14} color="var(--gold)" />
-                  Olive Seeds Premium Crafted & Digital Design Studio
+                  Olive Seeds Bespoke Design Studio
                 </span>
               </motion.div>
 
@@ -1006,7 +1006,7 @@ export default function Home() {
                   margin: "0",
                 }}
               >
-                Premium Engraved
+                Where Considered Design
                 <br />
                 <span style={{
                   background: "linear-gradient(135deg, var(--gold) 0%, #b8943d 50%, var(--accent) 100%)",
@@ -1014,13 +1014,10 @@ export default function Home() {
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
                 }}>
-                  Products,
+                  Meets Lasting
                 </span>
-                {" "}Digital
                 <br />
-                Templates &amp; Design
-                <br />
-                Services <span style={{ fontWeight: 400, color: "var(--text-2)", fontSize: "65%", letterSpacing: "0.02em" }}>— Worldwide</span>
+                Distinction.
               </motion.h1>
 
               <motion.p
@@ -1036,9 +1033,7 @@ export default function Home() {
                   fontWeight: 400,
                 }}
               >
-                Bespoke laser-acrylic & wooden engraved gifts, personalized arts, &amp; interior products keepsakes —
-                paired with premium Notion workspaces, Figma systems, and React web engineering,
-                all crafted from our design studio.
+                We craft bespoke design objects, custom brand expressions, and curated visual experiences for discerning clients who understand that quality is never an accident.
               </motion.p>
 
               {/* CTAs */}
@@ -1049,11 +1044,11 @@ export default function Home() {
                 style={{ display: "flex", gap: "16px", flexWrap: "wrap", margin: "10px 0" }}
               >
                 <Link to="/products" className="btn-primary" style={{ padding: "16px 36px", fontSize: "13.5px" }}>
-                  Shop Gifts
+                  Explore Our Work
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: "6px" }}><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                 </Link>
-                <Link to="/digital" className="btn-outline" style={{ padding: "16px 36px", fontSize: "13.5px" }}>
-                  Explore Digital Studio
+                <Link to="/contact" className="btn-outline" style={{ padding: "16px 36px", fontSize: "13.5px" }}>
+                  Begin Your Enquiry
                 </Link>
               </motion.div>
 
@@ -1072,10 +1067,10 @@ export default function Home() {
                   }}
                 >
                   {[
-                    ["500+", "Crafts Delivered", <Icons.Box size={18} color="var(--gold)" />],
-                    ["120+", "Digital Packs", <Icons.Bolt size={18} color="var(--gold)" />],
-                    ["15+", "Countries", <Icons.Globe size={18} color="var(--gold)" />],
-                    ["99%", "Happy Clients", <Icons.Sparkles size={18} color="var(--gold)" />],
+                    ["500+", "Commissions Completed", <Icons.Box size={18} color="var(--gold)" />],
+                    ["120+", "Design Suites", <Icons.Bolt size={18} color="var(--gold)" />],
+                    ["15+", "Countries Served", <Icons.Globe size={18} color="var(--gold)" />],
+                    ["99%", "Client Retention", <Icons.Sparkles size={18} color="var(--gold)" />],
                   ].map(([num, label, icon], i) => (
                     <motion.div
                       key={label}
@@ -1178,8 +1173,8 @@ export default function Home() {
                   <Icons.Wood size={20} color="var(--gold)" />
                 </div>
                 <div>
-                  <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--accent)" }}>Premium Crafted</div>
-                  <div style={{ fontSize: "10px", color: "var(--gold)", letterSpacing: "0.08em", textTransform: "uppercase", marginTop: "2px" }}>Laser Engraved</div>
+                  <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--accent)" }}>Bespoke Objects</div>
+                  <div style={{ fontSize: "10px", color: "var(--gold)", letterSpacing: "0.08em", textTransform: "uppercase", marginTop: "2px" }}>Precision-Crafted</div>
                 </div>
               </div>
 
@@ -1227,7 +1222,7 @@ export default function Home() {
       }}>
         <div className="marquee-track">
           {[...Array(2)].flatMap(() =>
-            ["Etsy Shop", "✦", "Amazon Handmade", "✦", "Gumroad Premium", "✦", "React Engineering", "✦", "Next.js Systems", "✦", "Figma Assets", "✦", "Olive Seeds Studio", "✦"].map((item, i) => (
+            ["Architectural Woodwork", "✦", "Corporate Gifting", "✦", "Hospitality Amenities", "✦", "Brand Identity Systems", "✦", "Spatial Signage", "✦", "Executive Design Suites", "✦", "Olive Seeds Design Studio", "✦"].map((item, i) => (
               <span key={`${item}-${i}`} style={{
                 fontSize: "11px", fontWeight: 600, letterSpacing: "0.22em",
                 textTransform: "uppercase",
@@ -1246,7 +1241,7 @@ export default function Home() {
       <section style={{ padding: "clamp(80px, 8vw, 140px) 0", background: "var(--surface)" }}>
         <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
           <FadeUp style={{ textAlign: "center", marginBottom: "48px" }}>
-            <span className="eyebrow" style={{ justifyContent: "center" }}>What We Offer</span>
+            <span className="eyebrow" style={{ justifyContent: "center" }}>A Studio Built on Intention</span>
             <h2 className="clash" style={{
               fontSize: "clamp(2.2rem, 4vw, 4rem)",
               fontWeight: 700,
@@ -1255,19 +1250,19 @@ export default function Home() {
               letterSpacing: "-0.02em",
               lineHeight: 1.08,
             }}>
-              Three worlds of design,<br />
+              Designed for Those Who<br />
               <span style={{
                 background: "linear-gradient(135deg, var(--gold) 0%, #a87c3a 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
-              }}>One premium studio.</span>
+              }}>Expect More.</span>
             </h2>
             <p style={{
-              color: "var(--text-2)", maxWidth: "500px", margin: "20px auto 0",
-              fontSize: "16px", lineHeight: 1.7,
+              color: "var(--text-2)", maxWidth: "580px", margin: "20px auto 0",
+              fontSize: "15.5px", lineHeight: 1.75,
             }}>
-              At the intersection of tactile engraving art and modern digital design — Olive Seeds brings every discipline under one roof.
+              Olive Seeds Design Studio exists at the intersection of craft, identity, and purpose. We partner with corporations, hospitality groups, interior studios, and independent brands to produce design that speaks before a word is said. Every piece we create is considered from first sketch to final delivery. Nothing leaves our studio without intention.
             </p>
           </FadeUp>
 
@@ -1289,12 +1284,12 @@ export default function Home() {
                 <h3 className="clash" style={{
                   fontSize: "1.6rem", fontWeight: 700, color: "var(--accent)",
                   letterSpacing: "-0.01em", marginBottom: "14px",
-                }}>Physical Products</h3>
+                }}>Bespoke Product Design</h3>
                 <p style={{ color: "var(--text-2)", fontSize: "14px", lineHeight: 1.75, marginBottom: "28px" }}>
-                  Precision laser-engraved acrylic & wooden arts, gifts, interior keepsakes, custom nameplates &amp; corporate gifts — more products in our design studio.
+                  From custom corporate collections to personalised client gifts and spatial décor — we design and produce objects that carry your identity with quiet authority.
                 </p>
                 <ul style={{ listStyle: "none", padding: 0, marginBottom: "36px" }}>
-                  {["Custom Engraved Premium Art", "Acrylic Keepsake Products", "Personalized Interior Products", "Corporate Gift & More"].map((li) => (
+                  {["Executive Gift Collections", "Personalised Keepsakes", "Spatial & Architectural Décor", "B2B Volume Commissions"].map((li) => (
                     <li key={li} style={{
                       fontSize: "13px", color: "var(--text-2)",
                       padding: "9px 0", borderBottom: "1px solid var(--border)",
@@ -1309,7 +1304,7 @@ export default function Home() {
                   ))}
                 </ul>
                 <Link to="/products" className="btn-primary" style={{ fontSize: "12px", padding: "12px 24px" }}>
-                  Shop Physical Crafts →
+                  Explore the Collection →
                 </Link>
               </div>
             </FadeUp>
@@ -1323,7 +1318,7 @@ export default function Home() {
                   background: "var(--gold)", color: "#fff",
                   fontSize: "9px", fontWeight: 700, letterSpacing: "0.15em",
                   textTransform: "uppercase", padding: "5px 12px", borderRadius: "100px",
-                }}>Most Popular</div>
+                }}>Distinguished</div>
                 <div style={{
                   width: "52px", height: "52px", borderRadius: "14px",
                   background: "var(--gold-soft)", border: "1px solid var(--gold-border)",
@@ -1335,12 +1330,12 @@ export default function Home() {
                 <h3 className="clash" style={{
                   fontSize: "1.6rem", fontWeight: 700, color: "var(--accent)",
                   letterSpacing: "-0.01em", marginBottom: "14px",
-                }}>Digital Products</h3>
+                }}>Brand &amp; Digital Design</h3>
                 <p style={{ color: "var(--text-2)", fontSize: "14px", lineHeight: 1.75, marginBottom: "28px" }}>
-                  Instant-download Notion workspaces, Figma UI kits, website templates, 3D assets, AI workflows &amp; N8N agents.
+                  Logos, visual systems, digital templates, and branded materials crafted with precision — built to represent your organisation at the highest level.
                 </p>
                 <ul style={{ listStyle: "none", padding: 0, marginBottom: "36px" }}>
-                  {["Figma & Website Templates", "Notion Dashboards", "3D Assets & Printables", "AI Workflows & N8N Agents"].map((li) => (
+                  {["Brand Identity Systems", "Presentation & Document Suites", "Social Media Visual Systems", "Executive Digital Systems"].map((li) => (
                     <li key={li} style={{
                       fontSize: "13px", color: "var(--text-2)",
                       padding: "9px 0", borderBottom: "1px solid var(--border)",
@@ -1374,12 +1369,12 @@ export default function Home() {
                 <h3 className="clash" style={{
                   fontSize: "1.6rem", fontWeight: 700, color: "var(--accent)",
                   letterSpacing: "-0.01em", marginBottom: "14px",
-                }}>Design Services</h3>
+                }}>Event &amp; Occasion Design</h3>
                 <p style={{ color: "var(--text-2)", fontSize: "14px", lineHeight: 1.75, marginBottom: "28px" }}>
-                  UI/UX Design, Web Development, Mobile Apps, Branding, Graphic Design, AI Integration &amp; Automation Systems.
+                  Bespoke stationery, signage, gifting suites, and experiential design for corporate events, hospitality launches, and private occasions that demand distinction.
                 </p>
                 <ul style={{ listStyle: "none", padding: 0, marginBottom: "36px" }}>
-                  {["UI/UX & Web Development", "Mobile App Design", "Branding & Identity", "AI Integration & Automation"].map((li) => (
+                  {["Bespoke Event Stationery", "Architectural Signage Systems", "Executive Gifting Suites", "Experiential Launch Design"].map((li) => (
                     <li key={li} style={{
                       fontSize: "13px", color: "var(--text-2)",
                       padding: "9px 0", borderBottom: "1px solid var(--border)",
@@ -1393,8 +1388,8 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-                <Link to="/service#contact" className="btn-outline" style={{ fontSize: "12px", padding: "12px 24px" }}>
-                  Request a Quote →
+                <Link to="/contact" className="btn-outline" style={{ fontSize: "12px", padding: "12px 24px" }}>
+                  Begin Your Enquiry →
                 </Link>
               </div>
             </FadeUp>
@@ -1429,7 +1424,7 @@ export default function Home() {
                 }} />
                 <img
                   src="/home_swimming_replacement.jpg"
-                  alt="Artisan laser engraving wood craftsmanship design studio"
+                  alt="Artisan wood craftsmanship and bespoke design studio"
                   style={{
                     width: "100%", height: "400px", objectFit: "cover",
                     borderRadius: "var(--radius)",
@@ -1481,10 +1476,10 @@ export default function Home() {
                 style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}
               >
                 {[
-                  ["Sparkles", "Premium Products", "Finest woods, acrylics & precision laser calibration"],
-                  ["Art", "Modern UI/UX", "High-performance React & sleek Figma design systems"],
-                  ["Globe", "Worldwide Dispatch", "Tracked shipping & instant digital downloads"],
-                  ["Pen", "Bespoke Orders", "Personalized names, logos & custom corporate styles"],
+                  ["Sparkles", "Considered Materials", "Finest hand-finished timbers and architectural grade acrylics"],
+                  ["Art", "Cohesive Systems", "Distinguished visual identities and digital design frameworks"],
+                  ["Globe", "Worldwide Delivery", "Tracked international shipping & instant digital downloads"],
+                  ["Pen", "Bespoke Commissions", "Custom corporate editions, institutional marks, and bespoke suites"],
                 ].map(([icon, title, desc]) => (
                   <div key={title} style={{
                     background: "var(--surface)",
@@ -1519,12 +1514,12 @@ export default function Home() {
             marginBottom: "64px", flexWrap: "wrap", gap: "24px",
           }}>
             <FadeUp>
-              <span className="eyebrow">Workshop Showcase</span>
+              <span className="eyebrow">The Collection</span>
               <h2 className="clash" style={{
                 fontSize: "clamp(2rem, 4vw, 3.6rem)",
                 fontWeight: 700, color: "var(--accent)",
                 marginTop: "14px", letterSpacing: "-0.02em", lineHeight: 1.08,
-              }}>Physical Masterpieces</h2>
+              }}>Bespoke Physical Objects</h2>
             </FadeUp>
             <Link to="/categories" style={{
               fontSize: "12px", fontWeight: 600, letterSpacing: "0.1em",
@@ -1534,7 +1529,7 @@ export default function Home() {
               borderBottom: "1px solid var(--gold-border)",
               paddingBottom: "4px",
             }}>
-              Full Workshop Catalog →
+              Full Collection →
             </Link>
           </div>
 
@@ -1548,7 +1543,7 @@ export default function Home() {
             }}>
               <img
                 src="/home_workshop.jpg"
-                alt="Custom laser wood engraving high end personalized gifts"
+                alt="Bespoke luxury design objects and hand-finished timber pieces"
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 loading="lazy"
               />
@@ -1568,7 +1563,7 @@ export default function Home() {
                   textTransform: "uppercase", color: "var(--gold)", marginBottom: "20px",
                 }}>
                   <Icons.Sparkles size={12} color="var(--gold)" />
-                  Signature Craft
+                  Signature Edition
                 </span>
                 <h3 className="clash" style={{
                   fontSize: "clamp(1.8rem, 3.5vw, 3rem)",
@@ -1579,21 +1574,21 @@ export default function Home() {
                   <span style={{
                     background: "linear-gradient(135deg, var(--gold) 0%, #e0b96a 100%)",
                     WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-                  }}>Precisely calibrated.</span>
+                  }}>Lasting distinction.</span>
                 </h3>
                 <p style={{ color: "rgba(255,255,255,0.72)", fontSize: "15px", lineHeight: 1.7, marginBottom: "28px" }}>
-                  Cherry wood boards, clean acrylic tags, personalized frames and corporate items etched with precision lasers.
+                  Hand-finished timber pieces, architectural acrylic objects, and bespoke executive suites finished to the highest standard.
                 </p>
                 <button
                   onClick={() => {
                     const event = new CustomEvent("open-whatsapp-chat", {
-                      detail: { text: "Hi Olive Seeds, I would like to customize a craft." }
+                      detail: { text: "Hi Olive Seeds, I would like to begin an enquiry about a bespoke commission." }
                     });
                     window.dispatchEvent(event);
                   }}
                   className="btn-gold cursor-pointer"
                 >
-                  Customize Your Craft →
+                  Begin Your Enquiry →
                 </button>
               </div>
             </div>
@@ -1675,18 +1670,18 @@ export default function Home() {
               textTransform: "uppercase", color: "var(--gold)",
             }}>
               <span style={{ display: "block", width: "28px", height: "1.5px", background: "var(--gold)", borderRadius: "2px" }} />
-              Blueprint Assets Shop
+              Digital Design Atelier
             </span>
             <h2 className="clash" style={{
               fontSize: "clamp(2rem, 4vw, 3.6rem)",
               fontWeight: 700, color: "#fff",
               marginTop: "18px", letterSpacing: "-0.02em", lineHeight: 1.08,
-            }}>Premium Digital Studio</h2>
+            }}>Studio-Grade Digital Assets</h2>
             <p style={{
-              color: "rgba(255,255,255,0.62)", maxWidth: "480px",
+              color: "rgba(255,255,255,0.62)", maxWidth: "520px",
               margin: "16px auto 0", fontSize: "15px", lineHeight: 1.7,
             }}>
-              Instant-download Notion workspaces, Figma UI kits, and clean React code templates built with modern design systems.
+              Presentation suites, brand identity kits, executive stationery, and structured digital design systems — crafted to the same exacting standard as our commissioned work.
             </p>
           </FadeUp>
 
@@ -1775,11 +1770,11 @@ export default function Home() {
               fontWeight: 700, color: "var(--accent)",
               marginTop: "18px", letterSpacing: "-0.02em", lineHeight: 1.08,
             }}>
-              Built for businesses.<br />
+              Engineered for distinction.<br />
               <span style={{
                 background: "linear-gradient(135deg, var(--gold) 0%, #a87c3a 100%)",
                 WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-              }}>Loved by everyone.</span>
+              }}>Chosen by industry leaders.</span>
             </h2>
           </FadeUp>
 
@@ -1788,12 +1783,12 @@ export default function Home() {
             style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "24px" }}
           >
             {[
-              { icon: "Globe", title: "Worldwide Delivery", desc: "Fully tracked international shipping to 15+ countries with reliable logistics partners." },
-              { icon: "Sparkles", title: "Premium Products", desc: "Every physical product is perfectly-finished with precision laser equipment and quality materials." },
-              { icon: "Bolt", title: "Instant Downloads", desc: "Digital products delivered instantly. No waiting, no hassle — ready to use immediately." },
-              { icon: "Trophy", title: "Business-Focused", desc: "Tailored solutions for startups, corporates, and entrepreneurs who demand excellence." },
-              { icon: "Shield", title: "Secure Payments", desc: "End-to-end encrypted, PCI-compliant payment processing for complete peace of mind." },
-              { icon: "Support", title: "Dedicated Support", desc: "Responsive, expert support for every order — physical or digital, before and after purchase." },
+              { icon: "Globe", title: "Worldwide Delivery", desc: "Tracked international dispatch to corporate headquarters, boutique hotels, and private clients across 15+ countries." },
+              { icon: "Sparkles", title: "Bespoke Commissions", desc: "Every physical piece is hand-finished with considered materials, architectural precision, and lasting character." },
+              { icon: "Bolt", title: "Instant Digital Suites", desc: "Executive presentation templates and visual identity systems ready for immediate deployment." },
+              { icon: "Trophy", title: "Enterprise Fluency", desc: "Structured procurement and volume ordering for corporate gifting programmes, hospitality, and institutions." },
+              { icon: "Shield", title: "Discreet & Secure", desc: "Confidential handling of proprietary client assets and bank-grade encrypted checkout protocols." },
+              { icon: "Support", title: "Dedicated Atelier Service", desc: "Direct consultation with our creative directors from initial brief through to final delivery." },
             ].map((s, i) => (
               <FadeUp key={s.title} delay={i * 0.07}>
                 <div style={{
@@ -1864,27 +1859,33 @@ export default function Home() {
             {/* Left Column (Sticky Intro) */}
             <div className="lg-sticky self-start flex flex-col gap-6">
               <FadeUp>
-                <span className="eyebrow" style={{ display: "inline-flex" }}>Distinct Identity</span>
+                <span className="eyebrow" style={{ display: "inline-flex" }}>Sector Specialisation</span>
                 <h2 className="clash" style={{
                   fontSize: "clamp(2.2rem, 4vw, 3.6rem)",
                   fontWeight: 700, color: "var(--accent)",
                   marginTop: "18px", letterSpacing: "-0.02em", lineHeight: 1.1,
                   marginBottom: "20px"
                 }}>
-                  The Feeling of<br />
+                  Trusted Across<br />
                   <span style={{
                     background: "linear-gradient(135deg, var(--gold) 0%, #a87c3a 100%)",
                     WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-                  }}>Rare Identity</span>
+                  }}>Industries</span>
                 </h2>
                 <p style={{
                   color: "var(--text-2)", fontSize: "15px", lineHeight: 1.7,
-                  marginBottom: "36px"
+                  marginBottom: "20px"
                 }}>
-                  We believe that the designs you choose should speak to who you are. Olive Seeds is created to make you feel unique, feel special, and express a rare personality that stands out from the rest.
+                  Our clients share one thing in common — a refusal to accept ordinary.
                 </p>
-                <Link to="/gallery" className="btn-primary" style={{ display: "inline-flex" }}>
-                  Explore Premium Design
+                <p style={{
+                  color: "var(--text-2)", fontSize: "14px", lineHeight: 1.65,
+                  marginBottom: "36px", opacity: 0.85
+                }}>
+                  From corporate headquarters and boutique hotels to prestigious academic institutions and private occasions — we produce design work that reflects the character of each client with clarity and confidence.
+                </p>
+                <Link to="/contact" className="btn-primary" style={{ display: "inline-flex" }}>
+                  Begin Your Enquiry
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: "8px" }}><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                 </Link>
               </FadeUp>
@@ -1893,10 +1894,10 @@ export default function Home() {
             {/* Right Column (Interactive List) */}
             <div className="flex flex-col gap-6">
               {[
-                { number: "01", icon: "Art", title: "Bespoke Art & Code", desc: "Tailored to your requirements. We design physical gifts and engineer modern web systems matching your exact specification." },
-                { number: "02", icon: "Sparkles", title: "Impeccable Quality", desc: "Crafted with premium materials and high precision tools. We check every detail to ensure it meets our rigorous standards." },
-                { number: "03", icon: "Box", title: "Seamless Experience", desc: "From instant digital downloads to securely packaged tracked worldwide shipping, we guarantee a hassle-free journey." },
-                { number: "04", icon: "Sparkles", title: "Uncompromising Uniqueness", desc: "Stand out with confidence. Our custom layouts, high-end materials, and bespoke systems ensure you leave a lasting impression of quality and authenticity." },
+                { number: "01", icon: "Art", title: "Corporate & Enterprise", desc: "Executive gift collections, branded stationery, and architectural desktop pieces crafted for organisations that demand distinction." },
+                { number: "02", icon: "Sparkles", title: "Hospitality & Interior", desc: "Custom signage systems, spatial décor, and amenity objects designed in harmony with architectural interiors and boutique spaces." },
+                { number: "03", icon: "Box", title: "Events & Occasions", desc: "Bespoke stationery suites, ceremonial objects, and curated gifting created for private occasions and high-profile corporate summits." },
+                { number: "04", icon: "GraduationCap", title: "Education & Institutions", desc: "Distinguished institutional honours, awards, and visual identity systems built to represent prestige and heritage with quiet authority." },
               ].map((c, i) => (
                 <FadeUp key={c.number} delay={i * 0.08}>
                   <div
@@ -1939,12 +1940,12 @@ export default function Home() {
       }}>
         <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
           <FadeUp style={{ textAlign: "center", marginBottom: "24px" }}>
-            <span className="eyebrow" style={{ justifyContent: "center" }}>Client Stories</span>
+            <span className="eyebrow" style={{ justifyContent: "center" }}>Trusted Across Industries</span>
             <h2 className="clash" style={{
               fontSize: "clamp(1.6rem, 3vw, 2.4rem)",
               fontWeight: 700, color: "#fff",
               marginTop: "8px", letterSpacing: "-0.02em",
-            }}>Loved Globally</h2>
+            }}>Our clients share one thing in common — a refusal to accept ordinary.</h2>
           </FadeUp>
         </div>
 
@@ -2118,28 +2119,28 @@ export default function Home() {
               fontSize: "11px", fontWeight: 700, letterSpacing: "0.14em",
               textTransform: "uppercase", color: "var(--gold)", marginBottom: "32px",
             }}>
-              Start a Project
+              Start a Conversation
             </span>
             <h2 className="clash" style={{
               fontSize: "clamp(2.2rem, 5vw, 4.8rem)",
               fontWeight: 700, color: "#fff",
               lineHeight: 1.04, letterSpacing: "-0.02em", marginBottom: "22px",
             }}>
-              Let's build something<br />
+              Ready to Create Something<br />
               <span style={{
                 background: "linear-gradient(135deg, var(--gold) 0%, #e0c882 100%)",
                 WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-              }}>permanent together.</span>
+              }}>Exceptional?</span>
             </h2>
             <p style={{
               color: "rgba(255,255,255,0.6)", fontSize: "16px", lineHeight: 1.75,
               marginBottom: "48px", maxWidth: "560px", margin: "0 auto 48px",
             }}>
-              Custom laser-engraved physical crafts, premium digital products, and state-of-the-art web engineering — all from our design studio.
+              Whether you have a clear brief or a quiet idea that needs shaping — we would be glad to hear from you. Our studio works with a select number of clients at a time to ensure every project receives the attention it deserves.
             </p>
             <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap" }}>
               <Link to="/contact" className="btn-gold">
-                Let's Talk 
+                Begin Your Enquiry 
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
               </Link>
               <Link to="/gallery" style={{
@@ -2153,7 +2154,7 @@ export default function Home() {
               }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.55)"; e.currentTarget.style.background = "rgba(255,255,255,0.06)"; }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)"; e.currentTarget.style.background = "transparent"; }}
-              >Browse Collection</Link>
+              >Explore the Collection</Link>
             </div>
           </div>
         </FadeUp>

@@ -21,10 +21,35 @@ router.get("/admin/all", verifyAdmin, async (req, res) => {
 
 // ADMIN — add
 router.post("/", verifyAdmin, async (req, res) => {
-  const { name, type, description, image_url } = req.body;
+  const { name, type, description, image_url, image_urls } = req.body;
+  
+  let urls = [];
+  if (Array.isArray(image_urls)) {
+    urls = image_urls.map(u => String(u || "").trim()).filter(Boolean);
+  } else if (typeof image_urls === "string" && image_urls.trim()) {
+    urls = image_urls.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
+  }
+  if (image_url && typeof image_url === "string" && image_url.trim()) {
+    const splitUrls = image_url.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
+    urls.push(...splitUrls);
+  }
+  urls = [...new Set(urls)];
+
+  if (urls.length > 1) {
+    const insertedIds = [];
+    for (const url of urls) {
+      const [result] = await db.query(
+        "INSERT INTO catalog (name, type, description, image_url) VALUES (?,?,?,?)",
+        [name, type || "physical", description, url]
+      );
+      insertedIds.push(result.insertId);
+    }
+    return res.json({ id: insertedIds[0], ids: insertedIds, count: insertedIds.length, message: `${insertedIds.length} collections added` });
+  }
+
   const [result] = await db.query(
     "INSERT INTO catalog (name, type, description, image_url) VALUES (?,?,?,?)",
-    [name, type || "physical", description, image_url || null]
+    [name, type || "physical", description, urls[0] || image_url || null]
   );
   res.json({ id: result.insertId });
 });

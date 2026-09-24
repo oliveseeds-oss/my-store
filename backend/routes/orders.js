@@ -5,9 +5,10 @@ const { verifyAdmin, verifyMember } = require("../middleware/auth");
 const createNotification = require("../utils/createNotification");
 
 async function verifyPayPalOrder(orderId) {
-  const [rows] = await db.query("SELECT paypal_client_id, paypal_client_secret FROM settings WHERE id = 1");
+  const [rows] = await db.query("SELECT paypal_client_id, paypal_client_secret, paypal_mode FROM settings WHERE id = 1");
   let clientId = rows[0]?.paypal_client_id || process.env.PAYPAL_CLIENT_ID;
   let clientSecret = rows[0]?.paypal_client_secret;
+  const configuredMode = rows[0]?.paypal_mode;
   
   if (clientSecret) {
     const { decrypt } = require("../utils/shiprocket");
@@ -23,7 +24,7 @@ async function verifyPayPalOrder(orderId) {
     throw new Error("PayPal credentials missing in production. Cannot verify transaction.");
   }
 
-  const isLive = !clientId.startsWith("sb") && process.env.PAYPAL_MODE !== "sandbox";
+  const isLive = configuredMode === "production" || (!configuredMode && !clientId.startsWith("sb") && process.env.PAYPAL_MODE === "production");
   const baseUrl = isLive ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
 
   const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
@@ -151,7 +152,9 @@ router.post("/", async (req, res) => {
 
       const subtotal = physicalItems.reduce((sum, i) => sum + i.price * i.qty, 0);
       const tax_amount = Math.round(subtotal * 0.18); // Default 18% GST
-      const ship_fee = shipping_fee !== undefined ? shipping_fee : (subtotal >= 999 ? 0 : 60);
+      const ship_fee = shipping_fee !== undefined && !isNaN(parseFloat(shipping_fee))
+        ? parseFloat(shipping_fee)
+        : (shipping_cost !== undefined && !isNaN(parseFloat(shipping_cost)) ? parseFloat(shipping_cost) : 60);
       const total = subtotal + tax_amount + ship_fee;
 
       // Parse address line or use structured fields

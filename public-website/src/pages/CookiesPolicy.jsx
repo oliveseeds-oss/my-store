@@ -256,7 +256,7 @@ export default function CookiesPolicy() {
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
             {saved && (
               <span style={{ color: "#4caf8a", fontSize: "13px", fontWeight: "bold" }}>
-                ✓ Saved!
+                ✓ Preferences saved
               </span>
             )}
             <button

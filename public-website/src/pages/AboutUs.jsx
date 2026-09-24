@@ -5,26 +5,23 @@ import Footer from "../components/Footer";
 import SEO from "../components/SEO";
 
 const values = [
-  { icon: "💡", title: "Strategic Thinking", desc: "Every successful project begins with understanding. We combine research, creativity, and strategy to design brands, digital experiences, and products that deliver meaningful results." },
-  { icon: "💻", title: "Digital Excellence", desc: "From brand identities and websites to mobile applications and user experiences, we create modern digital solutions that are intuitive, scalable, and built for long-term success." },
-  { icon: "🎯", title: " Precision in Every Detail", desc: "Great design lives in the details. We carefully refine every element—from typography and layouts to interactions, materials, and finishes—to ensure exceptional quality across both digital and physical creations." },
-  { icon: "✨", title: "Made with meaning", desc: "Whether we're developing a digital platform or producing a premium custom product, we approach every project with the same commitment to quality, innovation, and lasting value." },
+  { icon: "✨", title: "Bespoke by nature", desc: "We do not sell off-the-shelf. Every product and service is tailored to the client." },
+  { icon: "🌐", title: "Cross-industry fluency", desc: "We work across corporate, hospitality, education, retail, and events — bringing breadth of perspective to every brief." },
+  { icon: "📦", title: "Bulk and B2B ready", desc: "Our studio is structured to serve large-scale corporate orders with the same care as individual commissions." },
+  { icon: "⚡", title: "Digital and physical", desc: "We bridge tangible design objects and digital brand assets under one roof." },
 ];
 
 const team = [
   { name: "Alexander Babu", role: "Director", initial: "AB", color: "#0D1512" },
   { name: "Vijaya Alex", role: "Executive Officer", initial: "VA", color: "#0D1512" },
   { name: "Paul Wesly", role: "Head of Digital Service", initial: "PW", color: "#0D1512" },
-  { name: "Shane Beniel", role: "Head of Manufacturing ", initial: "SB", color: "#2d5a4e" },
+  { name: "Shane Beniel", role: "Head of Atelier Production", initial: "SB", color: "#2d5a4e" },
 ];
 
-const milestones = [
-  { year: "2019", event: "Founded on meaningful design to build unique, creative and innovative soluction." },
-  { year: "2020", event: "Expanded into digital solutions." },
-  { year: "2021", event: "Launched our design services " },
-  { year: "2022", event: "Extending Collaborated with Brands." },
-  { year: "2025", event: "Expanded into premium products manufacturing" },
-  { year: "2026", event: "Today — still creating, still innovating, still designing with purpose." },
+const approachSteps = [
+  { step: "01", title: "Listen", desc: "Every engagement begins with understanding. We take time to learn your brand, your audience, and the gap between where you are and where you want to be." },
+  { step: "02", title: "Create", desc: "Our studio develops considered design proposals — never templates, always originals. Each concept is built around your identity and refined until it is exactly right." },
+  { step: "03", title: "Deliver", desc: "From production to final delivery, we manage every stage with precision. What arrives is complete, polished, and ready to represent you." },
 ];
 
 function CountUp({ end, suffix = "" }) {
@@ -44,19 +41,19 @@ function CountUp({ end, suffix = "" }) {
 
 export default function AboutUs() {
   useEffect(() => {
-    document.title = "About Us | Oliveseeds Creative Studio";
+    document.title = "About Us | Olive Seeds Bespoke Design Studio";
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute("content", "Learn about Oliveseeds Studio's mission, milestones, leadership, and our design and manufacturing processes.");
+      metaDesc.setAttribute("content", "Olive Seeds is a bespoke design studio creating distinguished products, corporate gifts, and brand expressions for hospitality and corporate leaders.");
     }
   }, []);
 
   return (
     <div style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }} className="min-h-screen">
       <SEO
-        title="About Our Studio | Olive Seeds"
-        description="Learn about our passion for luxury craftsmanship, organic bamboo & recycled acrylic selections, precision laser engraving, and custom brand designs."
-        keywords="luxury craftsmanship, sustainable design, about olive seeds, laser workshop, design studio"
+        title="About Us | Olive Seeds Bespoke Design Studio"
+        description="Olive Seeds is a bespoke design studio creating distinguished products, corporate gifts, and brand expressions for hospitality and corporate leaders."
+        keywords="bespoke design studio, luxury craftsmanship, corporate gifting, spatial design, brand identity, olive seeds design studio"
       />
       <Navbar />
 
@@ -79,15 +76,15 @@ export default function AboutUs() {
             <span className="opacity-40">›</span>
             <span className="font-bold">About</span>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-[#FAF9F6]/60">Our Story</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-[#FAF9F6]/60">About Us</p>
           <h1
             style={{ fontFamily: "'Outfit', sans-serif" }}
             className="text-5xl md:text-7xl font-black leading-tight tracking-tight max-w-2xl mb-6"
           >
-            Intent Over Trends.
+            Design with Purpose. Craft with Care.
           </h1>
           <p className="text-sm md:text-base leading-relaxed max-w-xl text-[#FAF9F6]/80 font-medium">
-            We started Olive Seeds because we believed that the thing- exceptional design creates lasting impact. Great design has the power to create lasting value. So our creative studio, delivering premium digital solutions and custom-crafted premium products for businesses and individuals around the world.
+            Olive Seeds Design Studio is an independent creative studio dedicated to the art of considered design — producing objects, identities, and experiences that endure.
           </p>
         </div>
       </div>
@@ -97,10 +94,10 @@ export default function AboutUs() {
         <div className="max-w-5xl mx-auto px-6 py-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
-              { value: 500, suffix: "+", label: "Products crafted & custom" },
-              { value: 15, suffix: "+", label: "Countries Expanding" },
-              { value: 6, suffix: " yrs", label: "In business" },
-              { value: 99, suffix: "%", label: "Happy customers" },
+              { value: 500, suffix: "+", label: "Bespoke Commissions" },
+              { value: 15, suffix: "+", label: "Countries Served" },
+              { value: 6, suffix: " yrs", label: "Studio Practice" },
+              { value: 99, suffix: "%", label: "Client Satisfaction" },
             ].map((s) => (
               <div key={s.label} className="text-center p-4">
                 <p
@@ -121,19 +118,18 @@ export default function AboutUs() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
 
           <div className="lg:col-span-2 flex flex-col gap-6">
-            <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#0D1512]/60">Who We Are</p>
+            <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#0D1512]/60">Our Story</p>
             <h2
               className="text-3xl md:text-4xl font-black tracking-tight"
               style={{ fontFamily: "'Outfit', sans-serif" }}
             >
-              Create with passion, made for the world.
+              The Studio
             </h2>
             <p className="text-sm md:text-base leading-relaxed text-[#0D1512]/80">
-              Olive Seeds Design Studio is a multidisciplinary creative studio focused on building impactful products, designs and digital experiences.
+              Olive Seeds was founded with a single conviction — that good design should feel inevitable. Not trendy. Not loud. Inevitable, as though it could not have been any other way. We began as a small creative practice with a deep respect for materials, craftsmanship, and the stories that objects carry.
             </p>
             <p className="text-sm md:text-base leading-relaxed text-[#0D1512]/80">
-              Beyond the digital world, we extend the same commitment to excellence through premium custom products. We believe every project deserves a tailored approach. Whether we're designing a digital platform or crafting a premium product, our goal is the same—to create work that is purposeful, distinctive, and built to leave a lasting impression.
-
+              Today, we serve organisations across corporate, hospitality, education, and lifestyle sectors — producing bespoke design work that reflects the character of each client with clarity and confidence.
             </p>
           </div>
 
@@ -157,7 +153,7 @@ export default function AboutUs() {
                 style={{ fontFamily: "'Outfit', sans-serif" }}
                 className="text-lg font-bold leading-relaxed italic my-4"
               >
-                "Every design that leaves our studio is created with purpose, build on trust and a lasting impression of excellence."
+                "Good design should feel inevitable — purposeful, enduring, and crafted to represent your character with quiet authority."
               </blockquote>
               <p className="text-xs opacity-60">— AK Chris, Founder</p>
 
@@ -179,12 +175,12 @@ export default function AboutUs() {
       {/* Values Grid */}
       <section style={{ background: "#0D1512", color: "#FAF9F6" }} className="py-20">
         <div className="max-w-5xl mx-auto px-6">
-          <p className="text-xs font-bold uppercase tracking-[0.3em] text-center opacity-60 mb-3">What Drives Us</p>
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-center opacity-60 mb-3">Distinction in Practice</p>
           <h2
             style={{ fontFamily: "'Outfit', sans-serif" }}
             className="text-3xl md:text-5xl font-black text-center mb-16 tracking-tight"
           >
-            Our core values
+            Why Clients Choose Us
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -209,40 +205,41 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* Timeline Journey */}
+      {/* Approach Journey */}
       <section className="max-w-5xl mx-auto px-6 py-20">
-        <p className="text-xs font-bold uppercase tracking-[0.3em] text-center text-[#0D1512]/60 mb-3">The Journey</p>
+        <p className="text-xs font-bold uppercase tracking-[0.3em] text-center text-[#0D1512]/60 mb-3">How We Work</p>
         <h2
           style={{ fontFamily: "'Outfit', sans-serif" }}
           className="text-3xl md:text-5xl font-black text-center mb-16 tracking-tight"
         >
-          How we got here
+          Our Approach
         </h2>
 
         <div className="max-w-xl mx-auto relative pl-8 md:pl-0">
           <div className="absolute left-3.5 md:left-1/2 top-4 bottom-4 w-0.5 bg-[#0D1512]/10" />
 
           <div className="flex flex-col gap-12">
-            {milestones.map((m, i) => (
+            {approachSteps.map((m, i) => (
               <div
-                key={m.year}
+                key={m.step}
                 className={`relative flex flex-col md:flex-row gap-6 md:gap-12 items-start md:items-center ${i % 2 === 0 ? "md:flex-row-reverse" : ""
                   }`}
               >
-                {/* Timeline Dot/Year */}
+                {/* Timeline Dot/Step */}
                 <div className="absolute left-[-26px] md:left-1/2 md:translate-x-[-50%] z-10">
                   <div
                     style={{ background: "#0D1512", color: "#FAF9F6" }}
                     className="w-14 h-14 rounded-full border-4 border-[#FAF9F6] flex items-center justify-center font-black text-sm shadow-md"
                   >
-                    {m.year}
+                    {m.step}
                   </div>
                 </div>
 
                 {/* Content Card */}
                 <div className="w-full md:w-1/2 pl-6 md:pl-0">
                   <div className="bg-white border border-[#0D1512]/10 rounded-2xl p-6 shadow-sm hover:shadow-md transition">
-                    <p className="text-sm text-[#0D1512]/80 leading-relaxed">{m.event}</p>
+                    <h3 className="font-bold text-base text-[#0D1512] mb-1">{m.title}</h3>
+                    <p className="text-sm text-[#0D1512]/80 leading-relaxed">{m.desc}</p>
                   </div>
                 </div>
               </div>
@@ -259,7 +256,7 @@ export default function AboutUs() {
             style={{ fontFamily: "'Outfit', sans-serif" }}
             className="text-3xl md:text-5xl font-black text-center mb-16 tracking-tight"
           >
-            Meet our Partners
+            Studio Leadership
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
@@ -289,30 +286,30 @@ export default function AboutUs() {
 
       {/* CTA Box */}
       <section className="max-w-4xl mx-auto px-6 py-24 text-center">
-        <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#0D1512]/60 mb-4">Start your story</p>
+        <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#0D1512]/60 mb-4">Start a Conversation</p>
         <h2
           style={{ fontFamily: "'Outfit', sans-serif" }}
           className="text-4xl md:text-6xl font-black mb-6 tracking-tight leading-tight"
         >
-          Ready to create something<br />unforgettable?
+          Let's Build Something Together
         </h2>
         <p className="text-sm md:text-base text-[#0D1512]/70 leading-relaxed max-w-xl mx-auto mb-10">
-          Browse our collection or contact us to discuss a custom project. We'd love to make something beautiful for you.
+          We take on a limited number of new client relationships each season to ensure the quality of our work remains uncompromised. If you are considering a project — we would welcome the conversation.
         </p>
         <div className="flex flex-wrap gap-4 justify-center">
           <Link
-            to="/products"
+            to="/contact"
             style={{ background: "#0D1512", color: "#FAF9F6" }}
             className="px-8 py-4 rounded-xl font-bold text-sm tracking-wide shadow-lg shadow-emerald-900/10 hover:scale-105 active:scale-95 transition-all"
           >
-            Shop Keepsakes
+            Contact the Studio
           </Link>
           <Link
-            to="/contact"
+            to="/products"
             style={{ borderColor: "#0D1512", color: "#0D1512" }}
             className="px-8 py-4 rounded-xl border-2 font-bold text-sm hover:bg-[#0D1512] hover:text-[#FAF9F6] transition-all"
           >
-            Get In Touch
+            Explore the Collection
           </Link>
         </div>
       </section>

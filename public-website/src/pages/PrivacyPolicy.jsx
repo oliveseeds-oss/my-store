@@ -33,7 +33,7 @@ const sections = [
     icon: "⚙️",
     title: "How We Use Your Information",
     items: [
-      { sub: "Order fulfilment", text: "To process, produce, and deliver your engraved or digital products, and to send you order confirmations, shipping updates, and invoices." },
+      { sub: "Order fulfilment", text: "To process, produce, and deliver your bespoke physical objects or digital products, and to send you order confirmations, shipping updates, and invoices." },
       { sub: "Account management", text: "To create and maintain your member account, authenticate your login, and allow you to view your order history." },
       { sub: "Customer support", text: "To respond to your queries, resolve disputes, and handle refund or return requests." },
       { sub: "Website improvement", text: "To analyse usage patterns, fix bugs, and improve our product listings and user experience." },

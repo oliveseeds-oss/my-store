@@ -1,16 +1,17 @@
 const router = require("express").Router();
 const db = require("../db");
 const { verifyAdmin } = require("../middleware/auth");
+const { createRateLimiter } = require("../middleware/rateLimiter");
 
-// POST /api/newsletter/subscribe — save email to DB, check for duplicate
-router.post("/subscribe", async (req, res) => {
+// POST /api/newsletter/subscribe — Rate-limited newsletter subscription
+router.post("/subscribe", createRateLimiter(5, 15 * 60 * 1000), async (req, res) => {
   const { email } = req.body;
 
-  if (!email || !/\S+@\S+\.\S+/.test(email)) {
+  if (!email || typeof email !== "string" || !/\S+@\S+\.\S+/.test(email.trim()) || email.trim().length > 255) {
     return res.status(400).json({ error: "A valid email address is required" });
   }
 
-  const cleanEmail = email.trim().toLowerCase();
+  const cleanEmail = email.trim().toLowerCase().slice(0, 255);
 
   try {
     const [existing] = await db.query(

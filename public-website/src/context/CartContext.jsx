@@ -3,11 +3,26 @@ import { trackGA4Event } from "../utils/ga4";
 
 const CartContext = createContext();
 
+const normalizeCartItem = (i) => {
+  const hasDiscount = i.discount_price !== null && i.discount_price !== undefined && i.discount_price !== "" && Number(i.discount_price) > 0;
+  const currentPrice = Number(i.price) || 0;
+  const discountPrice = hasDiscount ? Number(i.discount_price) : null;
+  const effectivePrice = (discountPrice !== null && discountPrice < currentPrice) ? discountPrice : currentPrice;
+  const originalPrice = Number(i.original_price || (hasDiscount && discountPrice < currentPrice ? currentPrice : effectivePrice));
+  return {
+    ...i,
+    price: effectivePrice,
+    original_price: originalPrice,
+    qty: Number(i.qty) || 1
+  };
+};
+
 export function CartProvider({ children }) {
   const [cart, setCart] = useState(() => {
     try {
       const saved = localStorage.getItem("cart");
-      return saved ? JSON.parse(saved) : [];
+      const list = saved ? JSON.parse(saved) : [];
+      return Array.isArray(list) ? list.map(normalizeCartItem) : [];
     } catch {
       return [];
     }
@@ -21,7 +36,8 @@ export function CartProvider({ children }) {
     }
   }, [cart]);
 
-  const addToCart = (item) => {
+  const addToCart = (rawItem) => {
+    const item = normalizeCartItem(rawItem);
     trackGA4Event("add_to_cart", {
       currency: "INR",
       value: item.price * (item.qty || 1),
@@ -35,7 +51,7 @@ export function CartProvider({ children }) {
         getCartKey(i) === itemKey
           ? { ...i, qty: i.qty + (item.qty || 1) } : i
       );
-      return [...prev, { ...item, qty: item.qty || 1 }];
+      return [...prev, item];
     });
   };
 

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import SEO from "../components/SEO";
 import API from "../api";
 
 const Icons = {
@@ -72,78 +73,83 @@ const FadeUp = ({ children, delay = 0, className = "", style = {} }) => (
 
 const SERVICES = [
   {
-    title: "UI / UX Design",
-    iconKey: "UIUX",
-    desc: "Modern user experiences with premium interfaces, wireframes, prototypes, dashboards and mobile-first systems.",
-    tag: "Experience Design",
-  },
-  {
-    title: "Web Development",
-    iconKey: "WebDev",
-    desc: "High-performance websites and scalable web applications built with modern technologies and clean architecture.",
-    tag: "Engineering",
-  },
-  {
-    title: "Mobile App Design",
-    iconKey: "Mobile",
-    desc: "Beautiful Android & iOS application experiences designed for performance, usability and conversion.",
-    tag: "Mobile",
-  },
-  {
-    title: "Graphic Design",
-    iconKey: "Graphic",
-    desc: "Bespoke print collateral, high-end pitch decks, visual presentation assets and brand style books.",
-    tag: "Visual Design",
-  },
-  {
-    title: "Brand Identity",
+    title: "Brand & Visual Identity",
     iconKey: "Brand",
-    desc: "Crafting foundational identities — color frameworks, guidelines, logomarks, typography structures.",
-    tag: "Branding",
+    desc: "A brand is not a logo — it is a language. We develop complete visual identity systems for organisations that understand the difference. From mark-making and typographic systems to colour language and brand guidelines, we build identities that translate with authority across every touchpoint.",
+    tag: "Ideal for: New organisations, rebranding projects, corporate identity refreshes",
   },
   {
-    title: "AI Integration",
-    iconKey: "AI",
-    desc: "Deploying automated intelligence, fine-tuning custom prompts, LLM endpoints and smart service wrappers.",
-    tag: "Intelligence",
+    title: "Custom Product Design",
+    iconKey: "Sparkles",
+    desc: "We design and produce bespoke physical objects — from executive gift collections and branded stationery to architectural décor pieces and custom retail products. Every object is designed to specification, produced with care, and finished to a standard your recipients will notice.",
+    tag: "Ideal for: Corporate gifting, hospitality amenities, event collections. Available for B2B volume orders.",
+  },
+  {
+    title: "Spatial & Décor Design",
+    iconKey: "Graphic",
+    desc: "We work with interior designers, hospitality groups, and commercial property clients to produce custom design elements for built environments — signage systems, branded décor objects, and curated visual installations.",
+    tag: "Ideal for: Hotels, restaurants, office interiors, retail environments, boutique spaces",
+  },
+  {
+    title: "Event & Occasion Design",
+    iconKey: "Sparkles",
+    desc: "From corporate summits to private celebrations — we design the visual and material world of your event. Bespoke stationery, custom signage, welcome gifting, and branded experiential elements — produced to a unified standard of excellence.",
+    tag: "Ideal for: Corporate events, product launches, award ceremonies, private occasions",
+  },
+  {
+    title: "Digital Design & Brand Assets",
+    iconKey: "WebDev",
+    desc: "Premium digital design assets — presentation templates, social media systems, digital stationery, and branded document suites — all crafted to the same standard as our physical work.",
+    tag: "Ideal for: Corporate teams, agencies, content creators, educational institutions",
+  },
+  {
+    title: "Educational & Institutional Design",
+    iconKey: "Globe",
+    desc: "We partner with schools, universities, and educational organisations to produce distinguished design for their communities — from institutional stationery and award pieces to event design and campus visual identity.",
+    tag: "Ideal for: Schools, universities, academies, foundations, training organisations",
   },
 ];
 
 const PROCESS_STEPS = [
   {
     num: "01",
-    title: "Discovery",
-    desc: "Deep research, client alignment, project analysis, and establishing a core design thesis for your business.",
+    title: "Consultation & Briefing",
+    desc: "We examine your organisation's identity, objectives, and project parameters to establish a clear creative brief.",
   },
   {
     num: "02",
-    title: "Strategy",
-    desc: "Craft a precise roadmap — information architecture, tech stack, timeline, and success metrics aligned to outcomes.",
+    title: "Conceptual Development",
+    desc: "Our studio explores material, architectural, and visual directions, developing bespoke proposals tailored to your brand.",
   },
   {
     num: "03",
-    title: "Design",
-    desc: "High-fidelity systems built in Figma. Every pixel is intentional, every interaction is considered.",
+    title: "Prototyping & Sampling",
+    desc: "Material swatches, physical finish samples, or digital design proofs are presented for thorough review and refinement.",
   },
   {
     num: "04",
-    title: "Development",
-    desc: "Clean, scalable code. Performance-first builds delivered on schedule with full QA and staging reviews.",
+    title: "Precision Production",
+    desc: "Master artisans and design specialists craft each piece using architectural materials, precision detailing, and rigorous quality control.",
   },
   {
     num: "05",
-    title: "Launch",
-    desc: "Smooth handoff, deployment, and go-live support so nothing falls through the cracks.",
+    title: "Curation & Delivery",
+    desc: "Every commission is inspected, hand-packed in protective presentation suites, and dispatched with tracked international logistics.",
   },
   {
     num: "06",
-    title: "Optimization",
-    desc: "Post-launch analysis, iteration cycles, and long-term support to keep your product sharp.",
+    title: "Ongoing Partnership",
+    desc: "We maintain archival records of your specifications to facilitate effortless future reorders and brand extensions.",
   },
 ];
 
 export default function Service() {
   useEffect(() => {
+    document.title = "Bespoke Design Services | Olive Seeds Studio";
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute("content", "Creative services spanning brand identity design, interior design products, corporate gifting, and event design for clients with exacting standards.");
+    }
     if (window.location.hash) {
       const el = document.getElementById(window.location.hash.substring(1));
       if (el) {
@@ -661,6 +667,11 @@ export default function Service() {
         }
       `}</style>
 
+      <SEO
+        title="Bespoke Design Services | Olive Seeds Studio"
+        description="Creative services spanning brand identity design, interior design products, corporate gifting, and event design for clients with exacting standards."
+        keywords="bespoke design services, corporate identity, brand design, spatial design, corporate gifting, event design"
+      />
       <Navbar />
 
       {/* ══════════════════════════════
@@ -688,7 +699,7 @@ export default function Service() {
           <FadeUp>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 28 }}>
               <Icons.Sparkles size={14} color="var(--gold)" />
-              <span className="os-label">Digital Design & Technology Studio</span>
+              <span className="os-label">Olive Seeds Design Studio</span>
             </div>
           </FadeUp>
 
@@ -698,16 +709,7 @@ export default function Service() {
               className="os-heading os-hero-h1"
               style={{ fontSize: 64, color: "var(--accent)", maxWidth: 880, margin: "0 auto 28px", lineHeight: 1.12 }}
             >
-              Professional Digital Design Services —{" "}
-              <br />
-              <span style={{
-                background: "linear-gradient(135deg, var(--gold) 0%, #b8943d 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}>
-                Expert Team
-              </span> for Your Business
+              Services
             </h1>
           </FadeUp>
 
@@ -722,8 +724,7 @@ export default function Service() {
                 fontWeight: 400,
               }}
             >
-              We design and build premium digital products — UI/UX systems, websites, mobile
-              apps, brand identities and AI-powered automation — engineered to convert and built to scale.
+              A considered range of design services — each one structured for clients who hold their brand to the highest standard.
             </p>
           </FadeUp>
 
@@ -731,14 +732,14 @@ export default function Service() {
           <FadeUp delay={0.3}>
             <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center", marginBottom: "20px" }}>
               <a href="#contact" className="btn-primary" style={{ padding: "16px 36px" }}>
-                Start Your Project
+                Start a Conversation
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </a>
-              <a href="#services" className="btn-secondary" style={{ padding: "16px 36px" }}>
-                View Selected Work
-              </a>
+              <Link to="/products" className="btn-secondary" style={{ padding: "16px 36px" }}>
+                Explore the Collection
+              </Link>
             </div>
           </FadeUp>
 
@@ -824,23 +825,22 @@ export default function Service() {
             {/* Left */}
             <div>
               <div className="section-divider" />
-              <span className="os-label" style={{ display: "block", marginBottom: 16 }}>Common Business Challenges</span>
+              <span className="os-label" style={{ display: "block", marginBottom: 16 }}>The Cost of Compromise</span>
               <h2 className="os-heading" style={{ fontSize: 42, color: "var(--accent)", marginBottom: 24 }}>
-                Does your business face these problems?
+                Where ordinary design falls short
               </h2>
               <p style={{ fontSize: 16, color: "var(--text-2)", lineHeight: 1.8, marginBottom: 36 }}>
-                Most businesses lose revenue every day because of poor digital experiences. These
-                aren't just design problems — they're business problems.
+                For ambitious organisations, visual mediocrity is not simply an aesthetic flaw — it actively dilutes perceived value, weakens credibility, and undermines customer trust.
               </p>
 
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 {[
-                  "Outdated website that doesn't convert visitors",
-                  "Poor user experience driving customers away",
-                  "Weak or inconsistent brand identity",
-                  "Manual workflows wasting hours every week",
-                  "No mobile app strategy in a mobile-first world",
-                  "Competitors look more professional than you",
+                  "Generic brand identities that fail to distinguish your organisation in crowded markets",
+                  "Inconsistent presentation across physical objects, corporate communications, and digital platforms",
+                  "Mass-produced corporate gifting that feels transactional and is quickly discarded",
+                  "Spatial and architectural environments that lack bespoke signage and brand cohesion",
+                  "Presentation assets that undermine senior executive authority in critical meetings",
+                  "Disjointed vendor relationships that compromise quality control between design and production",
                 ].map((problem, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
                     <div style={{ width: 20, height: 20, borderRadius: "50%", background: "rgba(239,68,68,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 2 }}>
@@ -867,17 +867,17 @@ export default function Service() {
               >
                 <div style={{ position: "absolute", top: -60, right: -60, width: 240, height: 240, borderRadius: "50%", background: "radial-gradient(circle, rgba(201, 168, 106, 0.15), transparent 70%)", pointerEvents: "none" }} />
                 <div style={{ position: "relative", zIndex: 1 }}>
-                  <span className="os-label" style={{ color: "var(--gold)", display: "block", marginBottom: 16 }}>Olive Seeds Solution</span>
+                  <span className="os-label" style={{ color: "var(--gold)", display: "block", marginBottom: 16 }}>The Atelier Standard</span>
                   <h3 className="os-heading" style={{ fontSize: 28, color: "#ffffff", marginBottom: 24, lineHeight: 1.2 }}>
-                    We transform challenges into competitive advantages
+                    Considered design that commands authority and endures
                   </h3>
 
                   <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                     {[
-                      ["Premium UI/UX", "that converts visitors into customers"],
-                      ["Scalable Web & Mobile", "built for performance and growth"],
-                      ["Strategic Brand Identity", "that commands authority in your market"],
-                      ["AI & Automation Systems", "that save 20+ hours per week"],
+                      ["Distinctive Visual Systems", "crafted to reflect your character across every medium"],
+                      ["Bespoke Physical Objects", "hand-finished pieces engineered to be retained and valued"],
+                      ["Executive Digital Assets", "presentation and brand suites built for senior leadership"],
+                      ["Unified Creative Practice", "seamless coordination from concept to delivery"],
                     ].map(([title, desc], i) => (
                       <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
                         <div style={{ width: 20, height: 20, borderRadius: "50%", background: "rgba(201,168,106,0.18)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 2 }}>
@@ -892,7 +892,7 @@ export default function Service() {
                   </div>
 
                   <a href="#contact" className="btn-primary" style={{ marginTop: 36, display: "inline-flex", background: "#ffffff", color: "var(--accent)" }}>
-                    Discuss Your Project
+                    Discuss Your Brief
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </a>
                 </div>
@@ -915,15 +915,13 @@ export default function Service() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 56, flexWrap: "wrap", gap: 24 }}>
             <div>
               <div className="section-divider" />
-              <span className="os-label" style={{ display: "block", marginBottom: 14 }}>Our Expertise</span>
+              <span className="os-label" style={{ display: "block", marginBottom: 14 }}>Our Practice</span>
               <h2 className="os-heading" style={{ fontSize: 44, color: "var(--accent)" }}>
-                Premium Digital Services
+                Studio Services
               </h2>
             </div>
             <p style={{ fontSize: 15, color: "var(--text-2)", maxWidth: 360, lineHeight: 1.8 }}>
-              Each service is a complete product offering — not a
-              checklist of deliverables, but a strategic engagement
-              with measurable outcomes.
+              A considered range of design services — each one structured for clients who hold their brand to the highest standard.
             </p>
           </div>
 
@@ -981,7 +979,7 @@ export default function Service() {
               <div className="section-divider" />
               <span className="os-label" style={{ display: "block", marginBottom: 14 }}>Selected Work</span>
               <h2 className="os-heading" style={{ fontSize: 44, color: "var(--accent)" }}>
-                Projects That Drive Results
+                Selected Studio Commissions
               </h2>
             </div>
           </FadeUp>
@@ -1007,9 +1005,9 @@ export default function Service() {
               >
                 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(14,19,32,0.92) 0%, rgba(14,19,32,0.3) 60%, transparent 100%)", zIndex: 1 }} />
                 <div style={{ position: "relative", zIndex: 2 }}>
-                  <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--gold)", marginBottom: 10, display: "block" }}>SaaS Dashboard</span>
-                  <h3 style={{ fontSize: 24, fontWeight: 700, color: "#ffffff", letterSpacing: "-0.03em" }}>Enterprise Analytics Platform</h3>
-                  <p style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", marginTop: 8 }}>UI/UX Design · Web Development · Design System</p>
+                  <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--gold)", marginBottom: 10, display: "block" }}>Spatial &amp; Décor Design</span>
+                  <h3 style={{ fontSize: 24, fontWeight: 700, color: "#ffffff", letterSpacing: "-0.03em" }}>Bespoke Hospitality Signage &amp; Interior System</h3>
+                  <p style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", marginTop: 8 }}>Architectural Materials · Custom Detailing · Spatial Identity</p>
                 </div>
               </div>
             </FadeUp>
@@ -1017,8 +1015,8 @@ export default function Service() {
             {/* Two smaller cards */}
             <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
               {[
-                { img: "https://images.unsplash.com/photo-1555774698-0b77e0d5fa6a?auto=format&fit=crop&w=600&q=80", accent: "var(--gold)", label: "Mobile App", title: "FinTech iOS & Android App", sub: "App Design · Prototyping · Branding" },
-                { img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80", accent: "var(--gold)", label: "Brand Identity", title: "B2B SaaS Rebrand System", sub: "Logo · Typography · Brand Guidelines" },
+                { img: "https://images.unsplash.com/photo-1555774698-0b77e0d5fa6a?auto=format&fit=crop&w=600&q=80", accent: "var(--gold)", label: "Corporate Gifting", title: "Executive Timber & Brass Presentation Suites", sub: "Hand-Finished Timber · Precision Detailing · Custom Packaging" },
+                { img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80", accent: "var(--gold)", label: "Brand Identity", title: "Comprehensive Visual Identity System", sub: "Typographic Architecture · Brand Guidelines · Digital Assets" },
               ].map((item, i) => (
                 <FadeUp key={i} delay={0.15 + i * 0.08}>
                   <div
@@ -1084,11 +1082,10 @@ export default function Service() {
                 From Vision To Reality
               </h2>
               <p style={{ fontSize: 15, color: "var(--text-2)", lineHeight: 1.8 }}>
-                A structured engagement model refined over 120+ projects.
-                No surprises — just results.
+                A disciplined six-stage methodology engineered for predictability, craftsmanship, and uncompromising finish.
               </p>
               <a href="#contact" className="btn-primary" style={{ marginTop: 32, display: "inline-flex" }}>
-                Start Your Project
+                Discuss Your Brief
               </a>
             </div>
 
@@ -1290,18 +1287,17 @@ export default function Service() {
               <div className="section-divider" style={{ width: 44, height: 3, background: "var(--gold)", marginBottom: 20 }} />
               <span className="os-label" style={{ display: "block", marginBottom: 14 }}>Start Your Project</span>
               <h2 className="os-heading" style={{ fontSize: 40, color: "var(--accent)", marginBottom: 20, fontWeight: 700 }}>
-                Let's build something extraordinary
+                Begin Your Project Enquiry
               </h2>
               <p style={{ fontSize: 15.5, color: "var(--text-2)", lineHeight: 1.8, marginBottom: 40 }}>
-                Fill out the brief below and a senior strategist will personally
-                review your project and respond within 24 hours.
+                Share your project brief below. A studio creative director will review your specifications and respond within one business day.
               </p>
 
               <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                 {[
-                  { icon: "⏱", title: "24-hour response", desc: "Every inquiry reviewed personally" },
-                  { icon: "🔒", title: "Strict confidentiality", desc: "NDA available on request" },
-                  { icon: "💬", title: "Free consultation", desc: "30-minute strategy call included" },
+                  { icon: "⏱", title: "One business day response", desc: "Every enquiry reviewed by studio directors" },
+                  { icon: "🔒", title: "Strict confidentiality", desc: "Non-disclosure agreements executed on request" },
+                  { icon: "💬", title: "Bespoke proposal", desc: "Tailored scope, material schedules, and transparent timelines" },
                 ].map((item, i) => (
                   <div key={i} style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
                     <span style={{ fontSize: 20, flexShrink: 0, lineHeight: 1 }}>{item.icon}</span>
@@ -1329,7 +1325,7 @@ export default function Service() {
                   <div style={{ fontSize: "48px", color: "var(--gold)", marginBottom: "16px" }}>✓</div>
                   <h3 style={{ fontSize: "20px", fontWeight: 700, color: "var(--accent)", marginBottom: "10px" }}>Enquiry Received</h3>
                   <p style={{ fontSize: "14.5px", color: "var(--text-2)", lineHeight: 1.6 }}>
-                    Thank you for reaching out! Our creative director will review your project details and get in touch within 24 hours.
+                    Thank you for contacting the studio. Our creative director will review your project details and respond within one business day.
                   </p>
                 </div>
               ) : (
@@ -1391,16 +1387,13 @@ export default function Service() {
                       onChange={e => setForm({ ...form, project_type: e.target.value })}
                     >
                       <option value="">Select a service...</option>
-                      <option>UI / UX Design</option>
-                      <option>Website Design & Development</option>
-                      <option>Mobile App Design</option>
-                      <option>Mobile App Development</option>
-                      <option>Brand Identity</option>
-                      <option>Graphic Design</option>
-                      <option>AI Integration</option>
-                      <option>Automation / N8N</option>
-                      <option>Design System</option>
-                      <option>Startup MVP</option>
+                      <option>Brand & Visual Identity</option>
+                      <option>Custom Product Design</option>
+                      <option>Spatial & Décor Design</option>
+                      <option>Event & Occasion Design</option>
+                      <option>Digital Design & Brand Assets</option>
+                      <option>Educational & Institutional Design</option>
+                      <option>Bespoke Commission / Volume Order</option>
                       <option>Other</option>
                     </select>
                   </div>
@@ -1479,17 +1472,16 @@ export default function Service() {
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div className="dark-cta">
             <span className="os-label" style={{ color: "var(--gold)", display: "block", marginBottom: 20, textAlign: "center" }}>
-              Ready to start?
+              Tailored Consultation
             </span>
             <h2
               className="os-heading"
               style={{ fontSize: 52, color: "#ffffff", marginBottom: 20, position: "relative", zIndex: 1 }}
             >
-              Your next chapter starts here.
+              Not Sure Which Service Fits Your Brief?
             </h2>
-            <p style={{ fontSize: 17, color: "rgba(255,255,255,0.65)", maxWidth: 520, margin: "0 auto 40px", lineHeight: 1.8, position: "relative", zIndex: 1 }}>
-              We work with a select number of clients each quarter.
-              Secure your spot and let's build something the market has never seen.
+            <p style={{ fontSize: 17, color: "rgba(255,255,255,0.65)", maxWidth: 640, margin: "0 auto 40px", lineHeight: 1.8, position: "relative", zIndex: 1 }}>
+              Many of our most successful projects begin as a conversation without a clear brief. Tell us what you are trying to achieve — we will advise on the right approach and provide a tailored proposal at no obligation.
             </p>
             <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap", position: "relative", zIndex: 1 }}>
               <a
@@ -1497,7 +1489,7 @@ export default function Service() {
                 className="btn-primary"
                 style={{ background: "#ffffff", color: "var(--accent)", fontSize: 15 }}
               >
-                Start Your Project
+                Start a Conversation
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </a>
             </div>

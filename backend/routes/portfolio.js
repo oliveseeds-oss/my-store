@@ -35,19 +35,36 @@ router.get("/admin/all", verifyAdmin, async (req, res) => {
   }
 });
 
-// ADMIN — Add portfolio item
+// ADMIN — Add portfolio item (supports single image_url or multiple image_urls)
 router.post("/", verifyAdmin, async (req, res) => {
-  const { image_url, title, description, category } = req.body;
-  if (!image_url || !title) {
-    return res.status(400).json({ error: "Image URL and Title are required" });
+  const { image_url, image_urls, title, description, category } = req.body;
+  
+  let urls = [];
+  if (Array.isArray(image_urls)) {
+    urls = image_urls.map(u => String(u || "").trim()).filter(Boolean);
+  } else if (typeof image_urls === "string" && image_urls.trim()) {
+    urls = image_urls.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
+  }
+  if (image_url && typeof image_url === "string" && image_url.trim()) {
+    const splitUrls = image_url.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
+    urls.push(...splitUrls);
+  }
+  urls = [...new Set(urls)];
+
+  if (urls.length === 0 || !title) {
+    return res.status(400).json({ error: "At least one Image URL and Title are required" });
   }
 
   try {
-    const [result] = await db.query(
-      "INSERT INTO portfolio (image_url, title, description, category) VALUES (?,?,?,?)",
-      [image_url, title, description || null, category || null]
-    );
-    res.json({ id: result.insertId, message: "Portfolio project added" });
+    const insertedIds = [];
+    for (const url of urls) {
+      const [result] = await db.query(
+        "INSERT INTO portfolio (image_url, title, description, category) VALUES (?,?,?,?)",
+        [url, title, description || null, category || null]
+      );
+      insertedIds.push(result.insertId);
+    }
+    res.json({ id: insertedIds[0], ids: insertedIds, count: insertedIds.length, message: `${insertedIds.length} portfolio project(s) added` });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -41,9 +41,9 @@ export default function Gallery() {
   return (
     <div style={{ background: "#FDFCF7", minHeight: "100vh", fontFamily: "'Inter', sans-serif" }}>
       <SEO 
-        title="Premium Custom Engraving Inspiration Gallery | Olive Seeds"
-        description="Browse our curated design gallery of custom teakwood nameplates, frosted acrylic logos, signage models, and interior design items."
-        keywords="wood engraving gallery, custom signage reference, interior design engraving inspiration"
+        title="Bespoke Design & Craft Gallery | Olive Seeds Design Studio"
+        description="Browse our curated design gallery of custom timber pieces, architectural acrylic objects, signage models, and interior design commissions."
+        keywords="bespoke gallery, architectural signage reference, interior design inspiration, custom commissions"
       />
       <Navbar />
 
@@ -58,10 +58,10 @@ export default function Gallery() {
             Workshop Showcase
           </span>
           <h1 className="text-4xl md:text-5xl font-light italic font-serif text-white tracking-tight mb-6">
-            Bespoke Engraving & Craft Gallery
+            Bespoke Objects & Craft Gallery
           </h1>
           <p className="text-stone-300 text-sm md:text-base max-w-2xl mx-auto leading-relaxed font-light">
-            Explore how our high-precision laser engravings transform teakwood nameplates, frosted acrylic signs, custom keepsakes, and premium interior decors.
+            Explore how our precision-crafted objects transform hand-finished timber, frosted acrylic signs, bespoke keepsakes, and premium interior decors.
           </p>
         </div>
       </section>
@@ -210,14 +210,20 @@ export default function Gallery() {
               />
 
               <div className="p-8">
-                <span className="text-[10px] text-amber-500 font-extrabold uppercase tracking-widest block mb-2">
-                  {lightboxImage.category || "Laser Crafted"}
-                </span>
-                <h3 className="text-2xl font-light font-serif italic text-white mb-4">
-                  {lightboxImage.title}
-                </h3>
-                <p className="text-stone-400 text-sm leading-relaxed mb-6 font-light">
-                  Handcrafted using organic premium grade {lightboxImage.material || "wood/acrylic"} options. Perfect for personalized home decor, luxury branding nameplates, and signage systems.
+                {lightboxImage.category && (
+                  <span className="text-[10px] text-amber-500 font-extrabold uppercase tracking-widest block mb-2">
+                    {lightboxImage.category}
+                  </span>
+                )}
+                {lightboxImage.title && (
+                  <h3 className="text-2xl font-light font-serif italic text-white mb-4">
+                    {lightboxImage.title}
+                  </h3>
+                )}
+                <p className="text-stone-300 text-sm leading-relaxed mb-6 font-light">
+                  {lightboxImage.description || (lightboxImage.material
+                    ? `Handcrafted using premium grade ${lightboxImage.material}. Custom sized and crafted to order.`
+                    : "Handcrafted with precision laser craftsmanship. Contact us for custom sizing and bespoke specifications.")}
                 </p>
 
                 <div className="border-t border-stone-800 pt-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">

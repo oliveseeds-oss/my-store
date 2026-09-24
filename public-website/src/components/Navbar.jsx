@@ -33,7 +33,7 @@ export default function Navbar() {
 
         {/* Desktop Navigation Links */}
         <div className="hidden md:flex items-center gap-6 text-xs font-black uppercase tracking-wider text-[#0D1512]/80">
-          <Link to="/products" className="hover:text-[#0D1512] transition">Engraved</Link>
+          <Link to="/products" className="hover:text-[#0D1512] transition">The Collection</Link>
           <Link to="/digital" className="hover:text-[#0D1512] transition">Digital</Link>
           <Link to="/service" className="hover:text-[#0D1512] transition">Service</Link>
           <Link to="/blog" className="hover:text-[#0D1512] transition">Blog</Link>
@@ -72,7 +72,7 @@ export default function Navbar() {
               onClick={() => setIsMobileMenuOpen(false)}
               className="py-2 border-b border-[#0D1512]/5 hover:text-[#0D1512] transition"
             >
-              Engraved Products
+              The Collection
             </Link>
             <Link
               to="/digital"
@@ -100,7 +100,7 @@ export default function Navbar() {
               onClick={() => setIsMobileMenuOpen(false)}
               className="py-2 border-b border-[#0D1512]/5 hover:text-[#0D1512] font-bold text-amber-700 transition"
             >
-              📦 Bulk Orders / Custom Engraving
+              📦 B2B & Volume Orders
             </Link>
             <Link
               to="/portfolio"

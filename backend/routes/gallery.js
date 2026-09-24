@@ -28,19 +28,51 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ADMIN — Add gallery item
+// ADMIN — Add gallery item (supports single image_url or multiple image_urls)
 router.post("/", verifyAdmin, async (req, res) => {
-  const { image_url, title, style, category, industry, material } = req.body;
-  if (!image_url) {
-    return res.status(400).json({ error: "Image URL is required" });
+  const { image_url, image_urls, title, style, category, industry, material, description } = req.body;
+  
+  // Extract all URLs
+  let urls = [];
+  if (Array.isArray(image_urls)) {
+    urls = image_urls.map(u => String(u || "").trim()).filter(Boolean);
+  } else if (typeof image_urls === "string" && image_urls.trim()) {
+    urls = image_urls.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
+  }
+  if (image_url && typeof image_url === "string" && image_url.trim()) {
+    const splitUrls = image_url.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
+    urls.push(...splitUrls);
+  }
+  urls = [...new Set(urls)];
+
+  if (urls.length === 0) {
+    return res.status(400).json({ error: "At least one Image URL is required" });
   }
 
   try {
-    const [result] = await db.query(
-      "INSERT INTO gallery (image_url, title, style, category, industry, material) VALUES (?,?,?,?,?,?)",
-      [image_url, title || null, style || null, category || null, industry || null, material || null]
+    const insertedIds = [];
+    for (const url of urls) {
+      const [result] = await db.query(
+        "INSERT INTO gallery (image_url, title, style, category, industry, material, description) VALUES (?,?,?,?,?,?,?)",
+        [url, title || null, style || null, category || null, industry || null, material || null, description || null]
+      );
+      insertedIds.push(result.insertId);
+    }
+    res.json({ ids: insertedIds, count: insertedIds.length, message: `${insertedIds.length} showcase design image(s) added` });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ADMIN — Update gallery item
+router.put("/:id", verifyAdmin, async (req, res) => {
+  const { image_url, title, style, category, industry, material, description } = req.body;
+  try {
+    await db.query(
+      "UPDATE gallery SET image_url=?, title=?, style=?, category=?, industry=?, material=?, description=? WHERE id=?",
+      [image_url, title || null, style || null, category || null, industry || null, material || null, description || null, req.params.id]
     );
-    res.json({ id: result.insertId, message: "Showcase design image added" });
+    res.json({ message: "Showcase design image updated" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

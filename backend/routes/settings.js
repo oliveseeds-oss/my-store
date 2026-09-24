@@ -3,7 +3,7 @@ const db = require("../db");
 const { verifyAdmin } = require("../middleware/auth");
 
 router.get("/", async (req, res) => {
-  const [rows] = await db.query("SELECT site_name, site_email, phone, address, currency, shipping_fee, free_shipping_above, razorpay_key, razorpay_secret, paypal_client_id, paypal_client_secret, shiprocket_email, shiprocket_password FROM settings WHERE id = 1");
+  const [rows] = await db.query("SELECT site_name, site_email, phone, address, currency, shipping_fee, free_shipping_above, razorpay_key, razorpay_secret, paypal_client_id, paypal_client_secret, paypal_mode, shiprocket_email, shiprocket_password FROM settings WHERE id = 1");
   const settings = rows[0] || {};
   
   // Mask shiprocket password
@@ -19,20 +19,21 @@ router.get("/", async (req, res) => {
     settings.paypal_client_secret = "••••••••";
   }
   
-  const isLive = !settings.paypal_client_id?.startsWith("sb") && process.env.PAYPAL_MODE !== "sandbox";
+  const configuredMode = settings.paypal_mode;
+  const isLive = configuredMode === "production" || (!configuredMode && !settings.paypal_client_id?.startsWith("sb") && process.env.PAYPAL_MODE === "production");
   res.json({
     ...settings,
-    paypal_client_id: settings.paypal_client_id || process.env.PAYPAL_CLIENT_ID || "sb",
-    paypal_mode: isLive ? "production" : "sandbox",
+    paypal_client_id: settings.paypal_client_id || process.env.PAYPAL_CLIENT_ID || "",
+    paypal_mode: configuredMode || (isLive ? "production" : "sandbox"),
     google_client_id: process.env.GOOGLE_CLIENT_ID || "874744414734-mockclientid.apps.googleusercontent.com"
   });
 });
 
 router.put("/", verifyAdmin, async (req, res) => {
-  const { site_name, site_email, phone, address, currency, shipping_fee, free_shipping_above, razorpay_key, razorpay_secret, paypal_client_id, paypal_client_secret, shiprocket_email, shiprocket_password, admin_password } = req.body;
+  const { site_name, site_email, phone, address, currency, shipping_fee, free_shipping_above, razorpay_key, razorpay_secret, paypal_client_id, paypal_client_secret, paypal_mode, shiprocket_email, shiprocket_password, admin_password } = req.body;
   
   // Handle shiprocket credential decryption/encryption migration
-  const [current] = await db.query("SELECT shiprocket_password, razorpay_secret, paypal_client_secret FROM settings WHERE id = 1");
+  const [current] = await db.query("SELECT shiprocket_password, razorpay_secret, paypal_client_secret, paypal_mode FROM settings WHERE id = 1");
   
   let finalPassword = shiprocket_password;
   if (shiprocket_password === "••••••••") {
@@ -60,8 +61,10 @@ router.put("/", verifyAdmin, async (req, res) => {
     finalPaypalSecret = encrypt(paypal_client_secret);
   }
 
-  let query = "UPDATE settings SET site_name=?, site_email=?, phone=?, address=?, currency=?, shipping_fee=?, free_shipping_above=?, razorpay_key=?, razorpay_secret=?, paypal_client_id=?, paypal_client_secret=?, shiprocket_email=?, shiprocket_password=?";
-  const params = [site_name, site_email, phone, address, currency, shipping_fee, free_shipping_above, razorpay_key, finalRazorpaySecret, paypal_client_id, finalPaypalSecret, shiprocket_email, finalPassword];
+  const finalPaypalMode = paypal_mode || current[0]?.paypal_mode || "sandbox";
+
+  let query = "UPDATE settings SET site_name=?, site_email=?, phone=?, address=?, currency=?, shipping_fee=?, free_shipping_above=?, razorpay_key=?, razorpay_secret=?, paypal_client_id=?, paypal_client_secret=?, paypal_mode=?, shiprocket_email=?, shiprocket_password=?";
+  const params = [site_name, site_email, phone, address, currency, shipping_fee, free_shipping_above, razorpay_key, finalRazorpaySecret, paypal_client_id, finalPaypalSecret, finalPaypalMode, shiprocket_email, finalPassword];
 
   if (admin_password) {
     const bcrypt = require("bcryptjs");
@@ -167,17 +170,23 @@ router.post("/test-razorpay", verifyAdmin, async (req, res) => {
 });
 
 router.post("/test-paypal", verifyAdmin, async (req, res) => {
-  const { paypal_client_id, paypal_client_secret } = req.body;
+  const { paypal_client_id, paypal_client_secret, paypal_mode } = req.body;
   try {
     let clientId = paypal_client_id;
     let clientSecret = paypal_client_secret;
+    let mode = paypal_mode;
 
-    if (clientSecret === "••••••••") {
-      const [rows] = await db.query("SELECT paypal_client_id, paypal_client_secret FROM settings WHERE id = 1");
+    if (clientSecret === "••••••••" || !mode) {
+      const [rows] = await db.query("SELECT paypal_client_id, paypal_client_secret, paypal_mode FROM settings WHERE id = 1");
       if (rows.length) {
         clientId = paypal_client_id || rows[0].paypal_client_id;
-        const { decrypt } = require("../utils/shiprocket");
-        clientSecret = decrypt(rows[0].paypal_client_secret);
+        if (clientSecret === "••••••••") {
+          const { decrypt } = require("../utils/shiprocket");
+          clientSecret = decrypt(rows[0].paypal_client_secret);
+        }
+        if (!mode) {
+          mode = rows[0].paypal_mode;
+        }
       }
     }
 
@@ -188,7 +197,7 @@ router.post("/test-paypal", verifyAdmin, async (req, res) => {
       return res.json({ success: false, message: "PayPal Client ID or Secret Key not configured." });
     }
 
-    const isLive = !clientId.startsWith("sb") && process.env.PAYPAL_MODE !== "sandbox";
+    const isLive = mode === "production" || (!mode && !clientId.startsWith("sb") && process.env.PAYPAL_MODE === "production");
     const baseUrl = isLive ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
     const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
 
