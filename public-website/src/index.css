@@ -12,8 +12,8 @@ html { scroll-behavior: smooth; }
 
   /* ─── White-First Design System Tokens ─── */
   --bg: #FFFFFF;
-  --bg-soft: #F8F8F6;
-  --surface-warm: #F5F4F1;
+  --bg-soft: #FAF6EE;
+  --surface-warm: #F6F1E5;
   --surface: #FFFFFF;
 
   --text: #181A18;
@@ -26,12 +26,12 @@ html { scroll-behavior: smooth; }
   --accent: #23483D;
   --accent-h: #16352D;
   --gold: #A48855;
-  --gold-soft: rgba(164, 136, 85, 0.08);
-  --gold-border: rgba(164, 136, 85, 0.22);
-  --accent-surface: #F2F5F3;
+  --gold-soft: rgba(164, 136, 85, 0.12);
+  --gold-border: rgba(164, 136, 85, 0.28);
+  --accent-surface: #F5EFE2;
 
-  --border: #E7E7E2;
-  --border-hover: #CACCC6;
+  --border: #EAE4D6;
+  --border-hover: #D5CAA8;
 
   --radius-sm: 3px;
   --radius: 4px;

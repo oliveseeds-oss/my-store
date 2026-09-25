@@ -282,7 +282,7 @@ export default function Engraving() {
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
             <span style={{
               display: "inline-flex", alignItems: "center", gap: "8px",
-              background: "#F8F8F6", border: "1px solid #E7E7E2",
+              background: "#FAF6EE", border: "1px solid #E7E7E2",
               borderRadius: "4px", padding: "6px 14px",
               fontSize: "11px", fontWeight: 600, letterSpacing: "0.15em",
               textTransform: "uppercase", color: "#23483D", marginBottom: "20px",
@@ -300,7 +300,7 @@ export default function Engraving() {
               <a href="#bulk-order" style={{ background: "#23483D", color: "#FFFFFF", borderRadius: "4px", padding: "12px 26px", fontSize: "12px", fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.06em", display: "inline-flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s" }} className="hover:bg-[#16352D]">
                 Request a Proposal
               </a>
-              <a href="#materials" style={{ background: "#FFFFFF", border: "1px solid #E7E7E2", color: "#181A18", borderRadius: "4px", padding: "12px 26px", fontSize: "12px", fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.06em", display: "inline-flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s" }} className="hover:bg-[#F8F8F6]">
+              <a href="#materials" style={{ background: "#FFFFFF", border: "1px solid #E7E7E2", color: "#181A18", borderRadius: "4px", padding: "12px 26px", fontSize: "12px", fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.06em", display: "inline-flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s" }} className="hover:bg-[#FAF6EE]">
                 Explore Materials
               </a>
             </div>
@@ -367,7 +367,7 @@ export default function Engraving() {
       </section>
 
       {/* ── MATERIAL CARDS WITH IMAGES ── */}
-      <section id="materials" style={{ padding: "clamp(60px, 8vw, 100px) 24px", background: "#F8F8F6", borderBottom: "1px solid #E7E7E2" }}>
+      <section id="materials" style={{ padding: "clamp(60px, 8vw, 100px) 24px", background: "#FAF6EE", borderBottom: "1px solid #E7E7E2" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: "50px" }}>
             <span style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "#23483D", display: "block", marginBottom: "8px" }}>Selected Materials</span>
@@ -425,7 +425,7 @@ export default function Engraving() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "20px" }}>
             {STEPS.map((step, i) => (
               <div key={i} style={{
-                background: "#F8F8F6",
+                background: "#FAF6EE",
                 border: "1px solid #E7E7E2",
                 borderRadius: "4px",
                 padding: "24px 20px",
@@ -440,7 +440,7 @@ export default function Engraving() {
       </section>
 
       {/* ── WHY OLIVE SEEDS ── */}
-      <section style={{ padding: "80px 24px", background: "#F8F8F6", borderBottom: "1px solid #E7E7E2" }}>
+      <section style={{ padding: "80px 24px", background: "#FAF6EE", borderBottom: "1px solid #E7E7E2" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: "48px" }}>
             <span style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "#23483D", display: "block", marginBottom: "8px" }}>Studio Guarantee</span>
@@ -455,7 +455,7 @@ export default function Engraving() {
                   display: "flex", gap: "16px", padding: "20px",
                   background: "#FFFFFF", borderRadius: "4px", border: "1px solid #E7E7E2",
                 }}>
-                  <div style={{ width: "38px", height: "38px", borderRadius: "4px", background: "#F8F8F6", border: "1px solid #E7E7E2", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <div style={{ width: "38px", height: "38px", borderRadius: "4px", background: "#FAF6EE", border: "1px solid #E7E7E2", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     <Icon size={16} color="#23483D" />
                   </div>
                   <div>
@@ -475,7 +475,7 @@ export default function Engraving() {
           <div style={{ textAlign: "center", marginBottom: "40px" }}>
             <span style={{
               display: "inline-flex", alignItems: "center", gap: "8px",
-              background: "#F8F8F6", border: "1px solid #E7E7E2",
+              background: "#FAF6EE", border: "1px solid #E7E7E2",
               borderRadius: "4px", padding: "5px 14px",
               fontSize: "11px", fontWeight: 600, letterSpacing: "0.15em",
               textTransform: "uppercase", color: "#23483D", marginBottom: "14px"
@@ -493,7 +493,7 @@ export default function Engraving() {
               initial={{ scale: 0.98, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               style={{
-                background: "#F8F8F6", border: "1px solid #E7E7E2",
+                background: "#FAF6EE", border: "1px solid #E7E7E2",
                 borderRadius: "4px", padding: "40px 28px", textAlign: "center"
               }}
             >

@@ -249,7 +249,7 @@ export default function FaqPage() {
                           className="w-full px-5 py-4 flex items-center justify-between text-left gap-4 font-normal text-sm md:text-base text-[#181A18] cursor-pointer"
                         >
                           <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="leading-snug text-base sm:text-lg text-[#181A18] font-normal">{f.question}</h3>
-                          <span className="p-1 rounded-[2px] bg-[#F8F8F6] border border-[#E7E7E2] text-[#676A65] shrink-0">
+                          <span className="p-1 rounded-[2px] bg-[#FAF6EE] border border-[#E7E7E2] text-[#676A65] shrink-0">
                             {isOpen ? <MdExpandLess className="text-lg" /> : <MdExpandMore className="text-lg" />}
                           </span>
                         </button>

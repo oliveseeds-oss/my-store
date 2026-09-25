@@ -8,8 +8,8 @@
 :root {
   /* ─── 1. Backgrounds (White-first 80–85%) ─── */
   --bg: #FFFFFF;
-  --bg-soft: #FAF9F6;
-  --surface-warm: #F7F5F0;
+  --bg-soft: #FAF6EE;
+  --surface-warm: #F6F1E5;
   --surface: #FFFFFF;
 
   /* ─── 2. Typography (Charcoal & dark neutrals 10–15%) ─── */
@@ -24,13 +24,13 @@
   --accent: #23483D;
   --accent-h: #16352D;
   --gold: #A48855;
-  --gold-soft: rgba(164, 136, 85, 0.08);
-  --gold-border: rgba(164, 136, 85, 0.22);
-  --accent-surface: #F2F5F3;
+  --gold-soft: rgba(164, 136, 85, 0.12);
+  --gold-border: rgba(164, 136, 85, 0.28);
+  --accent-surface: #F5EFE2;
 
   /* ─── 4. Architectural Borders ─── */
-  --border: #E7E7E2;
-  --border-hover: #CACCC6;
+  --border: #EAE4D6;
+  --border-hover: #D5CAA8;
 
   /* ─── 5. Precise Border Radius (No bubble curves) ─── */
   --radius-sm: 3px;

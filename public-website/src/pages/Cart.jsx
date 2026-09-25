@@ -51,7 +51,7 @@ export default function Cart() {
                   key={`${item.id}-${item.type}-${item.selectedSize || ""}-${item.customizationSummary || ""}`}
                   className="rounded-[4px] border border-[#E7E7E2] bg-white p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 transition-all duration-300"
                 >
-                  <div className="w-20 h-20 bg-[#F8F8F6] rounded-[4px] flex items-center justify-center flex-shrink-0 border border-[#E7E7E2] overflow-hidden">
+                  <div className="w-20 h-20 bg-[#FAF6EE] rounded-[4px] flex items-center justify-center flex-shrink-0 border border-[#EAE4D6] overflow-hidden">
                     {item.image_url || item.thumbnail_url ? (
                       <img 
                         src={item.image_url || item.thumbnail_url} 
@@ -69,7 +69,7 @@ export default function Cart() {
                       {item.type} asset {item.selectedSize ? `— Size: ${item.selectedSize}` : ''}
                     </p>
                     {item.customizationSummary && (
-                      <p className="text-[11px] text-[#23483D] bg-[#F8F8F6] rounded-[4px] px-2.5 py-1.5 font-medium mt-1.5 border border-[#E7E7E2]">
+                      <p className="text-[11px] text-[#23483D] bg-[#FAF6EE] rounded-[4px] px-2.5 py-1.5 font-medium mt-1.5 border border-[#EAE4D6]">
                         ✒️ Custom: {item.customizationSummary}
                       </p>
                     )}
@@ -83,21 +83,21 @@ export default function Cart() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between w-full sm:w-auto gap-4 mt-4 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-t-0 border-[#E7E7E2]">
+                  <div className="flex items-center justify-between w-full sm:w-auto gap-4 mt-4 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-t-0 border-[#EAE4D6]">
                     {item.type === "physical" && (
-                      <div className="flex items-center border border-[#E7E7E2] rounded-[4px] overflow-hidden bg-[#F8F8F6]">
+                      <div className="flex items-center border border-[#EAE4D6] rounded-[4px] overflow-hidden bg-[#FAF6EE]">
                         <button
                           onClick={() => item.qty > 1
                             ? updateQty(item.id, item.type, item.qty - 1, item.selectedSize, item.customizationSummary)
                             : removeFromCart(item.id, item.type, item.selectedSize, item.customizationSummary)}
-                          className="px-3 py-1.5 hover:bg-stone-200 text-sm font-bold transition"
+                          className="px-3 py-1.5 hover:bg-[#F0EAD8] text-sm font-bold transition"
                         >
                           −
                         </button>
                         <span className="px-3 text-xs font-semibold text-center min-w-[24px]">{item.qty}</span>
                         <button
                           onClick={() => updateQty(item.id, item.type, item.qty + 1, item.selectedSize, item.customizationSummary)}
-                          className="px-3 py-1.5 hover:bg-stone-200 text-sm font-bold transition"
+                          className="px-3 py-1.5 hover:bg-[#F0EAD8] text-sm font-bold transition"
                         >
                           +
                         </button>
@@ -130,7 +130,7 @@ export default function Cart() {
                   {hasPhysicalItems ? (
                     <div className="flex justify-between text-[#676A65] items-center">
                       <span>Shipping</span>
-                      <span className="text-xs font-medium text-[#23483D] bg-[#F8F8F6] px-2 py-0.5 rounded-[4px] border border-[#E7E7E2]">
+                      <span className="text-xs font-medium text-[#23483D] bg-[#FAF6EE] px-2 py-0.5 rounded-[4px] border border-[#E7E7E2]">
                         Calculated at checkout
                       </span>
                     </div>

@@ -629,27 +629,109 @@ export default function Service() {
       ══════════════════════════════ */}
       <section
         className="service-hero-section relative"
-        style={{ paddingTop: "120px", paddingBottom: "120px", background: "var(--bg)" }}
+        style={{ paddingTop: "clamp(90px, 11vw, 140px)", paddingBottom: "clamp(70px, 9vw, 120px)", background: "var(--bg)", position: "relative", overflow: "hidden" }}
       >
-        {/* Subtle top-left accent */}
-        <div
-          className="service-hero-glow"
+        {/* Ambient Warm Champagne Gold Glow Decoration with Motion */}
+        <motion.div
+          animate={{
+            scale: [1, 1.18, 1],
+            opacity: [0.35, 0.6, 0.35],
+            x: [0, 20, 0],
+            y: [0, -15, 0]
+          }}
+          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
           style={{
             position: "absolute",
-            top: 0, left: 0,
-            width: 550, height: 550,
+            top: "-10%",
+            right: "15%",
+            width: 550,
+            height: 550,
             borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(201,168,106,0.08), transparent 70%)",
+            background: "radial-gradient(circle, rgba(197, 168, 128, 0.16) 0%, rgba(197, 168, 128, 0.04) 50%, transparent 70%)",
             pointerEvents: "none",
+            zIndex: 1
           }}
         />
 
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 32px", position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+        {/* Ambient Second Subtle Halo Bottom-Left */}
+        <motion.div
+          animate={{
+            scale: [1, 1.15, 1],
+            opacity: [0.25, 0.45, 0.25],
+            y: [0, 15, 0]
+          }}
+          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+          style={{
+            position: "absolute",
+            bottom: "-10%",
+            left: "8%",
+            width: 480,
+            height: 480,
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(164, 136, 85, 0.12) 0%, transparent 70%)",
+            pointerEvents: "none",
+            zIndex: 1
+          }}
+        />
+
+        {/* Delicate Animated Geometric Gold Rings Motion Decor */}
+        <motion.div
+          animate={{
+            rotate: [0, 360],
+            y: [0, -10, 0]
+          }}
+          transition={{
+            rotate: { duration: 65, repeat: Infinity, ease: "linear" },
+            y: { duration: 8, repeat: Infinity, ease: "easeInOut" }
+          }}
+          style={{
+            position: "absolute",
+            top: "15%",
+            left: "10%",
+            width: 280,
+            height: 280,
+            borderRadius: "50%",
+            border: "1px dashed rgba(197, 168, 128, 0.25)",
+            pointerEvents: "none",
+            zIndex: 1,
+            display: "none",
+          }}
+          className="lg:block"
+        >
+          <div style={{
+            position: "absolute",
+            inset: 28,
+            borderRadius: "50%",
+            border: "1px solid rgba(197, 168, 128, 0.15)",
+          }} />
+          <div style={{
+            position: "absolute",
+            top: -4,
+            left: "50%",
+            width: 8,
+            height: 8,
+            borderRadius: "50%",
+            background: "#C5A880",
+            boxShadow: "0 0 10px rgba(197, 168, 128, 0.6)"
+          }} />
+        </motion.div>
+
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 32px", position: "relative", zIndex: 2, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
           {/* Label */}
           <FadeUp>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 28 }}>
-              <Icons.Sparkles size={14} color="var(--gold)" />
-              <span className="os-label">Olive Seeds Design Studio</span>
+            <div style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+              background: "#FAF6EE",
+              border: "1px solid var(--border)",
+              borderRadius: 4,
+              padding: "6px 16px",
+              marginBottom: 24,
+            }}>
+              <span style={{ color: "#C5A880", fontSize: 11 }}>✦</span>
+              <span className="os-label" style={{ color: "var(--accent)" }}>Olive Seeds Design Studio · Bespoke Practice</span>
             </div>
           </FadeUp>
 
@@ -657,7 +739,7 @@ export default function Service() {
           <FadeUp delay={0.1}>
             <h1
               className="os-heading os-hero-h1"
-              style={{ fontSize: 64, color: "var(--accent)", maxWidth: 880, margin: "0 auto 28px", lineHeight: 1.12 }}
+              style={{ fontSize: "clamp(38px, 5.5vw, 68px)", color: "var(--accent)", maxWidth: 880, margin: "0 auto 24px", lineHeight: 1.12, letterSpacing: "-0.01em" }}
             >
               What We Do
             </h1>
@@ -666,11 +748,11 @@ export default function Service() {
           <FadeUp delay={0.2}>
             <p
               style={{
-                fontSize: 18,
+                fontSize: "clamp(15px, 1.8vw, 18px)",
                 color: "var(--text-2)",
                 maxWidth: 680,
                 lineHeight: 1.8,
-                margin: "0 auto 44px",
+                margin: "0 auto 40px",
                 fontWeight: 400,
               }}
             >
@@ -680,20 +762,18 @@ export default function Service() {
 
           {/* CTAs */}
           <FadeUp delay={0.3}>
-            <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center", marginBottom: "20px" }}>
-              <a href="#contact" className="btn-primary" style={{ padding: "16px 36px" }}>
+            <div style={{ display: "flex", gap: 14, flexWrap: "wrap", justifyContent: "center", marginBottom: "10px" }}>
+              <a href="#contact" className="btn-primary" style={{ padding: "14px 34px", fontSize: 12 }}>
                 Start a Conversation
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
                   <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </a>
-              <Link to="/products" className="btn-secondary" style={{ padding: "16px 36px" }}>
+              <Link to="/products" className="btn-secondary" style={{ padding: "14px 32px", fontSize: 12, background: "#FFFFFF", border: "1px solid var(--border)" }}>
                 Explore the Collection
               </Link>
             </div>
           </FadeUp>
-
-          {/* Hero visual mockup removed per user request */}
         </div>
       </section>
 

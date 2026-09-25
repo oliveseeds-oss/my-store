@@ -82,7 +82,7 @@ export default function BlogList() {
     return text
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      .replace(/`(.*?)`/g, '<mark class="bg-[#F8F8F6] text-[#23483D] px-1.5 py-0.5 rounded font-mono text-sm border border-[#E7E7E2]">$1</mark>')
+      .replace(/`(.*?)`/g, '<mark class="bg-[#FAF6EE] text-[#23483D] px-1.5 py-0.5 rounded font-mono text-sm border border-[#E7E7E2]">$1</mark>')
       .replace(/^> (.*?)$/gm, '<blockquote class="border-l-2 border-[#23483D] pl-4 italic text-[#676A65] my-4 font-serif text-lg">$1</blockquote>')
       .replace(/^- (.*?)$/gm, '<li class="ml-4 list-disc text-[#676A65] my-1">$1</li>')
       .replace(/^\d+\. (.*?)$/gm, '<li class="ml-4 list-decimal text-[#676A65] my-1">$1</li>')
@@ -191,7 +191,7 @@ export default function BlogList() {
             >
               <div className="flex items-center gap-3 mb-6 flex-wrap">
                 <span
-                  style={{ background: "#F8F8F6", color: "#23483D", border: "1px solid #E7E7E2" }}
+                  style={{ background: "#FAF6EE", color: "#23483D", border: "1px solid #E7E7E2" }}
                   className="text-[10px] font-bold px-3 py-1 rounded-[2px] uppercase tracking-widest"
                 >
                   {viewingPost.category}
@@ -253,7 +253,7 @@ export default function BlogList() {
                       <button
                         key={post.id}
                         onClick={() => openReader(post)}
-                        className="w-full text-left p-3.5 rounded-[4px] border border-[#E7E7E2] hover:border-[#23483D] hover:bg-[#F8F8F6] transition-all duration-200 group cursor-pointer"
+                        className="w-full text-left p-3.5 rounded-[4px] border border-[#E7E7E2] hover:border-[#23483D] hover:bg-[#FAF6EE] transition-all duration-200 group cursor-pointer"
                       >
                         <h4
                           style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
@@ -284,9 +284,9 @@ export default function BlogList() {
                       <button
                         key={post.id}
                         onClick={() => openReader(post)}
-                        className="w-full text-left p-3 hover:bg-[#F8F8F6] rounded-[4px] border border-transparent hover:border-[#E7E7E2] transition flex items-start gap-3 group cursor-pointer"
+                        className="w-full text-left p-3 hover:bg-[#FAF6EE] rounded-[4px] border border-transparent hover:border-[#E7E7E2] transition flex items-start gap-3 group cursor-pointer"
                       >
-                        <span className="text-[11px] font-medium text-[#23483D] bg-[#F8F8F6] border border-[#E7E7E2] w-6 h-6 rounded-[2px] flex items-center justify-center flex-shrink-0">
+                        <span className="text-[11px] font-medium text-[#23483D] bg-[#FAF6EE] border border-[#E7E7E2] w-6 h-6 rounded-[2px] flex items-center justify-center flex-shrink-0">
                           0{idx + 1}
                         </span>
                         <div className="flex-1 min-w-0">
@@ -415,7 +415,7 @@ export default function BlogList() {
                   className="group flex flex-col bg-white border border-[#E7E7E2] rounded-[4px] overflow-hidden hover:border-[#CACCC6] hover:-translate-y-1 transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md"
                 >
                   {/* Proportional Image Frame */}
-                  <div className="h-44 sm:h-48 overflow-hidden relative bg-[#F8F8F6]">
+                  <div className="h-44 sm:h-48 overflow-hidden relative bg-[#FAF6EE]">
                     <img
                       src={post.image_url || post.image || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800"}
                       alt={post.title}

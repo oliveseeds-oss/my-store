@@ -611,8 +611,8 @@ export default function Checkout() {
             </h3>
             
             {hasSavedAddress ? (
-              <div className="bg-[#F8F8F6] border border-[#E7E7E2] rounded-[4px] p-5 text-xs text-[#181A18] space-y-3">
-                <div className="flex items-center justify-between pb-2 border-b border-[#E7E7E2]">
+              <div className="bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px] p-5 text-xs text-[#181A18] space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-[#EAE4D6]">
                   <span className="font-bold uppercase tracking-wider text-[10px] text-[#676A65]">Saved Member Address</span>
                   <span className="bg-[#23483D]/10 text-[#23483D] text-[10px] font-bold px-2 py-0.5 rounded-[2px]">Default Shipping</span>
                 </div>
@@ -623,7 +623,7 @@ export default function Checkout() {
                     {[form.delivery_street, form.delivery_apt, form.delivery_city, form.delivery_state, form.delivery_country, form.delivery_pincode].filter(Boolean).join(", ")}
                   </p>
                 </div>
-                <div className="pt-2 border-t border-[#E7E7E2]">
+                <div className="pt-2 border-t border-[#EAE4D6]">
                   <Link to="/profile?tab=addresses" className="text-[#23483D] hover:underline text-xs font-bold inline-flex items-center gap-1">
                     Wrong address? Update in Profile →
                   </Link>
@@ -661,20 +661,20 @@ export default function Checkout() {
 
             {/* Shipping Method Selection Section (Step 5) */}
             {hasPhysicalItems && (
-              <div className="border-t border-[#E7E7E2] pt-5 mt-3 flex flex-col gap-3">
+              <div className="border-t border-[#EAE4D6] pt-5 mt-3 flex flex-col gap-3">
                 <div className="flex items-center justify-between">
                   <h4 className="text-sm font-semibold text-[#181A18] flex items-center gap-2">
                     <span>🚚</span> Select Shipping Method
                   </h4>
                   {shippingZoneInfo && (
-                    <span className="text-[10px] font-semibold text-[#23483D] bg-[#F8F8F6] border border-[#E7E7E2] px-2.5 py-0.5 rounded-[4px]">
+                    <span className="text-[10px] font-semibold text-[#23483D] bg-[#FAF6EE] border border-[#EAE4D6] px-2.5 py-0.5 rounded-[4px]">
                       {shippingZoneInfo}
                     </span>
                   )}
                 </div>
 
                 {shippingLoading ? (
-                  <div className="p-4 bg-[#F8F8F6] rounded-[4px] border border-[#E7E7E2] text-xs text-[#676A65] font-medium flex items-center justify-center gap-2">
+                  <div className="p-4 bg-[#FAF6EE] rounded-[4px] border border-[#EAE4D6] text-xs text-[#676A65] font-medium flex items-center justify-center gap-2">
                     <span className="animate-spin">⏳</span> Calculating best shipping options for {form.delivery_country}...
                   </div>
                 ) : shippingError ? (
@@ -696,8 +696,8 @@ export default function Checkout() {
                             key={m.method_id}
                             className={`p-3.5 rounded-[4px] border flex items-center justify-between cursor-pointer transition-all ${
                               isSelected
-                                ? "border-[#23483D] bg-[#F8F8F6]"
-                                : "border-[#E7E7E2] bg-white hover:bg-[#F8F8F6]"
+                                ? "border-[#23483D] bg-[#FAF6EE]"
+                                : "border-[#EAE4D6] bg-white hover:bg-[#FAF6EE]"
                             }`}
                           >
                             <div className="flex items-center gap-3">
@@ -735,9 +735,9 @@ export default function Checkout() {
             )}
 
             {/* Payment Details */}
-            <div className="border-t border-[#E7E7E2] pt-5 mt-3">
+            <div className="border-t border-[#EAE4D6] pt-5 mt-3">
               <h4 className="text-sm font-semibold text-[#181A18] mb-3">Secure Payment Methods Available</h4>
-              <div className="p-4 border border-[#E7E7E2] bg-[#F8F8F6] rounded-[4px] flex flex-col gap-2">
+              <div className="p-4 border border-[#EAE4D6] bg-[#FAF6EE] rounded-[4px] flex flex-col gap-2">
                 <span className="text-xs font-bold text-[#181A18]">💳 Online Payments Gateways Enabled</span>
                 <span className="text-[11px] text-[#676A65] font-normal leading-relaxed">
                   We securely accept Debit Cards, Credit Cards (Visa, Mastercard, RuPay, etc.), UPI, and Netbanking via <strong>Razorpay</strong> for domestic orders, and international card payments via <strong>PayPal</strong>.
@@ -824,7 +824,7 @@ export default function Checkout() {
               </div>
 
               {selected.currency_code !== "INR" && (
-                <div className="bg-[#F8F8F6] border border-[#E7E7E2] rounded-[4px] p-3 text-[10px] leading-relaxed text-[#676A65]">
+                <div className="bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px] p-3 text-[10px] leading-relaxed text-[#676A65]">
                   ℹ️ Transactions are processed securely in your currency: <strong>{convert(Math.max(0, total + shipping - couponDiscount))}</strong>.
                 </div>
               )}
@@ -856,7 +856,7 @@ export default function Checkout() {
                       <button
                         type="button"
                         onClick={() => setPaymentMethod("razorpay")}
-                        className={`p-3.5 rounded-[4px] border text-left transition-all ${paymentMethod === "razorpay" ? "border-[#23483D] bg-[#F8F8F6]" : "border-[#E7E7E2] bg-white hover:bg-[#F8F8F6]"}`}
+                        className={`p-3.5 rounded-[4px] border text-left transition-all ${paymentMethod === "razorpay" ? "border-[#23483D] bg-[#FAF6EE]" : "border-[#EAE4D6] bg-white hover:bg-[#FAF6EE]"}`}
                       >
                         <div className="font-bold text-xs text-[#181A18]">💳 Razorpay</div>
                         <div className="text-[9px] text-[#676A65] mt-0.5">Cards, UPI, Netbanking</div>
@@ -864,7 +864,7 @@ export default function Checkout() {
                       <button
                         type="button"
                         onClick={() => setPaymentMethod("paypal")}
-                        className={`p-3.5 rounded-[4px] border text-left transition-all ${paymentMethod === "paypal" ? "border-[#23483D] bg-[#F8F8F6]" : "border-[#E7E7E2] bg-white hover:bg-[#F8F8F6]"}`}
+                        className={`p-3.5 rounded-[4px] border text-left transition-all ${paymentMethod === "paypal" ? "border-[#23483D] bg-[#FAF6EE]" : "border-[#EAE4D6] bg-white hover:bg-[#FAF6EE]"}`}
                       >
                         <div className="font-bold text-xs text-[#181A18]">🅿️ PayPal</div>
                         <div className="text-[9px] text-[#676A65] mt-0.5">International Wallet & Cards</div>

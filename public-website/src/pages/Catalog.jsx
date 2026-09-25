@@ -141,7 +141,7 @@ export default function Catalog() {
 
           {searchQuery && (
             <div className="mt-4 flex items-center justify-center gap-3 flex-wrap text-xs">
-              <span className="bg-[#F8F8F6] text-[#23483D] border border-[#E7E7E2] px-3 py-1 rounded-[4px] flex items-center gap-2 font-medium">
+              <span className="bg-[#FAF6EE] text-[#23483D] border border-[#E7E7E2] px-3 py-1 rounded-[4px] flex items-center gap-2 font-medium">
                 <span>Filtered by: <strong>{searchQuery}</strong></span>
                 <button
                   onClick={() => setSearchQuery("")}
@@ -168,14 +168,14 @@ export default function Catalog() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {[...Array(6)].map((_, idx) => (
               <div key={idx} className="bg-white rounded-[4px] p-5 border border-[#E7E7E2] shadow-sm animate-pulse flex flex-col gap-4">
-                <div className="aspect-square bg-[#F8F8F6] rounded-[4px] w-full" />
-                <div className="h-4 bg-[#F8F8F6] rounded w-2/3" />
-                <div className="h-3 bg-[#F8F8F6] rounded w-1/2" />
+                <div className="aspect-square bg-[#FAF6EE] rounded-[4px] w-full" />
+                <div className="h-4 bg-[#FAF6EE] rounded w-2/3" />
+                <div className="h-3 bg-[#FAF6EE] rounded w-1/2" />
               </div>
             ))}
           </div>
         ) : filteredCategories.length === 0 ? (
-          <div className="text-center py-16 px-6 bg-[#F8F8F6] rounded-[4px] border border-[#E7E7E2] shadow-sm max-w-lg mx-auto">
+          <div className="text-center py-16 px-6 bg-[#FAF6EE] rounded-[4px] border border-[#E7E7E2] shadow-sm max-w-lg mx-auto">
             <span className="text-4xl block mb-3">🔍</span>
             <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-normal text-[#181A18] mb-2">No Specific Categories for "{searchQuery}"</h3>
             <p className="text-[#676A65] text-xs mb-6 leading-relaxed">
@@ -190,7 +190,7 @@ export default function Catalog() {
               </Link>
               <button
                 onClick={() => setSearchQuery("")}
-                className="bg-white hover:bg-[#F8F8F6] text-[#181A18] border border-[#E7E7E2] text-xs font-medium px-5 py-2.5 rounded-[4px] transition"
+                className="bg-white hover:bg-[#FAF6EE] text-[#181A18] border border-[#E7E7E2] text-xs font-medium px-5 py-2.5 rounded-[4px] transition"
               >
                 View All Categories
               </button>
@@ -205,7 +205,7 @@ export default function Catalog() {
                 className="group flex flex-col bg-white rounded-[4px] border border-[#E7E7E2] hover:border-[#23483D] hover:shadow-md overflow-hidden transition-all duration-300"
               >
                 {/* Image Frame */}
-                <div className="aspect-square w-full bg-[#F8F8F6] overflow-hidden relative border-b border-[#E7E7E2]">
+                <div className="aspect-square w-full bg-[#FAF6EE] overflow-hidden relative border-b border-[#E7E7E2]">
                   {c.image_url ? (
                     <img 
                       src={c.image_url} 
@@ -213,7 +213,7 @@ export default function Catalog() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-[#F8F8F6]">
+                    <div className="w-full h-full flex items-center justify-center bg-[#FAF6EE]">
                       <span className="text-4xl group-hover:scale-110 transition duration-300">🪵</span>
                     </div>
                   )}

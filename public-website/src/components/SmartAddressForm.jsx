@@ -164,7 +164,7 @@ export default function SmartAddressForm({
       </div>
 
       {!isPhysical && (
-        <div className="bg-[#F8F8F6] border border-[#E7E7E2] text-[#181A18] rounded-[4px] p-3.5 text-xs flex items-center gap-3">
+        <div className="bg-[#FAF6EE] border border-[#EAE4D6] text-[#181A18] rounded-[4px] p-3.5 text-xs flex items-center gap-3">
           <span className="text-xl">⚡</span>
           <div>
             <p className="font-bold text-[#181A18]">Digital Product Order</p>

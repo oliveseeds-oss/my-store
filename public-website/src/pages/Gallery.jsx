@@ -122,13 +122,13 @@ export default function Gallery() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
             {[...Array(6)].map((_, idx) => (
               <div key={idx} className="bg-white rounded-[4px] p-4 border border-[#E7E7E2] animate-pulse flex flex-col gap-3">
-                <div className="aspect-square bg-[#F8F8F6] rounded-[4px] w-full" />
-                <div className="h-4 bg-[#F8F8F6] rounded w-2/3" />
+                <div className="aspect-square bg-[#FAF6EE] rounded-[4px] w-full" />
+                <div className="h-4 bg-[#FAF6EE] rounded w-2/3" />
               </div>
             ))}
           </div>
         ) : items.length === 0 ? (
-          <div className="text-center py-20 bg-[#F8F8F6] rounded-[4px] border border-[#E7E7E2] shadow-sm">
+          <div className="text-center py-20 bg-[#FAF6EE] rounded-[4px] border border-[#E7E7E2] shadow-sm">
             <span className="text-4xl block mb-3">🍂</span>
             <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl font-normal text-[#181A18] mb-2">No custom creations match this search</h3>
             <p className="text-[#676A65] text-xs">Clear the filters to view the complete catalog.</p>
@@ -145,7 +145,7 @@ export default function Gallery() {
                   onClick={() => setLightboxImage(item)}
                   className="group bg-white rounded-[4px] border border-[#E7E7E2] overflow-hidden shadow-sm hover:shadow-md hover:border-[#23483D] transition-all duration-300 flex flex-col cursor-pointer"
                 >
-                  <div className="aspect-square w-full overflow-hidden bg-[#F8F8F6] relative">
+                  <div className="aspect-square w-full overflow-hidden bg-[#FAF6EE] relative">
                     <img 
                       src={item.image_url} 
                       alt={item.title || "Custom crafted item"} 

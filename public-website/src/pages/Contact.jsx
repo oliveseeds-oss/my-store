@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import API from "../api";
@@ -7,7 +8,6 @@ import SEO from "../components/SEO";
 export default function Contact() {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [activeType, setActiveType] = useState("Bespoke Objects & Keepsakes");
 
   useEffect(() => {
     document.title = "Contact Olive Seeds Design Studio | Bespoke Design Enquiries";
@@ -58,11 +58,6 @@ export default function Contact() {
     "+32 Belgium",
   ];
 
-  const handleTypeSelect = (type) => {
-    setActiveType(type);
-    setForm(prev => ({ ...prev, subject: type }));
-  };
-
   const submit = async () => {
     if (
       !form.firstName ||
@@ -91,14 +86,14 @@ export default function Contact() {
       });
     } catch (err) {
       console.error(err);
-      alert("Unable to transmit your brief. Please verify your connection or contact our concierge via WhatsApp.");
+      alert("Unable to transmit your brief. Please verify your connection or reach out directly via WhatsApp.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ background: "#FFFFFF", color: "#181A18", fontFamily: "'DM Sans', sans-serif" }} className="min-h-screen overflow-hidden">
+    <div style={{ background: "#FFFFFF", color: "#181A18", fontFamily: "'DM Sans', sans-serif" }} className="min-h-screen">
       <SEO
         title="Contact Olive Seeds Design Studio | Bespoke Design Enquiries"
         description="Enquire about bespoke design products, B2B bulk orders, or brand services. Olive Seeds Design Studio welcomes enquiries from corporate clients worldwide."
@@ -106,385 +101,283 @@ export default function Contact() {
       />
       <Navbar />
 
-      {/* ── ATELIER HEADER ── */}
+      {/* ── ATELIER CONTACT SECTION (QUIET LUXURY & SERENE) ── */}
       <section
         style={{
           background: "#FFFFFF",
-          borderBottom: "1px solid #E7E7E2"
+          borderBottom: "1px solid #EAE4D6",
+          padding: "clamp(80px, 9vw, 120px) 24px clamp(60px, 8vw, 100px)",
+          position: "relative",
+          overflow: "hidden"
         }}
-        className="relative pt-16 pb-20 md:pt-24 md:pb-28 overflow-hidden"
       >
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          
-          {/* Header Title Area */}
-          <div className="max-w-3xl mb-14 md:mb-18">
-            <div className="inline-flex items-center gap-2 bg-[#F8F8F6] border border-[#E7E7E2] px-3.5 py-1.5 rounded-[4px] mb-5">
-              <span className="text-[#A48855] text-xs">✦</span>
-              <span className="text-[#23483D] text-[11px] font-bold uppercase tracking-[0.2em]">
-                Private Atelier &amp; Corporate Commissions
-              </span>
-            </div>
+        {/* Subtle Ambient Warm Champagne Gold Glow Decoration with Motion */}
+        <motion.div
+          animate={{
+            scale: [1, 1.15, 1],
+            opacity: [0.35, 0.6, 0.35],
+            x: [0, 20, 0],
+            y: [0, -15, 0]
+          }}
+          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+          style={{
+            position: "absolute",
+            top: "-15%",
+            right: "15%",
+            width: 550,
+            height: 550,
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(197, 168, 128, 0.16) 0%, rgba(197, 168, 128, 0.04) 50%, transparent 70%)",
+            pointerEvents: "none",
+            zIndex: 1
+          }}
+        />
 
-            <h1
-              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-normal leading-[1.12] text-[#181A18] tracking-tight mb-5"
+        <motion.div
+          animate={{
+            scale: [1, 1.18, 1],
+            opacity: [0.25, 0.45, 0.25],
+            y: [0, 15, 0]
+          }}
+          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+          style={{
+            position: "absolute",
+            bottom: "-10%",
+            left: "10%",
+            width: 480,
+            height: 480,
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(164, 136, 85, 0.12) 0%, transparent 70%)",
+            pointerEvents: "none",
+            zIndex: 1
+          }}
+        />
+
+        <div className="max-w-4xl mx-auto relative z-10">
+
+          {/* Centered Editorial Header */}
+          <div className="text-center mb-12 sm:mb-14">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             >
-              Initiate a Private Dialogue
-            </h1>
+              <span className="inline-flex items-center gap-2 bg-[#FAF6EE] border border-[#EAE4D6] px-4 py-1.5 rounded-[4px] mb-5 text-[11px] font-bold uppercase tracking-[0.2em] text-[#23483D]">
+                <span className="text-[#C5A880]">✦</span>
+                Private Atelier Consultation
+              </span>
+            </motion.div>
 
-            <p className="text-base sm:text-lg leading-relaxed text-[#676A65] font-normal">
-              Whether you are commissioning an edition of bespoke executive keepsakes, developing an architectural spatial system, or seeking private creative consultation — our studio directors welcome your inquiry.
-            </p>
-          </div>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.85, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+              className="text-4xl sm:text-5xl lg:text-6xl font-normal leading-[1.12] text-[#181A18] tracking-tight mb-4"
+            >
+              Start a Conversation
+            </motion.h1>
 
-          {/* Main 2-Column Consultation Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-start">
+            <motion.p
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.85, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="text-sm sm:text-base leading-relaxed text-[#676A65] max-w-xl mx-auto"
+            >
+              Whether you are commissioning bespoke executive objects or seeking a longer-term creative partnership — our studio directors welcome your brief.
+            </motion.p>
 
-            {/* Left Column: Direct Studio Channels & Concierge */}
-            <div className="lg:col-span-5 flex flex-col gap-6">
-
-              {/* Direct Concierge Desk */}
-              <div className="bg-[#FFFFFF] border border-[#E7E7E2] rounded-[4px] p-6 sm:p-7 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col gap-5">
-                <div className="flex items-center justify-between pb-3 border-b border-[#E7E7E2]">
-                  <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#23483D]">
-                    Studio Concierge
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-[2px]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    Priority Response Desk
-                  </span>
-                </div>
-
-                <p className="text-xs text-[#676A65] leading-relaxed">
-                  For immediate coordination, urgent corporate deadlines, or to share confidential vectors and reference files directly:
-                </p>
-
-                {/* Direct Action Channels */}
-                <div className="flex flex-col gap-3">
-                  <a
-                    href="https://wa.me/+919442943394"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between p-3.5 rounded-[4px] bg-[#F8F8F6] border border-[#E7E7E2] hover:border-[#23483D] hover:bg-[#F2F5F3] transition group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg">💬</span>
-                      <div>
-                        <p className="text-xs font-semibold text-[#181A18] group-hover:text-[#23483D] transition">Direct WhatsApp Concierge</p>
-                        <p className="text-[11px] text-[#676A65]">+91 94429 43394 · Senior Director</p>
-                      </div>
-                    </div>
-                    <span className="text-xs text-[#23483D] font-semibold group-hover:translate-x-0.5 transition">Connect →</span>
-                  </a>
-
-                  <a
-                    href="mailto:oliveseeds.oss@gmail.com"
-                    className="flex items-center justify-between p-3.5 rounded-[4px] bg-[#F8F8F6] border border-[#E7E7E2] hover:border-[#23483D] hover:bg-[#F2F5F3] transition group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg">✉️</span>
-                      <div>
-                        <p className="text-xs font-semibold text-[#181A18] group-hover:text-[#23483D] transition">Official Studio Inquiries</p>
-                        <p className="text-[11px] text-[#676A65]">oliveseeds.oss@gmail.com</p>
-                      </div>
-                    </div>
-                    <span className="text-xs text-[#23483D] font-semibold group-hover:translate-x-0.5 transition">Email →</span>
-                  </a>
-                </div>
-              </div>
-
-              {/* Response SLA & Trust Markers */}
-              <div className="bg-[#F8F8F6] border border-[#E7E7E2] rounded-[4px] p-6 flex flex-col gap-4">
-                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#181A18]">
-                  Atelier Standards &amp; Commitments
-                </p>
-
-                <div className="flex flex-col gap-3 text-xs text-[#676A65]">
-                  <div className="flex items-start gap-2.5">
-                    <span className="text-[#A48855] text-xs mt-0.5">✦</span>
-                    <span className="text-[#181A18] font-medium leading-snug">
-                      Guaranteed 24-hour turnaround on formal quotations and preliminary material evaluations.
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-2.5">
-                    <span className="text-[#A48855] text-xs mt-0.5">✦</span>
-                    <span className="text-[#181A18] font-medium leading-snug">
-                      Mutual Non-Disclosure Agreements (NDA) honored for unannounced brand releases and private events.
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-2.5">
-                    <span className="text-[#A48855] text-xs mt-0.5">✦</span>
-                    <span className="text-[#181A18] font-medium leading-snug">
-                      High-precision vector blueprints and 3D digital renderings rendered before production commences.
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Studio Mark */}
-              <div className="border border-[#E7E7E2] rounded-[4px] p-4 flex items-center justify-between text-xs text-[#8A8D88]">
-                <span>Olive Seeds Atelier · Quality Accredited</span>
-                <span className="text-[#A48855] font-semibold">EST. 2024</span>
-              </div>
-
-            </div>
-
-            {/* Right Column: High-End Consultation Console (Form) */}
-            <div className="lg:col-span-7">
-              <div className="bg-[#FFFFFF] border border-[#E7E7E2] rounded-[4px] p-6 sm:p-9 shadow-[0_4px_24px_rgba(20,25,22,0.04)]">
-                {sent ? (
-                  <div className="text-center py-16 flex flex-col items-center gap-4 animate-fade-in">
-                    <div className="w-14 h-14 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-2xl text-emerald-700">
-                      ✓
-                    </div>
-                    <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-3xl font-normal text-[#181A18]">
-                      Brief Transmitted Successfully
-                    </h2>
-                    <p className="text-sm text-[#676A65] max-w-sm leading-relaxed">
-                      Thank you for submitting your brief. A Studio Partner has been notified and will review your specifications within one business day.
-                    </p>
-                    <div className="pt-4 flex gap-3">
-                      <button
-                        onClick={() => setSent(false)}
-                        className="text-xs uppercase tracking-wider font-semibold text-[#23483D] border border-[#23483D] px-5 py-2.5 rounded-[4px] hover:bg-[#F2F5F3] transition"
-                      >
-                        Submit Another Brief
-                      </button>
-                      <a
-                        href="https://wa.me/+919442943394"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs uppercase tracking-wider font-semibold text-white bg-[#23483D] px-5 py-2.5 rounded-[4px] hover:bg-[#16352D] transition inline-flex items-center gap-1.5"
-                      >
-                        Open WhatsApp Concierge →
-                      </a>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <div className="mb-7 pb-4 border-b border-[#E7E7E2]">
-                      <h2
-                        style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
-                        className="text-2xl sm:text-3xl font-normal text-[#181A18]"
-                      >
-                        Commission Brief &amp; Inquiry
-                      </h2>
-                      <p className="text-xs text-[#676A65] mt-1">
-                        Please outline your commission objectives and desired material palette.
-                      </p>
-                    </div>
-
-                    <div className="flex flex-col gap-5">
-
-                      {/* Project Type Quick Selector */}
-                      <div>
-                        <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#676A65] mb-2 block">
-                          Commission Focus / Scope
-                        </label>
-                        <div className="flex flex-wrap gap-2">
-                          {projectTypes.map((type) => (
-                            <button
-                              key={type}
-                              type="button"
-                              onClick={() => handleTypeSelect(type)}
-                              className={`text-xs px-3.5 py-1.5 rounded-[4px] border transition font-medium cursor-pointer ${
-                                activeType === type
-                                  ? "bg-[#23483D] text-white border-[#23483D] shadow-sm"
-                                  : "bg-[#FFFFFF] text-[#676A65] border-[#E7E7E2] hover:border-[#CACCC6]"
-                              }`}
-                            >
-                              {type}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Name fields */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#676A65] mb-1.5 block">
-                            First Name <span className="text-rose-500">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            required
-                            value={form.firstName}
-                            onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                            placeholder="Lord / Lady / Dr / Mr / Ms"
-                            className="w-full bg-[#FFFFFF] border border-[#DADCD7] rounded-[4px] px-3.5 py-2.5 text-xs text-[#181A18] placeholder-[#9CA3AF] focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] transition"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#676A65] mb-1.5 block">
-                            Last Name <span className="text-rose-500">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            required
-                            value={form.lastName}
-                            onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-                            placeholder="Full Surname"
-                            className="w-full bg-[#FFFFFF] border border-[#DADCD7] rounded-[4px] px-3.5 py-2.5 text-xs text-[#181A18] placeholder-[#9CA3AF] focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] transition"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Phone & Country Code */}
-                      <div>
-                        <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#676A65] mb-1.5 block">
-                          Telephone / WhatsApp Number <span className="text-rose-500">*</span>
-                        </label>
-                        <div className="flex gap-2">
-                          <select
-                            value={form.countryCode}
-                            onChange={(e) => setForm({ ...form, countryCode: e.target.value })}
-                            className="bg-[#FFFFFF] border border-[#DADCD7] rounded-[4px] px-3 py-2.5 text-xs text-[#181A18] focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] transition w-32"
-                          >
-                            {countryCodes.map((code) => (
-                              <option key={code} value={code.split(" ")[0]}>
-                                {code}
-                              </option>
-                            ))}
-                          </select>
-                          <input
-                            type="tel"
-                            required
-                            value={form.phone}
-                            onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                            placeholder="Mobile or Direct Line"
-                            className="flex-1 bg-[#FFFFFF] border border-[#DADCD7] rounded-[4px] px-3.5 py-2.5 text-xs text-[#181A18] placeholder-[#9CA3AF] focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] transition"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Email Address */}
-                      <div>
-                        <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#676A65] mb-1.5 block">
-                          Official Email Address <span className="text-rose-500">*</span>
-                        </label>
-                        <input
-                          type="email"
-                          required
-                          value={form.email}
-                          onChange={(e) => setForm({ ...form, email: e.target.value })}
-                          placeholder="client@organization.com"
-                          className="w-full bg-[#FFFFFF] border border-[#DADCD7] rounded-[4px] px-3.5 py-2.5 text-xs text-[#181A18] placeholder-[#9CA3AF] focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] transition"
-                        />
-                      </div>
-
-                      {/* Company Name & Subject */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#676A65] mb-1.5 block">
-                            Organization / Brand Name
-                          </label>
-                          <input
-                            type="text"
-                            value={form.company}
-                            onChange={(e) => setForm({ ...form, company: e.target.value })}
-                            placeholder="Company or Private Studio"
-                            className="w-full bg-[#FFFFFF] border border-[#DADCD7] rounded-[4px] px-3.5 py-2.5 text-xs text-[#181A18] placeholder-[#9CA3AF] focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] transition"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#676A65] mb-1.5 block">
-                            Subject / Commission Header
-                          </label>
-                          <input
-                            type="text"
-                            value={form.subject}
-                            onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                            placeholder="Brief Subject"
-                            className="w-full bg-[#FFFFFF] border border-[#DADCD7] rounded-[4px] px-3.5 py-2.5 text-xs text-[#181A18] placeholder-[#9CA3AF] focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] transition"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Project Message */}
-                      <div>
-                        <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#676A65] mb-1.5 block">
-                          Project Brief &amp; Specifications <span className="text-rose-500">*</span>
-                        </label>
-                        <textarea
-                          rows={4}
-                          required
-                          value={form.message}
-                          onChange={(e) => setForm({ ...form, message: e.target.value })}
-                          placeholder="Outline your timeline, desired materials (e.g. Teakwood, Birch Plywood, Cast Acrylic, Leather), quantity, and delivery destination..."
-                          className="w-full bg-[#FFFFFF] border border-[#DADCD7] rounded-[4px] px-3.5 py-2.5 text-xs text-[#181A18] placeholder-[#9CA3AF] focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] resize-none transition"
-                        />
-                      </div>
-
-                      {/* Submit CTA */}
-                      <button
-                        type="button"
-                        onClick={submit}
-                        disabled={loading}
-                        className="w-full bg-[#23483D] hover:bg-[#16352D] text-white rounded-[4px] py-3.5 font-bold tracking-[0.12em] uppercase text-xs transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 mt-1"
-                      >
-                        {loading ? "Transmitting Brief..." : "Transmit Brief to Studio Directors →"}
-                      </button>
-
-                      <p className="text-[11px] text-[#8A8D88] text-center mt-0.5">
-                        Your communication is confidential and protected by studio privacy protocols.
-                      </p>
-
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* ── ATELIER PROTOCOLS STRIP ── */}
-      <section style={{ background: "#F8F8F6", borderTop: "1px solid #E7E7E2" }} className="py-20">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#23483D] block mb-2">
-              The Studio Protocols
-            </span>
-            <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-3xl md:text-4xl font-normal text-[#181A18]">
-              Precision from Brief to Handover
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                num: "01",
-                title: "Discrete Consultation & NDA",
-                desc: "We treat proprietary brands, unreleased executive milestones, and luxury event materials with absolute discretion and non-disclosure governance."
-              },
-              {
-                num: "02",
-                title: "Digital Proofs & Material Calibration",
-                desc: "Before production begins, we supply micron-accurate vector proofs, finish simulations, and material verification to ensure zero margin for error."
-              },
-              {
-                num: "03",
-                title: "White-Glove Worldwide Delivery",
-                desc: "Finished editions are packaged in custom protective casing and dispatched via insured, tracked courier logistics across domestic and international destinations."
-              }
-            ].map((item) => (
-              <div
-                key={item.num}
-                className="bg-[#FFFFFF] border border-[#E7E7E2] rounded-[4px] p-7 flex flex-col gap-3 shadow-[0_2px_8px_rgba(0,0,0,0.02)]"
+            {/* Direct Concierge Line */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.85, delay: 0.3 }}
+              className="mt-6 flex flex-wrap items-center justify-center gap-5 sm:gap-8 text-xs text-[#676A65]"
+            >
+              <a
+                href="https://wa.me/+919442943394"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-[#23483D] hover:text-[#16352D] font-medium transition"
               >
-                <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl font-light text-[#A48855]">
-                  {item.num}
-                </span>
-                <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-medium text-[#181A18]">
-                  {item.title}
-                </h3>
-                <p className="text-xs text-[#676A65] leading-relaxed">
-                  {item.desc}
-                </p>
-              </div>
-            ))}
+                <span>💬 WhatsApp Concierge: +91 94429 43394</span>
+              </a>
+              <span className="hidden sm:inline text-[#EAE4D6]">|</span>
+              <a
+                href="mailto:oliveseeds.oss@gmail.com"
+                className="inline-flex items-center gap-2 text-[#23483D] hover:text-[#16352D] font-medium transition"
+              >
+                <span>✉️ Email: oliveseeds.oss@gmail.com</span>
+              </a>
+            </motion.div>
           </div>
+
+          {/* Clean, Refined Consultation Form Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="max-w-2xl mx-auto bg-[#FFFFFF] border border-[#EAE4D6] rounded-[4px] p-7 sm:p-10 shadow-[0_8px_30px_rgba(20,25,22,0.03)]"
+          >
+            {sent ? (
+              <div className="text-center py-12 flex flex-col items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-[#FAF6EE] border border-[#C5A880] flex items-center justify-center text-xl text-[#23483D]">
+                  ✓
+                </div>
+                <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl sm:text-3xl font-normal text-[#181A18]">
+                  Brief Transmitted
+                </h2>
+                <p className="text-xs sm:text-sm text-[#676A65] max-w-sm leading-relaxed">
+                  Thank you for reaching out. A studio director has been notified and will review your specifications within one business day.
+                </p>
+                <button
+                  onClick={() => setSent(false)}
+                  className="mt-2 text-xs uppercase tracking-wider font-semibold text-[#23483D] border border-[#23483D] px-5 py-2.5 rounded-[4px] hover:bg-[#FAF6EE] transition"
+                >
+                  Submit Another Brief
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-5">
+
+                {/* Scope Selector */}
+                <div>
+                  <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#676A65] mb-2 block">
+                    Commission Scope
+                  </label>
+                  <select
+                    value={form.subject}
+                    onChange={(e) => setForm({ ...form, subject: e.target.value })}
+                    className="w-full bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px] px-3.5 py-2.5 text-xs text-[#181A18] focus:outline-none focus:border-[#23483D] transition cursor-pointer"
+                  >
+                    {projectTypes.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Name fields */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#676A65] mb-1.5 block">
+                      First Name <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={form.firstName}
+                      onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+                      placeholder="First Name"
+                      className="w-full bg-[#FFFFFF] border border-[#EAE4D6] rounded-[4px] px-3.5 py-2.5 text-xs text-[#181A18] placeholder-[#9CA3AF] focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] transition"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#676A65] mb-1.5 block">
+                      Last Name <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={form.lastName}
+                      onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+                      placeholder="Last Name"
+                      className="w-full bg-[#FFFFFF] border border-[#EAE4D6] rounded-[4px] px-3.5 py-2.5 text-xs text-[#181A18] placeholder-[#9CA3AF] focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] transition"
+                    />
+                  </div>
+                </div>
+
+                {/* Contact & Country Code */}
+                <div>
+                  <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#676A65] mb-1.5 block">
+                    Contact / WhatsApp Number <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="flex gap-2">
+                    <select
+                      value={form.countryCode}
+                      onChange={(e) => setForm({ ...form, countryCode: e.target.value })}
+                      className="bg-[#FFFFFF] border border-[#EAE4D6] rounded-[4px] px-3 py-2.5 text-xs text-[#181A18] focus:outline-none focus:border-[#23483D] transition w-32"
+                    >
+                      {countryCodes.map((code) => (
+                        <option key={code} value={code.split(" ")[0]}>
+                          {code}
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      type="tel"
+                      required
+                      value={form.phone}
+                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                      placeholder="Mobile or Direct Line"
+                      className="flex-1 bg-[#FFFFFF] border border-[#EAE4D6] rounded-[4px] px-3.5 py-2.5 text-xs text-[#181A18] placeholder-[#9CA3AF] focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] transition"
+                    />
+                  </div>
+                </div>
+
+                {/* Email Address */}
+                <div>
+                  <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#676A65] mb-1.5 block">
+                    Email Address <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    placeholder="name@organization.com"
+                    className="w-full bg-[#FFFFFF] border border-[#EAE4D6] rounded-[4px] px-3.5 py-2.5 text-xs text-[#181A18] placeholder-[#9CA3AF] focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] transition"
+                  />
+                </div>
+
+                {/* Organization */}
+                <div>
+                  <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#676A65] mb-1.5 block">
+                    Organization / Brand (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={form.company}
+                    onChange={(e) => setForm({ ...form, company: e.target.value })}
+                    placeholder="Company or Private Studio"
+                    className="w-full bg-[#FFFFFF] border border-[#EAE4D6] rounded-[4px] px-3.5 py-2.5 text-xs text-[#181A18] placeholder-[#9CA3AF] focus:outline-none focus:border-[#23483D] transition"
+                  />
+                </div>
+
+                {/* Project Brief */}
+                <div>
+                  <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#676A65] mb-1.5 block">
+                    Project Brief &amp; Requirements <span className="text-rose-500">*</span>
+                  </label>
+                  <textarea
+                    rows={4}
+                    required
+                    value={form.message}
+                    onChange={(e) => setForm({ ...form, message: e.target.value })}
+                    placeholder="Describe your project, timelines, desired materials, or estimated quantities..."
+                    className="w-full bg-[#FFFFFF] border border-[#EAE4D6] rounded-[4px] px-3.5 py-2.5 text-xs text-[#181A18] placeholder-[#9CA3AF] focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] resize-none transition"
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="button"
+                  onClick={submit}
+                  disabled={loading}
+                  className="w-full bg-[#23483D] hover:bg-[#16352D] text-white rounded-[4px] py-3.5 font-bold tracking-[0.12em] uppercase text-xs transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 mt-1"
+                >
+                  {loading ? "Transmitting..." : "Submit Inquiry to Studio Partners →"}
+                </button>
+
+                <p className="text-[11px] text-[#8A8D88] text-center mt-1">
+                  Guaranteed response within 24 hours. Non-disclosure agreements honored upon request.
+                </p>
+
+              </div>
+            )}
+          </motion.div>
+
         </div>
       </section>
 

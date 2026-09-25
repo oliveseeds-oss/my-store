@@ -687,7 +687,7 @@ export default function ProductDetail() {
                   navigator.clipboard.writeText(window.location.href);
                   alert("Link copied to clipboard.");
                 }}
-                className="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center text-xs font-bold bg-[#F8F8F6] border border-[#E7E7E2] text-stone-700 rounded-[4px] hover:bg-stone-200 transition"
+                className="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center text-xs font-bold bg-[#FAF6EE] border border-[#E7E7E2] text-stone-700 rounded-[4px] hover:bg-stone-200 transition"
               >
                 Copy Link
               </button>
@@ -742,7 +742,7 @@ export default function ProductDetail() {
                     <button key={s} onClick={() => setSelectedSize(s)}
                       className={`px-4 py-2 text-sm border transition font-medium rounded-[4px]
                         ${selectedSize === s
-                          ? "border-[#23483D] bg-[#F8F8F6] text-[#23483D]"
+                          ? "border-[#23483D] bg-[#FAF6EE] text-[#23483D]"
                           : "border-[#E7E7E2] text-stone-700 hover:border-stone-400"}`}>
                       {s}
                     </button>
@@ -800,7 +800,7 @@ export default function ProductDetail() {
                           onClick={() => handleTemplateChange(idx)}
                           className={`flex flex-col items-center p-2 border transition rounded-[4px]
                             ${selectedTemplateIdx === idx
-                              ? "border-[#23483D] bg-[#F8F8F6] text-[#23483D]"
+                              ? "border-[#23483D] bg-[#FAF6EE] text-[#23483D]"
                               : "border-[#E7E7E2] text-stone-600 hover:border-stone-400"}`}
                         >
                           <img src={t.preview_image} alt="" className="w-12 h-12 object-cover rounded-[2px] mb-1 bg-stone-100" />
@@ -975,7 +975,7 @@ export default function ProductDetail() {
                 {added ? "✓ Added to Order" : "Add to Order"}
               </button>
               <button
-                className="w-full py-4 font-semibold text-xs uppercase tracking-widest bg-white border border-[#23483D] text-[#23483D] hover:bg-[#F8F8F6] transition-all rounded-[4px] cursor-pointer"
+                className="w-full py-4 font-semibold text-xs uppercase tracking-widest bg-white border border-[#23483D] text-[#23483D] hover:bg-[#FAF6EE] transition-all rounded-[4px] cursor-pointer"
                 onClick={() => handleDirectCheckout("paypal")}>
                 Commission This Piece — Secure Checkout
               </button>
@@ -989,14 +989,14 @@ export default function ProductDetail() {
                 <button
                   type="button"
                   onClick={() => handleDirectCheckout("razorpay")}
-                  className="flex items-center justify-center gap-2 py-3 px-3 border border-[#E7E7E2] rounded-[4px] hover:border-[#23483D] hover:bg-[#F8F8F6] transition cursor-pointer text-xs font-semibold text-[#181A18]"
+                  className="flex items-center justify-center gap-2 py-3 px-3 border border-[#E7E7E2] rounded-[4px] hover:border-[#23483D] hover:bg-[#FAF6EE] transition cursor-pointer text-xs font-semibold text-[#181A18]"
                 >
                   💳 Razorpay
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDirectCheckout("paypal")}
-                  className="flex items-center justify-center gap-2 py-3 px-3 border border-[#E7E7E2] rounded-[4px] hover:border-[#23483D] hover:bg-[#F8F8F6] transition cursor-pointer text-xs font-semibold text-[#181A18]"
+                  className="flex items-center justify-center gap-2 py-3 px-3 border border-[#E7E7E2] rounded-[4px] hover:border-[#23483D] hover:bg-[#FAF6EE] transition cursor-pointer text-xs font-semibold text-[#181A18]"
                 >
                   🅿️ PayPal
                 </button>
@@ -1004,7 +1004,7 @@ export default function ProductDetail() {
             </div>
 
             {/* Perks */}
-            <div className="border border-[#E7E7E2] bg-[#F8F8F6] p-5 flex flex-col gap-3 rounded-[4px] mt-1">
+            <div className="border border-[#E7E7E2] bg-[#FAF6EE] p-5 flex flex-col gap-3 rounded-[4px] mt-1">
               {[
                 ["🚚", "Complimentary delivery on qualifying orders"],
                 ["🔄", "Seven-day studio review policy"],

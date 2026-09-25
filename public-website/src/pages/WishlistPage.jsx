@@ -71,7 +71,7 @@ export default function WishlistPage() {
             <p className="text-xs sm:text-sm text-[#676A65] mt-1">Curate your shortlisted bespoke pieces and studio assets.</p>
           </div>
 
-          <span className="bg-[#F8F8F6] text-[#23483D] text-xs font-semibold px-3.5 py-1.5 rounded-[4px] border border-[#E7E7E2] self-start sm:self-auto">
+          <span className="bg-[#FAF6EE] text-[#23483D] text-xs font-semibold px-3.5 py-1.5 rounded-[4px] border border-[#E7E7E2] self-start sm:self-auto">
             {wishlistItems.length} {wishlistItems.length === 1 ? "Saved Piece" : "Saved Pieces"}
           </span>
         </div>
@@ -105,11 +105,11 @@ export default function WishlistPage() {
               return (
                 <div key={p.wishlist_id || targetUid} className="bg-white border border-[#E7E7E2] rounded-[4px] p-4 sm:p-5 shadow-xs hover:border-[#CACCC6] transition flex items-center justify-between gap-4">
                   <div className="flex items-center gap-4 min-w-0">
-                    <Link to={productLink} className="w-16 h-16 sm:w-20 sm:h-20 bg-[#F8F8F6] rounded-[3px] overflow-hidden flex-shrink-0 border border-[#E7E7E2] block">
+                    <Link to={productLink} className="w-16 h-16 sm:w-20 sm:h-20 bg-[#FAF6EE] rounded-[3px] overflow-hidden flex-shrink-0 border border-[#E7E7E2] block">
                       <img src={imgSrc} alt={p.name} className="w-full h-full object-cover hover:scale-105 transition duration-300" />
                     </Link>
                     <div className="min-w-0 flex-1">
-                      <span className="inline-block text-[10px] font-semibold uppercase tracking-wider text-[#A48855] bg-[#F8F8F6] border border-[#E7E7E2] px-2 py-0.5 rounded-[2px] mb-1">
+                      <span className="inline-block text-[10px] font-semibold uppercase tracking-wider text-[#A48855] bg-[#FAF6EE] border border-[#E7E7E2] px-2 py-0.5 rounded-[2px] mb-1">
                         {p.type === "digital" ? "Digital Asset" : (p.category || "Custom Piece")}
                       </span>
                       <h2 className="text-sm sm:text-base font-normal truncate">
@@ -129,7 +129,7 @@ export default function WishlistPage() {
                     </Link>
                     <button
                       onClick={() => removeFromWishlist(p)}
-                      className="p-2 text-[#8A8D88] hover:text-[#181A18] hover:bg-[#F8F8F6] rounded-[3px] transition cursor-pointer"
+                      className="p-2 text-[#8A8D88] hover:text-[#181A18] hover:bg-[#FAF6EE] rounded-[3px] transition cursor-pointer"
                       title="Remove from saved pieces"
                     >
                       <MdFavorite className="text-lg text-[#A48855]" />

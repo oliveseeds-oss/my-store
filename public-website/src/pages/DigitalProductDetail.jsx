@@ -20,13 +20,13 @@ function ReviewForm({ productId, onSubmit }) {
   const [done, setDone] = useState(false);
 
   if (!member) return (
-    <div className="p-4 text-xs rounded-[4px]" style={{ background: "#F8F8F6", border: "1px solid #E7E7E2", color: "#676A65" }}>
+    <div className="p-4 text-xs rounded-[4px]" style={{ background: "#FAF6EE", border: "1px solid #E7E7E2", color: "#676A65" }}>
       <Link to="/login" className="underline font-bold" style={{ color: "#23483D" }}>Sign in</Link> to write a review
     </div>
   );
 
   if (done) return (
-    <div className="p-4 text-xs rounded-[4px]" style={{ background: "#F8F8F6", border: "1px solid #23483D", color: "#23483D" }}>
+    <div className="p-4 text-xs rounded-[4px]" style={{ background: "#FAF6EE", border: "1px solid #23483D", color: "#23483D" }}>
       ✓ Review submitted successfully. Thank you.
     </div>
   );
@@ -210,7 +210,7 @@ export default function DigitalProductDetail() {
       />
 
       {/* Breadcrumb */}
-      <div style={{ background: "#F8F8F6", borderBottom: "1px solid #E7E7E2" }}>
+      <div style={{ background: "#FAF6EE", borderBottom: "1px solid #E7E7E2" }}>
         <div className="max-w-6xl mx-auto px-4 py-2.5 flex items-center gap-2 text-xs"
           style={{ color: "#676A65" }}>
           <Link to="/" className="hover:text-[#23483D] transition">Home</Link>
@@ -241,7 +241,7 @@ export default function DigitalProductDetail() {
               </div>
             )}
             <div className="flex-1 overflow-hidden rounded-[4px]"
-              style={{ border: "1px solid #E7E7E2", background: "#F8F8F6" }}>
+              style={{ border: "1px solid #E7E7E2", background: "#FAF6EE" }}>
               {allImages.length > 0
                 ? <img src={allImages[selectedImg]} alt={product.name}
                     className="w-full aspect-video object-cover" />
@@ -257,7 +257,7 @@ export default function DigitalProductDetail() {
               <div className="flex gap-2 flex-wrap">
                 {tags.map(t => (
                   <span key={t} className="text-xs font-semibold px-3 py-1 rounded-[4px]"
-                    style={{ background: "#F8F8F6", border: "1px solid #E7E7E2", color: "#23483D" }}>
+                    style={{ background: "#FAF6EE", border: "1px solid #E7E7E2", color: "#23483D" }}>
                     {t}
                   </span>
                 ))}
@@ -331,14 +331,14 @@ export default function DigitalProductDetail() {
               <div className="flex gap-4">
                 {product.file_format && (
                   <div className="text-center px-4 py-2 rounded-[4px]"
-                    style={{ background: "#F8F8F6", border: "1px solid #E7E7E2" }}>
+                    style={{ background: "#FAF6EE", border: "1px solid #E7E7E2" }}>
                     <p className="text-[11px]" style={{ color: "#676A65" }}>Format</p>
                     <p className="text-sm font-semibold" style={{ color: "#181A18" }}>{product.file_format}</p>
                   </div>
                 )}
                 {product.file_size && (
                   <div className="text-center px-4 py-2 rounded-[4px]"
-                    style={{ background: "#F8F8F6", border: "1px solid #E7E7E2" }}>
+                    style={{ background: "#FAF6EE", border: "1px solid #E7E7E2" }}>
                     <p className="text-[11px]" style={{ color: "#676A65" }}>File size</p>
                     <p className="text-sm font-semibold" style={{ color: "#181A18" }}>{product.file_size}</p>
                   </div>
@@ -389,7 +389,7 @@ export default function DigitalProductDetail() {
 
             {/* Payment Integration UI (Hidden if 0 rupees / free) */}
             {finalPrice > 0 && (
-              <div className="p-5 flex flex-col gap-3.5 rounded-[4px] mt-2" style={{ background: "#F8F8F6", border: "1px solid #E7E7E2" }}>
+              <div className="p-5 flex flex-col gap-3.5 rounded-[4px] mt-2" style={{ background: "#FAF6EE", border: "1px solid #E7E7E2" }}>
                 <span className="text-[10px] font-bold uppercase tracking-widest block" style={{ color: "#23483D", letterSpacing: "0.12em" }}>Secure Checkout Options</span>
                 <p className="text-xs leading-normal" style={{ color: "#676A65" }}>Choose gateway to authenticate payment securely:</p>
                 <div className="grid grid-cols-2 gap-3">
@@ -481,7 +481,7 @@ export default function DigitalProductDetail() {
                     style={{ flex: "0 0 200px", background: "#FFFFFF", border: "1px solid #E7E7E2" }}
                     className="group hover:border-[#CACCC6] transition overflow-hidden rounded-[4px] p-3 flex flex-col justify-between">
                     <div>
-                      <div className="aspect-video bg-[#F8F8F6] overflow-hidden rounded-[4px] mb-2 flex items-center justify-center">
+                      <div className="aspect-video bg-[#FAF6EE] overflow-hidden rounded-[4px] mb-2 flex items-center justify-center">
                         {img
                           ? <img src={img} alt={r.name} className="w-full h-full object-cover group-hover:scale-105 transition" />
                           : <span className="text-2xl opacity-20">⬡</span>}

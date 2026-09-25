@@ -92,7 +92,7 @@ export default function AboutUs() {
       </div>
 
       {/* Stats Board */}
-      <div style={{ background: "#F8F8F6", borderBottom: "1px solid #E7E7E2" }}>
+      <div style={{ background: "#FAF6EE", borderBottom: "1px solid #E7E7E2" }}>
         <div className="max-w-5xl mx-auto px-6 py-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
@@ -139,7 +139,7 @@ export default function AboutUs() {
           <div className="w-full flex flex-col gap-6">
             <div
               style={{
-                background: "#F8F8F6",
+                background: "#FAF6EE",
                 color: "#181A18",
                 border: "1px solid #E7E7E2"
               }}
@@ -184,7 +184,7 @@ export default function AboutUs() {
       </section>
 
       {/* Values Grid */}
-      <section style={{ background: "#F8F8F6", borderTop: "1px solid #E7E7E2", borderBottom: "1px solid #E7E7E2" }} className="py-20">
+      <section style={{ background: "#FAF6EE", borderTop: "1px solid #E7E7E2", borderBottom: "1px solid #E7E7E2" }} className="py-20">
         <div className="max-w-5xl mx-auto px-6">
           <p className="text-xs font-bold uppercase tracking-[0.25em] text-center text-[#23483D] mb-3">Distinction in Practice</p>
           <h2
@@ -200,7 +200,7 @@ export default function AboutUs() {
                 key={v.title}
                 className="bg-white border border-[#E7E7E2] rounded-[4px] p-8 transition-all duration-300"
               >
-                <div className="text-2xl mb-4 w-10 h-10 bg-[#F8F8F6] border border-[#E7E7E2] rounded-[4px] flex items-center justify-center">
+                <div className="text-2xl mb-4 w-10 h-10 bg-[#FAF6EE] border border-[#E7E7E2] rounded-[4px] flex items-center justify-center">
                   {v.icon}
                 </div>
                 <h3
@@ -260,7 +260,7 @@ export default function AboutUs() {
       </section>
 
       {/* Team Cards */}
-      <section style={{ background: "#F8F8F6", borderTop: "1px solid #E7E7E2" }} className="py-20">
+      <section style={{ background: "#FAF6EE", borderTop: "1px solid #E7E7E2" }} className="py-20">
         <div className="max-w-5xl mx-auto px-6">
           <p className="text-xs font-bold uppercase tracking-[0.25em] text-center text-[#23483D] mb-3">The People</p>
           <h2
@@ -315,7 +315,7 @@ export default function AboutUs() {
           </Link>
           <Link
             to="/products"
-            className="px-8 py-3.5 rounded-[4px] border border-[#E7E7E2] font-semibold text-xs uppercase tracking-wider text-[#181A18] hover:bg-[#F8F8F6] transition-all"
+            className="px-8 py-3.5 rounded-[4px] border border-[#E7E7E2] font-semibold text-xs uppercase tracking-wider text-[#181A18] hover:bg-[#FAF6EE] transition-all"
           >
             Explore the Collection
           </Link>

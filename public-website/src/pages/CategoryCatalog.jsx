@@ -55,7 +55,7 @@ export default function CategoryCatalog() {
             ))}
           </div>
         ) : categories.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "80px 24px", background: "#F8F8F6", borderRadius: "4px", border: "1px solid #E7E7E2" }}>
+          <div style={{ textAlign: "center", padding: "80px 24px", background: "#FAF6EE", borderRadius: "4px", border: "1px solid #E7E7E2" }}>
             <span style={{ fontSize: "40px" }}>🪵</span>
             <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: 500, color: "#181A18", marginTop: "16px" }}>No Categories Created Yet</h3>
             <p style={{ fontSize: "13px", color: "#676A65", marginTop: "6px" }}>Check back soon as we add bespoke objects and digital design systems.</p>
@@ -73,7 +73,7 @@ export default function CategoryCatalog() {
                   className="group"
                   style={{ textDecoration: "none", color: "inherit", display: "flex", flexDirection: "column", background: "#FFFFFF", border: "1px solid #E7E7E2", borderRadius: "4px", overflow: "hidden", transition: "all 0.2s ease" }}
                 >
-                  <div style={{ aspectRatio: "1.3/1", overflow: "hidden", background: "#F8F8F6", position: "relative", borderBottom: "1px solid #E7E7E2" }}>
+                  <div style={{ aspectRatio: "1.3/1", overflow: "hidden", background: "#FAF6EE", position: "relative", borderBottom: "1px solid #E7E7E2" }}>
                     {c.image_url ? (
                       <img 
                         src={c.image_url} 
@@ -89,7 +89,7 @@ export default function CategoryCatalog() {
                     <div style={{ position: "absolute", top: "10px", right: "10px" }}>
                       <span style={{
                         fontSize: "9px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase",
-                        background: "#F8F8F6",
+                        background: "#FAF6EE",
                         border: c.type === "digital" ? "1px solid #23483D" : "1px solid #A48855",
                         color: c.type === "digital" ? "#23483D" : "#A48855",
                         padding: "3px 8px", borderRadius: "4px"

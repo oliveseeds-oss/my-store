@@ -104,7 +104,7 @@ export default function Portfolio() {
                   key={cat}
                   onClick={() => setFilter(cat)}
                   style={{
-                    background: filter === cat ? "#F8F8F6" : "#FFFFFF",
+                    background: filter === cat ? "#FAF6EE" : "#FFFFFF",
                     border: `1px solid ${filter === cat ? "#23483D" : "#E7E7E2"}`,
                     color: filter === cat ? "#23483D" : "#676A65",
                     padding: "7px 18px",
@@ -129,11 +129,11 @@ export default function Portfolio() {
         {loading ? (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "28px" }}>
             {[...Array(6)].map((_, idx) => (
-              <div key={idx} style={{ height: "300px", background: "#F8F8F6", border: "1px solid #E7E7E2", borderRadius: "4px" }} />
+              <div key={idx} style={{ height: "300px", background: "#FAF6EE", border: "1px solid #E7E7E2", borderRadius: "4px" }} />
             ))}
           </div>
         ) : filteredItems.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "80px 20px", background: "#F8F8F6", borderRadius: "4px", border: "1px solid #E7E7E2" }}>
+          <div style={{ textAlign: "center", padding: "80px 20px", background: "#FAF6EE", borderRadius: "4px", border: "1px solid #E7E7E2" }}>
             <span style={{ fontSize: "36px" }}>📷</span>
             <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: 500, marginTop: "16px", color: "#181A18" }}>No Projects Discovered</h3>
             <p style={{ color: "#676A65", fontSize: "13px", marginTop: "6px" }}>Use Admin Panel to upload showcase images with style descriptions.</p>
@@ -155,7 +155,7 @@ export default function Portfolio() {
                     overflow: "hidden",
                     cursor: "pointer",
                     aspectRatio: "1.4/1",
-                    background: "#F8F8F6",
+                    background: "#FAF6EE",
                     border: "1px solid #E7E7E2",
                     boxShadow: "0 1px 3px rgba(0,0,0,0.03)",
                   }}
@@ -245,12 +245,12 @@ export default function Portfolio() {
                 {(activeItem.material || activeItem.industry) && (
                   <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "20px" }}>
                     {activeItem.material && (
-                      <span style={{ fontSize: "11px", color: "#23483D", background: "#F8F8F6", border: "1px solid #E7E7E2", padding: "4px 10px", borderRadius: "4px" }}>
+                      <span style={{ fontSize: "11px", color: "#23483D", background: "#FAF6EE", border: "1px solid #EAE4D6", padding: "4px 10px", borderRadius: "4px" }}>
                         Material: {activeItem.material}
                       </span>
                     )}
                     {activeItem.industry && (
-                      <span style={{ fontSize: "11px", color: "#23483D", background: "#F8F8F6", border: "1px solid #E7E7E2", padding: "4px 10px", borderRadius: "4px" }}>
+                      <span style={{ fontSize: "11px", color: "#23483D", background: "#FAF6EE", border: "1px solid #EAE4D6", padding: "4px 10px", borderRadius: "4px" }}>
                         Industry: {activeItem.industry}
                       </span>
                     )}

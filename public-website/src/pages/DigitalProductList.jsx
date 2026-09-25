@@ -24,7 +24,7 @@ if (typeof document !== "undefined" && !document.getElementById("olive-fonts")) 
 const T = {
   bg: "#FFFFFF",
   surface1: "#FFFFFF",
-  surface2: "#F8F8F6",
+  surface2: "#FAF6EE",
   textPrimary: "#181A18",
   textSecondary: "#676A65",
   accent1: "#23483D",
@@ -113,7 +113,7 @@ const GLOBAL_CSS = `
     position: relative;
     height: 220px;
     overflow: hidden;
-    background: #F8F8F6;
+    background: #FAF6EE;
     flex-shrink: 0;
   }
   .dcard__img {
@@ -150,12 +150,12 @@ const GLOBAL_CSS = `
     transition: all 0.2s ease;
   }
   .filter-btn:hover {
-    background: #F8F8F6;
+    background: #FAF6EE;
     color: var(--a1);
     border-color: var(--bd);
   }
   .filter-btn.active {
-    background: #F8F8F6;
+    background: #FAF6EE;
     color: var(--a1);
     border-color: var(--a1);
     font-weight: 600;
@@ -490,7 +490,7 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
                 fontSize: 10,
                 fontWeight: 700,
                 fontFamily: "'DM Sans', sans-serif",
-                background: "#F8F8F6",
+                background: "#FAF6EE",
                 border: "1px solid #E7E7E2",
                 color: T.accent1,
               }}>
@@ -877,7 +877,7 @@ export default function DigitalProductList() {
                   letterSpacing: "0.2em",
                   textTransform: "uppercase",
                   fontFamily: "'DM Sans', sans-serif",
-                  background: "#F8F8F6",
+                  background: "#FAF6EE",
                   border: `1px solid ${T.border}`,
                   color: T.accent1,
                   whiteSpace: "nowrap",
@@ -964,7 +964,7 @@ export default function DigitalProductList() {
                   }}
                   onMouseOver={(e) => {
                     e.currentTarget.style.borderColor = "#CACCC6";
-                    e.currentTarget.style.background = "#F8F8F6";
+                    e.currentTarget.style.background = "#FAF6EE";
                   }}
                   onMouseOut={(e) => {
                     e.currentTarget.style.borderColor = T.border;
@@ -1417,7 +1417,7 @@ export default function DigitalProductList() {
         zIndex: 2,
         borderTop: `1px solid ${T.border}`,
         padding: "72px 24px",
-        background: "#F8F8F6",
+        background: "#FAF6EE",
         overflow: "hidden",
       }}>
         <div style={{ maxWidth: 560, margin: "0 auto", textAlign: "center", position: "relative" }}>
@@ -1610,7 +1610,7 @@ export default function DigitalProductList() {
                     padding: "9px 12px", borderRadius: 4, border: "none",
                     cursor: "pointer", width: "100%",
                     fontFamily: "'DM Sans', sans-serif", fontSize: 13,
-                    background: filters.minRating === r ? "#F8F8F6" : "transparent",
+                    background: filters.minRating === r ? "#FAF6EE" : "transparent",
                     color: filters.minRating === r ? T.accent1 : T.textSecondary,
                     textAlign: "left",
                   }}
@@ -1629,7 +1629,7 @@ export default function DigitalProductList() {
       )}
 
       {/* ── Contact Section ── */}
-      <section id="contact-section" style={{ padding: "80px 24px", position: "relative", zIndex: 2, background: "#F8F8F6", borderTop: `1px solid ${T.border}` }}>
+      <section id="contact-section" style={{ padding: "80px 24px", position: "relative", zIndex: 2, background: "#FAF6EE", borderTop: `1px solid ${T.border}` }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "60px" }} className="responsive-split-1-2">
             {/* Left Column */}
