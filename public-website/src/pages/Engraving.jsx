@@ -111,6 +111,12 @@ const MATERIALS = [
     desc: "Ultra-smooth density cores carved with precision. Excellent for geometric wall decors.",
     img: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?q=80&w=800&auto=format&fit=crop" 
   },
+  { 
+    icon: "Repeat", 
+    name: "Birch Plywood & Architectural Veneers", 
+    desc: "Multi-layered cross-laminated birch with exposed edge grains, offering high tensile rigidity and geometric contrast for contemporary installations.",
+    img: "https://images.unsplash.com/photo-1546484396-fb3fc6f95f98?q=80&w=800&auto=format&fit=crop" 
+  },
 ];
 
 const WHY_US = [
@@ -441,7 +447,7 @@ export default function Engraving() {
             <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(1.8rem, 3.5vw, 2.5rem)", fontWeight: 400, color: "#181A18" }}>High Standards, No Compromise</h2>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {WHY_US.map((item, i) => {
               const Icon = Icons[item.icon] || Icons.Sparkles;
               return (

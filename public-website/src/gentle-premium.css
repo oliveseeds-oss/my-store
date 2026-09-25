@@ -8,8 +8,8 @@
 :root {
   /* ─── 1. Backgrounds (White-first 80–85%) ─── */
   --bg: #FFFFFF;
-  --bg-soft: #F8F8F6;
-  --surface-warm: #F5F4F1;
+  --bg-soft: #FAF9F6;
+  --surface-warm: #F7F5F0;
   --surface: #FFFFFF;
 
   /* ─── 2. Typography (Charcoal & dark neutrals 10–15%) ─── */

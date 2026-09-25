@@ -446,106 +446,244 @@ export default function ProductList() {
       <Navbar />
 
       {/* ═══════════════════════════════════════════════════
-          HERO SECTION
+          HERO SECTION (LUXURY ATELIER SHOWCASE)
       ═══════════════════════════════════════════════════ */}
       <section className="products-hero" style={{
         background: "#FFFFFF",
         borderBottom: `1px solid ${T.border}`,
-        padding: "80px 24px 70px",
+        padding: "clamp(60px, 8vw, 90px) 24px clamp(40px, 6vw, 60px)",
         position: "relative",
         overflow: "hidden",
       }}>
         <div style={{ maxWidth: 1280, margin: "0 auto", position: "relative", zIndex: 2 }}>
-          <p style={{
-            fontFamily: T.bodyFont, fontSize: 11, fontWeight: 700,
-            letterSpacing: "0.25em", textTransform: "uppercase",
-            color: T.accent, marginBottom: 16,
-          }}>
-            Olive Seeds · The Collection
-          </p>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+            
+            {/* Left Column: Editorial Information */}
+            <div className="lg:col-span-7 flex flex-col items-start">
+              <div style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                background: "#F8F8F6", border: `1px solid ${T.border}`,
+                borderRadius: 4, padding: "6px 14px", marginBottom: 18,
+              }}>
+                <span style={{ color: "#A48855", fontSize: 10 }}>✦</span>
+                <span style={{
+                  fontFamily: T.bodyFont, fontSize: 11, fontWeight: 700,
+                  letterSpacing: "0.2em", textTransform: "uppercase",
+                  color: T.accent,
+                }}>
+                  Olive Seeds Atelier · Bespoke Physical Editions
+                </span>
+              </div>
 
-          <h1 style={{
-            fontFamily: T.headingFont,
-            fontStyle: "normal",
-            fontWeight: 400,
-            fontSize: "clamp(36px, 5.5vw, 64px)",
-            color: T.text,
-            lineHeight: 1.12,
-            maxWidth: 750,
-            marginBottom: 20,
-          }}>
-            The Collection
-          </h1>
-
-          <p style={{
-            fontFamily: T.bodyFont,
-            fontSize: 16,
-            lineHeight: 1.8,
-            color: T.textSec,
-            maxWidth: 680,
-            marginBottom: 12,
-          }}>
-            Each piece in our collection is designed to carry meaning — for the organisations that commission them and the people who receive them.
-          </p>
-
-          <p style={{
-            fontFamily: T.bodyFont,
-            fontSize: 14,
-            lineHeight: 1.7,
-            color: T.textSec,
-            maxWidth: 640,
-            marginBottom: 36,
-          }}>
-            We produce custom design objects for corporate gifting, spatial identity, event experiences, and lifestyle collections. All products are available for bespoke customisation and bulk B2B ordering. Contact us to discuss your requirements.
-          </p>
-
-          <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-            <button
-              onClick={() => {
-                setFilters((f) => ({ ...f, category: "", sort: "newest" }));
-                document.getElementById("product-grid")?.scrollIntoView({ behavior: "smooth" });
-              }}
-              style={{
-                padding: "14px 32px",
-                background: T.accent,
-                color: "#FFFFFF",
-                border: "none",
-                borderRadius: 4,
-                fontFamily: T.bodyFont,
-                fontSize: 12,
-                fontWeight: 600,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                cursor: "pointer",
-                boxShadow: "none",
-                transition: "all 0.2s ease",
-              }}
-            >
-              Explore the Collection
-            </button>
-            <Link
-              to="/contact"
-              style={{
-                padding: "14px 32px",
-                background: "transparent",
+              <h1 style={{
+                fontFamily: T.headingFont,
+                fontWeight: 400,
+                fontSize: "clamp(34px, 5vw, 56px)",
                 color: T.text,
-                border: `1px solid ${T.border}`,
-                borderRadius: 4,
+                lineHeight: 1.15,
+                marginBottom: 16,
+              }}>
+                The Physical Collection
+              </h1>
+
+              <p style={{
                 fontFamily: T.bodyFont,
-                fontSize: 12,
-                fontWeight: 600,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                cursor: "pointer",
-                textDecoration: "none",
-                display: "inline-flex",
-                alignItems: "center",
-                transition: "all 0.2s ease",
-              }}
-            >
-              Begin Your Enquiry
-            </Link>
+                fontSize: 16,
+                lineHeight: 1.75,
+                color: T.textSec,
+                maxWidth: 620,
+                marginBottom: 20,
+              }}>
+                Each piece in our atelier collection is an intentional balance of organic timber, optical acrylic, and micron-calibrated craftsmanship. Designed for organisations and collectors who understand that true luxury lives in quiet precision.
+              </p>
+
+              {/* Atelier Hallmark Pills */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-2xl mb-8">
+                {[
+                  { tag: "01", title: "Select Hardwoods", desc: "Teak, Maple & Birch" },
+                  { tag: "02", title: "Micron Detailing", desc: "0.01mm laser tolerances" },
+                  { tag: "03", title: "Global Freight", desc: "White-glove insured delivery" },
+                ].map((item) => (
+                  <div
+                    key={item.tag}
+                    style={{
+                      background: "#F8F8F6",
+                      border: `1px solid ${T.border}`,
+                      borderRadius: 4,
+                      padding: "12px 14px",
+                    }}
+                  >
+                    <span style={{ fontSize: 10, fontWeight: 700, color: "#A48855", display: "block", marginBottom: 2 }}>{item.tag}</span>
+                    <p style={{ fontSize: 12, fontWeight: 600, color: T.text, margin: 0 }}>{item.title}</p>
+                    <p style={{ fontSize: 11, color: T.textSec, margin: "2px 0 0" }}>{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{ display: "flex", gap: 12, flexWrap: "wrap", width: "100%" }}>
+                <button
+                  onClick={() => {
+                    setFilters((f) => ({ ...f, category: "", sort: "newest" }));
+                    document.getElementById("product-grid")?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  style={{
+                    padding: "13px 28px",
+                    background: T.accent,
+                    color: "#FFFFFF",
+                    border: "none",
+                    borderRadius: 4,
+                    fontFamily: T.bodyFont,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                    cursor: "pointer",
+                    transition: "background 0.2s ease",
+                  }}
+                  className="hover:bg-[#16352D]"
+                >
+                  Explore Catalog ↓
+                </button>
+                <Link
+                  to="/bulk-order"
+                  style={{
+                    padding: "13px 26px",
+                    background: "#FFFFFF",
+                    color: T.text,
+                    border: `1px solid ${T.border}`,
+                    borderRadius: 4,
+                    fontFamily: T.bodyFont,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                    textDecoration: "none",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    transition: "all 0.2s ease",
+                  }}
+                  className="hover:bg-[#F8F8F6]"
+                >
+                  Corporate &amp; Bulk Orders
+                </Link>
+                <Link
+                  to="/contact"
+                  style={{
+                    padding: "13px 24px",
+                    background: "transparent",
+                    color: T.accent,
+                    border: `1px solid transparent`,
+                    borderRadius: 4,
+                    fontFamily: T.bodyFont,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    letterSpacing: "0.06em",
+                    textTransform: "uppercase",
+                    textDecoration: "none",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 4,
+                    transition: "all 0.2s ease",
+                  }}
+                  className="hover:text-[#16352D] underline"
+                >
+                  Private Brief →
+                </Link>
+              </div>
+            </div>
+
+            {/* Right Column: Architectural Visual Card */}
+            <div className="lg:col-span-5 relative w-full">
+              <div style={{
+                position: "relative",
+                borderRadius: 4,
+                overflow: "hidden",
+                border: `1px solid ${T.border}`,
+                boxShadow: "0 12px 35px rgba(20, 25, 22, 0.06)",
+                aspectRatio: "4/3",
+                background: "#F8F8F6",
+              }}>
+                <img
+                  src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=900&auto=format&fit=crop"
+                  alt="Artisan calibrating bespoke timber object"
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+
+                {/* Floating Top Badge */}
+                <div style={{
+                  position: "absolute", top: 14, right: 14,
+                  background: "rgba(255, 255, 255, 0.95)",
+                  backdropFilter: "blur(8px)",
+                  border: `1px solid ${T.border}`,
+                  borderRadius: 4,
+                  padding: "6px 12px",
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: T.accent,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.04)"
+                }}>
+                  <span style={{ color: "#A48855" }}>✦</span>
+                  <span>Bespoke Studio</span>
+                </div>
+
+                {/* Floating Bottom Card */}
+                <div style={{
+                  position: "absolute", bottom: 14, left: 14, right: 14,
+                  background: "rgba(255, 255, 255, 0.96)",
+                  backdropFilter: "blur(12px)",
+                  border: `1px solid ${T.border}`,
+                  borderRadius: 4,
+                  padding: "12px 16px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  boxShadow: "0 4px 14px rgba(0,0,0,0.06)"
+                }}>
+                  <div>
+                    <p style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: T.textSec, fontWeight: 600, margin: 0 }}>
+                      Atelier Protocol
+                    </p>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: T.text, margin: "2px 0 0" }}>
+                      Hand-Oiled Organic Timber &amp; Cast Acrylic
+                    </p>
+                  </div>
+                  <div style={{
+                    width: 32, height: 32, borderRadius: 4,
+                    background: "#F8F8F6", border: `1px solid ${T.border}`,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    color: T.accent, fontSize: 12, fontWeight: 700
+                  }}>
+                    ✓
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
+
+          {/* Bottom Hallmark Banner */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 pt-8" style={{ borderTop: `1px solid ${T.border}` }}>
+            {[
+              { icon: "🏛️", title: "Custom Commissions", desc: "Tailored to your architectural spec" },
+              { icon: "📦", title: "B2B Volume Rates", desc: "Corporate gifting & large tiers" },
+              { icon: "📐", title: "Digital Blueprint Proof", desc: "Full approval before production" },
+              { icon: "🌍", title: "Insured Dispatch", desc: "Safely delivered worldwide" },
+            ].map((f, idx) => (
+              <div key={idx} className="flex items-center gap-3">
+                <span className="text-xl shrink-0">{f.icon}</span>
+                <div>
+                  <p className="text-xs font-semibold text-[#181A18] leading-tight m-0">{f.title}</p>
+                  <p className="text-[11px] text-[#676A65] m-0 mt-0.5">{f.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
         </div>
       </section>
 
