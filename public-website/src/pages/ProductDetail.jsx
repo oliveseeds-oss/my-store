@@ -58,8 +58,8 @@ function ReviewForm({ productId, onSubmit }) {
   };
 
   return (
-    <div className="border border-stone-200 bg-white p-5 rounded-xl space-y-4">
-      <h4 className="font-bold text-stone-800 text-sm">
+    <div className="border border-[#E7E7E2] bg-white p-5 rounded-[4px] space-y-4">
+      <h4 className="font-bold text-[#181A18] text-sm">
         Write a customer review
       </h4>
 
@@ -72,7 +72,7 @@ function ReviewForm({ productId, onSubmit }) {
               key={star}
               onClick={() => setForm(f => ({ ...f, rating: star }))}
               className={`w-11 h-11 flex items-center justify-center text-2xl transition cursor-pointer ${
-                star <= form.rating ? "text-amber-500" : "text-stone-300 hover:text-amber-400"
+                star <= form.rating ? "text-[#A48855]" : "text-stone-300 hover:text-[#A48855]"
               }`}
             >
               ★
@@ -88,14 +88,14 @@ function ReviewForm({ productId, onSubmit }) {
           onChange={e => setForm(f => ({ ...f, review_text: e.target.value }))}
           rows={3}
           placeholder="What did you like or dislike? How was the quality?"
-          className="w-full border border-stone-300 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-400 rounded-lg resize-none"
+          className="w-full border border-[#DADCD7] px-3 py-2 text-xs focus:outline-none focus:border-[#23483D] rounded-[4px] resize-none"
         />
       </div>
 
       <button
         onClick={submit}
         disabled={loading}
-        className="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2 text-xs font-bold transition disabled:opacity-50 rounded-lg shadow-sm"
+        className="bg-[#23483D] hover:bg-[#16352D] text-white px-5 py-2.5 text-xs font-semibold tracking-wider uppercase transition disabled:opacity-50 rounded-[4px]"
       >
         {loading ? "Submitting..." : "Submit Review"}
       </button>
@@ -401,7 +401,7 @@ export default function ProductDetail() {
   };
 
   if (!product) return (
-    <div className="min-h-screen flex items-center justify-center" style={{ background: "#f7f3ef" }}>
+    <div className="min-h-screen flex items-center justify-center" style={{ background: "#FFFFFF" }}>
       <div className="text-stone-400">Loading...</div>
     </div>
   );
@@ -491,7 +491,7 @@ export default function ProductDetail() {
   }));
 
   return (
-    <div className="min-h-screen" style={{ background: "#f7f3ef" }}>
+    <div className="min-h-screen" style={{ background: "#FFFFFF", fontFamily: "'DM Sans', sans-serif" }}>
       <SEO 
         title={product.name} 
         description={product.description ? product.description.substring(0, 160) : ""} 
@@ -514,8 +514,8 @@ export default function ProductDetail() {
               <div className="flex flex-row sm:flex-col gap-2 w-full sm:w-16 flex-shrink-0 overflow-x-auto">
                 {allImages.map((img, i) => (
                   <button key={i} onClick={() => setSelectedImg(i)}
-                    className={`border-2 overflow-hidden transition
-                      ${selectedImg === i ? "border-amber-500" : "border-stone-200 hover:border-stone-400"}`}>
+                    className={`border overflow-hidden transition rounded-[4px]
+                      ${selectedImg === i ? "border-[#23483D]" : "border-[#E7E7E2] hover:border-stone-400"}`}>
                     <img src={img} alt="" className="w-full aspect-square object-cover" />
                   </button>
                 ))}
@@ -524,7 +524,7 @@ export default function ProductDetail() {
             {/* Main image / Live Preview */}
             <div 
               style={{ containerType: "inline-size" }}
-              className="flex-1 bg-white border border-stone-200 overflow-hidden relative"
+              className="flex-1 bg-white border border-[#E7E7E2] rounded-[4px] overflow-hidden relative"
             >
               {product.enable_personalization && product.templates?.length > 0 ? (
                 (() => {
@@ -624,7 +624,7 @@ export default function ProductDetail() {
             )}
 
             <div className="flex items-start justify-between gap-3">
-              <h1 className="text-2xl lg:text-3xl font-bold text-stone-900 leading-tight">
+              <h1 className="text-2xl lg:text-3xl font-normal text-[#181A18] leading-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
                 {product.name}
               </h1>
               <button
@@ -648,7 +648,7 @@ export default function ProductDetail() {
                 }}
                 title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
                 aria-label="Wishlist"
-                className="w-10 h-10 rounded-full border border-stone-200 bg-white flex items-center justify-center text-xl shadow-sm hover:scale-105 transition shrink-0 cursor-pointer"
+                className="w-10 h-10 rounded-full border border-[#E7E7E2] bg-white flex items-center justify-center text-xl shadow-none hover:border-[#23483D] transition shrink-0 cursor-pointer"
                 style={{ color: isWishlisted ? "#e11d48" : "#64748b" }}
               >
                 {isWishlisted ? "♥" : "♡"}
@@ -662,7 +662,7 @@ export default function ProductDetail() {
                 href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center text-xs font-bold bg-[#1877F2] text-white rounded-xl hover:opacity-90 transition"
+                className="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center text-xs font-bold bg-[#1877F2] text-white rounded-[4px] hover:opacity-90 transition"
               >
                 Facebook
               </a>
@@ -670,7 +670,7 @@ export default function ProductDetail() {
                 href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(product.name)}&url=${encodeURIComponent(window.location.href)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center text-xs font-bold bg-black text-white rounded-xl hover:opacity-90 transition"
+                className="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center text-xs font-bold bg-black text-white rounded-[4px] hover:opacity-90 transition"
               >
                 Twitter/X
               </a>
@@ -678,7 +678,7 @@ export default function ProductDetail() {
                 href={`https://pinterest.com/pin/create/button/?url=${encodeURIComponent(window.location.href)}&media=${encodeURIComponent(product.image_url || "")}&description=${encodeURIComponent(product.name)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center text-xs font-bold bg-[#BD081C] text-white rounded-xl hover:opacity-90 transition"
+                className="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center text-xs font-bold bg-[#BD081C] text-white rounded-[4px] hover:opacity-90 transition"
               >
                 Pinterest
               </a>
@@ -687,7 +687,7 @@ export default function ProductDetail() {
                   navigator.clipboard.writeText(window.location.href);
                   alert("Link copied to clipboard.");
                 }}
-                className="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center text-xs font-bold bg-stone-200 text-stone-700 rounded-xl hover:bg-stone-300 transition"
+                className="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center text-xs font-bold bg-[#F8F8F6] border border-[#E7E7E2] text-stone-700 rounded-[4px] hover:bg-stone-200 transition"
               >
                 Copy Link
               </button>
@@ -696,22 +696,22 @@ export default function ProductDetail() {
             {/* Rating */}
             <div className="flex items-center gap-3">
               <Stars rating={product.rating} />
-              <span className="text-sm text-amber-700 hover:underline cursor-pointer">
+              <span className="text-sm text-[#23483D] hover:underline cursor-pointer">
                 {product.rating} out of 5 ({product.review_count || 0} reviews)
               </span>
             </div>
 
-            <div className="border-t border-stone-200 pt-4">
+            <div className="border-t border-[#E7E7E2] pt-4">
               {product.discount_price ? (
                 <div>
                   <div className="flex items-baseline gap-3">
-                    <span className="text-3xl font-bold text-stone-900">{convert(finalPrice)}</span>
+                    <span className="text-3xl font-light text-[#181A18]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>{convert(finalPrice)}</span>
                     <span className="text-base text-stone-400 line-through">M.R.P: {convert(product.price)}</span>
                     <span className="text-sm font-bold text-red-600">({discount}% off)</span>
                   </div>
                 </div>
               ) : (
-                <span className="text-3xl font-bold text-stone-900">{convert(product.price)}</span>
+                <span className="text-3xl font-light text-[#181A18]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>{convert(product.price)}</span>
               )}
 
               {/* FEATURE 6: Live Stock Counter */}
@@ -735,16 +735,15 @@ export default function ProductDetail() {
             {sizes.length > 0 && (
               <div>
                 <p className="text-sm font-semibold text-stone-700 mb-2">
-                  Size: <span className="text-amber-700">{selectedSize}</span>
+                  Size: <span className="text-[#23483D]">{selectedSize}</span>
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {sizes.map(s => (
                     <button key={s} onClick={() => setSelectedSize(s)}
-                      className={`px-4 py-2 text-sm border-2 transition font-medium
+                      className={`px-4 py-2 text-sm border transition font-medium rounded-[4px]
                         ${selectedSize === s
-                          ? "border-amber-500 bg-amber-50 text-amber-800"
-                          : "border-stone-300 text-stone-700 hover:border-stone-500"}`}
-                      style={{ borderRadius: "2px" }}>
+                          ? "border-[#23483D] bg-[#F8F8F6] text-[#23483D]"
+                          : "border-[#E7E7E2] text-stone-700 hover:border-stone-400"}`}>
                       {s}
                     </button>
                   ))}
@@ -783,10 +782,10 @@ export default function ProductDetail() {
 
             {/* Personalization Section */}
             {product.enable_personalization && product.templates?.length > 0 && (
-              <div className="border border-stone-200 bg-white p-4 flex flex-col gap-4 mb-2" style={{ borderRadius: "2px" }}>
+              <div className="border border-[#E7E7E2] bg-white p-5 flex flex-col gap-4 mb-2 rounded-[4px]">
                 <div>
-                  <span className="text-[10px] text-amber-700 font-extrabold uppercase tracking-wider block">✏️ Customisation Details</span>
-                  <h3 className="text-lg font-bold text-stone-850">Personalise Your Piece</h3>
+                  <span className="text-[10px] text-[#23483D] font-bold uppercase tracking-wider block">✏️ Customisation Details</span>
+                  <h3 className="text-lg font-bold text-[#181A18]">Personalise Your Piece</h3>
                 </div>
 
                 {/* Template selector */}
@@ -799,12 +798,12 @@ export default function ProductDetail() {
                           key={t.id}
                           type="button"
                           onClick={() => handleTemplateChange(idx)}
-                          className={`flex flex-col items-center p-2 border-2 transition rounded-sm
+                          className={`flex flex-col items-center p-2 border transition rounded-[4px]
                             ${selectedTemplateIdx === idx
-                              ? "border-amber-500 bg-amber-50 text-amber-800"
-                              : "border-stone-200 text-stone-600 hover:border-stone-300"}`}
+                              ? "border-[#23483D] bg-[#F8F8F6] text-[#23483D]"
+                              : "border-[#E7E7E2] text-stone-600 hover:border-stone-400"}`}
                         >
-                          <img src={t.preview_image} alt="" className="w-12 h-12 object-cover rounded-sm mb-1 bg-stone-100" />
+                          <img src={t.preview_image} alt="" className="w-12 h-12 object-cover rounded-[2px] mb-1 bg-stone-100" />
                           <span className="text-[10px] font-bold text-center truncate w-full">{t.name}</span>
                         </button>
                       ))}
@@ -969,37 +968,35 @@ export default function ProductDetail() {
             <div className="flex flex-col gap-3 pt-4">
               <button onClick={handleAddToCart}
                 disabled={product.stock === 0}
-                className={`w-full py-4 font-bold text-xs uppercase tracking-widest transition-all shadow-md rounded-full cursor-pointer
+                className={`w-full py-4 font-semibold text-xs uppercase tracking-widest transition-all rounded-[4px] cursor-pointer
                   ${added ? "bg-emerald-700 text-white"
                     : product.stock === 0 ? "bg-stone-200 text-stone-400 cursor-not-allowed"
-                      : "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white"}`}
-                style={{ fontFamily: "'Outfit', sans-serif" }}>
+                      : "bg-[#23483D] hover:bg-[#16352D] text-white"}`}>
                 {added ? "✓ Added to Order" : "Add to Order"}
               </button>
               <button
-                className="w-full py-4 font-bold text-xs uppercase tracking-widest bg-stone-950 hover:bg-stone-900 text-white transition-all shadow-lg rounded-full cursor-pointer"
-                style={{ fontFamily: "'Outfit', sans-serif" }}
+                className="w-full py-4 font-semibold text-xs uppercase tracking-widest bg-white border border-[#23483D] text-[#23483D] hover:bg-[#F8F8F6] transition-all rounded-[4px] cursor-pointer"
                 onClick={() => handleDirectCheckout("paypal")}>
                 Commission This Piece — Secure Checkout
               </button>
             </div>
 
             {/* Payment Integration UI */}
-            <div className="border border-stone-200/60 bg-white p-5 flex flex-col gap-3.5 rounded-2xl shadow-sm mt-3">
-              <span className="text-[10px] text-amber-700 font-extrabold uppercase tracking-widest block" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: "0.12em" }}>🔒 SECURE CHECKOUT OPTIONS</span>
-              <p className="text-[11.5px] text-stone-500 leading-normal">Select payment partner to complete transaction securely:</p>
+            <div className="border border-[#E7E7E2] bg-white p-5 flex flex-col gap-3.5 rounded-[4px] mt-3">
+              <span className="text-[10px] text-[#23483D] font-bold uppercase tracking-widest block" style={{ letterSpacing: "0.12em" }}>🔒 SECURE CHECKOUT OPTIONS</span>
+              <p className="text-[11.5px] text-[#676A65] leading-normal">Select payment partner to complete transaction securely:</p>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => handleDirectCheckout("razorpay")}
-                  className="flex items-center justify-center gap-2 py-3 px-3 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50/50 transition cursor-pointer text-xs font-bold text-stone-700 shadow-sm"
+                  className="flex items-center justify-center gap-2 py-3 px-3 border border-[#E7E7E2] rounded-[4px] hover:border-[#23483D] hover:bg-[#F8F8F6] transition cursor-pointer text-xs font-semibold text-[#181A18]"
                 >
                   💳 Razorpay
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDirectCheckout("paypal")}
-                  className="flex items-center justify-center gap-2 py-3 px-3 border border-stone-200 rounded-xl hover:border-blue-500 hover:bg-blue-50/50 transition cursor-pointer text-xs font-bold text-stone-700 shadow-sm"
+                  className="flex items-center justify-center gap-2 py-3 px-3 border border-[#E7E7E2] rounded-[4px] hover:border-[#23483D] hover:bg-[#F8F8F6] transition cursor-pointer text-xs font-semibold text-[#181A18]"
                 >
                   🅿️ PayPal
                 </button>
@@ -1007,14 +1004,14 @@ export default function ProductDetail() {
             </div>
 
             {/* Perks */}
-            <div className="border border-stone-200/60 bg-white p-5 flex flex-col gap-3 rounded-2xl shadow-sm mt-1">
+            <div className="border border-[#E7E7E2] bg-[#F8F8F6] p-5 flex flex-col gap-3 rounded-[4px] mt-1">
               {[
                 ["🚚", "Complimentary delivery on qualifying orders"],
                 ["🔄", "Seven-day studio review policy"],
                 ["🔒", "Encrypted payment via Razorpay & PayPal"],
                 ["✏️", "Bespoke precision-crafted detailing"],
               ].map(([icon, text]) => (
-                <div key={text} className="flex items-center gap-2.5 text-xs text-stone-600">
+                <div key={text} className="flex items-center gap-2.5 text-xs text-[#676A65]">
                   <span>{icon}</span> {text}
                 </div>
               ))}
@@ -1028,11 +1025,11 @@ export default function ProductDetail() {
         </div>
 
         {/* ── Description ── */}
-        <div className="mt-10 border-t border-stone-200 pt-8">
-          <h2 className="text-xl font-bold text-stone-800 mb-4">
+        <div className="mt-10 border-t border-[#E7E7E2] pt-8">
+          <h2 className="text-xl md:text-2xl font-normal text-[#181A18] mb-4" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
             Studio Description & Details
           </h2>
-          <p className="text-stone-600 leading-relaxed whitespace-pre-wrap text-sm">
+          <p className="text-[#676A65] leading-relaxed whitespace-pre-wrap text-sm">
             {product.description}
           </p>
         </div>

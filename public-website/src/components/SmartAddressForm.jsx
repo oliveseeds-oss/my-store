@@ -106,7 +106,7 @@ export default function SmartAddressForm({
     <div className="space-y-4 text-left">
       {/* 1. Full Name */}
       <div>
-        <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">
+        <label className="text-[10px] uppercase font-bold text-[#676A65] mb-1.5 block tracking-widest">
           Full Name *
         </label>
         <input
@@ -115,14 +115,14 @@ export default function SmartAddressForm({
           disabled={readOnly}
           value={form.name || form.full_name || ""}
           onChange={(e) => onChange({ ...form, name: e.target.value, full_name: e.target.value })}
-          className="w-full bg-[#FAF9F6]/20 border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] disabled:bg-stone-100 disabled:cursor-not-allowed"
+          className="w-full bg-white border border-[#DADCD7] rounded-[4px] px-4 py-2.5 text-xs focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] text-[#181A18] disabled:bg-stone-100 disabled:cursor-not-allowed"
           placeholder="John Doe"
         />
       </div>
 
       {/* 2. Phone — dial code prefix dropdown (auto-set from country) + number input, validated with libphonenumber-js */}
       <div>
-        <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">
+        <label className="text-[10px] uppercase font-bold text-[#676A65] mb-1.5 block tracking-widest">
           Phone Number *
         </label>
         <div className="flex gap-2">
@@ -130,7 +130,7 @@ export default function SmartAddressForm({
             disabled={readOnly}
             value={currentCountryObj?.isoCode}
             onChange={handleCountryChange}
-            className="bg-[#FAF9F6]/20 border border-[#0D1512]/20 rounded-xl px-3 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] font-mono shrink-0 disabled:bg-stone-100 disabled:cursor-not-allowed"
+            className="bg-white border border-[#DADCD7] rounded-[4px] px-3 py-2.5 text-xs focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] text-[#181A18] font-mono shrink-0 disabled:bg-stone-100 disabled:cursor-not-allowed"
           >
             {allCountries.map((c) => {
               let code = "+1";
@@ -150,8 +150,8 @@ export default function SmartAddressForm({
             disabled={readOnly}
             value={form.phone || ""}
             onChange={(e) => onChange({ ...form, phone: e.target.value })}
-            className={`w-full bg-[#FAF9F6]/20 border rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 text-[#0D1512] disabled:bg-stone-100 disabled:cursor-not-allowed ${
-              !phoneValidation.isValid ? "border-rose-400 focus:ring-rose-300" : "border-[#0D1512]/20 focus:ring-[#0D1512]/40"
+            className={`w-full bg-white border rounded-[4px] px-4 py-2.5 text-xs focus:outline-none focus:ring-1 text-[#181A18] disabled:bg-stone-100 disabled:cursor-not-allowed ${
+              !phoneValidation.isValid ? "border-rose-400 focus:ring-rose-300" : "border-[#DADCD7] focus:border-[#23483D] focus:ring-[#23483D]"
             }`}
             placeholder="98765 43210"
           />
@@ -164,11 +164,11 @@ export default function SmartAddressForm({
       </div>
 
       {!isPhysical && (
-        <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-2xl p-3.5 text-xs flex items-center gap-3">
+        <div className="bg-[#F8F8F6] border border-[#E7E7E2] text-[#181A18] rounded-[4px] p-3.5 text-xs flex items-center gap-3">
           <span className="text-xl">⚡</span>
           <div>
-            <p className="font-bold text-emerald-900">Digital Product Order</p>
-            <p className="text-[11px] text-emerald-700 mt-0.5 leading-relaxed">
+            <p className="font-bold text-[#181A18]">Digital Product Order</p>
+            <p className="text-[11px] text-[#676A65] mt-0.5 leading-relaxed">
               No physical delivery is needed. All download files, source assets, and license keys will be instantly delivered to your registered email upon payment.
             </p>
           </div>
@@ -179,7 +179,7 @@ export default function SmartAddressForm({
       {isPhysical && (
         <>
           <div>
-            <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">
+            <label className="text-[10px] uppercase font-bold text-[#676A65] mb-1.5 block tracking-widest">
               Address Line 1 *
             </label>
             <input
@@ -188,13 +188,13 @@ export default function SmartAddressForm({
               disabled={readOnly}
               value={form.delivery_street || form.street_address || ""}
               onChange={(e) => onChange({ ...form, delivery_street: e.target.value, street_address: e.target.value })}
-              className="w-full bg-[#FAF9F6]/20 border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] disabled:bg-stone-100 disabled:cursor-not-allowed"
+              className="w-full bg-white border border-[#DADCD7] rounded-[4px] px-4 py-2.5 text-xs focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] text-[#181A18] disabled:bg-stone-100 disabled:cursor-not-allowed"
               placeholder="Flat / House No., Street Name, Area"
             />
           </div>
 
           <div>
-            <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">
+            <label className="text-[10px] uppercase font-bold text-[#676A65] mb-1.5 block tracking-widest">
               Address Line 2 (Optional)
             </label>
             <input
@@ -202,14 +202,14 @@ export default function SmartAddressForm({
               disabled={readOnly}
               value={form.delivery_apt || form.apt_suite || ""}
               onChange={(e) => onChange({ ...form, delivery_apt: e.target.value, apt_suite: e.target.value })}
-              className="w-full bg-[#FAF9F6]/20 border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] disabled:bg-stone-100 disabled:cursor-not-allowed"
+              className="w-full bg-white border border-[#DADCD7] rounded-[4px] px-4 py-2.5 text-xs focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] text-[#181A18] disabled:bg-stone-100 disabled:cursor-not-allowed"
               placeholder="Apt, Suite, Unit, Building Floor"
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">
+              <label className="text-[10px] uppercase font-bold text-[#676A65] mb-1.5 block tracking-widest">
                 City / Town / Suburb *
               </label>
               <input
@@ -218,13 +218,13 @@ export default function SmartAddressForm({
                 disabled={readOnly}
                 value={form.delivery_city || form.city || ""}
                 onChange={(e) => onChange({ ...form, delivery_city: e.target.value, city: e.target.value })}
-                className="w-full bg-[#FAF9F6]/20 border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] disabled:bg-stone-100 disabled:cursor-not-allowed"
+                className="w-full bg-white border border-[#DADCD7] rounded-[4px] px-4 py-2.5 text-xs focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] text-[#181A18] disabled:bg-stone-100 disabled:cursor-not-allowed"
                 placeholder="City Name"
               />
             </div>
 
             <div>
-              <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">
+              <label className="text-[10px] uppercase font-bold text-[#676A65] mb-1.5 block tracking-widest">
                 {stateLabel} *
               </label>
               {statesList.length > 0 ? (
@@ -232,7 +232,7 @@ export default function SmartAddressForm({
                   disabled={readOnly}
                   value={form.delivery_state || form.state || ""}
                   onChange={(e) => onChange({ ...form, delivery_state: e.target.value, state: e.target.value })}
-                  className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] disabled:bg-stone-100 disabled:cursor-not-allowed"
+                  className="w-full bg-white border border-[#DADCD7] rounded-[4px] px-4 py-2.5 text-xs focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] text-[#181A18] disabled:bg-stone-100 disabled:cursor-not-allowed"
                 >
                   {statesList.map((s) => (
                     <option key={s.isoCode || s.name} value={s.name}>
@@ -247,7 +247,7 @@ export default function SmartAddressForm({
                   disabled={readOnly}
                   value={form.delivery_state || form.state || ""}
                   onChange={(e) => onChange({ ...form, delivery_state: e.target.value, state: e.target.value })}
-                  className="w-full bg-[#FAF9F6]/20 border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] disabled:bg-stone-100 disabled:cursor-not-allowed"
+                  className="w-full bg-white border border-[#DADCD7] rounded-[4px] px-4 py-2.5 text-xs focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] text-[#181A18] disabled:bg-stone-100 disabled:cursor-not-allowed"
                   placeholder="State / Region Name"
                 />
               )}
@@ -255,7 +255,7 @@ export default function SmartAddressForm({
 
             {showZip && (
               <div>
-                <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">
+                <label className="text-[10px] uppercase font-bold text-[#676A65] mb-1.5 block tracking-widest">
                   {zipLabel} *
                 </label>
                 <input
@@ -264,7 +264,7 @@ export default function SmartAddressForm({
                   disabled={readOnly}
                   value={form.delivery_pincode || form.pincode || ""}
                   onChange={(e) => onChange({ ...form, delivery_pincode: e.target.value, pincode: e.target.value })}
-                  className="w-full bg-[#FAF9F6]/20 border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] disabled:bg-stone-100 disabled:cursor-not-allowed"
+                  className="w-full bg-white border border-[#DADCD7] rounded-[4px] px-4 py-2.5 text-xs focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] text-[#181A18] disabled:bg-stone-100 disabled:cursor-not-allowed"
                   placeholder="110001"
                 />
               </div>
@@ -275,14 +275,14 @@ export default function SmartAddressForm({
 
       {/* Country Dropdown */}
       <div>
-        <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">
+        <label className="text-[10px] uppercase font-bold text-[#676A65] mb-1.5 block tracking-widest">
           Country {isPhysical ? "*" : "(Billing / Region)"}
         </label>
         <select
           disabled={readOnly}
           value={currentCountryObj?.isoCode}
           onChange={handleCountryChange}
-          className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] disabled:bg-stone-100 disabled:cursor-not-allowed"
+          className="w-full bg-white border border-[#DADCD7] rounded-[4px] px-4 py-2.5 text-xs focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] text-[#181A18] disabled:bg-stone-100 disabled:cursor-not-allowed"
         >
           {allCountries.map((c) => {
             const upperIso = c.isoCode.toUpperCase();

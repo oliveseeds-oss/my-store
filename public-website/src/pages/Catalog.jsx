@@ -95,7 +95,7 @@ export default function Catalog() {
   });
 
   return (
-    <div style={{ background: "#F6F3EE", minHeight: "100vh", fontFamily: "'Inter', sans-serif" }}>
+    <div style={{ background: "#FFFFFF", minHeight: "100vh", color: "#181A18", fontFamily: "'DM Sans', sans-serif" }}>
       <SEO 
         title="Studio Collection Catalog | Olive Seeds Studio"
         description="Explore our curated collection of bespoke design objects, hand-finished timber pieces, architectural acrylics, and distinguished corporate gifts."
@@ -104,14 +104,13 @@ export default function Catalog() {
       <Navbar />
 
       {/* Header Section */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-stone-900 via-stone-850 to-stone-950 text-stone-100 py-20 px-6">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(198,167,125,0.15),transparent_50%)] pointer-events-none" />
+      <section className="relative overflow-hidden bg-white text-[#181A18] py-16 md:py-20 px-6 border-b border-[#E7E7E2]">
         <div className="max-w-5xl mx-auto relative z-10 text-center">
-          <span className="text-[10px] text-amber-400 font-extrabold uppercase tracking-widest block mb-3">Bespoke Studio Craftsmanship</span>
-          <h1 className="text-4xl md:text-5xl font-light italic font-serif text-white tracking-tight mb-4">
+          <span className="text-[11px] text-[#23483D] font-semibold uppercase tracking-widest block mb-3">Bespoke Studio Craftsmanship</span>
+          <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-4xl md:text-5xl font-normal text-[#181A18] tracking-tight mb-4">
             Studio Catalog
           </h1>
-          <p className="text-stone-400 text-sm max-w-xl mx-auto leading-relaxed mb-8">
+          <p className="text-[#676A65] text-sm max-w-xl mx-auto leading-relaxed mb-8 font-normal">
             Browse our curated collection by category. Explore bespoke materials, hand-finished objects, and tailored options for your organisation.
           </p>
 
@@ -119,22 +118,22 @@ export default function Catalog() {
           <div className="max-w-xl mx-auto flex flex-col sm:flex-row gap-3 items-center justify-center">
             {/* Search Field */}
             <div className="relative w-full flex-1">
-              <span className="absolute inset-y-0 left-4 flex items-center text-stone-400">
-                <Icons.Search size={18} />
+              <span className="absolute inset-y-0 left-3.5 flex items-center text-[#676A65]">
+                <Icons.Search size={16} />
               </span>
               <input 
                 type="text"
                 placeholder="Search collection name or details..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-stone-800/80 border border-stone-700/60 focus:border-amber-500/80 rounded-full py-3.5 pl-12 pr-6 text-sm text-stone-100 placeholder-stone-500 outline-none transition-all"
+                className="w-full bg-[#FFFFFF] border border-[#DADCD7] focus:border-[#23483D] rounded-[4px] py-2.5 pl-10 pr-5 text-xs text-[#181A18] placeholder-[#9CA3AF] outline-none transition-all"
               />
               {searchQuery && (
                 <button 
                   onClick={() => setSearchQuery("")}
-                  className="absolute inset-y-0 right-4 flex items-center text-stone-500 hover:text-stone-300"
+                  className="absolute inset-y-0 right-3.5 flex items-center text-[#676A65] hover:text-[#181A18]"
                 >
-                  <Icons.Close size={16} />
+                  <Icons.Close size={14} />
                 </button>
               )}
             </div>
@@ -142,11 +141,11 @@ export default function Catalog() {
 
           {searchQuery && (
             <div className="mt-4 flex items-center justify-center gap-3 flex-wrap text-xs">
-              <span className="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-3.5 py-1 rounded-full flex items-center gap-2 font-medium">
+              <span className="bg-[#F8F8F6] text-[#23483D] border border-[#E7E7E2] px-3 py-1 rounded-[4px] flex items-center gap-2 font-medium">
                 <span>Filtered by: <strong>{searchQuery}</strong></span>
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="hover:text-white transition ml-1"
+                  className="hover:text-[#181A18] transition ml-1"
                   title="Clear filter"
                 >
                   ✕
@@ -154,7 +153,7 @@ export default function Catalog() {
               </span>
               <Link
                 to={`/products?category=${encodeURIComponent(searchQuery)}`}
-                className="text-amber-400 hover:text-amber-300 font-semibold underline flex items-center gap-1"
+                className="text-[#23483D] hover:text-[#16352D] font-medium underline flex items-center gap-1"
               >
                 View matching products in shop →
               </Link>
@@ -164,49 +163,49 @@ export default function Catalog() {
       </section>
 
       {/* Main Grid Container */}
-      <main className="max-w-5xl mx-auto px-6 py-16">
+      <main className="max-w-5xl mx-auto px-6 py-12">
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {[...Array(6)].map((_, idx) => (
-              <div key={idx} className="bg-white rounded-3xl p-6 border border-stone-200/60 shadow-sm animate-pulse flex flex-col gap-4">
-                <div className="aspect-square bg-stone-100 rounded-2xl w-full" />
-                <div className="h-4 bg-stone-200 rounded w-2/3" />
-                <div className="h-3 bg-stone-200 rounded w-1/2" />
+              <div key={idx} className="bg-white rounded-[4px] p-5 border border-[#E7E7E2] shadow-sm animate-pulse flex flex-col gap-4">
+                <div className="aspect-square bg-[#F8F8F6] rounded-[4px] w-full" />
+                <div className="h-4 bg-[#F8F8F6] rounded w-2/3" />
+                <div className="h-3 bg-[#F8F8F6] rounded w-1/2" />
               </div>
             ))}
           </div>
         ) : filteredCategories.length === 0 ? (
-          <div className="text-center py-16 px-6 bg-white rounded-3xl border border-stone-200/60 shadow-sm max-w-lg mx-auto">
-            <span className="text-5xl block mb-4">🔍</span>
-            <h3 className="text-xl font-bold text-stone-700 mb-2">No Specific Categories for "{searchQuery}"</h3>
-            <p className="text-stone-400 text-xs mb-6 leading-relaxed">
+          <div className="text-center py-16 px-6 bg-[#F8F8F6] rounded-[4px] border border-[#E7E7E2] shadow-sm max-w-lg mx-auto">
+            <span className="text-4xl block mb-3">🔍</span>
+            <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-normal text-[#181A18] mb-2">No Specific Categories for "{searchQuery}"</h3>
+            <p className="text-[#676A65] text-xs mb-6 leading-relaxed">
               We couldn't find a dedicated category page for this collection yet, but you can explore all available products or clear the filter.
             </p>
             <div className="flex justify-center gap-3 flex-wrap">
               <Link
                 to={`/products?category=${encodeURIComponent(searchQuery)}`}
-                className="bg-stone-900 hover:bg-stone-850 text-amber-400 text-xs font-bold px-6 py-2.5 rounded-full transition shadow-sm"
+                className="bg-[#23483D] hover:bg-[#16352D] text-white text-xs font-medium px-5 py-2.5 rounded-[4px] transition shadow-sm"
               >
                 Browse Products in Shop →
               </Link>
               <button
                 onClick={() => setSearchQuery("")}
-                className="bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold px-6 py-2.5 rounded-full transition"
+                className="bg-white hover:bg-[#F8F8F6] text-[#181A18] border border-[#E7E7E2] text-xs font-medium px-5 py-2.5 rounded-[4px] transition"
               >
                 View All Categories
               </button>
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {filteredCategories.map((c) => (
               <Link 
                 key={c.id} 
                 to={`/products?category=${encodeURIComponent(c.name)}`}
-                className="group flex flex-col bg-white rounded-3xl border border-stone-200/50 hover:border-amber-500/50 hover:shadow-xl hover:shadow-amber-900/5 overflow-hidden transition-all duration-300"
+                className="group flex flex-col bg-white rounded-[4px] border border-[#E7E7E2] hover:border-[#23483D] hover:shadow-md overflow-hidden transition-all duration-300"
               >
                 {/* Image Frame */}
-                <div className="aspect-square w-full bg-stone-100 overflow-hidden relative border-b border-stone-100">
+                <div className="aspect-square w-full bg-[#F8F8F6] overflow-hidden relative border-b border-[#E7E7E2]">
                   {c.image_url ? (
                     <img 
                       src={c.image_url} 
@@ -214,23 +213,23 @@ export default function Catalog() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-stone-50">
-                      <span className="text-5xl group-hover:scale-110 transition duration-300">🪵</span>
+                    <div className="w-full h-full flex items-center justify-center bg-[#F8F8F6]">
+                      <span className="text-4xl group-hover:scale-110 transition duration-300">🪵</span>
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
 
                 {/* Card Details */}
-                <div className="p-6 flex flex-col gap-2 flex-1">
-                  <h2 className="text-lg font-bold text-stone-800 tracking-tight group-hover:text-amber-800 transition duration-200">
+                <div className="p-5 flex flex-col gap-1.5 flex-1">
+                  <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-normal text-[#181A18] tracking-tight group-hover:text-[#23483D] transition duration-200">
                     {c.name}
                   </h2>
-                  <p className="text-stone-500 text-xs leading-relaxed line-clamp-2">
+                  <p className="text-[#676A65] text-xs leading-relaxed line-clamp-2">
                     {c.description || "Browse custom size templates and premium material selections."}
                   </p>
                   
-                  <span className="text-[10px] text-amber-700 font-extrabold uppercase tracking-wider mt-auto flex items-center gap-1">
+                  <span className="text-[11px] text-[#23483D] font-semibold uppercase tracking-wider mt-auto pt-2 flex items-center gap-1">
                     Explore Collection →
                   </span>
                 </div>

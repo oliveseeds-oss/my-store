@@ -49,7 +49,7 @@ export default function AboutUs() {
   }, []);
 
   return (
-    <div style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }} className="min-h-screen">
+    <div style={{ background: "#FFFFFF", color: "#181A18", fontFamily: "'DM Sans', sans-serif" }} className="min-h-screen">
       <SEO
         title="About Olive Seeds Design Studio | Bespoke Design with Purpose"
         description="Olive Seeds Design Studio is a premium bespoke design practice creating distinguished products and custom experiences for corporate and lifestyle clients."
@@ -60,37 +60,33 @@ export default function AboutUs() {
       {/* Hero Header */}
       <div
         style={{
-          background: "linear-gradient(135deg, #0D1512 0%, #0d1a16 100%)",
-          color: "#FAF9F6"
+          background: "#FFFFFF",
+          borderBottom: "1px solid #E7E7E2",
+          color: "#181A18"
         }}
-        className="relative py-24 about-hero overflow-hidden shadow-xl"
+        className="relative py-20 md:py-28 about-hero overflow-hidden"
       >
-        {/* Luxury glowing mesh blurs */}
-        <div className="absolute top-1/4 right-10 w-80 h-80 bg-[#FAF9F6]/10 rounded-full blur-[90px] pointer-events-none" />
-        <div className="absolute -bottom-10 left-1/3 w-60 h-60 bg-emerald-500/10 rounded-full blur-[70px] pointer-events-none" />
-
-        <div className="absolute inset-0 bg-white/5 opacity-5 pointer-events-none" />
         <div className="max-w-5xl mx-auto px-6 relative z-10">
-          <div className="flex gap-2 mb-6 items-center text-xs opacity-80">
-            <Link to="/" className="hover:underline text-[#FAF9F6] opacity-80 hover:opacity-100 transition">Home</Link>
+          <div className="flex gap-2 mb-6 items-center text-xs text-[#676A65]">
+            <Link to="/" className="hover:underline text-[#676A65] transition">Home</Link>
             <span className="opacity-40">›</span>
-            <span className="font-bold">About</span>
+            <span className="font-semibold text-[#181A18]">About</span>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-[#FAF9F6]/60">About Us</p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.25em] mb-4 text-[#23483D]">About Us</p>
           <h1
-            style={{ fontFamily: "'Outfit', sans-serif" }}
-            className="text-5xl md:text-7xl font-black leading-tight tracking-tight max-w-2xl mb-6"
+            style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+            className="text-4xl md:text-6xl font-normal leading-tight tracking-tight max-w-2xl mb-6 text-[#181A18]"
           >
             Design with Purpose. Craft with Care.
           </h1>
-          <p className="text-sm md:text-base leading-relaxed max-w-xl text-[#FAF9F6]/80 font-medium">
+          <p className="text-sm md:text-base leading-relaxed max-w-xl text-[#676A65] font-normal">
             Olive Seeds Design Studio is an independent creative studio dedicated to the art of considered design — producing objects, identities, and experiences that endure.
           </p>
         </div>
       </div>
 
       {/* Stats Board */}
-      <div style={{ background: "#0D1512", borderBottom: "1px solid rgba(255, 248, 222, 0.1)" }}>
+      <div style={{ background: "#F8F8F6", borderBottom: "1px solid #E7E7E2" }}>
         <div className="max-w-5xl mx-auto px-6 py-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
@@ -101,12 +97,12 @@ export default function AboutUs() {
             ].map((s) => (
               <div key={s.label} className="text-center p-4">
                 <p
-                  style={{ fontFamily: "'Outfit', sans-serif", color: "#FAF9F6" }}
-                  className="text-4xl md:text-5xl font-black leading-none mb-2"
+                  style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", color: "#181A18" }}
+                  className="text-4xl md:text-5xl font-light leading-none mb-2"
                 >
                   <CountUp end={s.value} suffix={s.suffix} />
                 </p>
-                <p className="text-xs text-white/60 uppercase tracking-widest">{s.label}</p>
+                <p className="text-xs text-[#676A65] uppercase tracking-widest">{s.label}</p>
               </div>
             ))}
           </div>
@@ -118,17 +114,17 @@ export default function AboutUs() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
 
           <div className="lg:col-span-2 flex flex-col gap-6">
-            <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#0D1512]/60">Our Story</p>
+            <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#23483D]">Our Story</p>
             <h2
-              className="text-3xl md:text-4xl font-black tracking-tight"
-              style={{ fontFamily: "'Outfit', sans-serif" }}
+              className="text-3xl md:text-4xl font-normal tracking-tight text-[#181A18]"
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
             >
               The Studio
             </h2>
-            <p className="text-sm md:text-base leading-relaxed text-[#0D1512]/80">
+            <p className="text-sm md:text-base leading-relaxed text-[#676A65]">
               Olive Seeds was founded with a single conviction — that good design should feel inevitable. Not trendy. Not loud. Inevitable, as though it could not have been any other way. We began as a small creative practice with a deep respect for materials, craftsmanship, and the stories that objects carry.
             </p>
-            <p className="text-sm md:text-base leading-relaxed text-[#0D1512]/80">
+            <p className="text-sm md:text-base leading-relaxed text-[#676A65]">
               Today, we serve organisations across corporate, hospitality, education, and lifestyle sectors — producing bespoke design work that reflects the character of each client with clarity and confidence.
             </p>
           </div>
@@ -137,33 +133,33 @@ export default function AboutUs() {
           <div className="w-full">
             <div
               style={{
-                background: "#0D1512",
-                color: "#FAF9F6",
-                border: "1px solid rgba(255, 248, 222, 0.15)"
+                background: "#F8F8F6",
+                color: "#181A18",
+                border: "1px solid #E7E7E2"
               }}
-              className="rounded-3xl p-8 relative shadow-xl"
+              className="rounded-[4px] p-8 relative"
             >
               <div
-                style={{ background: "#FAF9F6", color: "#0D1512" }}
-                className="absolute -top-3.5 left-6 text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-md"
+                style={{ background: "#FFFFFF", color: "#23483D", border: "1px solid #E7E7E2" }}
+                className="absolute -top-3.5 left-6 text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-[2px]"
               >
                 Our promise
               </div>
               <blockquote
-                style={{ fontFamily: "'Outfit', sans-serif" }}
-                className="text-lg font-bold leading-relaxed italic my-4"
+                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                className="text-lg font-normal leading-relaxed italic my-4 text-[#181A18]"
               >
                 "Good design should feel inevitable — purposeful, enduring, and crafted to represent your character with quiet authority."
               </blockquote>
-              <p className="text-xs opacity-60">— AK Chris, Founder</p>
+              <p className="text-xs text-[#676A65]">— AK Chris, Founder</p>
 
-              <div className="mt-6 pt-6 border-t border-white/10 flex gap-4 items-center">
-                <div className="w-11 h-11 rounded-full bg-white/10 flex items-center justify-center font-bold text-sm">
+              <div className="mt-6 pt-6 border-t border-[#E7E7E2] flex gap-4 items-center">
+                <div className="w-10 h-10 rounded-full bg-[#23483D] text-white flex items-center justify-center font-bold text-sm">
                   AK
                 </div>
                 <div>
-                  <p className="text-sm font-bold">AK Chris</p>
-                  <p className="text-xs opacity-60">Founder, Olive Seeds</p>
+                  <p className="text-sm font-bold text-[#181A18]">AK Chris</p>
+                  <p className="text-xs text-[#676A65]">Founder, Olive Seeds</p>
                 </div>
               </div>
             </div>
@@ -173,12 +169,12 @@ export default function AboutUs() {
       </section>
 
       {/* Values Grid */}
-      <section style={{ background: "#0D1512", color: "#FAF9F6" }} className="py-20">
+      <section style={{ background: "#F8F8F6", borderTop: "1px solid #E7E7E2", borderBottom: "1px solid #E7E7E2" }} className="py-20">
         <div className="max-w-5xl mx-auto px-6">
-          <p className="text-xs font-bold uppercase tracking-[0.3em] text-center opacity-60 mb-3">Distinction in Practice</p>
+          <p className="text-xs font-bold uppercase tracking-[0.25em] text-center text-[#23483D] mb-3">Distinction in Practice</p>
           <h2
-            style={{ fontFamily: "'Outfit', sans-serif" }}
-            className="text-3xl md:text-5xl font-black text-center mb-16 tracking-tight"
+            style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+            className="text-3xl md:text-5xl font-normal text-center mb-16 tracking-tight text-[#181A18]"
           >
             Why Clients Choose Us
           </h2>
@@ -187,18 +183,18 @@ export default function AboutUs() {
             {values.map((v) => (
               <div
                 key={v.title}
-                className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:border-white/30 transition-all duration-300"
+                className="bg-white border border-[#E7E7E2] rounded-[4px] p-8 transition-all duration-300"
               >
-                <div className="text-3xl mb-4 w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center">
+                <div className="text-2xl mb-4 w-10 h-10 bg-[#F8F8F6] border border-[#E7E7E2] rounded-[4px] flex items-center justify-center">
                   {v.icon}
                 </div>
                 <h3
-                  style={{ fontFamily: "'Outfit', sans-serif" }}
-                  className="text-xl font-bold mb-3"
+                  style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                  className="text-xl font-normal mb-3 text-[#181A18]"
                 >
                   {v.title}
                 </h3>
-                <p className="text-sm text-white/70 leading-relaxed">{v.desc}</p>
+                <p className="text-sm text-[#676A65] leading-relaxed">{v.desc}</p>
               </div>
             ))}
           </div>
@@ -207,16 +203,16 @@ export default function AboutUs() {
 
       {/* Approach Journey */}
       <section className="max-w-5xl mx-auto px-6 py-20">
-        <p className="text-xs font-bold uppercase tracking-[0.3em] text-center text-[#0D1512]/60 mb-3">How We Work</p>
+        <p className="text-xs font-bold uppercase tracking-[0.25em] text-center text-[#23483D] mb-3">How We Work</p>
         <h2
-          style={{ fontFamily: "'Outfit', sans-serif" }}
-          className="text-3xl md:text-5xl font-black text-center mb-16 tracking-tight"
+          style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+          className="text-3xl md:text-5xl font-normal text-center mb-16 tracking-tight text-[#181A18]"
         >
           Our Approach
         </h2>
 
         <div className="max-w-xl mx-auto relative pl-8 md:pl-0">
-          <div className="absolute left-3.5 md:left-1/2 top-4 bottom-4 w-0.5 bg-[#0D1512]/10" />
+          <div className="absolute left-3.5 md:left-1/2 top-4 bottom-4 w-0.5 bg-[#E7E7E2]" />
 
           <div className="flex flex-col gap-12">
             {approachSteps.map((m, i) => (
@@ -228,8 +224,8 @@ export default function AboutUs() {
                 {/* Timeline Dot/Step */}
                 <div className="absolute left-[-26px] md:left-1/2 md:translate-x-[-50%] z-10">
                   <div
-                    style={{ background: "#0D1512", color: "#FAF9F6" }}
-                    className="w-14 h-14 rounded-full border-4 border-[#FAF9F6] flex items-center justify-center font-black text-sm shadow-md"
+                    style={{ background: "#23483D", color: "#FFFFFF" }}
+                    className="w-12 h-12 rounded-full border-4 border-white flex items-center justify-center font-bold text-xs shadow-sm"
                   >
                     {m.step}
                   </div>
@@ -237,9 +233,9 @@ export default function AboutUs() {
 
                 {/* Content Card */}
                 <div className="w-full md:w-1/2 pl-6 md:pl-0">
-                  <div className="bg-white border border-[#0D1512]/10 rounded-2xl p-6 shadow-sm hover:shadow-md transition">
-                    <h3 className="font-bold text-base text-[#0D1512] mb-1">{m.title}</h3>
-                    <p className="text-sm text-[#0D1512]/80 leading-relaxed">{m.desc}</p>
+                  <div className="bg-white border border-[#E7E7E2] rounded-[4px] p-6">
+                    <h3 className="font-bold text-base text-[#181A18] mb-1">{m.title}</h3>
+                    <p className="text-sm text-[#676A65] leading-relaxed">{m.desc}</p>
                   </div>
                 </div>
               </div>
@@ -249,12 +245,12 @@ export default function AboutUs() {
       </section>
 
       {/* Team Cards */}
-      <section style={{ background: "#FAF9F6", borderTop: "1px solid rgba(27, 57, 49, 0.1)" }} className="py-20">
+      <section style={{ background: "#F8F8F6", borderTop: "1px solid #E7E7E2" }} className="py-20">
         <div className="max-w-5xl mx-auto px-6">
-          <p className="text-xs font-bold uppercase tracking-[0.3em] text-center text-[#0D1512]/60 mb-3">The People</p>
+          <p className="text-xs font-bold uppercase tracking-[0.25em] text-center text-[#23483D] mb-3">The People</p>
           <h2
-            style={{ fontFamily: "'Outfit', sans-serif" }}
-            className="text-3xl md:text-5xl font-black text-center mb-16 tracking-tight"
+            style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+            className="text-3xl md:text-5xl font-normal text-center mb-16 tracking-tight text-[#181A18]"
           >
             Studio Leadership
           </h2>
@@ -263,21 +259,20 @@ export default function AboutUs() {
             {team.map((member) => (
               <div
                 key={member.name}
-                className="bg-white border border-[#0D1512]/15 rounded-3xl p-8 text-center hover:-translate-y-2 transition-all duration-300 shadow-sm"
+                className="bg-white border border-[#E7E7E2] rounded-[4px] p-8 text-center transition-all duration-300"
               >
                 <div
-                  style={{ background: member.color, color: "#FAF9F6" }}
-                  className="w-16 h-16 rounded-full flex items-center justify-center font-black text-xl mx-auto mb-5"
+                  style={{ background: "#23483D", color: "#FFFFFF" }}
+                  className="w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg mx-auto mb-5"
                 >
                   {member.initial}
                 </div>
                 <h3
-                  style={{ fontFamily: "'Outfit', sans-serif" }}
-                  className="text-lg font-bold mb-1"
+                  className="text-base font-bold mb-1 text-[#181A18]"
                 >
                   {member.name}
                 </h3>
-                <p className="text-xs text-[#0D1512]/60 font-semibold tracking-wider uppercase">{member.role}</p>
+                <p className="text-xs text-[#676A65] font-medium tracking-wider uppercase">{member.role}</p>
               </div>
             ))}
           </div>
@@ -286,28 +281,26 @@ export default function AboutUs() {
 
       {/* CTA Box */}
       <section className="max-w-4xl mx-auto px-6 py-24 text-center">
-        <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#0D1512]/60 mb-4">Start a Conversation</p>
+        <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#23483D] mb-4">Start a Conversation</p>
         <h2
-          style={{ fontFamily: "'Outfit', sans-serif" }}
-          className="text-4xl md:text-6xl font-black mb-6 tracking-tight leading-tight"
+          style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+          className="text-4xl md:text-6xl font-normal mb-6 tracking-tight leading-tight text-[#181A18]"
         >
           Let's Build Something Together
         </h2>
-        <p className="text-sm md:text-base text-[#0D1512]/70 leading-relaxed max-w-xl mx-auto mb-10">
+        <p className="text-sm md:text-base text-[#676A65] leading-relaxed max-w-xl mx-auto mb-10">
           We take on a limited number of new client relationships each season to ensure the quality of our work remains uncompromised. If you are considering a project — we would welcome the conversation.
         </p>
         <div className="flex flex-wrap gap-4 justify-center">
           <Link
             to="/contact"
-            style={{ background: "#0D1512", color: "#FAF9F6" }}
-            className="px-8 py-4 rounded-xl font-bold text-sm tracking-wide shadow-lg shadow-emerald-900/10 hover:scale-105 active:scale-95 transition-all"
+            className="px-8 py-3.5 rounded-[4px] font-semibold text-xs uppercase tracking-wider bg-[#23483D] hover:bg-[#16352D] text-white transition-all"
           >
             Get in Touch
           </Link>
           <Link
             to="/products"
-            style={{ borderColor: "#0D1512", color: "#0D1512" }}
-            className="px-8 py-4 rounded-xl border-2 font-bold text-sm hover:bg-[#0D1512] hover:text-[#FAF9F6] transition-all"
+            className="px-8 py-3.5 rounded-[4px] border border-[#E7E7E2] font-semibold text-xs uppercase tracking-wider text-[#181A18] hover:bg-[#F8F8F6] transition-all"
           >
             Explore the Collection
           </Link>

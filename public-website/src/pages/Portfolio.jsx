@@ -73,7 +73,7 @@ export default function Portfolio() {
     : items.filter(item => item.category === filter);
 
   return (
-    <div style={{ background: "#060913", color: "#F8FAFC", minHeight: "100vh", fontFamily: "'Inter', sans-serif" }}>
+    <div style={{ background: "#FFFFFF", color: "#181A18", minHeight: "100vh", fontFamily: "'DM Sans', sans-serif" }}>
       <SEO 
         title="Portfolio Showcase | Olive Seeds Studio"
         description="Explore our curated studio portfolio: brand identity systems, architectural spatial design, and bespoke physical commissions for global clients."
@@ -82,45 +82,38 @@ export default function Portfolio() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden" style={{ paddingTop: "140px", paddingBottom: "70px", position: "relative" }}>
-        {/* Glow Spheres */}
-        <div style={{ position: "absolute", top: "-10%", right: "-10%", width: "600px", height: "600px", borderRadius: "50%", background: "radial-gradient(circle, rgba(139,124,255,0.08) 0%, transparent 70%)", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", bottom: "-10%", left: "-15%", width: "500px", height: "500px", borderRadius: "50%", background: "radial-gradient(circle, rgba(110,231,249,0.06) 0%, transparent 70%)", pointerEvents: "none" }} />
-
+      <section className="relative overflow-hidden" style={{ paddingTop: "120px", paddingBottom: "60px", position: "relative", background: "#FFFFFF", borderBottom: "1px solid #E7E7E2" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 32px", position: "relative", zIndex: 2 }}>
           <div style={{ textAlign: "center" }}>
-            <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "#6EE7F9", display: "block", marginBottom: "16px" }}>
+            <span style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "#23483D", display: "block", marginBottom: "12px" }}>
               Studio Portfolio
             </span>
-            <h1 className="clash font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 4.2rem)", fontWeight: 800, lineHeight: 1.1, color: "#FFFFFF", marginBottom: "20px", letterSpacing: "-0.02em" }}>
-              Our Work, <br />
-              <span style={{ background: "linear-gradient(135deg, #6EE7F9 0%, #8B7CFF 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-                Beautifully Exhibited
-              </span>
+            <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(2.4rem, 5vw, 4rem)", fontWeight: 400, lineHeight: 1.15, color: "#181A18", marginBottom: "16px", letterSpacing: "-0.01em" }}>
+              Our Work, Beautifully Exhibited
             </h1>
-            <p style={{ fontSize: "16px", color: "#94A3B8", maxWidth: "600px", margin: "0 auto 36px", lineHeight: 1.7 }}>
+            <p style={{ fontSize: "15px", color: "#676A65", maxWidth: "600px", margin: "0 auto 28px", lineHeight: 1.7 }}>
               Browse through our actual workshop creations and design mockups. High-fidelity layouts, premium material combinations, and client works.
             </p>
           </div>
 
           {/* Dynamic Categories filter bar */}
           {categories.length > 1 && (
-            <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap", marginTop: "40px" }}>
+            <div style={{ display: "flex", gap: "8px", justifyContent: "center", flexWrap: "wrap", marginTop: "24px" }}>
               {categories.map(cat => (
                 <button
                   key={cat}
                   onClick={() => setFilter(cat)}
                   style={{
-                    background: filter === cat ? "linear-gradient(135deg, #6EE7F9 0%, #8B7CFF 100%)" : "rgba(255,255,255,0.03)",
-                    border: `1px solid ${filter === cat ? "transparent" : "rgba(255,255,255,0.08)"}`,
-                    color: filter === cat ? "#060913" : "#94A3B8",
-                    padding: "8px 20px",
-                    borderRadius: "100px",
-                    fontSize: "12.5px",
-                    fontWeight: 600,
+                    background: filter === cat ? "#F8F8F6" : "#FFFFFF",
+                    border: `1px solid ${filter === cat ? "#23483D" : "#E7E7E2"}`,
+                    color: filter === cat ? "#23483D" : "#676A65",
+                    padding: "7px 18px",
+                    borderRadius: "4px",
+                    fontSize: "12px",
+                    fontWeight: filter === cat ? 600 : 500,
                     cursor: "pointer",
-                    boxShadow: filter === cat ? "0 6px 20px rgba(110,231,249,0.2)" : "none",
-                    transition: "all 0.3s ease",
+                    boxShadow: "none",
+                    transition: "all 0.2s ease",
                   }}
                 >
                   {cat}
@@ -132,18 +125,18 @@ export default function Portfolio() {
       </section>
 
       {/* Gallery Showcase Grid */}
-      <main style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 32px 100px", position: "relative", zIndex: 2 }}>
+      <main style={{ maxWidth: "1200px", margin: "0 auto", padding: "48px 32px 100px", position: "relative", zIndex: 2 }}>
         {loading ? (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "32px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "28px" }}>
             {[...Array(6)].map((_, idx) => (
-              <div key={idx} style={{ height: "300px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "20px", className: "animate-pulse" }} />
+              <div key={idx} style={{ height: "300px", background: "#F8F8F6", border: "1px solid #E7E7E2", borderRadius: "4px" }} />
             ))}
           </div>
         ) : filteredItems.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "80px 20px", background: "rgba(255,255,255,0.01)", borderRadius: "24px", border: "1px solid rgba(255,255,255,0.05)" }}>
-            <span style={{ fontSize: "40px" }}>📷</span>
-            <h3 style={{ fontSize: "18px", fontWeight: 700, marginTop: "16px", color: "#FFFFFF" }}>No Projects Discovered</h3>
-            <p style={{ color: "#64748B", fontSize: "13px", marginTop: "6px" }}>Use Admin Panel to upload showcase images with style descriptions.</p>
+          <div style={{ textAlign: "center", padding: "80px 20px", background: "#F8F8F6", borderRadius: "4px", border: "1px solid #E7E7E2" }}>
+            <span style={{ fontSize: "36px" }}>📷</span>
+            <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: 500, marginTop: "16px", color: "#181A18" }}>No Projects Discovered</h3>
+            <p style={{ color: "#676A65", fontSize: "13px", marginTop: "6px" }}>Use Admin Panel to upload showcase images with style descriptions.</p>
           </div>
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "28px" }}>
@@ -151,22 +144,22 @@ export default function Portfolio() {
               {filteredItems.map((item, idx) => (
                 <motion.div
                   key={item.id}
-                  initial={{ opacity: 0, y: 24 }}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.6, delay: idx * 0.04, ease: [0.16, 1, 0.3, 1] }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.4, delay: idx * 0.03, ease: [0.16, 1, 0.3, 1] }}
                   onClick={() => setActiveItem(item)}
                   style={{
                     position: "relative",
-                    borderRadius: "20px",
+                    borderRadius: "4px",
                     overflow: "hidden",
                     cursor: "pointer",
                     aspectRatio: "1.4/1",
-                    background: "rgba(255,255,255,0.02)",
-                    border: "1px solid rgba(255,255,255,0.06)",
-                    boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+                    background: "#F8F8F6",
+                    border: "1px solid #E7E7E2",
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.03)",
                   }}
-                  whileHover={{ y: -6, borderColor: "#6EE7F9", boxShadow: "0 20px 40px rgba(0,0,0,0.4)" }}
+                  whileHover={{ y: -4, borderColor: "#23483D", boxShadow: "0 8px 24px rgba(0,0,0,0.06)" }}
                 >
                   <img 
                     src={item.image_url} 
@@ -178,20 +171,20 @@ export default function Portfolio() {
                   <div style={{
                     position: "absolute",
                     inset: 0,
-                    background: "linear-gradient(to top, rgba(6, 9, 19, 0.9) 0%, rgba(6, 9, 19, 0.3) 50%, transparent 100%)",
+                    background: "linear-gradient(to top, rgba(24, 26, 24, 0.85) 0%, rgba(24, 26, 24, 0.35) 55%, transparent 100%)",
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "end",
                     padding: "20px",
                   }}>
-                    <span style={{ fontSize: "9px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#6EE7F9", marginBottom: "6px" }}>
+                    <span style={{ fontSize: "10px", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#A48855", marginBottom: "4px" }}>
                       {item.category || "Showcase"}
                     </span>
-                    <h3 className="clash text-white truncate" style={{ fontSize: "18px", fontWeight: 700, marginBottom: "4px" }}>
+                    <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: 400, color: "#FFFFFF", marginBottom: "2px" }} className="truncate">
                       {item.title}
                     </h3>
                     {item.style && (
-                      <p style={{ fontSize: "12px", color: "#94A3B8", margin: 0 }} className="line-clamp-1">
+                      <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.8)", margin: 0 }} className="line-clamp-1">
                         {item.style}
                       </p>
                     )}
@@ -210,7 +203,7 @@ export default function Portfolio() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
             onClick={() => setActiveItem(null)}
           >
             <motion.div 
@@ -219,13 +212,13 @@ export default function Portfolio() {
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
               style={{
-                background: "#0C1020",
-                border: "1px solid rgba(255,255,255,0.08)",
-                borderRadius: "28px",
+                background: "#FFFFFF",
+                border: "1px solid #E7E7E2",
+                borderRadius: "4px",
                 maxWidth: "600px",
                 width: "100%",
                 overflow: "hidden",
-                boxShadow: "0 30px 100px rgba(0,0,0,0.8)",
+                boxShadow: "0 20px 50px rgba(0,0,0,0.12)",
               }}
               onClick={e => e.stopPropagation()}
             >
@@ -234,30 +227,30 @@ export default function Portfolio() {
                 alt={activeItem.title} 
                 style={{ width: "100%", maxHeight: "380px", objectFit: "cover" }} 
               />
-              <div style={{ padding: "32px" }}>
-                <span style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "0.12em", color: "#8B7CFF", textTransform: "uppercase", display: "block", marginBottom: "12px" }}>
+              <div style={{ padding: "28px" }}>
+                <span style={{ fontSize: "10px", fontWeight: 600, letterSpacing: "0.12em", color: "#23483D", textTransform: "uppercase", display: "block", marginBottom: "8px" }}>
                   {activeItem.category || "Showcase Item"}
                 </span>
-                <h3 className="clash" style={{ fontSize: "24px", fontWeight: 700, color: "#FFFFFF", marginBottom: "12px" }}>
+                <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "24px", fontWeight: 400, color: "#181A18", marginBottom: "10px" }}>
                   {activeItem.title}
                 </h3>
                 
                 {activeItem.style && (
-                  <p style={{ fontSize: "14px", color: "#94A3B8", lineHeight: 1.6, marginBottom: "20px" }}>
+                  <p style={{ fontSize: "13px", color: "#676A65", lineHeight: 1.6, marginBottom: "18px" }}>
                     {activeItem.style}
                   </p>
                 )}
 
                 {/* Additional Spec Meta items if any */}
                 {(activeItem.material || activeItem.industry) && (
-                  <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "24px" }}>
+                  <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "20px" }}>
                     {activeItem.material && (
-                      <span style={{ fontSize: "11px", color: "#6EE7F9", background: "rgba(110,231,249,0.05)", border: "1px solid rgba(110,231,249,0.15)", padding: "4px 12px", borderRadius: "6px" }}>
+                      <span style={{ fontSize: "11px", color: "#23483D", background: "#F8F8F6", border: "1px solid #E7E7E2", padding: "4px 10px", borderRadius: "4px" }}>
                         Material: {activeItem.material}
                       </span>
                     )}
                     {activeItem.industry && (
-                      <span style={{ fontSize: "11px", color: "#8B7CFF", background: "rgba(139,124,255,0.05)", border: "1px solid rgba(139,124,255,0.15)", padding: "4px 12px", borderRadius: "6px" }}>
+                      <span style={{ fontSize: "11px", color: "#23483D", background: "#F8F8F6", border: "1px solid #E7E7E2", padding: "4px 10px", borderRadius: "4px" }}>
                         Industry: {activeItem.industry}
                       </span>
                     )}
@@ -268,13 +261,13 @@ export default function Portfolio() {
                   <button 
                     onClick={() => setActiveItem(null)}
                     style={{
-                      background: "transparent",
-                      border: "1px solid rgba(255,255,255,0.15)",
+                      background: "#23483D",
+                      border: "none",
                       color: "#FFFFFF",
-                      padding: "10px 24px",
-                      borderRadius: "100px",
-                      fontSize: "13px",
-                      fontWeight: 600,
+                      padding: "8px 22px",
+                      borderRadius: "4px",
+                      fontSize: "12px",
+                      fontWeight: 500,
                       cursor: "pointer",
                       transition: "all 0.2s",
                     }}

@@ -86,7 +86,7 @@ export default function Contact() {
   };
 
   return (
-    <div style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }} className="min-h-screen overflow-hidden">
+    <div style={{ background: "#FFFFFF", color: "#181A18", fontFamily: "'DM Sans', sans-serif" }} className="min-h-screen overflow-hidden">
       <SEO
         title="Contact Olive Seeds Design Studio | Bespoke Design Enquiries"
         description="Enquire about bespoke design products, B2B bulk orders, or brand services. Olive Seeds Design Studio welcomes enquiries from corporate clients worldwide."
@@ -97,48 +97,44 @@ export default function Contact() {
       {/* Hero Section */}
       <section
         style={{
-          background: "linear-gradient(135deg, #0D1512 0%, #0d1a16 100%)",
-          color: "#FAF9F6"
+          background: "#FFFFFF",
+          color: "#181A18",
+          borderBottom: "1px solid #E7E7E2"
         }}
-        className="relative py-20 md:py-28 blog-hero overflow-hidden shadow-xl"
+        className="relative py-16 md:py-24 overflow-hidden"
       >
-        {/* Luxury glowing mesh blurs */}
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-[#FAF9F6]/10 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute -bottom-10 left-10 w-72 h-72 bg-emerald-500/10 rounded-full blur-[80px] pointer-events-none" />
-
-        <div className="absolute inset-0 bg-white/5 opacity-5 pointer-events-none" />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
             {/* Left Side Content */}
             <div className="flex flex-col gap-6">
               <div
-                style={{ background: "rgba(255, 248, 222, 0.1)", borderColor: "rgba(255, 248, 222, 0.2)" }}
-                className="inline-flex items-center gap-2 border px-4 py-2 rounded-full backdrop-blur-md w-fit"
+                style={{ background: "#F8F8F6", borderColor: "#E7E7E2" }}
+                className="inline-flex items-center gap-2 border px-3.5 py-1.5 rounded-[4px] w-fit"
               >
-                <div className="w-2 h-2 bg-[#FAF9F6] rounded-full animate-pulse" />
-                <span style={{ color: "#FAF9F6" }} className="text-xs font-bold uppercase tracking-widest">
+                <div className="w-1.5 h-1.5 bg-[#23483D] rounded-full" />
+                <span style={{ color: "#23483D" }} className="text-[11px] font-semibold uppercase tracking-widest">
                   Bespoke Enquiries
                 </span>
               </div>
 
               <h1
-                style={{ fontFamily: "'Outfit', sans-serif" }}
-                className="text-4xl md:text-6xl font-black leading-tight text-white tracking-tight"
+                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                className="text-4xl md:text-5xl lg:text-6xl font-normal leading-tight text-[#181A18] tracking-tight"
               >
                 Start a Conversation
               </h1>
 
-              <p className="text-sm md:text-base leading-relaxed text-white/90 max-w-xl font-medium">
+              <p className="text-sm md:text-base leading-relaxed text-[#676A65] max-w-xl font-normal">
                 Whether you have a fully formed brief or are simply exploring possibilities — we would welcome the conversation. Tell us about your project and we will respond within one business day.
               </p>
 
-              <p className="text-xs md:text-sm leading-relaxed text-white/70 max-w-xl">
+              <p className="text-xs md:text-sm leading-relaxed text-[#676A65] max-w-xl">
                 We work with a select number of clients at any one time. If you are considering a commission, a bulk order, or a longer-term creative partnership — share what you have in mind and we will respond with clarity and honesty.
               </p>
 
               {/* Grid Features / Trust Lines */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mt-2">
                 {[
                   "Every enquiry is reviewed by our creative directors",
                   "Response within one business day — guaranteed",
@@ -147,10 +143,11 @@ export default function Contact() {
                 ].map((item) => (
                   <div
                     key={item}
-                    style={{ background: "rgba(255, 248, 222, 0.05)", borderColor: "rgba(255, 248, 222, 0.1)" }}
-                    className="border rounded-2xl px-5 py-4 text-white text-xs font-semibold tracking-wide hover:border-white/30 transition-all duration-300"
+                    style={{ background: "#F8F8F6", borderColor: "#E7E7E2" }}
+                    className="border rounded-[4px] px-4 py-3.5 text-[#181A18] text-xs font-medium tracking-wide transition-all duration-200 flex items-center gap-2.5"
                   >
-                    ✨ {item}
+                    <span className="text-[#23483D] text-[10px]">✦</span>
+                    <span>{item}</span>
                   </div>
                 ))}
               </div>
@@ -159,22 +156,22 @@ export default function Contact() {
             {/* Right Side Form Card */}
             <div className="w-full">
               <div
-                style={{ background: "#FAF9F6", border: "1px solid rgba(27, 57, 49, 0.15)", color: "#0D1512" }}
-                className="rounded-3xl p-6 md:p-8 shadow-xl"
+                style={{ background: "#FFFFFF", border: "1px solid #E7E7E2", color: "#181A18" }}
+                className="rounded-[4px] p-6 md:p-8 shadow-sm"
               >
                 {sent ? (
                   <div className="text-center py-12 flex flex-col gap-4">
-                    <span className="text-6xl">📨</span>
-                    <h2 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-2xl font-black">Enquiry Sent</h2>
-                    <p className="text-sm opacity-80 max-w-xs mx-auto">
+                    <span className="text-5xl">📨</span>
+                    <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl md:text-3xl font-normal text-[#181A18]">Enquiry Sent</h2>
+                    <p className="text-sm text-[#676A65] max-w-xs mx-auto">
                       Thank you for reaching out to Olive Seeds Design Studio. We will respond within one business day.
                     </p>
                   </div>
                 ) : (
                   <>
                     <div className="mb-6">
-                      <h2 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-2xl font-black">Send Your Enquiry</h2>
-                      <p className="text-xs opacity-60 mt-1">Share what you have in mind and we will respond with clarity and honesty.</p>
+                      <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl md:text-3xl font-normal text-[#181A18]">Send Your Enquiry</h2>
+                      <p className="text-xs text-[#676A65] mt-1">Share what you have in mind and we will respond with clarity and honesty.</p>
                     </div>
 
                     <div className="flex flex-col gap-4">
@@ -182,35 +179,35 @@ export default function Contact() {
                       {/* Name fields */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">First Name</label>
+                          <label className="text-[11px] font-medium uppercase tracking-wider text-[#676A65] mb-1.5 block">First Name</label>
                           <input
                             type="text"
                             value={form.firstName}
                             onChange={(e) => setForm({ ...form, firstName: e.target.value })}
                             placeholder="John"
-                            className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
+                            className="w-full bg-white border border-[#DADCD7] rounded-[4px] px-4 py-2.5 text-xs text-[#181A18] placeholder-[#9CA3AF] focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] transition-colors"
                           />
                         </div>
                         <div>
-                          <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Last Name</label>
+                          <label className="text-[11px] font-medium uppercase tracking-wider text-[#676A65] mb-1.5 block">Last Name</label>
                           <input
                             type="text"
                             value={form.lastName}
                             onChange={(e) => setForm({ ...form, lastName: e.target.value })}
                             placeholder="Doe"
-                            className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
+                            className="w-full bg-white border border-[#DADCD7] rounded-[4px] px-4 py-2.5 text-xs text-[#181A18] placeholder-[#9CA3AF] focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] transition-colors"
                           />
                         </div>
                       </div>
 
                       {/* Phone fields */}
                       <div>
-                        <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Contact Number (optional)</label>
+                        <label className="text-[11px] font-medium uppercase tracking-wider text-[#676A65] mb-1.5 block">Contact Number (optional)</label>
                         <div className="flex gap-2">
                           <select
                             value={form.countryCode}
                             onChange={(e) => setForm({ ...form, countryCode: e.target.value })}
-                            className="bg-white border border-[#0D1512]/20 rounded-xl px-3 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] w-28"
+                            className="bg-white border border-[#DADCD7] rounded-[4px] px-3 py-2.5 text-xs text-[#181A18] focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] transition-colors w-28"
                           >
                             {countryCodes.map((code) => (
                               <option key={code} value={code.split(" ")[0]}>
@@ -223,56 +220,56 @@ export default function Contact() {
                             value={form.phone}
                             onChange={(e) => setForm({ ...form, phone: e.target.value })}
                             placeholder="9876543210"
-                            className="flex-1 bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
+                            className="flex-1 bg-white border border-[#DADCD7] rounded-[4px] px-4 py-2.5 text-xs text-[#181A18] placeholder-[#9CA3AF] focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] transition-colors"
                           />
                         </div>
                       </div>
 
                       {/* Email field */}
                       <div>
-                        <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Email Address</label>
+                        <label className="text-[11px] font-medium uppercase tracking-wider text-[#676A65] mb-1.5 block">Email Address</label>
                         <input
                           type="email"
                           value={form.email}
                           onChange={(e) => setForm({ ...form, email: e.target.value })}
                           placeholder="your@email.com"
-                          className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
+                          className="w-full bg-white border border-[#DADCD7] rounded-[4px] px-4 py-2.5 text-xs text-[#181A18] placeholder-[#9CA3AF] focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] transition-colors"
                         />
                       </div>
 
                       {/* Company & Subject */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Company Name</label>
+                          <label className="text-[11px] font-medium uppercase tracking-wider text-[#676A65] mb-1.5 block">Company Name</label>
                           <input
                             type="text"
                             value={form.company}
                             onChange={(e) => setForm({ ...form, company: e.target.value })}
                             placeholder="Your Brand"
-                            className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
+                            className="w-full bg-white border border-[#DADCD7] rounded-[4px] px-4 py-2.5 text-xs text-[#181A18] placeholder-[#9CA3AF] focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] transition-colors"
                           />
                         </div>
                         <div>
-                          <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Subject</label>
+                          <label className="text-[11px] font-medium uppercase tracking-wider text-[#676A65] mb-1.5 block">Subject</label>
                           <input
                             type="text"
                             value={form.subject}
                             onChange={(e) => setForm({ ...form, subject: e.target.value })}
                             placeholder="Bespoke Commission Enquiry"
-                            className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
+                            className="w-full bg-white border border-[#DADCD7] rounded-[4px] px-4 py-2.5 text-xs text-[#181A18] placeholder-[#9CA3AF] focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] transition-colors"
                           />
                         </div>
                       </div>
 
                       {/* Message field */}
                       <div>
-                        <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-1.5 block">Tell Us About Your Project</label>
+                        <label className="text-[11px] font-medium uppercase tracking-wider text-[#676A65] mb-1.5 block">Tell Us About Your Project</label>
                         <textarea
                           rows={4}
                           value={form.message}
                           onChange={(e) => setForm({ ...form, message: e.target.value })}
                           placeholder="Share what you have in mind — materials, quantities, timelines, or your custom brief..."
-                          className="w-full bg-white border border-[#0D1512]/20 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] resize-none"
+                          className="w-full bg-white border border-[#DADCD7] rounded-[4px] px-4 py-2.5 text-xs text-[#181A18] placeholder-[#9CA3AF] focus:outline-none focus:border-[#23483D] focus:ring-1 focus:ring-[#23483D] resize-none transition-colors"
                         />
                       </div>
 
@@ -280,8 +277,8 @@ export default function Contact() {
                       <button
                         onClick={submit}
                         disabled={loading}
-                        style={{ background: "#0D1512", color: "#FAF9F6" }}
-                        className="w-full rounded-xl py-4 font-black tracking-wider uppercase text-xs shadow-lg active:scale-95 transition-all mt-2 disabled:opacity-50"
+                        style={{ background: "#23483D", color: "#FFFFFF" }}
+                        className="w-full rounded-[4px] py-3.5 font-medium tracking-wider uppercase text-xs hover:bg-[#16352D] active:scale-[0.99] transition-all mt-2 disabled:opacity-50"
                       >
                         {loading ? "Sending..." : "Send Your Enquiry"}
                       </button>
@@ -297,7 +294,7 @@ export default function Contact() {
       </section>
 
       {/* Extra Services Strip */}
-      <section style={{ background: "#FAF9F6", borderTop: "1px solid rgba(27, 57, 49, 0.1)" }} className="py-20">
+      <section style={{ background: "#F8F8F6", borderTop: "1px solid #E7E7E2" }} className="py-20">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
@@ -307,17 +304,17 @@ export default function Contact() {
             ].map((item) => (
               <div
                 key={item.title}
-                style={{ border: "1px solid rgba(27, 57, 49, 0.1)", background: "white" }}
-                className="rounded-3xl p-8 hover:-translate-y-1 transition-all duration-300"
+                style={{ border: "1px solid #E7E7E2", background: "#FFFFFF" }}
+                className="rounded-[4px] p-8 hover:-translate-y-0.5 transition-all duration-300 shadow-sm"
               >
                 <div
-                  style={{ background: "#0D1512", color: "#FAF9F6" }}
-                  className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold mb-5"
+                  style={{ background: "#F8F8F6", color: "#23483D", border: "1px solid #E7E7E2" }}
+                  className="w-10 h-10 rounded-[4px] flex items-center justify-center text-sm font-bold mb-5"
                 >
-                  ✨
+                  ✦
                 </div>
-                <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-xl font-bold mb-2">{item.title}</h3>
-                <p className="text-xs text-[#0D1512]/75 leading-relaxed">{item.desc}</p>
+                <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-normal text-[#181A18] mb-2">{item.title}</h3>
+                <p className="text-xs text-[#676A65] leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>

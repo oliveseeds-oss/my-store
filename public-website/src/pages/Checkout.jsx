@@ -584,7 +584,7 @@ export default function Checkout() {
   };
 
   return (
-    <div style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }} className="min-h-screen">
+    <div style={{ background: "#FFFFFF", color: "#181A18", fontFamily: "'DM Sans', sans-serif" }} className="min-h-screen">
       <SEO 
         title="Secure Checkout" 
         description="Complete your order securely and verify your details for bespoke design objects and digital assets." 
@@ -594,8 +594,8 @@ export default function Checkout() {
       
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <h1 
-          style={{ fontFamily: "'Outfit', sans-serif" }}
-          className="text-2xl sm:text-3xl font-black mb-6 sm:mb-8 tracking-tight"
+          style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+          className="text-2xl sm:text-3xl font-normal text-[#181A18] mb-6 sm:mb-8 tracking-tight"
         >
           Checkout
         </h1>
@@ -604,28 +604,27 @@ export default function Checkout() {
 
           {/* Delivery Details Form */}
           <div 
-            style={{ background: "white", borderColor: "rgba(27, 57, 49, 0.15)" }}
-            className="lg:col-span-2 rounded-2xl sm:rounded-3xl border p-4 sm:p-6 md:p-8 shadow-sm flex flex-col gap-5"
+            className="lg:col-span-2 rounded-[4px] border border-[#E7E7E2] bg-white p-4 sm:p-6 md:p-8 flex flex-col gap-5"
           >
-            <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-xl font-bold tracking-tight">
+            <h3 className="text-xl font-medium text-[#181A18] tracking-tight">
               {hasPhysicalItems ? "Delivery Details" : "Contact & Digital Delivery Details"}
             </h3>
             
             {hasSavedAddress ? (
-              <div className="bg-stone-50 border border-stone-200 rounded-2xl p-5 text-xs text-[#0D1512] space-y-3">
-                <div className="flex items-center justify-between pb-2 border-b border-stone-200">
-                  <span className="font-bold uppercase tracking-wider text-[10px] text-stone-500">Saved Member Address</span>
-                  <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-md">Default Shipping</span>
+              <div className="bg-[#F8F8F6] border border-[#E7E7E2] rounded-[4px] p-5 text-xs text-[#181A18] space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-[#E7E7E2]">
+                  <span className="font-bold uppercase tracking-wider text-[10px] text-[#676A65]">Saved Member Address</span>
+                  <span className="bg-[#23483D]/10 text-[#23483D] text-[10px] font-bold px-2 py-0.5 rounded-[2px]">Default Shipping</span>
                 </div>
                 <div>
-                  <p className="font-bold text-sm text-[#0D1512]">{form.name}</p>
-                  <p className="text-stone-600 mt-0.5">{form.email} • {form.phone}</p>
+                  <p className="font-bold text-sm text-[#181A18]">{form.name}</p>
+                  <p className="text-[#676A65] mt-0.5">{form.email} • {form.phone}</p>
                   <p className="text-stone-700 font-medium mt-2">
                     {[form.delivery_street, form.delivery_apt, form.delivery_city, form.delivery_state, form.delivery_country, form.delivery_pincode].filter(Boolean).join(", ")}
                   </p>
                 </div>
-                <div className="pt-2 border-t border-stone-200">
-                  <Link to="/profile?tab=addresses" className="text-amber-700 hover:text-amber-800 text-xs font-bold underline inline-flex items-center gap-1">
+                <div className="pt-2 border-t border-[#E7E7E2]">
+                  <Link to="/profile?tab=addresses" className="text-[#23483D] hover:underline text-xs font-bold inline-flex items-center gap-1">
                     Wrong address? Update in Profile →
                   </Link>
                 </div>
@@ -662,28 +661,28 @@ export default function Checkout() {
 
             {/* Shipping Method Selection Section (Step 5) */}
             {hasPhysicalItems && (
-              <div className="border-t border-stone-150 pt-5 mt-3 flex flex-col gap-3">
+              <div className="border-t border-[#E7E7E2] pt-5 mt-3 flex flex-col gap-3">
                 <div className="flex items-center justify-between">
-                  <h4 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-sm font-bold text-stone-800 flex items-center gap-2">
+                  <h4 className="text-sm font-semibold text-[#181A18] flex items-center gap-2">
                     <span>🚚</span> Select Shipping Method
                   </h4>
                   {shippingZoneInfo && (
-                    <span className="text-[10px] font-bold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
+                    <span className="text-[10px] font-semibold text-[#23483D] bg-[#F8F8F6] border border-[#E7E7E2] px-2.5 py-0.5 rounded-[4px]">
                       {shippingZoneInfo}
                     </span>
                   )}
                 </div>
 
                 {shippingLoading ? (
-                  <div className="p-4 bg-stone-50 rounded-2xl border border-stone-200 text-xs text-stone-500 font-medium flex items-center justify-center gap-2">
+                  <div className="p-4 bg-[#F8F8F6] rounded-[4px] border border-[#E7E7E2] text-xs text-[#676A65] font-medium flex items-center justify-center gap-2">
                     <span className="animate-spin">⏳</span> Calculating best shipping options for {form.delivery_country}...
                   </div>
                 ) : shippingError ? (
-                  <div className="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-800 font-bold">
+                  <div className="p-4 bg-amber-50 rounded-[4px] border border-amber-200 text-xs text-amber-800 font-bold">
                     ⚠️ {shippingError}
                   </div>
                 ) : shippingMethods.length === 0 ? (
-                  <div className="p-4 bg-rose-50 rounded-2xl border border-rose-200 text-xs text-rose-700 font-bold">
+                  <div className="p-4 bg-rose-50 rounded-[4px] border border-rose-200 text-xs text-rose-700 font-bold">
                     Shipping to your country is not available. Please contact us.
                   </div>
                 ) : (
@@ -695,10 +694,10 @@ export default function Checkout() {
                         return (
                           <label
                             key={m.method_id}
-                            className={`p-3.5 rounded-2xl border flex items-center justify-between cursor-pointer transition-all ${
+                            className={`p-3.5 rounded-[4px] border flex items-center justify-between cursor-pointer transition-all ${
                               isSelected
-                                ? "border-amber-500 bg-amber-50/50 shadow-sm ring-1 ring-amber-300"
-                                : "border-stone-200 bg-white hover:bg-stone-50"
+                                ? "border-[#23483D] bg-[#F8F8F6]"
+                                : "border-[#E7E7E2] bg-white hover:bg-[#F8F8F6]"
                             }`}
                           >
                             <div className="flex items-center gap-3">
@@ -707,21 +706,21 @@ export default function Checkout() {
                                 name="shippingMethod"
                                 checked={isSelected}
                                 onChange={() => setSelectedMethod(m)}
-                                className="text-amber-600 focus:ring-amber-500 cursor-pointer"
+                                className="text-[#23483D] focus:ring-[#23483D] cursor-pointer"
                               />
                               <div>
-                                <span className="font-bold text-xs text-stone-900 block">{m.method_name}</span>
-                                <span className="text-[10px] text-stone-500 font-medium">{m.estimated_days}</span>
+                                <span className="font-semibold text-xs text-[#181A18] block">{m.method_name}</span>
+                                <span className="text-[10px] text-[#676A65] font-medium">{m.estimated_days}</span>
                               </div>
                             </div>
 
                             <div className="text-right">
                               {m.is_free ? (
-                                <span className="text-xs font-black text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-md">
+                                <span className="text-xs font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-[2px]">
                                   FREE
                                 </span>
                               ) : (
-                                <span className="text-xs font-black text-stone-900 font-mono">
+                                <span className="text-xs font-semibold text-[#181A18] font-mono">
                                   {convert(m.shipping_cost_inr)}
                                 </span>
                               )}
@@ -736,11 +735,11 @@ export default function Checkout() {
             )}
 
             {/* Payment Details */}
-            <div className="border-t border-stone-150 pt-5 mt-3">
-              <h4 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-sm font-bold text-stone-700 mb-3">Secure Payment Methods Available</h4>
-              <div className="p-4 border border-[#0D1512]/15 bg-white rounded-2xl flex flex-col gap-2">
-                <span className="text-xs font-black">💳 Online Payments Gateways Enabled</span>
-                <span className="text-[11px] text-stone-600 font-semibold leading-relaxed">
+            <div className="border-t border-[#E7E7E2] pt-5 mt-3">
+              <h4 className="text-sm font-semibold text-[#181A18] mb-3">Secure Payment Methods Available</h4>
+              <div className="p-4 border border-[#E7E7E2] bg-[#F8F8F6] rounded-[4px] flex flex-col gap-2">
+                <span className="text-xs font-bold text-[#181A18]">💳 Online Payments Gateways Enabled</span>
+                <span className="text-[11px] text-[#676A65] font-normal leading-relaxed">
                   We securely accept Debit Cards, Credit Cards (Visa, Mastercard, RuPay, etc.), UPI, and Netbanking via <strong>Razorpay</strong> for domestic orders, and international card payments via <strong>PayPal</strong>.
                 </span>
               </div>
@@ -750,35 +749,34 @@ export default function Checkout() {
           {/* Summary Sidebar */}
           <div className="w-full flex flex-col gap-6">
             <div 
-              style={{ background: "white", borderColor: "rgba(27, 57, 49, 0.15)" }}
-              className="rounded-2xl sm:rounded-3xl border p-5 sm:p-6 shadow-md flex flex-col gap-4"
+              className="rounded-[4px] border border-[#E7E7E2] bg-white p-5 sm:p-6 flex flex-col gap-4"
             >
-              <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-lg font-black tracking-tight mb-2">Order summary</h3>
+              <h3 className="text-lg font-medium text-[#181A18] tracking-tight mb-2">Order summary</h3>
               
               <div className="flex flex-col gap-3 max-h-48 overflow-y-auto pr-1">
                 {cart.map((i) => (
-                  <div key={`${i.id}-${i.type}-${i.selectedSize || ""}-${i.customizationSummary || ""}`} className="flex flex-col text-xs font-semibold border-b border-stone-50 pb-1.5 mb-1.5 last:border-b-0 last:pb-0 last:mb-0">
+                  <div key={`${i.id}-${i.type}-${i.selectedSize || ""}-${i.customizationSummary || ""}`} className="flex flex-col text-xs font-medium border-b border-[#E7E7E2] pb-1.5 mb-1.5 last:border-b-0 last:pb-0 last:mb-0">
                     <div className="flex justify-between items-baseline">
-                      <span className="truncate flex-1 mr-2 opacity-85">{i.name} × {i.qty}</span>
+                      <span className="truncate flex-1 mr-2 text-[#181A18]">{i.name} × {i.qty}</span>
                       <div className="text-right shrink-0">
                         {i.original_price && Number(i.original_price) > Number(i.price) && (
                           <span className="line-through text-stone-400 text-[10px] mr-1.5 font-normal">
                             {convert(i.original_price * i.qty)}
                           </span>
                         )}
-                        <span className="text-[#0D1512]">{convert(i.price * i.qty)}</span>
+                        <span className="text-[#181A18] font-semibold">{convert(i.price * i.qty)}</span>
                       </div>
                     </div>
                     {i.customizationSummary && (
-                      <span className="text-[10px] text-amber-800 font-bold mt-0.5">✒️ {i.customizationSummary}</span>
+                      <span className="text-[10px] text-[#23483D] font-medium mt-0.5">✒️ {i.customizationSummary}</span>
                     )}
                   </div>
                 ))}
               </div>
 
               {/* Coupon Code Section (Feature 3) */}
-              <div className="border-t border-stone-100 pt-3 flex flex-col gap-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest opacity-75">Discount Coupon</label>
+              <div className="border-t border-[#E7E7E2] pt-3 flex flex-col gap-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[#676A65]">Discount Coupon</label>
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -786,13 +784,13 @@ export default function Checkout() {
                     onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                     placeholder="ENTER CODE"
                     disabled={couponApplied}
-                    className="flex-1 bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-xs font-mono font-bold uppercase focus:outline-none focus:border-amber-500 disabled:bg-stone-100"
+                    className="flex-1 bg-white border border-[#DADCD7] rounded-[4px] px-3 py-2 text-xs font-mono font-bold uppercase focus:outline-none focus:border-[#23483D] disabled:bg-stone-100"
                   />
                   <button
                     type="button"
                     onClick={applyCoupon}
                     disabled={couponApplied || !couponCode.trim()}
-                    className="bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white text-xs font-bold px-4 py-2 rounded-xl transition shrink-0"
+                    className="bg-[#23483D] hover:bg-[#16352D] disabled:opacity-50 text-white text-xs font-semibold px-4 py-2 rounded-[4px] transition shrink-0"
                   >
                     {couponApplied ? "Applied" : "Apply"}
                   </button>
@@ -801,14 +799,14 @@ export default function Checkout() {
                 {couponErr && <p className="text-[11px] text-rose-500 font-bold">{couponErr}</p>}
               </div>
 
-              <div className="border-t border-stone-100 pt-4 flex flex-col gap-2.5">
+              <div className="border-t border-[#E7E7E2] pt-4 flex flex-col gap-2.5">
                 {hasPhysicalItems ? (
-                  <div className="flex justify-between text-xs font-semibold opacity-75">
+                  <div className="flex justify-between text-xs font-medium text-[#676A65]">
                     <span>Shipping Fee {selectedMethod ? `(${selectedMethod.method_name})` : ""}</span>
                     <span>{shipping === 0 ? "Free" : convert(shipping)}</span>
                   </div>
                 ) : (
-                  <div className="flex justify-between text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-2 rounded-xl border border-emerald-100">
+                  <div className="flex justify-between text-xs font-medium text-emerald-700 bg-emerald-50 px-3 py-2 rounded-[4px] border border-emerald-100">
                     <span className="flex items-center gap-1.5">⚡ Digital Delivery</span>
                     <span className="font-bold">Instant Download (Free)</span>
                   </div>
@@ -819,14 +817,14 @@ export default function Checkout() {
                     <span>- {convert(couponDiscount)}</span>
                   </div>
                 )}
-                <div className="flex justify-between font-black text-lg text-[#0D1512] pt-1">
+                <div className="flex justify-between font-semibold text-lg text-[#181A18] pt-1">
                   <span>Total</span>
                   <span>{convert(Math.max(0, total + shipping - couponDiscount))}</span>
                 </div>
               </div>
 
               {selected.currency_code !== "INR" && (
-                <div className="bg-[#FAF9F6]/60 border border-[#0D1512]/10 rounded-xl p-3 text-[10px] leading-relaxed text-[#0D1512]/75">
+                <div className="bg-[#F8F8F6] border border-[#E7E7E2] rounded-[4px] p-3 text-[10px] leading-relaxed text-[#676A65]">
                   ℹ️ Transactions are processed securely in your currency: <strong>{convert(Math.max(0, total + shipping - couponDiscount))}</strong>.
                 </div>
               )}
@@ -834,7 +832,7 @@ export default function Checkout() {
               {/* Payment Method Option Selector */}
               {isFreeOrder ? (
                 <div className="mt-4 mb-2 flex flex-col gap-3">
-                  <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-3">
+                  <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-[4px] flex items-center gap-3">
                     <span className="text-2xl">🎉</span>
                     <div>
                       <p className="text-xs font-bold text-emerald-900">Complimentary Commission</p>
@@ -845,7 +843,7 @@ export default function Checkout() {
                     type="button"
                     onClick={() => placeOrder({ mode: "Free", transactionId: `FREE-${Date.now()}` })}
                     disabled={placing || cart.length === 0}
-                    className="w-full py-4 rounded-xl font-black text-xs uppercase tracking-wider shadow-lg bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full py-3.5 rounded-[4px] font-semibold text-xs uppercase tracking-wider bg-emerald-700 hover:bg-emerald-800 text-white transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
                   >
                     {placing ? "Processing Order..." : "⚡ Complete Free Order & Download"}
                   </button>
@@ -853,23 +851,23 @@ export default function Checkout() {
               ) : (
                 <>
                   <div className="mt-4 mb-4">
-                    <label className="text-[10px] font-bold uppercase tracking-widest opacity-75 mb-2 block">Choose Payment Gateway</label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-[#676A65] mb-2 block">Choose Payment Gateway</label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <button
                         type="button"
                         onClick={() => setPaymentMethod("razorpay")}
-                        className={`p-3.5 rounded-xl border text-left transition-all ${paymentMethod === "razorpay" ? "border-amber-500 bg-amber-50/50 shadow-sm" : "border-stone-200 bg-white hover:bg-stone-50"}`}
+                        className={`p-3.5 rounded-[4px] border text-left transition-all ${paymentMethod === "razorpay" ? "border-[#23483D] bg-[#F8F8F6]" : "border-[#E7E7E2] bg-white hover:bg-[#F8F8F6]"}`}
                       >
-                        <div className="font-bold text-xs text-stone-800">💳 Razorpay</div>
-                        <div className="text-[9px] text-stone-500 mt-0.5">Cards, UPI, Netbanking</div>
+                        <div className="font-bold text-xs text-[#181A18]">💳 Razorpay</div>
+                        <div className="text-[9px] text-[#676A65] mt-0.5">Cards, UPI, Netbanking</div>
                       </button>
                       <button
                         type="button"
                         onClick={() => setPaymentMethod("paypal")}
-                        className={`p-3.5 rounded-xl border text-left transition-all ${paymentMethod === "paypal" ? "border-amber-500 bg-amber-50/50 shadow-sm" : "border-stone-200 bg-white hover:bg-stone-50"}`}
+                        className={`p-3.5 rounded-[4px] border text-left transition-all ${paymentMethod === "paypal" ? "border-[#23483D] bg-[#F8F8F6]" : "border-[#E7E7E2] bg-white hover:bg-[#F8F8F6]"}`}
                       >
-                        <div className="font-bold text-xs text-stone-800">🅿️ PayPal</div>
-                        <div className="text-[9px] text-stone-500 mt-0.5">International Wallet & Cards</div>
+                        <div className="font-bold text-xs text-[#181A18]">🅿️ PayPal</div>
+                        <div className="text-[9px] text-[#676A65] mt-0.5">International Wallet & Cards</div>
                       </button>
                     </div>
                   </div>
@@ -880,8 +878,8 @@ export default function Checkout() {
                         <button
                           onClick={handleRazorpayPayment}
                           disabled={placing || cart.length === 0}
-                          style={{ background: "#d97706", color: "#ffffff" }}
-                          className="w-full py-4 rounded-xl font-black text-xs uppercase tracking-wider shadow-lg hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
+                          style={{ background: "#23483D", color: "#ffffff" }}
+                          className="w-full py-4 rounded-[4px] font-semibold text-xs uppercase tracking-wider hover:bg-[#16352D] transition-all disabled:opacity-50 cursor-pointer"
                         >
                           {placing ? "Processing..." : `Pay ${convert(payableTotal)} via Razorpay`}
                         </button>
@@ -915,7 +913,7 @@ export default function Checkout() {
                         />
                       </PayPalProvider>
                     ) : (
-                      <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 font-semibold text-center">
+                      <div className="p-4 bg-amber-50 border border-amber-200 rounded-[4px] text-xs text-amber-800 font-semibold text-center">
                         PayPal gateway is currently unavailable or disabled in store settings.
                       </div>
                     )}

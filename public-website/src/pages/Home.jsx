@@ -167,37 +167,37 @@ function CollectionCard({ col }) {
       style={{
         display: "block",
         textDecoration: "none",
-        background: hov ? "var(--gold-soft)" : "var(--surface)",
+        background: hov ? "var(--surface-warm)" : "var(--surface)",
         borderRadius: "var(--radius)",
-        border: hov ? "1px solid var(--gold-border)" : `1px solid var(--border)`,
-        padding: "36px 28px",
+        border: hov ? "1px solid var(--border-hover)" : "1px solid var(--border)",
+        padding: "32px 24px",
         cursor: "pointer",
-        transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-        boxShadow: hov ? "var(--shadow-md)" : "var(--shadow-sm)",
-        transform: hov ? "translateY(-6px) scale(1.02)" : "translateY(0) scale(1)",
+        transition: "all 0.25s ease",
+        boxShadow: hov ? "var(--shadow-md)" : "none",
+        transform: hov ? "translateY(-3px)" : "translateY(0)",
       }}
     >
-      <div style={{ marginBottom: 16, display: "inline-flex", color: "var(--gold)", transform: hov ? "scale(1.1) rotate(5deg)" : "scale(1)", transition: "transform 0.3s ease" }}>
-        <IconComponent size={36} color="var(--gold)" />
+      <div style={{ marginBottom: 16, display: "inline-flex", color: "var(--gold)" }}>
+        <IconComponent size={32} color="var(--gold)" />
       </div>
       <h3 style={{
-        fontFamily: "'Clash Display', sans-serif",
+        fontFamily: "'Cormorant Garamond', Georgia, serif",
         fontWeight: 600,
-        fontSize: 22, color: "var(--accent)", marginBottom: 8,
+        fontSize: 22, color: "var(--text)", marginBottom: 8,
       }}>
         {col.title}
       </h3>
-      <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: "var(--text-2)", lineHeight: 1.6 }}>
+      <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "var(--text-2)", lineHeight: 1.6 }}>
         {col.sub}
       </p>
       <div style={{
         marginTop: 20, display: "flex", alignItems: "center", gap: 6,
-        fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 600,
-        color: "var(--gold)", letterSpacing: "0.08em", textTransform: "uppercase",
-        transition: "transform 0.3s ease",
+        fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 500,
+        color: "var(--brand)", letterSpacing: "0.08em", textTransform: "uppercase",
+        transition: "transform 0.25s ease",
         transform: hov ? "translateX(4px)" : "translateX(0)",
       }}>
-        Explore <span style={{ fontSize: 14 }}>→</span>
+        Explore Collection <span style={{ fontSize: 14 }}>→</span>
       </div>
     </Link>
   );
@@ -205,52 +205,29 @@ function CollectionCard({ col }) {
 
 function PremiumProductCard({ p, to, isDigital = false, onWishlist, isWishlisted }) {
   const { convert } = useCurrency();
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
-
-  const handleMouseMove = (e) => {
-    const card = e.currentTarget;
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    const factor = 8;
-    setTilt({
-      x: (x / (rect.width / 2)) * factor,
-      y: (y / (rect.height / 2)) * factor
-    });
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-    setTilt({ x: 0, y: 0 });
-  };
 
   const imgUrl = p.image_url || p.thumbnail_url;
   
   return (
     <Link
       to={to}
-      onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={handleMouseLeave}
+      onMouseLeave={() => setIsHovered(false)}
       style={{
         display: "flex",
         flexDirection: "column",
         height: "100%",
-        background: isDigital 
-          ? (isHovered ? "rgba(255, 255, 255, 0.09)" : "rgba(255, 255, 255, 0.05)")
-          : "var(--surface)",
+        background: "var(--surface)",
         border: isHovered 
-          ? "1px solid rgba(201, 168, 106, 0.5)" 
-          : (isDigital ? "1px solid rgba(255,255,255,0.12)" : "1px solid var(--border)"),
+          ? "1px solid var(--border-hover)" 
+          : "1px solid var(--border)",
         borderRadius: "var(--radius)",
         overflow: "hidden",
         textDecoration: "none",
-        transition: "border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease",
-        boxShadow: isHovered 
-          ? (isDigital ? "0 20px 48px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(201, 168, 106, 0.15)" : "0 20px 48px rgba(15, 39, 68, 0.12), 0 0 0 1px rgba(201, 168, 106, 0.1)")
-          : "var(--shadow-sm)",
-        transform: `perspective(1000px) rotateX(${-tilt.y}deg) rotateY(${tilt.x}deg) translateY(${isHovered ? -8 : 0}px)`,
+        transition: "border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease",
+        boxShadow: isHovered ? "var(--shadow-md)" : "none",
+        transform: isHovered ? "translateY(-3px)" : "translateY(0)",
         position: "relative",
       }}
     >
@@ -277,27 +254,28 @@ function PremiumProductCard({ p, to, isDigital = false, onWishlist, isWishlisted
         <div style={{
           position: "absolute",
           inset: 0,
-          background: "linear-gradient(to top, rgba(15, 39, 68, 0.85) 0%, rgba(15, 39, 68, 0.3) 100%)",
+          background: "linear-gradient(to top, rgba(24, 26, 24, 0.75) 0%, rgba(24, 26, 24, 0.2) 100%)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           opacity: isHovered ? 1 : 0,
-          transition: "opacity 0.4s ease",
+          transition: "opacity 0.25s ease",
           zIndex: 3,
         }}>
-          <span className="clash" style={{
+          <span style={{
             color: "#fff",
-            fontSize: "13px",
-            fontWeight: 600,
-            letterSpacing: "0.15em",
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: "12px",
+            fontWeight: 500,
+            letterSpacing: "0.12em",
             textTransform: "uppercase",
-            border: "1px solid rgba(255, 255, 255, 0.3)",
-            background: "rgba(255, 255, 255, 0.1)",
-            padding: "10px 22px",
-            borderRadius: "100px",
-            backdropFilter: "blur(8px)",
-            transform: isHovered ? "translateY(0)" : "translateY(12px)",
-            transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+            border: "1px solid rgba(255, 255, 255, 0.4)",
+            background: "rgba(24, 26, 24, 0.3)",
+            padding: "8px 18px",
+            borderRadius: "var(--radius)",
+            backdropFilter: "blur(6px)",
+            transform: isHovered ? "translateY(0)" : "translateY(8px)",
+            transition: "transform 0.25s ease",
           }}>
             Explore {isDigital ? "Asset" : "Craft"} →
           </span>
@@ -305,22 +283,21 @@ function PremiumProductCard({ p, to, isDigital = false, onWishlist, isWishlisted
 
         <span style={{
           position: "absolute", 
-          top: "14px", 
-          left: "14px", 
+          top: "12px", 
+          left: "12px", 
           zIndex: 2,
-          background: isDigital ? "var(--gold)" : "rgba(255, 255, 255, 0.9)", 
-          color: isDigital ? "#fff" : "var(--accent)",
+          background: "rgba(255, 255, 255, 0.95)", 
+          color: "var(--brand)",
           fontSize: "9px", 
-          fontWeight: 700, 
-          letterSpacing: "0.18em", 
+          fontWeight: 600, 
+          letterSpacing: "0.14em", 
           textTransform: "uppercase", 
-          padding: "6px 14px", 
-          borderRadius: "100px",
-          backdropFilter: "blur(8px)",
-          border: isDigital ? "none" : "1px solid rgba(201, 168, 106, 0.2)",
-          boxShadow: "0 4px 12px rgba(15,39,68,0.08)"
+          padding: "4px 10px", 
+          borderRadius: "var(--radius-sm)",
+          border: "1px solid var(--border)",
+          boxShadow: "0 2px 6px rgba(0,0,0,0.04)"
         }}>
-          {isDigital ? "Digital File" : "Premium Craft"}
+          {isDigital ? "Digital Asset" : "Atelier Piece"}
         </span>
 
         {/* Heart Wishlist Button - minimum 44px tap target */}
@@ -336,17 +313,17 @@ function PremiumProductCard({ p, to, isDigital = false, onWishlist, isWishlisted
             right: "10px",
             zIndex: 10,
             background: "rgba(255, 255, 255, 0.95)",
-            border: "none",
-            borderRadius: "50%",
-            width: "44px",
-            height: "44px",
+            border: "1px solid var(--border)",
+            borderRadius: "var(--radius-sm)",
+            width: "36px",
+            height: "36px",
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-            color: isWishlisted ? "#e11d48" : "#94a3b8",
-            fontSize: "18px",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+            color: isWishlisted ? "#e11d48" : "#8A8D88",
+            fontSize: "16px",
             transition: "all 0.2s ease",
           }}
           aria-label="Save to wishlist"
@@ -356,28 +333,29 @@ function PremiumProductCard({ p, to, isDigital = false, onWishlist, isWishlisted
         </button>
       </div>
 
-      <div className="product-card-content" style={{ padding: "20px", display: "flex", flexDirection: "column", flex: 1 }}>
+      <div className="product-card-content" style={{ padding: "18px", display: "flex", flexDirection: "column", flex: 1 }}>
         <div style={{ 
-          fontSize: "9px", 
-          fontWeight: 700, 
-          letterSpacing: "0.2em", 
+          fontSize: "10px", 
+          fontWeight: 600, 
+          letterSpacing: "0.14em", 
           textTransform: "uppercase", 
           color: "var(--gold)", 
-          marginBottom: "8px" 
+          marginBottom: "6px" 
         }}>
           {p.category || p.category_name}
         </div>
-        <h3 className="clash product-card-name" style={{ 
-          fontSize: "17px", 
-          fontWeight: 600, 
-          color: isDigital ? "#ffffff" : "var(--accent)", 
-          marginBottom: "16px",
-          lineHeight: 1.3,
+        <h3 className="product-card-name" style={{ 
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: "16px", 
+          fontWeight: 500, 
+          color: "var(--text)", 
+          marginBottom: "12px",
+          lineHeight: 1.35,
           display: "-webkit-box",
           WebkitLineClamp: 2,
           WebkitBoxOrient: "vertical",
           overflow: "hidden",
-          minHeight: "2.8em",
+          minHeight: "2.7em",
         }}>
           {p.name}
         </h3>
@@ -387,25 +365,25 @@ function PremiumProductCard({ p, to, isDigital = false, onWishlist, isWishlisted
           alignItems: "center", 
           justifyContent: "space-between",
           marginTop: "auto",
-          paddingTop: "16px", 
-          borderTop: isDigital ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(15, 39, 68, 0.08)",
+          paddingTop: "14px", 
+          borderTop: "1px solid var(--border)",
         }}>
-          <span className="clash" style={{ fontSize: "1.45rem", fontWeight: 700, color: isDigital ? "var(--gold)" : "var(--accent)" }}>
+          <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "1.35rem", fontWeight: 600, color: "var(--text)" }}>
             {convert(p.price)}
           </span>
           <div style={{
-            width: "38px", 
-            height: "38px", 
-            borderRadius: "50%",
-            background: isHovered ? "var(--gold)" : (isDigital ? "rgba(255,255,255,0.1)" : "var(--accent)"),
+            width: "32px", 
+            height: "32px", 
+            borderRadius: "var(--radius-sm)",
+            background: isHovered ? "var(--brand)" : "var(--surface-warm)",
             display: "flex", 
             alignItems: "center", 
             justifyContent: "center",
-            color: isDigital ? (isHovered ? "#fff" : "var(--gold)") : "#fff", 
-            fontSize: "14px",
-            border: isDigital && !isHovered ? "1px solid rgba(255,255,255,0.2)" : "none",
-            transition: "background 0.3s ease, transform 0.3s ease, color 0.3s ease",
-            transform: isHovered ? "translateX(4px)" : "translateX(0)",
+            color: isHovered ? "#fff" : "var(--brand)", 
+            fontSize: "13px",
+            border: "1px solid var(--border)",
+            transition: "all 0.2s ease",
+            transform: isHovered ? "translateX(2px)" : "translateX(0)",
           }}>
             →
           </div>
@@ -486,75 +464,68 @@ export default function Home() {
   return (
     <div
       style={{
-        background: "#F8F8F5",
-        color: "#111111",
-        fontFamily: "'Inter', sans-serif",
+        background: "#FFFFFF",
+        color: "#181A18",
+        fontFamily: "'DM Sans', sans-serif",
         overflowX: "hidden",
       }}
       className="min-h-screen"
     >
       {/* ── Fonts & Global Styles ── */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
-        @import url('https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap');
-
         :root {
-          --bg:          #F8F8F5;
-          --text:        #111111;
-          --text-2:      #5E5E5E;
-          --accent:      #0F2744;
-          --accent-h:    #142F52;
-          --gold:        #C9A86A;
-          --gold-soft:   rgba(201,168,106,0.12);
-          --gold-border: rgba(201,168,106,0.28);
+          --bg:          #FFFFFF;
+          --text:        #181A18;
+          --text-2:      #676A65;
+          --accent:      #23483D;
+          --accent-h:    #16352D;
+          --gold:        #A48855;
+          --gold-soft:   rgba(164,136,85,0.08);
+          --gold-border: rgba(164,136,85,0.22);
           --surface:     #FFFFFF;
-          --border:      #E8E8E8;
-          --radius:      20px;
-          --radius-sm:   12px;
-          --shadow-sm:   0 2px 12px rgba(15,39,68,0.06);
-          --shadow-md:   0 8px 40px rgba(15,39,68,0.10);
-          --shadow-lg:   0 24px 80px rgba(15,39,68,0.14);
+          --border:      #E7E7E2;
+          --radius:      4px;
+          --radius-sm:   3px;
+          --shadow-sm:   0 2px 8px rgba(20,25,22,0.03);
+          --shadow-md:   0 8px 30px rgba(20,25,22,0.04);
+          --shadow-lg:   0 12px 40px rgba(20,25,22,0.05);
         }
 
         * { box-sizing: border-box; }
 
-        .clash { font-family: 'Clash Display', 'Inter', sans-serif; }
-
-        /* Nav glassmorphism on scroll — handled by Navbar component */
+        .clash { font-family: 'Cormorant Garamond', Georgia, serif; }
 
         /* Button styles */
         .btn-primary {
           display: inline-flex;
           align-items: center;
           gap: 10px;
-          background: linear-gradient(135deg, var(--accent) 0%, var(--accent-h) 100%);
-          color: #fff;
-          font-size: 13px;
-          font-weight: 600;
-          letter-spacing: 0.08em;
+          background: var(--accent);
+          color: #fff !important;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 12px;
+          font-weight: 500;
+          letter-spacing: 0.1em;
           text-transform: uppercase;
-          padding: 16px 36px;
-          border-radius: 100px;
-          border: 1px solid rgba(201, 168, 106, 0.3);
+          padding: 13px 28px;
+          border-radius: var(--radius);
+          border: 1px solid var(--accent);
           cursor: pointer;
           text-decoration: none;
-          box-shadow: 0 4px 20px rgba(15,39,68,0.15), inset 0 1px 1px rgba(255,255,255,0.1);
-          transition: background 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
-                      transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
-                      box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-                      border-color 0.35s ease;
+          box-shadow: none;
+          transition: all 0.25s ease;
         }
         .btn-primary:hover {
-          background: linear-gradient(135deg, var(--accent-h) 0%, #1e3a5f 100%);
-          transform: translateY(-4px) scale(1.03);
-          box-shadow: 0 20px 40px rgba(15,39,68,0.25), 0 0 0 3px rgba(201,168,106,0.3);
-          border-color: rgba(201,168,106,0.7);
+          background: var(--accent-h);
+          border-color: var(--accent-h);
+          transform: translateY(-2px);
+          box-shadow: var(--shadow-sm);
         }
         .btn-primary svg {
-          transition: transform 0.3s ease;
+          transition: transform 0.25s ease;
         }
         .btn-primary:hover svg {
-          transform: translateX(6px);
+          transform: translateX(4px);
         }
 
         .btn-gold {
@@ -562,76 +533,62 @@ export default function Home() {
           align-items: center;
           gap: 10px;
           background: var(--gold);
-          color: #fff;
-          font-size: 13px;
-          font-weight: 600;
-          letter-spacing: 0.05em;
+          color: #fff !important;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 12px;
+          font-weight: 500;
+          letter-spacing: 0.1em;
           text-transform: uppercase;
-          padding: 16px 36px;
-          border-radius: 100px;
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          padding: 13px 28px;
+          border-radius: var(--radius);
+          border: 1px solid var(--gold);
           cursor: pointer;
           text-decoration: none;
-          box-shadow: 0 4px 12px rgba(201,168,106,0.2);
-          transition: background 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
-                      transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
-                      box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                      border-color 0.3s ease;
+          box-shadow: none;
+          transition: all 0.25s ease;
         }
         .btn-gold:hover {
-          background: #b8943d;
-          transform: translateY(-3px) scale(1.02);
-          box-shadow: 0 20px 40px rgba(201,168,106,0.5);
-          border-color: rgba(255,255,255,0.35);
-        }
-        .btn-gold svg {
-          transition: transform 0.3s ease;
-        }
-        .btn-gold:hover svg {
-          transform: translateX(4px);
+          background: #8E7342;
+          border-color: #8E7342;
+          transform: translateY(-2px);
+          box-shadow: var(--shadow-sm);
         }
 
         .btn-outline {
           display: inline-flex;
           align-items: center;
           gap: 10px;
-          background: rgba(255, 255, 255, 0.4);
-          color: var(--accent);
-          font-size: 13px;
-          font-weight: 600;
-          letter-spacing: 0.08em;
+          background: #FFFFFF;
+          color: var(--text) !important;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 12px;
+          font-weight: 500;
+          letter-spacing: 0.1em;
           text-transform: uppercase;
-          padding: 15px 34px;
-          border-radius: 100px;
-          border: 1.5px solid var(--border);
+          padding: 13px 28px;
+          border-radius: var(--radius);
+          border: 1px solid var(--border-hover, #CACCC6);
           cursor: pointer;
           text-decoration: none;
-          backdrop-filter: blur(8px);
-          transition: border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
-                      background 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
-                      transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-                      color 0.35s ease,
-                      box-shadow 0.35s ease;
+          transition: all 0.25s ease;
         }
         .btn-outline:hover {
-          border-color: var(--gold);
-          background: var(--surface);
-          color: var(--gold);
-          transform: translateY(-4px) scale(1.03);
-          box-shadow: 0 16px 32px rgba(201,168,106,0.12), 0 0 0 2px rgba(201,168,106,0.15);
+          border-color: var(--accent);
+          background: var(--surface-warm);
+          color: var(--accent) !important;
+          transform: translateY(-2px);
         }
 
         /* Stats Row Modern Grid Overrides */
         .stats-row {
-          display: grid !important;
-          grid-template-columns: repeat(4, 1fr) !important;
-          background: rgba(255, 255, 255, 0.5) !important;
-          backdrop-filter: blur(16px);
-          border: 1px solid rgba(201, 168, 106, 0.15) !important;
-          border-radius: 24px !important;
-          padding: 24px 16px !important;
-          gap: 12px !important;
-          box-shadow: 0 10px 30px rgba(15,39,68,0.04);
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          background: #FFFFFF;
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          padding: 24px 16px;
+          gap: 12px;
+          box-shadow: var(--shadow-sm);
         }
         @media (max-width: 768px) {
           .stats-row {
@@ -937,25 +894,11 @@ export default function Home() {
           paddingTop: "90px",
           paddingBottom: "60px",
           position: "relative",
-          background: "#F8F8F5",
+          background: "#FFFFFF",
           display: "flex",
           alignItems: "center",
         }}
       >
-        {/* Background decorative circles */}
-        <div style={{
-          position: "absolute", top: "8%", right: "-6%",
-          width: "680px", height: "680px", borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(201,168,106,0.09) 0%, transparent 68%)",
-          pointerEvents: "none",
-        }} />
-        <div style={{
-          position: "absolute", bottom: "0%", left: "-8%",
-          width: "500px", height: "500px", borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(15,39,68,0.055) 0%, transparent 70%)",
-          pointerEvents: "none",
-        }} />
-
         <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px", width: "100%", position: "relative", zIndex: 1 }}>
           <div
             className="hero-grid"
@@ -973,20 +916,18 @@ export default function Home() {
                 <span style={{
                   display: "inline-flex",
                   alignItems: "center",
-                  gap: "10px",
-                  background: "linear-gradient(135deg, rgba(15,39,68,0.04) 0%, rgba(201,168,106,0.08) 100%)",
-                  border: "1px solid rgba(201,168,106,0.25)",
-                  borderRadius: "100px",
-                  padding: "10px 22px",
-                  fontSize: "11.5px",
-                  fontWeight: 600,
+                  gap: "8px",
+                  background: "var(--surface-warm)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "var(--radius)",
+                  padding: "6px 14px",
+                  fontSize: "11px",
+                  fontWeight: 500,
                   letterSpacing: "0.14em",
                   textTransform: "uppercase",
-                  color: "var(--accent)",
-                  boxShadow: "0 4px 20px rgba(201,168,106,0.06)",
-                  backdropFilter: "blur(8px)",
+                  color: "var(--brand)",
                 }}>
-                  <Icons.Sparkles size={14} color="var(--gold)" />
+                  <Icons.Sparkles size={13} color="var(--gold)" />
                   Olive Seeds Bespoke Design Studio
                 </span>
               </motion.div>

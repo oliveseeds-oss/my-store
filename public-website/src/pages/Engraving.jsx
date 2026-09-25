@@ -189,7 +189,7 @@ export default function Engraving() {
   };
 
   return (
-    <div style={{ background: "#FAF9F6", color: "#1E2522", minHeight: "100vh", fontFamily: "'Outfit', sans-serif" }}>
+    <div style={{ background: "#FFFFFF", color: "#181A18", minHeight: "100vh", fontFamily: "'DM Sans', sans-serif" }}>
       <SEO
         title="Bespoke Design Products | Olive Seeds Design Studio"
         description="Explore our curated collection of bespoke design products — custom corporate gifts, branded décor, and premium design objects for discerning B2B clients."
@@ -249,59 +249,52 @@ export default function Engraving() {
 
         .hero-img-box {
           position: relative;
-          border-radius: 32px;
+          border-radius: 4px;
           overflow: hidden;
-          box-shadow: 0 30px 60px rgba(0,0,0,0.25);
+          border: 1px solid #E7E7E2;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.05);
           aspect-ratio: 4/3;
         }
         @media (max-width: 576px) {
           .hero-img-box {
-            border-radius: 20px;
+            border-radius: 4px;
           }
         }
       `}</style>
 
       {/* ── HERO BANNER ── */}
       <section style={{
-        background: "linear-gradient(135deg, #0A1424 0%, #050A12 100%)",
-        padding: "clamp(120px, 15vw, 180px) 0 clamp(80px, 12vw, 130px)",
-        color: "#fff",
+        background: "#FFFFFF",
+        borderBottom: "1px solid #E7E7E2",
+        padding: "clamp(110px, 12vw, 150px) 0 clamp(60px, 8vw, 90px)",
+        color: "#181A18",
         position: "relative",
         overflow: "hidden"
       }}>
-        {/* Glow effect */}
-        <div style={{
-          position: "absolute", top: "-10%", right: "-10%",
-          width: "600px", height: "600px", borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(201,168,106,0.12) 0%, transparent 70%)",
-          pointerEvents: "none"
-        }} />
-
         <div className="engraving-hero">
           {/* Left info */}
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
             <span style={{
               display: "inline-flex", alignItems: "center", gap: "8px",
-              background: "rgba(201,168,106,0.12)", border: "1px solid rgba(201,168,106,0.25)",
-              borderRadius: "100px", padding: "8px 18px",
-              fontSize: "10px", fontWeight: 850, letterSpacing: "0.2em",
-              textTransform: "uppercase", color: "var(--gold)", marginBottom: "28px",
+              background: "#F8F8F6", border: "1px solid #E7E7E2",
+              borderRadius: "4px", padding: "6px 14px",
+              fontSize: "11px", fontWeight: 600, letterSpacing: "0.15em",
+              textTransform: "uppercase", color: "#23483D", marginBottom: "20px",
               marginInline: "auto"
             }} className="mx-auto lg:ml-0">
               ⚡ High-Precision Studio
             </span>
-            <h1 className="clash" style={{ fontSize: "clamp(2.4rem, 4.5vw, 4rem)", fontWeight: 700, lineHeight: 1.15, marginBottom: "24px", width: "100%" }}>
-              Bespoke Custom <br />
-              <span style={{ background: "linear-gradient(135deg, var(--gold) 0%, #f0cd84 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Object Solutions</span>
+            <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(2.4rem, 4.5vw, 4rem)", fontWeight: 400, lineHeight: 1.15, marginBottom: "20px", width: "100%", color: "#181A18" }}>
+              Bespoke Custom Object Solutions
             </h1>
-            <p style={{ color: "rgba(255,255,255,0.72)", fontSize: "16px", lineHeight: 1.7, maxWidth: "560px", marginBottom: "40px" }}>
+            <p style={{ color: "#676A65", fontSize: "15px", lineHeight: 1.7, maxWidth: "560px", marginBottom: "32px" }}>
               Transform organic teakwood, premium acrylic blocks, custom leather, and tempered crystal trophies into masterfully finished luxury keepsakes. Trusted by global brands and events.
             </p>
-            <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", width: "100%", justifyContent: "center" }} className="lg:justify-start">
-              <a href="#bulk-order" className="btn-gold" style={{ padding: "16px 32px" }}>
+            <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", width: "100%", justifyContent: "center" }} className="lg:justify-start">
+              <a href="#bulk-order" style={{ background: "#23483D", color: "#FFFFFF", borderRadius: "4px", padding: "12px 26px", fontSize: "12px", fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.06em", display: "inline-flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s" }} className="hover:bg-[#16352D]">
                 Request a Proposal
               </a>
-              <a href="#materials" className="btn-secondary" style={{ padding: "16px 32px", borderColor: "rgba(255,255,255,0.2)", color: "#fff" }}>
+              <a href="#materials" style={{ background: "#FFFFFF", border: "1px solid #E7E7E2", color: "#181A18", borderRadius: "4px", padding: "12px 26px", fontSize: "12px", fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.06em", display: "inline-flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s" }} className="hover:bg-[#F8F8F6]">
                 Explore Materials
               </a>
             </div>
@@ -316,19 +309,19 @@ export default function Engraving() {
             />
             {/* Glass badge */}
             <div style={{
-              position: "absolute", bottom: "24px", left: "24px",
-              background: "rgba(10, 20, 36, 0.7)", border: "1px solid rgba(255,255,255,0.15)",
-              backdropFilter: "blur(16px)", padding: "16px 20px", borderRadius: "18px",
-              display: "flex", gap: "16px"
+              position: "absolute", bottom: "16px", left: "16px",
+              background: "rgba(255, 255, 255, 0.95)", border: "1px solid #E7E7E2",
+              backdropFilter: "blur(12px)", padding: "12px 18px", borderRadius: "4px",
+              display: "flex", gap: "16px", boxShadow: "0 4px 12px rgba(0,0,0,0.06)"
             }}>
               <div>
-                <p style={{ fontSize: "10px", textTransform: "uppercase", color: "rgba(255,255,255,0.6)", fontWeight: 700, margin: 0 }}>Calibration</p>
-                <p style={{ fontSize: "16px", fontWeight: 800, color: "var(--gold)", margin: "4px 0 0" }}>0.01 mm</p>
+                <p style={{ fontSize: "10px", textTransform: "uppercase", color: "#676A65", fontWeight: 500, margin: 0 }}>Calibration</p>
+                <p style={{ fontSize: "15px", fontWeight: 600, color: "#23483D", margin: "2px 0 0" }}>0.01 mm</p>
               </div>
-              <div style={{ borderLeft: "1px solid rgba(255,255,255,0.15)" }} />
+              <div style={{ borderLeft: "1px solid #E7E7E2" }} />
               <div>
-                <p style={{ fontSize: "10px", textTransform: "uppercase", color: "rgba(255,255,255,0.6)", fontWeight: 700, margin: 0 }}>Materials</p>
-                <p style={{ fontSize: "16px", fontWeight: 800, color: "#fff", margin: "4px 0 0" }}>Premium Core</p>
+                <p style={{ fontSize: "10px", textTransform: "uppercase", color: "#676A65", fontWeight: 500, margin: 0 }}>Materials</p>
+                <p style={{ fontSize: "15px", fontWeight: 600, color: "#181A18", margin: "2px 0 0" }}>Premium Core</p>
               </div>
             </div>
           </div>
@@ -336,30 +329,30 @@ export default function Engraving() {
       </section>
 
       {/* ── INTRO / IMAGES SECTION ── */}
-      <section style={{ padding: "80px 24px", background: "#FFF" }}>
+      <section style={{ padding: "80px 24px", background: "#FFFFFF", borderBottom: "1px solid #E7E7E2" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "32px", alignItems: "center" }}>
-            <div style={{ position: "relative", borderRadius: "24px", overflow: "hidden", boxShadow: "0 20px 40px rgba(0,0,0,0.06)", height: "380px" }}>
+            <div style={{ position: "relative", borderRadius: "4px", overflow: "hidden", border: "1px solid #E7E7E2", height: "380px" }}>
               <img 
                 src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=800&auto=format&fit=crop" 
                 alt="Personalised presentation boxes ready for dispatch" 
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
             </div>
-            <div style={{ padding: "20px" }}>
-              <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold)", display: "block", marginBottom: "12px" }}>Artisan Studio</span>
-              <h2 className="clash" style={{ fontSize: "clamp(2rem, 3.5vw, 2.6rem)", fontWeight: 700, color: "#0A1424", marginBottom: "20px", lineHeight: 1.25 }}>Exceptional Contrast &amp; Crisp Tactile Finishes</h2>
-              <p style={{ color: "#666", fontSize: "15px", lineHeight: 1.7, marginBottom: "24px" }}>
+            <div style={{ padding: "10px" }}>
+              <span style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "#23483D", display: "block", marginBottom: "12px" }}>Artisan Studio</span>
+              <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(2rem, 3.5vw, 2.6rem)", fontWeight: 400, color: "#181A18", marginBottom: "20px", lineHeight: 1.25 }}>Exceptional Contrast &amp; Crisp Tactile Finishes</h2>
+              <p style={{ color: "#676A65", fontSize: "14px", lineHeight: 1.7, marginBottom: "24px" }}>
                 Considered object design is not just about surfaces — it is an art of speed, power, and focal calibrations. Our studio instruments carefully craft custom vector graphics, high-end typography, and complex brand logo signatures with zero fraying or rough margins.
               </p>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-                <div style={{ borderLeft: "3.5px solid var(--gold)", paddingLeft: "14px" }}>
-                  <p style={{ fontWeight: 800, fontSize: "14px", margin: 0, color: "#0A1424" }}>Teakwood nameplates</p>
-                  <p style={{ fontSize: "12px", color: "#666", margin: "4px 0 0" }}>Deep 3D tactile detail</p>
+                <div style={{ borderLeft: "3px solid #23483D", paddingLeft: "14px" }}>
+                  <p style={{ fontWeight: 600, fontSize: "14px", margin: 0, color: "#181A18" }}>Teakwood nameplates</p>
+                  <p style={{ fontSize: "12px", color: "#676A65", margin: "4px 0 0" }}>Deep 3D tactile detail</p>
                 </div>
-                <div style={{ borderLeft: "3.5px solid var(--gold)", paddingLeft: "14px" }}>
-                  <p style={{ fontWeight: 800, fontSize: "14px", margin: 0, color: "#0A1424" }}>Frosted acrylic blocks</p>
-                  <p style={{ fontSize: "12px", color: "#666", margin: "4px 0 0" }}>Clean ice-like glow</p>
+                <div style={{ borderLeft: "3px solid #23483D", paddingLeft: "14px" }}>
+                  <p style={{ fontWeight: 600, fontSize: "14px", margin: 0, color: "#181A18" }}>Frosted acrylic blocks</p>
+                  <p style={{ fontSize: "12px", color: "#676A65", margin: "4px 0 0" }}>Clean ice-like glow</p>
                 </div>
               </div>
             </div>
@@ -368,12 +361,12 @@ export default function Engraving() {
       </section>
 
       {/* ── MATERIAL CARDS WITH IMAGES ── */}
-      <section id="materials" style={{ padding: "clamp(60px, 8vw, 100px) 24px", background: "#FAF9F6", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
+      <section id="materials" style={{ padding: "clamp(60px, 8vw, 100px) 24px", background: "#F8F8F6", borderBottom: "1px solid #E7E7E2" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: "60px" }}>
-            <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold)", display: "block", marginBottom: "8px" }}>Selected Materials</span>
-            <h2 className="clash" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 700, color: "#0A1424", marginBottom: "16px" }}>Explore Architectural Materials</h2>
-            <p style={{ fontSize: "15px", color: "#666", maxWidth: "560px", margin: "0 auto", lineHeight: 1.7 }}>
+          <div style={{ textAlign: "center", marginBottom: "50px" }}>
+            <span style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "#23483D", display: "block", marginBottom: "8px" }}>Selected Materials</span>
+            <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 400, color: "#181A18", marginBottom: "14px" }}>Explore Architectural Materials</h2>
+            <p style={{ fontSize: "14px", color: "#676A65", maxWidth: "560px", margin: "0 auto", lineHeight: 1.7 }}>
               We handpick and finish every raw panel to ensure optimal density, structure, and high contrast vector responses.
             </p>
           </div>
@@ -384,28 +377,28 @@ export default function Engraving() {
               return (
                 <FadeUp key={i} delay={i * 0.08}>
                   <div style={{
-                    background: "#FFF",
-                    borderRadius: "28px",
+                    background: "#FFFFFF",
+                    borderRadius: "4px",
                     overflow: "hidden",
-                    border: "1px solid var(--border)",
-                    boxShadow: "0 8px 30px rgba(0,0,0,0.02)",
+                    border: "1px solid #E7E7E2",
+                    boxShadow: "0 2px 10px rgba(0,0,0,0.02)",
                     height: "100%",
                     display: "flex",
                     flexDirection: "column",
-                    transition: "transform 0.3s ease, border-color 0.3s ease"
+                    transition: "transform 0.2s ease, border-color 0.2s ease"
                   }}
-                    onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.borderColor = "var(--gold)"; }}
-                    onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "var(--border)"; }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.borderColor = "#23483D"; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "#E7E7E2"; }}
                   >
-                    <div style={{ height: "200px", overflow: "hidden", position: "relative" }}>
+                    <div style={{ height: "190px", overflow: "hidden", position: "relative" }}>
                       <img src={mat.img} alt={mat.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                      <div style={{ position: "absolute", top: "16px", left: "16px", background: "#FFF", padding: "10px", borderRadius: "12px", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", display: "flex" }}>
-                        <Icon size={18} color="var(--gold)" />
+                      <div style={{ position: "absolute", top: "14px", left: "14px", background: "#FFFFFF", padding: "8px", borderRadius: "4px", border: "1px solid #E7E7E2", display: "flex" }}>
+                        <Icon size={16} color="#23483D" />
                       </div>
                     </div>
-                    <div style={{ padding: "24px", flex: 1, display: "flex", flexDirection: "column" }}>
-                      <h4 style={{ fontSize: "17px", fontWeight: 750, color: "#0A1424", marginBottom: "8px" }}>{mat.name}</h4>
-                      <p style={{ fontSize: "13px", color: "#666", lineHeight: 1.6, margin: 0 }}>{mat.desc}</p>
+                    <div style={{ padding: "20px", flex: 1, display: "flex", flexDirection: "column" }}>
+                      <h4 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "19px", fontWeight: 500, color: "#181A18", marginBottom: "6px" }}>{mat.name}</h4>
+                      <p style={{ fontSize: "13px", color: "#676A65", lineHeight: 1.6, margin: 0 }}>{mat.desc}</p>
                     </div>
                   </div>
                 </FadeUp>
@@ -416,24 +409,24 @@ export default function Engraving() {
       </section>
 
       {/* ── WORKFLOW STEPS ── */}
-      <section style={{ padding: "80px 24px", background: "#FFF" }}>
+      <section style={{ padding: "80px 24px", background: "#FFFFFF", borderBottom: "1px solid #E7E7E2" }}>
         <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: "52px" }}>
-            <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold)", display: "block", marginBottom: "8px" }}>Seamless Workflow</span>
-            <h2 className="clash" style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.5rem)", fontWeight: 700, color: "#0A1424" }}>Our Production Pipeline</h2>
+          <div style={{ textAlign: "center", marginBottom: "48px" }}>
+            <span style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "#23483D", display: "block", marginBottom: "8px" }}>Seamless Workflow</span>
+            <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(1.8rem, 3.5vw, 2.5rem)", fontWeight: 400, color: "#181A18" }}>Our Production Pipeline</h2>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "24px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "20px" }}>
             {STEPS.map((step, i) => (
               <div key={i} style={{
-                background: "#FAF9F6",
-                border: "1px solid var(--border)",
-                borderRadius: "24px",
-                padding: "28px 24px",
+                background: "#F8F8F6",
+                border: "1px solid #E7E7E2",
+                borderRadius: "4px",
+                padding: "24px 20px",
               }}>
-                <span style={{ fontSize: "32px", fontWeight: 900, color: "rgba(201,168,106,0.22)", display: "block", marginBottom: "16px" }}>{step.num}</span>
-                <h4 style={{ fontSize: "16px", fontWeight: 750, color: "#0A1424", marginBottom: "8px" }}>{step.title}</h4>
-                <p style={{ fontSize: "13px", color: "#666", lineHeight: 1.6, margin: 0 }}>{step.desc}</p>
+                <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "28px", fontWeight: 400, color: "#23483D", display: "block", marginBottom: "12px" }}>{step.num}</span>
+                <h4 style={{ fontSize: "15px", fontWeight: 600, color: "#181A18", marginBottom: "8px" }}>{step.title}</h4>
+                <p style={{ fontSize: "13px", color: "#676A65", lineHeight: 1.6, margin: 0 }}>{step.desc}</p>
               </div>
             ))}
           </div>
@@ -441,27 +434,27 @@ export default function Engraving() {
       </section>
 
       {/* ── WHY OLIVE SEEDS ── */}
-      <section style={{ padding: "80px 24px", background: "#FAF9F6", borderTop: "1px solid var(--border)" }}>
+      <section style={{ padding: "80px 24px", background: "#F8F8F6", borderBottom: "1px solid #E7E7E2" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: "52px" }}>
-            <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold)", display: "block", marginBottom: "8px" }}>Studio Guarantee</span>
-            <h2 className="clash" style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.5rem)", fontWeight: 700, color: "#0A1424" }}>High Standards, No Compromise</h2>
+          <div style={{ textAlign: "center", marginBottom: "48px" }}>
+            <span style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "#23483D", display: "block", marginBottom: "8px" }}>Studio Guarantee</span>
+            <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(1.8rem, 3.5vw, 2.5rem)", fontWeight: 400, color: "#181A18" }}>High Standards, No Compromise</h2>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" }}>
             {WHY_US.map((item, i) => {
               const Icon = Icons[item.icon] || Icons.Sparkles;
               return (
                 <div key={i} style={{
-                  display: "flex", gap: "16px", padding: "24px",
-                  background: "#FFF", borderRadius: "24px", border: "1px solid var(--border)",
+                  display: "flex", gap: "16px", padding: "20px",
+                  background: "#FFFFFF", borderRadius: "4px", border: "1px solid #E7E7E2",
                 }}>
-                  <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: "var(--gold-soft)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <Icon size={18} color="var(--gold)" />
+                  <div style={{ width: "38px", height: "38px", borderRadius: "4px", background: "#F8F8F6", border: "1px solid #E7E7E2", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <Icon size={16} color="#23483D" />
                   </div>
                   <div>
-                    <h4 style={{ fontSize: "15px", fontWeight: 750, color: "#0A1424", marginBottom: "6px" }}>{item.title}</h4>
-                    <p style={{ fontSize: "13px", color: "#666", lineHeight: 1.5, margin: 0 }}>{item.desc}</p>
+                    <h4 style={{ fontSize: "14px", fontWeight: 600, color: "#181A18", marginBottom: "4px" }}>{item.title}</h4>
+                    <p style={{ fontSize: "12px", color: "#676A65", lineHeight: 1.5, margin: 0 }}>{item.desc}</p>
                   </div>
                 </div>
               );
@@ -471,61 +464,60 @@ export default function Engraving() {
       </section>
 
       {/* ── BULK ORDER FORM ── */}
-      <section id="bulk-order" style={{ padding: "clamp(80px, 10vw, 130px) 24px", background: "#0A1424", color: "#fff", position: "relative" }}>
+      <section id="bulk-order" style={{ padding: "clamp(70px, 9vw, 110px) 24px", background: "#FFFFFF", color: "#181A18", position: "relative" }}>
         <div style={{ maxWidth: "720px", margin: "0 auto", position: "relative", zIndex: 2 }}>
-          <div style={{ textAlign: "center", marginBottom: "48px" }}>
+          <div style={{ textAlign: "center", marginBottom: "40px" }}>
             <span style={{
               display: "inline-flex", alignItems: "center", gap: "8px",
-              background: "rgba(201,168,106,0.12)", border: "1px solid rgba(201,168,106,0.25)",
-              borderRadius: "100px", padding: "6px 14px",
-              fontSize: "10px", fontWeight: 700, letterSpacing: "0.15em",
-              textTransform: "uppercase", color: "var(--gold)", marginBottom: "16px"
+              background: "#F8F8F6", border: "1px solid #E7E7E2",
+              borderRadius: "4px", padding: "5px 14px",
+              fontSize: "11px", fontWeight: 600, letterSpacing: "0.15em",
+              textTransform: "uppercase", color: "#23483D", marginBottom: "14px"
             }}>
               Custom Consultation
             </span>
-            <h2 className="clash" style={{ fontSize: "clamp(2rem, 3.5vw, 2.8rem)", fontWeight: 700 }}>Request a B2B &amp; Volume Proposal</h2>
-            <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "14px", marginTop: "12px", lineHeight: 1.6 }}>
+            <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(2rem, 3.5vw, 2.8rem)", fontWeight: 400, color: "#181A18" }}>Request a B2B &amp; Volume Proposal</h2>
+            <p style={{ color: "#676A65", fontSize: "14px", marginTop: "10px", lineHeight: 1.6 }}>
               Ordering bespoke nameplates, plaques, awards or architectural signage for your organisation or events? Fill out the brief below. (Minimum volume: 10 units)
             </p>
           </div>
 
           {success ? (
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.98, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               style={{
-                background: "rgba(201,168,106,0.12)", border: "1px solid var(--gold-border)",
-                borderRadius: "24px", padding: "48px 32px", textAlign: "center"
+                background: "#F8F8F6", border: "1px solid #E7E7E2",
+                borderRadius: "4px", padding: "40px 28px", textAlign: "center"
               }}
             >
-              <h3 className="clash" style={{ fontSize: "22px", color: "var(--gold)", marginBottom: "12px" }}>✓ Specs Received</h3>
-              <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.8)", lineHeight: 1.6, margin: 0 }}>
+              <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "24px", color: "#23483D", marginBottom: "10px" }}>✓ Specs Received</h3>
+              <p style={{ fontSize: "14px", color: "#676A65", lineHeight: 1.6, margin: 0 }}>
                 Thank you for your submission. Our design director will review your specifications and respond within 24 hours with conceptual proposals and volume terms.
               </p>
             </motion.div>
           ) : (
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
                 <style>{`
                   .bulk-input {
                     width: 100%;
-                    background: rgba(255,255,255,0.03);
-                    border: 1px solid rgba(255,255,255,0.12);
-                    border-radius: 14px;
-                    padding: 14px 18px;
-                    color: #FFF;
-                    font-size: 13.5px;
-                    font-family: 'Inter', sans-serif;
+                    background: #FFFFFF;
+                    border: 1px solid #DADCD7;
+                    border-radius: 4px;
+                    padding: 12px 16px;
+                    color: #181A18;
+                    font-size: 13px;
+                    font-family: 'DM Sans', sans-serif;
                     outline: none;
-                    transition: all 0.3s ease;
+                    transition: border-color 0.2s ease;
                   }
                   .bulk-input:focus {
-                    border-color: var(--gold);
-                    background: rgba(255,255,255,0.06);
+                    border-color: #23483D;
                   }
                   .responsive-form-grid {
                     display: grid;
                     grid-template-columns: 1fr;
-                    gap: 20px;
+                    gap: 16px;
                   }
                   @media (min-width: 640px) {
                     .responsive-form-grid {
@@ -534,12 +526,12 @@ export default function Engraving() {
                   }
                   .bulk-label {
                     display: block;
-                    font-size: 10.5px;
-                    font-weight: 700;
+                    font-size: 11px;
+                    font-weight: 500;
                     text-transform: uppercase;
-                    letter-spacing: 0.15em;
-                    color: rgba(255,255,255,0.8);
-                    margin-bottom: 8px;
+                    letter-spacing: 0.12em;
+                    color: #676A65;
+                    margin-bottom: 6px;
                   }
                 `}</style>
               <div className="responsive-form-grid">
@@ -591,8 +583,7 @@ export default function Engraving() {
                 <div>
                   <label className="bulk-label">Material / Product Type</label>
                   <select
-                    className="bulk-input"
-                    style={{ appearance: "none", background: "#0A1424" }}
+                    className="bulk-input cursor-pointer"
                     value={formData.product_type}
                     onChange={(e) => setFormData({ ...formData, product_type: e.target.value })}
                   >
@@ -621,7 +612,7 @@ export default function Engraving() {
                   rows="4"
                   required
                   placeholder="Tell us about your project. Include customization details, size specifications, brand asset availability, or required finishes..."
-                  className="bulk-input"
+                  className="bulk-input resize-none"
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 />
@@ -630,11 +621,14 @@ export default function Engraving() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="btn-gold"
                 style={{
                   marginTop: "8px", width: "100%", justifyContent: "center", cursor: "pointer",
-                  opacity: submitting ? 0.7 : 1, padding: "16px 0"
+                  opacity: submitting ? 0.7 : 1, padding: "14px 0",
+                  background: "#23483D", color: "#FFFFFF", borderRadius: "4px",
+                  fontSize: "12px", fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.08em",
+                  border: "none", transition: "all 0.2s"
                 }}
+                className="hover:bg-[#16352D]"
               >
                 {submitting ? "Submitting Inquiry..." : "Submit Project Brief"}
               </button>

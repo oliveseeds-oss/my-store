@@ -204,47 +204,45 @@ export default function Service() {
     <div
       className="min-h-screen overflow-hidden"
       style={{
-        background: "#F7F8FA",
-        fontFamily: "'Inter', sans-serif",
-        color: "#0E1320",
+        background: "#FFFFFF",
+        fontFamily: "'DM Sans', sans-serif",
+        color: "#181A18",
       }}
     >
       {/* ─── GOOGLE FONTS ─── */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        @import url('https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap');
-
         :root {
-          --bg:          #F8F8F5;
-          --text:        #0E1320;
-          --text-2:      #5E6A7E;
-          --accent:      #0F2744;
-          --accent-h:    #142f54;
-          --gold:        #C9A86A;
-          --gold-soft:   rgba(201,168,106,0.12);
-          --gold-border: rgba(201,168,106,0.28);
+          --bg:          #FFFFFF;
+          --text:        #181A18;
+          --text-2:      #676A65;
+          --accent:      #23483D;
+          --accent-h:    #16352D;
+          --gold:        #A48855;
+          --gold-soft:   rgba(164,136,85,0.08);
+          --gold-border: rgba(164,136,85,0.22);
           --surface:     #FFFFFF;
-          --border:      #E8EAEF;
-          --radius:      24px;
-          --radius-sm:   14px;
-          --shadow-sm:   0 4px 18px rgba(15,39,68,0.04);
-          --shadow-md:   0 10px 45px rgba(15,39,68,0.08);
-          --shadow-lg:   0 24px 80px rgba(15,39,68,0.12);
+          --border:      #E7E7E2;
+          --radius:      4px;
+          --radius-sm:   3px;
+          --shadow-sm:   0 2px 8px rgba(20,25,22,0.03);
+          --shadow-md:   0 8px 30px rgba(20,25,22,0.04);
+          --shadow-lg:   0 12px 40px rgba(20,25,22,0.05);
         }
 
         * { box-sizing: border-box; }
 
         .os-heading {
-          font-family: 'Clash Display', 'Inter', sans-serif;
-          font-weight: 700;
-          letter-spacing: -0.025em;
-          line-height: 1.1;
+          font-family: 'Cormorant Garamond', Georgia, serif;
+          font-weight: 600;
+          letter-spacing: 0.01em;
+          line-height: 1.2;
         }
 
         .os-label {
+          font-family: 'DM Sans', sans-serif;
           font-size: 11px;
-          font-weight: 700;
-          letter-spacing: 0.18em;
+          font-weight: 500;
+          letter-spacing: 0.16em;
           text-transform: uppercase;
           color: var(--gold);
         }
@@ -252,8 +250,8 @@ export default function Service() {
         /* HERO GRID LINES */
         .hero-grid {
           background-image:
-            linear-gradient(rgba(201,168,106,0.14) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(201,168,106,0.14) 1px, transparent 1px);
+            linear-gradient(rgba(164,136,85,0.08) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(164,136,85,0.08) 1px, transparent 1px);
           background-size: 60px 60px;
         }
 
@@ -263,26 +261,14 @@ export default function Service() {
           border: 1px solid var(--border);
           border-radius: var(--radius);
           padding: 44px 36px;
-          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+          transition: all 0.25s ease;
           position: relative;
           overflow: hidden;
         }
-        .service-card::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(135deg, rgba(201,168,106,0.08) 0%, transparent 60%);
-          opacity: 0;
-          transition: opacity 0.4s ease;
-          pointer-events: none;
-        }
         .service-card:hover {
-          border-color: var(--gold-border);
-          box-shadow: var(--shadow-lg), 0 0 0 1px rgba(201,168,106,0.1);
-          transform: translateY(-8px);
-        }
-        .service-card:hover::before {
-          opacity: 1;
+          border-color: var(--border-hover);
+          box-shadow: var(--shadow-md);
+          transform: translateY(-3px);
         }
 
         /* STAT CARD */

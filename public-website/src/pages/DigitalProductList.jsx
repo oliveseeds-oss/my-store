@@ -22,15 +22,15 @@ if (typeof document !== "undefined" && !document.getElementById("olive-fonts")) 
 
 /* ─── Design tokens ───────────────────────────────────────── */
 const T = {
-  bg: "#0B1020",
-  surface1: "#12192D",
-  surface2: "#1A233A",
-  textPrimary: "#F8FAFC",
-  textSecondary: "#A5B4C7",
-  accent1: "#6EE7F9",
-  accent2: "#8B7CFF",
-  accent3: "#00D4A6",
-  border: "rgba(255,255,255,0.08)",
+  bg: "#FFFFFF",
+  surface1: "#FFFFFF",
+  surface2: "#F8F8F6",
+  textPrimary: "#181A18",
+  textSecondary: "#676A65",
+  accent1: "#23483D",
+  accent2: "#16352D",
+  accent3: "#A48855",
+  border: "#E7E7E2",
 };
 
 const SORT_OPTIONS = [
@@ -53,8 +53,8 @@ const GLOBAL_CSS = `
     --a3: ${T.accent3};
     --bd: ${T.border};
   }
-  .sora { font-family: 'Sora', sans-serif; }
-  .inter { font-family: 'Inter', sans-serif; }
+  .sora { font-family: 'Cormorant Garamond', Georgia, serif; }
+  .inter { font-family: 'DM Sans', sans-serif; }
 
   /* Vault category pill */
   .vault-pill {
@@ -62,81 +62,73 @@ const GLOBAL_CSS = `
     align-items: center;
     gap: 6px;
     padding: 8px 18px;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 600;
-    font-family: 'Inter', sans-serif;
-    letter-spacing: 0.01em;
+    border-radius: 4px;
+    font-size: 12.5px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.03em;
     border: 1px solid var(--bd);
     color: var(--ts);
-    background: rgba(255,255,255,0.03);
+    background: #FFFFFF;
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition: all 0.2s ease;
     white-space: nowrap;
   }
   .vault-pill:hover {
-    border-color: rgba(110,231,249,0.35);
+    border-color: var(--a1);
     color: var(--a1);
-    background: rgba(110,231,249,0.06);
+    background: rgba(35,72,61,0.04);
   }
   .vault-pill.active {
     border-color: var(--a1);
-    color: var(--bg);
+    color: #FFFFFF;
     background: var(--a1);
-    box-shadow: 0 4px 20px rgba(110,231,249,0.3);
+    box-shadow: none;
   }
   .dcard {
     position: relative;
     overflow: hidden;
-    border-radius: 24px;
+    border-radius: 4px;
     border: 1px solid var(--bd);
     background: var(--s1);
     display: flex;
     flex-direction: column;
     height: 100%;
-    transition: transform 0.4s cubic-bezier(.22,.68,0,1.2),
-                box-shadow 0.4s ease,
-                border-color 0.4s ease;
+    transition: transform 0.3s ease,
+                box-shadow 0.3s ease,
+                border-color 0.3s ease;
     will-change: transform;
+    box-shadow: 0 4px 18px rgba(20,25,22,0.03);
   }
   .dcard:hover {
-    transform: translateY(-6px) scale(1.012);
-    border-color: rgba(110,231,249,0.22);
-    box-shadow: 0 24px 64px rgba(0,0,0,0.55),
-                0 0 40px rgba(110,231,249,0.07),
-                inset 0 1px 0 rgba(255,255,255,0.05);
+    transform: translateY(-4px);
+    border-color: #CACCC6;
+    box-shadow: 0 12px 30px rgba(20,25,22,0.06);
   }
   .dcard__glow {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    pointer-events: none;
-    background: radial-gradient(ellipse at 50% 0%, rgba(110,231,249,0.12), transparent 65%);
-    transition: opacity 0.4s ease;
+    display: none;
   }
-  .dcard:hover .dcard__glow { opacity: 1; }
  
   .dcard__img-wrap {
     position: relative;
     height: 220px;
     overflow: hidden;
-    background: #080f1e;
+    background: #F8F8F6;
     flex-shrink: 0;
   }
   .dcard__img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.6s ease, filter 0.4s ease;
+    transition: transform 0.6s ease;
   }
   .dcard:hover .dcard__img {
-    transform: scale(1.08);
-    filter: brightness(1.1);
+    transform: scale(1.05);
   }
   .dcard__img-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(11,16,32,0.82) 0%, transparent 55%);
+    background: linear-gradient(to top, rgba(24,26,24,0.05) 0%, transparent 60%);
   }
 
 
@@ -146,77 +138,77 @@ const GLOBAL_CSS = `
     display: block;
     width: 100%;
     text-align: left;
-    padding: 10px 14px;
-    border-radius: 10px;
-    font-size: 13.5px;
+    padding: 9px 12px;
+    border-radius: 4px;
+    font-size: 13px;
     font-weight: 500;
-    font-family: 'Inter', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     border: 1px solid transparent;
     color: var(--ts);
     background: transparent;
     cursor: pointer;
-    transition: all 0.22s ease;
+    transition: all 0.2s ease;
   }
   .filter-btn:hover {
-    background: rgba(110,231,249,0.06);
+    background: #F8F8F6;
     color: var(--a1);
-    border-color: rgba(110,231,249,0.15);
+    border-color: var(--bd);
   }
   .filter-btn.active {
-    background: linear-gradient(90deg, rgba(110,231,249,0.14), rgba(139,124,255,0.10));
+    background: #F8F8F6;
     color: var(--a1);
-    border-color: rgba(110,231,249,0.28);
+    border-color: var(--a1);
     font-weight: 600;
   }
 
   /* Input / select */
   .vault-input {
     outline: none;
-    background: rgba(18,25,45,0.9);
-    border: 1px solid var(--bd);
-    border-radius: 12px;
+    background: #FFFFFF;
+    border: 1px solid #DADCD7;
+    border-radius: 4px;
     color: var(--tp);
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    padding: 10px 42px 10px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    padding: 10px 42px 10px 14px;
     width: 260px;
-    backdrop-filter: blur(16px);
-    transition: border-color 0.25s;
+    transition: border-color 0.2s;
   }
-  .vault-input::placeholder { color: rgba(165,180,199,0.45); }
-  .vault-input:focus { border-color: rgba(110,231,249,0.4); }
+  .vault-input::placeholder { color: #8A8D88; }
+  .vault-input:focus { border-color: var(--a1); }
 
   .vault-select {
     outline: none;
-    background: rgba(18,25,45,0.9);
-    border: 1px solid var(--bd);
-    border-radius: 12px;
+    background: #FFFFFF;
+    border: 1px solid #DADCD7;
+    border-radius: 4px;
     color: var(--tp);
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    padding: 10px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    padding: 10px 14px;
     cursor: pointer;
-    backdrop-filter: blur(16px);
-    transition: border-color 0.25s;
+    transition: border-color 0.2s;
   }
-  .vault-select:focus { border-color: rgba(110,231,249,0.4); }
+  .vault-select:focus { border-color: var(--a1); }
 
   /* Cart button */
   .cart-btn {
     width: 100%;
-    padding: 9px 0;
-    border-radius: 100px;
-    font-weight: 750;
-    font-size: 11.5px;
-    font-family: 'Inter', sans-serif;
+    padding: 11px 0;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     border: none;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background: var(--a1);
+    color: #FFFFFF;
+    transition: background-color 0.2s ease;
   }
-  .cart-btn:hover { transform: scale(1.025); }
-  .cart-btn:active { transform: scale(0.97); }
+  .cart-btn:hover { background: var(--a2); }
+  .cart-btn:active { transform: scale(0.98); }
 
   /* Skeleton pulse */
   @keyframes skeletonPulse {
@@ -228,11 +220,11 @@ const GLOBAL_CSS = `
   /* Ambient floating orbs */
   @keyframes orb1 {
     0%,100% { transform: translate(0,0) scale(1); }
-    50% { transform: translate(30px,-40px) scale(1.08); }
+    50% { transform: translate(15px,-20px) scale(1.04); }
   }
   @keyframes orb2 {
     0%,100% { transform: translate(0,0) scale(1); }
-    50% { transform: translate(-25px,30px) scale(0.94); }
+    50% { transform: translate(-15px,15px) scale(0.96); }
   }
   .orb1 { animation: orb1 14s ease-in-out infinite; }
   .orb2 { animation: orb2 18s ease-in-out infinite; }
@@ -244,7 +236,7 @@ const GLOBAL_CSS = `
     z-index: 40;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    background: rgba(11,16,32,0.88);
+    background: rgba(255, 255, 255, 0.95);
     border-bottom: 1px solid var(--bd);
   }
 
@@ -254,35 +246,36 @@ const GLOBAL_CSS = `
 
   /* Collection card */
   .coll-card {
-    border-radius: 16px;
-    padding: 16px;
+    border-radius: 4px;
+    padding: 20px;
     border: 1px solid var(--bd);
-    background: var(--s1);
+    background: #FFFFFF;
     cursor: pointer;
-    transition: border-color 0.3s, transform 0.3s, background 0.3s;
+    transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
   }
   .coll-card:hover {
-    border-color: rgba(139,124,255,0.35);
-    background: rgba(139,124,255,0.05);
-    transform: translateY(-4px);
+    border-color: #CACCC6;
+    background: #FFFFFF;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(20,25,22,0.04);
   }
 
   /* Newsletter input */
   .nl-input {
     flex: 1;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--bd);
-    border-radius: 12px;
-    padding: 12px 18px;
+    background: #FFFFFF;
+    border: 1px solid #DADCD7;
+    border-radius: 4px;
+    padding: 12px 16px;
     color: var(--tp);
-    font-family: 'Inter', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 14px;
     outline: none;
-    transition: border-color 0.25s;
+    transition: border-color 0.2s;
     min-width: 0;
   }
-  .nl-input::placeholder { color: rgba(165,180,199,0.4); }
-  .nl-input:focus { border-color: rgba(110,231,249,0.4); }
+  .nl-input::placeholder { color: #8A8D88; }
+  .nl-input:focus { border-color: var(--a1); }
 
   .mobile-filter-btn {
     display: none;
@@ -456,19 +449,19 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
               top: 8,
               right: 8,
               zIndex: 30,
-              width: 44,
-              height: 44,
+              width: 38,
+              height: 38,
               borderRadius: "50%",
-              background: "rgba(15,23,42,0.85)",
+              background: "rgba(255,255,255,0.92)",
               backdropFilter: "blur(8px)",
-              border: "1px solid rgba(255,255,255,0.15)",
+              border: "1px solid #E7E7E2",
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: 18,
-              boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
-              color: isWishlisted ? "#f43f5e" : "#94a3b8",
+              fontSize: 16,
+              boxShadow: "0 2px 8px rgba(20,25,22,0.06)",
+              color: isWishlisted ? "#e11d48" : "#64748b",
               transition: "all 0.2s ease",
             }}
           >
@@ -480,13 +473,12 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
             {discount > 0 && (
               <span style={{
                 padding: "3px 8px",
-                borderRadius: 999,
+                borderRadius: 4,
                 fontSize: 10,
                 fontWeight: 700,
-                fontFamily: "Inter, sans-serif",
-                background: "linear-gradient(90deg,#F59E0B,#EF4444)",
+                fontFamily: "'DM Sans', sans-serif",
+                background: "#7f1d1d",
                 color: "#fff",
-                boxShadow: "0 4px 16px rgba(239,68,68,0.35)",
               }}>
                 -{discount}%
               </span>
@@ -494,14 +486,13 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
             {tags.length > 0 && (
               <span style={{
                 padding: "3px 8px",
-                borderRadius: 999,
+                borderRadius: 4,
                 fontSize: 10,
                 fontWeight: 700,
-                fontFamily: "Inter, sans-serif",
-                background: "linear-gradient(90deg, rgba(110,231,249,0.25), rgba(139,124,255,0.25))",
-                border: "1px solid rgba(110,231,249,0.3)",
+                fontFamily: "'DM Sans', sans-serif",
+                background: "#F8F8F6",
+                border: "1px solid #E7E7E2",
                 color: T.accent1,
-                backdropFilter: "blur(8px)",
               }}>
                 {tags[0]}
               </span>
@@ -512,14 +503,13 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
             <div style={{ position: "absolute", bottom: 10, left: 10, zIndex: 10 }}>
               <span style={{
                 padding: "3px 8px",
-                borderRadius: 999,
+                borderRadius: 4,
                 fontSize: 10,
                 fontWeight: 600,
-                fontFamily: "Inter, sans-serif",
-                background: "rgba(255,255,255,0.1)",
-                backdropFilter: "blur(10px)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                color: "#fff",
+                fontFamily: "'DM Sans', sans-serif",
+                background: "rgba(255,255,255,0.92)",
+                border: "1px solid #E7E7E2",
+                color: "#181A18",
               }}>
                 {p.file_format}
               </span>
@@ -529,10 +519,10 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
       </Link>
 
       {/* Body */}
-      <div className="product-card-content" style={{ padding: "16px 18px 20px", display: "flex", flexDirection: "column", flex: 1, gap: 10 }}>
+      <div className="product-card-content" style={{ padding: "18px 20px 22px", display: "flex", flexDirection: "column", flex: 1, gap: 10 }}>
         {p.category_name && (
           <p style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "'DM Sans', sans-serif",
             fontSize: 10,
             fontWeight: 700,
             letterSpacing: "0.18em",
@@ -548,8 +538,8 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
           <h3
             className="sora product-card-name"
             style={{
-              fontSize: 15,
-              fontWeight: 700,
+              fontSize: 17,
+              fontWeight: 600,
               lineHeight: 1.35,
               color: T.textPrimary,
               margin: 0,
@@ -571,16 +561,16 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
               key={i}
               style={{
                 fontSize: 12,
-                color: i <= Math.round(p.rating) ? "#FBBF24" : "rgba(255,255,255,0.12)",
+                color: i <= Math.round(p.rating) ? "#A48855" : "#E7E7E2",
               }}
             >
               ★
             </span>
           ))}
           <span style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "'DM Sans', sans-serif",
             fontSize: 11,
-            color: "rgba(165,180,199,0.5)",
+            color: "#676A65",
             marginLeft: 4,
           }}>
             ({p.review_count || 0})
@@ -590,23 +580,21 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
         {/* Price */}
         <div className="product-card-price" style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: "auto", paddingTop: 8 }}>
           <span
-            className="sora"
             style={{
-              fontSize: 22,
-              fontWeight: 800,
-              background: `linear-gradient(90deg, ${T.accent1}, ${T.textPrimary})`,
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              fontFamily: "'Cormorant Garamond', Georgia, serif",
+              fontSize: 24,
+              fontWeight: 700,
+              color: T.textPrimary,
             }}
           >
             {convert(finalPrice)}
           </span>
           {p.discount_price && (
             <span style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontSize: 13,
               textDecoration: "line-through",
-              color: "rgba(165,180,199,0.35)",
+              color: "#8A8D88",
             }}>
               {convert(p.price)}
             </span>
@@ -617,15 +605,11 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
           onClick={handleAdd}
           className="cart-btn product-card-button"
           style={{
-            background: added
-              ? `linear-gradient(90deg, ${T.accent3}, #00b899)`
-              : `linear-gradient(90deg, ${T.accent2}, ${T.accent1})`,
-            color: added ? "#fff" : T.bg,
-            boxShadow: added
-              ? "0 8px 24px rgba(0,212,166,0.28)"
-              : "0 8px 24px rgba(110,231,249,0.22)",
+            background: added ? "#16a34a" : T.accent1,
+            color: "#fff",
             marginTop: 8,
             width: "100%",
+            borderRadius: 4,
           }}
         >
           {added ? "✓ Added to Order" : "Add to Order"}
@@ -831,7 +815,7 @@ export default function DigitalProductList() {
         }
       `}</style>
 
-      {/* ── Ambient background orbs ── */}
+      {/* ── Ambient background subtle accents ── */}
       <div style={{ position: "fixed", inset: 0, pointerEvents: "none", overflow: "hidden", zIndex: 0 }}>
         <div
           className="orb1"
@@ -842,7 +826,7 @@ export default function DigitalProductList() {
             width: 700,
             height: 700,
             borderRadius: "50%",
-            background: `radial-gradient(circle, rgba(110,231,249,0.07) 0%, transparent 70%)`,
+            background: `radial-gradient(circle, rgba(35,72,61,0.025) 0%, transparent 70%)`,
             filter: "blur(60px)",
           }}
         />
@@ -855,19 +839,7 @@ export default function DigitalProductList() {
             width: 800,
             height: 800,
             borderRadius: "50%",
-            background: `radial-gradient(circle, rgba(139,124,255,0.07) 0%, transparent 70%)`,
-            filter: "blur(80px)",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            top: "40%",
-            left: "30%",
-            width: 500,
-            height: 500,
-            borderRadius: "50%",
-            background: `radial-gradient(circle, rgba(0,212,166,0.04) 0%, transparent 70%)`,
+            background: `radial-gradient(circle, rgba(164,136,85,0.02) 0%, transparent 70%)`,
             filter: "blur(80px)",
           }}
         />
@@ -878,15 +850,14 @@ export default function DigitalProductList() {
         <Navbar />
       </div>
 
-
-
       {/* ── Hero ── */}
       <section
         className="digital-hero"
         style={{
           position: "relative",
-          padding: "100px 24px 80px",
+          padding: "90px 24px 70px",
           overflow: "hidden",
+          background: "#FFFFFF",
           borderBottom: `1px solid ${T.border}`,
         }}
       >
@@ -894,20 +865,20 @@ export default function DigitalProductList() {
           <div className="digital-hero-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "center" }}>
             {/* Left */}
             <div>
-              <div style={{ marginBottom: 20 }}>
+              <div style={{ marginBottom: 18 }}>
                 <span style={{
                   display: "inline-flex",
                   alignItems: "center",
-                  gap: 6,
+                  gap: 8,
                   padding: "6px 14px",
-                  borderRadius: 999,
+                  borderRadius: 4,
                   fontSize: 11,
                   fontWeight: 700,
-                  letterSpacing: "0.18em",
+                  letterSpacing: "0.2em",
                   textTransform: "uppercase",
-                  fontFamily: "Inter, sans-serif",
-                  background: "rgba(110,231,249,0.08)",
-                  border: "1px solid rgba(110,231,249,0.2)",
+                  fontFamily: "'DM Sans', sans-serif",
+                  background: "#F8F8F6",
+                  border: `1px solid ${T.border}`,
                   color: T.accent1,
                   whiteSpace: "nowrap",
                 }}>
@@ -917,26 +888,26 @@ export default function DigitalProductList() {
               </div>
 
               <h1
-                className="sora"
                 style={{
-                  fontSize: "clamp(36px, 5vw, 58px)",
-                  fontWeight: 900,
+                  fontFamily: "'Cormorant Garamond', Georgia, serif",
+                  fontSize: "clamp(38px, 5.5vw, 64px)",
+                  fontWeight: 400,
                   lineHeight: 1.1,
                   color: T.textPrimary,
-                  margin: "0 0 12px",
-                  letterSpacing: "-2px",
+                  margin: "0 0 16px",
+                  letterSpacing: "-0.5px",
                 }}
               >
-                Digital Products
+                Digital Design Systems & Assets
               </h1>
 
               <p
-                className="inter"
                 style={{
-                  fontSize: "clamp(15px, 1.8vw, 18px)",
-                  lineHeight: 1.7,
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "clamp(15px, 1.8vw, 17px)",
+                  lineHeight: 1.75,
                   color: T.textSecondary,
-                  margin: "20px 0 36px",
+                  margin: "0 0 32px",
                   maxWidth: 520,
                 }}
               >
@@ -950,29 +921,28 @@ export default function DigitalProductList() {
                     if (el) el.scrollIntoView({ behavior: "smooth" });
                   }}
                   style={{
-                    padding: "14px 30px",
-                    borderRadius: 12,
-                    fontFamily: "Inter, sans-serif",
-                    fontWeight: 700,
-                    fontSize: 14,
+                    padding: "14px 28px",
+                    borderRadius: 4,
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontWeight: 600,
+                    fontSize: 13,
                     letterSpacing: "0.04em",
                     border: "none",
                     cursor: "pointer",
-                    background: `linear-gradient(135deg, ${T.accent1}, ${T.accent2})`,
-                    color: T.bg,
-                    boxShadow: `0 10px 32px rgba(110,231,249,0.3)`,
-                    transition: "transform 0.2s, box-shadow 0.2s",
+                    background: T.accent1,
+                    color: "#FFFFFF",
+                    transition: "background-color 0.2s, transform 0.2s",
                   }}
                   onMouseOver={(e) => {
-                    e.currentTarget.style.transform = "translateY(-2px)";
-                    e.currentTarget.style.boxShadow = "0 16px 40px rgba(110,231,249,0.4)";
+                    e.currentTarget.style.background = T.accent2;
+                    e.currentTarget.style.transform = "translateY(-1px)";
                   }}
                   onMouseOut={(e) => {
+                    e.currentTarget.style.background = T.accent1;
                     e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "0 10px 32px rgba(110,231,249,0.3)";
                   }}
                 >
-                  Explore Assets
+                  Explore Collection
                 </button>
                 <button
                   onClick={() => {
@@ -980,28 +950,28 @@ export default function DigitalProductList() {
                     if (el) el.scrollIntoView({ behavior: "smooth" });
                   }}
                   style={{
-                    padding: "14px 30px",
-                    borderRadius: 12,
-                    fontFamily: "Inter, sans-serif",
+                    padding: "14px 28px",
+                    borderRadius: 4,
+                    fontFamily: "'DM Sans', sans-serif",
                     fontWeight: 600,
-                    fontSize: 14,
+                    fontSize: 13,
                     letterSpacing: "0.04em",
                     cursor: "pointer",
                     background: "transparent",
                     color: T.textPrimary,
                     border: `1px solid ${T.border}`,
-                    transition: "border-color 0.25s, background 0.25s",
+                    transition: "border-color 0.2s, background 0.2s",
                   }}
                   onMouseOver={(e) => {
-                    e.currentTarget.style.borderColor = "rgba(110,231,249,0.35)";
-                    e.currentTarget.style.background = "rgba(110,231,249,0.05)";
+                    e.currentTarget.style.borderColor = "#CACCC6";
+                    e.currentTarget.style.background = "#F8F8F6";
                   }}
                   onMouseOut={(e) => {
                     e.currentTarget.style.borderColor = T.border;
                     e.currentTarget.style.background = "transparent";
                   }}
                 >
-                  Custom Project
+                  Custom Project Brief
                 </button>
               </div>
             </div>
@@ -1010,9 +980,9 @@ export default function DigitalProductList() {
             <div style={{ position: "relative", height: 360, display: "flex", alignItems: "center", justifyContent: "center" }}>
               {[
                 { label: "Presentation Templates", icon: "📊", x: 0, y: 0, accent: T.accent1 },
-                { label: "Brand Identity Kits", icon: "✨", x: 160, y: -50, accent: T.accent2 },
-                { label: "Business Stationery", icon: "📄", x: 30, y: 140, accent: T.accent3 },
-                { label: "Social Media Systems", icon: "📱", x: 200, y: 90, accent: "#F59E0B" },
+                { label: "Brand Identity Kits", icon: "✨", x: 160, y: -50, accent: T.accent3 },
+                { label: "Business Stationery", icon: "📄", x: 30, y: 140, accent: T.accent1 },
+                { label: "Social Media Systems", icon: "📱", x: 200, y: 90, accent: T.accent3 },
               ].map((card, i) => (
                 <div
                   key={card.label}
@@ -1023,30 +993,29 @@ export default function DigitalProductList() {
                     top: `calc(50% - 48px + ${card.y}px)`,
                     width: 156,
                     padding: "14px 16px",
-                    borderRadius: 16,
-                    border: `1px solid rgba(255,255,255,0.09)`,
-                    background: "rgba(18,25,45,0.85)",
-                    backdropFilter: "blur(20px)",
-                    boxShadow: `0 16px 48px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.03)`,
+                    borderRadius: 4,
+                    border: `1px solid ${T.border}`,
+                    background: "#FFFFFF",
+                    boxShadow: "0 10px 28px rgba(20,25,22,0.06)",
                     animation: `orb${(i % 2) + 1} ${12 + i * 3}s ease-in-out infinite`,
                     animationDelay: `${i * 1.5}s`,
                   }}
                 >
                   <div style={{ fontSize: 24, marginBottom: 8 }}>{card.icon}</div>
                   <div style={{
-                    fontFamily: "Sora, sans-serif",
+                    fontFamily: "'DM Sans', sans-serif",
                     fontSize: 12,
                     fontWeight: 700,
                     color: T.textPrimary,
-                    marginBottom: 4,
+                    marginBottom: 6,
                   }}>
                     {card.label}
                   </div>
                   <div style={{
-                    height: 3,
+                    height: 2,
                     borderRadius: 2,
-                    background: `linear-gradient(90deg, ${card.accent}, transparent)`,
-                    width: "70%",
+                    background: card.accent,
+                    width: "40%",
                   }} />
                 </div>
               ))}
@@ -1448,53 +1417,47 @@ export default function DigitalProductList() {
         zIndex: 2,
         borderTop: `1px solid ${T.border}`,
         padding: "72px 24px",
+        background: "#F8F8F6",
         overflow: "hidden",
       }}>
-        {/* bg accent */}
-        <div style={{
-          position: "absolute",
-          inset: 0,
-          background: `radial-gradient(ellipse at 50% 100%, rgba(139,124,255,0.08), transparent 60%)`,
-          pointerEvents: "none",
-        }} />
-
         <div style={{ maxWidth: 560, margin: "0 auto", textAlign: "center", position: "relative" }}>
           <span style={{
             display: "inline-flex",
             alignItems: "center",
             gap: 6,
             padding: "5px 14px",
-            borderRadius: 999,
+            borderRadius: 4,
             fontSize: 11,
             fontWeight: 700,
             letterSpacing: "0.18em",
             textTransform: "uppercase",
-            fontFamily: "Inter, sans-serif",
-            background: "rgba(139,124,255,0.1)",
-            border: "1px solid rgba(139,124,255,0.2)",
-            color: T.accent2,
-            marginBottom: 20,
+            fontFamily: "'DM Sans', sans-serif",
+            background: "#FFFFFF",
+            border: `1px solid ${T.border}`,
+            color: T.accent1,
+            marginBottom: 16,
           }}>
-            Vault Insider
+            Studio Updates
           </span>
 
-          <h2 className="sora" style={{
-            fontSize: "clamp(24px, 3.5vw, 36px)",
-            fontWeight: 800,
+          <h2 style={{
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontSize: "clamp(26px, 3.5vw, 40px)",
+            fontWeight: 400,
             color: T.textPrimary,
-            letterSpacing: "-1px",
+            letterSpacing: "-0.5px",
             margin: "0 0 14px",
           }}>
             Stay Ahead of the Curve
           </h2>
           <p style={{
-            fontFamily: "Inter, sans-serif",
-            fontSize: 15,
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: 14.5,
             color: T.textSecondary,
-            margin: "0 0 32px",
+            margin: "0 0 28px",
             lineHeight: 1.6,
           }}>
-            Get new releases, exclusive assets, early access drops, and industry resources delivered first.
+            Get new releases, exclusive assets, early access drops, and studio resources delivered directly.
           </p>
 
           <div style={{ display: "flex", gap: 10, maxWidth: 440, margin: "0 auto" }}>
@@ -1505,21 +1468,20 @@ export default function DigitalProductList() {
             />
             <button style={{
               padding: "12px 22px",
-              borderRadius: 12,
-              fontFamily: "Inter, sans-serif",
-              fontWeight: 700,
+              borderRadius: 4,
+              fontFamily: "'DM Sans', sans-serif",
+              fontWeight: 600,
               fontSize: 13,
               letterSpacing: "0.04em",
               border: "none",
               cursor: "pointer",
-              background: `linear-gradient(135deg, ${T.accent1}, ${T.accent2})`,
-              color: T.bg,
+              background: T.accent1,
+              color: "#FFFFFF",
               whiteSpace: "nowrap",
-              boxShadow: "0 8px 24px rgba(110,231,249,0.25)",
-              transition: "transform 0.2s",
+              transition: "background-color 0.2s",
             }}
-            onMouseOver={(e) => e.currentTarget.style.transform = "scale(1.04)"}
-            onMouseOut={(e) => e.currentTarget.style.transform = "scale(1)"}
+            onMouseOver={(e) => e.currentTarget.style.background = T.accent2}
+            onMouseOut={(e) => e.currentTarget.style.background = T.accent1}
             >
               Get Access
             </button>
@@ -1528,14 +1490,14 @@ export default function DigitalProductList() {
           <div style={{ display: "flex", justifyContent: "center", gap: 24, marginTop: 20, flexWrap: "wrap" }}>
             {["New Releases", "Exclusive Assets", "Early Access"].map((t) => (
               <span key={t} style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontSize: 12,
-                color: "rgba(165,180,199,0.5)",
+                color: "#676A65",
                 display: "flex",
                 alignItems: "center",
                 gap: 5,
               }}>
-                <span style={{ color: T.accent3, fontSize: 10 }}>✓</span> {t}
+                <span style={{ color: T.accent1, fontSize: 10 }}>✓</span> {t}
               </span>
             ))}
           </div>
@@ -1549,7 +1511,7 @@ export default function DigitalProductList() {
           background: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "flex-end"
         }}>
           <div style={{
-            width: "300px", background: T.surface1, height: "100%", overflowY: "auto",
+            width: "300px", background: "#FFFFFF", height: "100%", overflowY: "auto",
             padding: "30px 24px", display: "flex", flexDirection: "column", gap: 20,
             position: "relative", boxShadow: "-8px 0 32px rgba(0,0,0,0.15)"
           }}>
@@ -1563,11 +1525,12 @@ export default function DigitalProductList() {
             >
               ×
             </button>
-            <h3 className="sora" style={{ fontSize: 22, fontWeight: 700, margin: "0 0 10px 0", color: T.textPrimary }}>Filters</h3>
+            <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 24, fontWeight: 600, margin: "0 0 10px 0", color: T.textPrimary }}>Filters</h3>
             
             {/* Categories */}
             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              <p className="sora" style={{
+              <p style={{
+                fontFamily: "'DM Sans', sans-serif",
                 fontSize: 10,
                 fontWeight: 700,
                 letterSpacing: "0.22em",
@@ -1596,7 +1559,8 @@ export default function DigitalProductList() {
 
             {/* Price Range */}
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <p className="sora" style={{
+              <p style={{
+                fontFamily: "'DM Sans', sans-serif",
                 fontSize: 10,
                 fontWeight: 700,
                 letterSpacing: "0.22em",
@@ -1627,7 +1591,8 @@ export default function DigitalProductList() {
 
             {/* Rating */}
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              <p className="sora" style={{
+              <p style={{
+                fontFamily: "'DM Sans', sans-serif",
                 fontSize: 10,
                 fontWeight: 700,
                 letterSpacing: "0.22em",
@@ -1642,17 +1607,17 @@ export default function DigitalProductList() {
                   onClick={() => { setFilter("minRating", filters.minRating === r ? "" : r); setShowMobileFilters(false); }}
                   style={{
                     display: "flex", alignItems: "center", gap: 8,
-                    padding: "9px 12px", borderRadius: 10, border: "none",
+                    padding: "9px 12px", borderRadius: 4, border: "none",
                     cursor: "pointer", width: "100%",
-                    fontFamily: "Inter, sans-serif", fontSize: 13,
-                    background: filters.minRating === r ? "rgba(110,231,249,0.1)" : "transparent",
+                    fontFamily: "'DM Sans', sans-serif", fontSize: 13,
+                    background: filters.minRating === r ? "#F8F8F6" : "transparent",
                     color: filters.minRating === r ? T.accent1 : T.textSecondary,
                     textAlign: "left",
                   }}
                 >
                   <span>
                     {[1, 2, 3, 4, 5].map((i) => (
-                      <span key={i} style={{ color: i <= r ? "#FBBF24" : "rgba(255,255,255,0.1)", fontSize: 12 }}>★</span>
+                      <span key={i} style={{ color: i <= r ? "#A48855" : "#E7E7E2", fontSize: 12 }}>★</span>
                     ))}
                   </span>
                   & Up
@@ -1664,17 +1629,17 @@ export default function DigitalProductList() {
       )}
 
       {/* ── Contact Section ── */}
-      <section id="contact-section" style={{ padding: "80px 24px", position: "relative", zIndex: 2, background: "rgba(18, 25, 45, 0.4)", borderTop: `1px solid ${T.border}` }}>
+      <section id="contact-section" style={{ padding: "80px 24px", position: "relative", zIndex: 2, background: "#F8F8F6", borderTop: `1px solid ${T.border}` }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "60px" }} className="responsive-split-1-2">
             {/* Left Column */}
             <div>
-              <div style={{ width: 44, height: 3, background: "linear-gradient(90deg, #6EE7F9, #8B7CFF)", marginBottom: 20, borderRadius: 2 }} />
-              <span className="sora" style={{ display: "block", marginBottom: 14, fontSize: 11, fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: T.accent1 }}>Start Your Project</span>
-              <h2 className="clash" style={{ fontSize: 36, color: T.textPrimary, marginBottom: 20, fontWeight: 700, lineHeight: 1.15 }}>
+              <div style={{ width: 44, height: 2, background: T.accent1, marginBottom: 20 }} />
+              <span style={{ display: "block", marginBottom: 12, fontSize: 11, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: T.accent1, fontFamily: "'DM Sans', sans-serif" }}>Start Your Project</span>
+              <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 38, color: T.textPrimary, marginBottom: 18, fontWeight: 400, lineHeight: 1.15 }}>
                 Let's build something extraordinary
               </h2>
-              <p style={{ fontSize: 15.5, color: T.textSecondary, lineHeight: 1.8, marginBottom: 40 }}>
+              <p style={{ fontSize: 15, color: T.textSecondary, lineHeight: 1.8, marginBottom: 36, fontFamily: "'DM Sans', sans-serif" }}>
                 Fill out the brief and our senior design director will review your project specifications and respond within 24 hours.
               </p>
 
@@ -1687,8 +1652,8 @@ export default function DigitalProductList() {
                   <div key={i} style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
                     <span style={{ fontSize: 20, flexShrink: 0, lineHeight: 1 }}>{item.icon}</span>
                     <div>
-                      <div style={{ fontSize: 14, fontWeight: 700, color: T.textPrimary }}>{item.title}</div>
-                      <div style={{ fontSize: 13, color: T.textSecondary, marginTop: 2 }}>{item.desc}</div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: T.textPrimary, fontFamily: "'DM Sans', sans-serif" }}>{item.title}</div>
+                      <div style={{ fontSize: 13, color: T.textSecondary, marginTop: 2, fontFamily: "'DM Sans', sans-serif" }}>{item.desc}</div>
                     </div>
                   </div>
                 ))}
@@ -1699,25 +1664,25 @@ export default function DigitalProductList() {
             <div
               className="contact-form-card"
               style={{
-                background: T.surface1,
+                background: "#FFFFFF",
                 border: `1px solid ${T.border}`,
-                borderRadius: 24,
+                borderRadius: 4,
                 padding: "36px",
-                boxShadow: "0 15px 40px rgba(0,0,0,0.3)",
+                boxShadow: "0 10px 30px rgba(20,25,22,0.04)",
               }}
             >
               {success ? (
                 <div style={{ textAlign: "center", padding: "40px 20px" }}>
                   <div style={{ fontSize: "48px", color: T.accent1, marginBottom: "16px" }}>✓</div>
-                  <h3 style={{ fontSize: "20px", fontWeight: 700, color: T.textPrimary, marginBottom: "10px" }}>Enquiry Received</h3>
-                  <p style={{ fontSize: "14.5px", color: T.textSecondary, lineHeight: 1.6 }}>
+                  <h3 style={{ fontSize: "20px", fontWeight: 700, color: T.textPrimary, marginBottom: "10px", fontFamily: "'DM Sans', sans-serif" }}>Enquiry Received</h3>
+                  <p style={{ fontSize: "14.5px", color: T.textSecondary, lineHeight: 1.6, fontFamily: "'DM Sans', sans-serif" }}>
                     Thank you for your enquiry. Our creative director will review your brief and respond within 24 hours.
                   </p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }} className="responsive-form">
                   <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary }}>Full Name *</label>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary, fontFamily: "'DM Sans', sans-serif" }}>Full Name *</label>
                     <input
                       type="text"
                       placeholder="Jane Smith"
@@ -1725,14 +1690,14 @@ export default function DigitalProductList() {
                       value={form.name}
                       onChange={e => setForm({ ...form, name: e.target.value })}
                       style={{
-                        padding: "12px 16px", borderRadius: 12, border: `1px solid ${T.border}`,
-                        background: T.surface2, color: T.textPrimary, outline: "none", fontSize: 14
+                        padding: "12px 14px", borderRadius: 4, border: `1px solid #DADCD7`,
+                        background: "#FFFFFF", color: T.textPrimary, outline: "none", fontSize: 13.5
                       }}
                     />
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary }}>Company *</label>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary, fontFamily: "'DM Sans', sans-serif" }}>Company *</label>
                     <input
                       type="text"
                       placeholder="Acme Inc."
@@ -1740,14 +1705,14 @@ export default function DigitalProductList() {
                       value={form.company}
                       onChange={e => setForm({ ...form, company: e.target.value })}
                       style={{
-                        padding: "12px 16px", borderRadius: 12, border: `1px solid ${T.border}`,
-                        background: T.surface2, color: T.textPrimary, outline: "none", fontSize: 14
+                        padding: "12px 14px", borderRadius: 4, border: `1px solid #DADCD7`,
+                        background: "#FFFFFF", color: T.textPrimary, outline: "none", fontSize: 13.5
                       }}
                     />
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary }}>Email Address *</label>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary, fontFamily: "'DM Sans', sans-serif" }}>Email Address *</label>
                     <input
                       type="email"
                       placeholder="jane@company.com"
@@ -1755,35 +1720,35 @@ export default function DigitalProductList() {
                       value={form.email}
                       onChange={e => setForm({ ...form, email: e.target.value })}
                       style={{
-                        padding: "12px 16px", borderRadius: 12, border: `1px solid ${T.border}`,
-                        background: T.surface2, color: T.textPrimary, outline: "none", fontSize: 14
+                        padding: "12px 14px", borderRadius: 4, border: `1px solid #DADCD7`,
+                        background: "#FFFFFF", color: T.textPrimary, outline: "none", fontSize: 13.5
                       }}
                     />
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary }}>Phone Number</label>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary, fontFamily: "'DM Sans', sans-serif" }}>Phone Number</label>
                     <input
                       type="tel"
                       placeholder="+1 (555) 000-0000"
                       value={form.phone}
                       onChange={e => setForm({ ...form, phone: e.target.value })}
                       style={{
-                        padding: "12px 16px", borderRadius: 12, border: `1px solid ${T.border}`,
-                        background: T.surface2, color: T.textPrimary, outline: "none", fontSize: 14
+                        padding: "12px 14px", borderRadius: 4, border: `1px solid #DADCD7`,
+                        background: "#FFFFFF", color: T.textPrimary, outline: "none", fontSize: 13.5
                       }}
                     />
                   </div>
 
                   <div style={{ gridColumn: "span 2", display: "flex", flexDirection: "column", gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary }}>Project Type *</label>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary, fontFamily: "'DM Sans', sans-serif" }}>Project Type *</label>
                     <select
                       required
                       value={form.project_type}
                       onChange={e => setForm({ ...form, project_type: e.target.value })}
                       style={{
-                        padding: "12px 16px", borderRadius: 12, border: `1px solid ${T.border}`,
-                        background: T.surface2, color: T.textPrimary, outline: "none", fontSize: 14, cursor: "pointer"
+                        padding: "12px 14px", borderRadius: 4, border: `1px solid #DADCD7`,
+                        background: "#FFFFFF", color: T.textPrimary, outline: "none", fontSize: 13.5, cursor: "pointer"
                       }}
                     >
                       <option value="">Select a service...</option>
@@ -1802,13 +1767,13 @@ export default function DigitalProductList() {
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary }}>Budget Range</label>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary, fontFamily: "'DM Sans', sans-serif" }}>Budget Range</label>
                     <select
                       value={form.budget_range}
                       onChange={e => setForm({ ...form, budget_range: e.target.value })}
                       style={{
-                        padding: "12px 16px", borderRadius: 12, border: `1px solid ${T.border}`,
-                        background: T.surface2, color: T.textPrimary, outline: "none", fontSize: 14, cursor: "pointer"
+                        padding: "12px 14px", borderRadius: 4, border: `1px solid #DADCD7`,
+                        background: "#FFFFFF", color: T.textPrimary, outline: "none", fontSize: 13.5, cursor: "pointer"
                       }}
                     >
                       <option value="">Select budget...</option>
@@ -1821,13 +1786,13 @@ export default function DigitalProductList() {
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary }}>Timeline</label>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary, fontFamily: "'DM Sans', sans-serif" }}>Timeline</label>
                     <select
                       value={form.timeline}
                       onChange={e => setForm({ ...form, timeline: e.target.value })}
                       style={{
-                        padding: "12px 16px", borderRadius: 12, border: `1px solid ${T.border}`,
-                        background: T.surface2, color: T.textPrimary, outline: "none", fontSize: 14, cursor: "pointer"
+                        padding: "12px 14px", borderRadius: 4, border: `1px solid #DADCD7`,
+                        background: "#FFFFFF", color: T.textPrimary, outline: "none", fontSize: 13.5, cursor: "pointer"
                       }}
                     >
                       <option value="">Ideal timeline...</option>
@@ -1840,7 +1805,7 @@ export default function DigitalProductList() {
                   </div>
 
                   <div style={{ gridColumn: "span 2", display: "flex", flexDirection: "column", gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary }}>Project Details *</label>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary, fontFamily: "'DM Sans', sans-serif" }}>Project Details *</label>
                     <textarea
                       rows={4}
                       placeholder="Tell us about your project, goals, and any specific requirements..."
@@ -1848,8 +1813,8 @@ export default function DigitalProductList() {
                       value={form.message}
                       onChange={e => setForm({ ...form, message: e.target.value })}
                       style={{
-                        padding: "12px 16px", borderRadius: 12, border: `1px solid ${T.border}`,
-                        background: T.surface2, color: T.textPrimary, outline: "none", fontSize: 14, resize: "none"
+                        padding: "12px 14px", borderRadius: 4, border: `1px solid #DADCD7`,
+                        background: "#FFFFFF", color: T.textPrimary, outline: "none", fontSize: 13.5, resize: "none"
                       }}
                     />
                   </div>
@@ -1858,10 +1823,11 @@ export default function DigitalProductList() {
                     type="submit"
                     disabled={submitting}
                     style={{
-                      gridColumn: "span 2", padding: "14px", borderRadius: 12, border: "none",
-                      background: `linear-gradient(135deg, ${T.accent1}, ${T.accent2})`,
-                      color: T.bg, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em",
-                      cursor: submitting ? "not-allowed" : "pointer", fontSize: 13, marginTop: 10
+                      gridColumn: "span 2", padding: "14px", borderRadius: 4, border: "none",
+                      background: T.accent1,
+                      color: "#FFFFFF", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em",
+                      cursor: submitting ? "not-allowed" : "pointer", fontSize: 13, marginTop: 10,
+                      fontFamily: "'DM Sans', sans-serif"
                     }}
                   >
                     {submitting ? "Sending..." : "Submit Inquiry"}
@@ -1875,7 +1841,7 @@ export default function DigitalProductList() {
 
       {/* ── Footer ── */}
       <div style={{ position: "relative", zIndex: 2 }}>
-        <Footer dark />
+        <Footer />
       </div>
     </div>
   );
