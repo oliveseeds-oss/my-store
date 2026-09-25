@@ -9,10 +9,10 @@ export default function Contact() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    document.title = "Contact Us | Olive Seeds Bespoke Design Studio";
+    document.title = "Contact Olive Seeds Design Studio | Bespoke Design Enquiries";
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute("content", "Initiate a project enquiry with Olive Seeds Design Studio. We welcome bespoke commissions, brand consultations, and corporate gifting partnerships.");
+      metaDesc.setAttribute("content", "Enquire about bespoke design products, B2B bulk orders, or brand services. Olive Seeds Design Studio welcomes enquiries from corporate clients worldwide.");
     }
   }, []);
 
@@ -88,8 +88,8 @@ export default function Contact() {
   return (
     <div style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }} className="min-h-screen overflow-hidden">
       <SEO
-        title="Contact Us | Olive Seeds Bespoke Design Studio"
-        description="Initiate a project enquiry with Olive Seeds Design Studio. We welcome bespoke commissions, brand consultations, and corporate gifting partnerships."
+        title="Contact Olive Seeds Design Studio | Bespoke Design Enquiries"
+        description="Enquire about bespoke design products, B2B bulk orders, or brand services. Olive Seeds Design Studio welcomes enquiries from corporate clients worldwide."
         keywords="contact bespoke design studio, corporate design enquiries, b2b orders, olive seeds design studio"
       />
       <Navbar />
@@ -126,11 +126,11 @@ export default function Contact() {
                 style={{ fontFamily: "'Outfit', sans-serif" }}
                 className="text-4xl md:text-6xl font-black leading-tight text-white tracking-tight"
               >
-                Let's Begin
+                Start a Conversation
               </h1>
 
               <p className="text-sm md:text-base leading-relaxed text-white/90 max-w-xl font-medium">
-                Whether you have a detailed brief or an early-stage idea — we welcome your enquiry. Our studio responds to all messages within one business day.
+                Whether you have a fully formed brief or are simply exploring possibilities — we would welcome the conversation. Tell us about your project and we will respond within one business day.
               </p>
 
               <p className="text-xs md:text-sm leading-relaxed text-white/70 max-w-xl">
@@ -140,10 +140,10 @@ export default function Contact() {
               {/* Grid Features / Trust Lines */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                 {[
-                  "All enquiries are treated with complete confidentiality.",
-                  "We respond within one business day.",
-                  "B2B and volume orders welcome.",
-                  "Bespoke design consultations.",
+                  "Every enquiry is reviewed by our creative directors",
+                  "Response within one business day — guaranteed",
+                  "Non-disclosure agreements available upon request",
+                  "B2B and volume orders welcome",
                 ].map((item) => (
                   <div
                     key={item}

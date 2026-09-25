@@ -84,8 +84,9 @@ export default function App() {
                   <Route path="/invoice/:order_id"  element={<InvoicePage />} />
                   <Route path="/blog"               element={<BlogList />} />
                   <Route path="/blog/:id"           element={<BlogList />} />
-                  <Route path="/blog/:slug"         element={<BlogList />} />
                   <Route path="/service"            element={<Service />} />
+                  <Route path="/services"           element={<Service />} />
+                  <Route path="/digital-products"   element={<DigitalProductList />} />
                   <Route path="/contact"            element={<Contact />} />
                   <Route path="/catalog"            element={<Catalog />} />
                   <Route path="/categories"         element={<CategoryCatalog />} />

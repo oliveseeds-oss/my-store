@@ -868,8 +868,8 @@ export default function Home() {
       `}</style>
 
       <SEO
-        title="Olive Seeds | Bespoke Luxury Design Studio"
-        description="Olive Seeds Design Studio crafts bespoke design objects, corporate gifting collections, and curated brand experiences for discerning clients worldwide."
+        title="Olive Seeds Design Studio | Bespoke Luxury Design for Brands, Spaces & Occasions"
+        description="Premium bespoke design studio crafting distinguished products and experiences for corporate clients, interior spaces, hospitality brands, and exclusive events worldwide."
         keywords="bespoke luxury design studio, bespoke corporate gifting, custom brand expressions, spatial design objects, interior signage systems, event design suites"
       />
 
@@ -1017,7 +1017,7 @@ export default function Home() {
                   Meets Lasting
                 </span>
                 <br />
-                Distinction.
+                Distinction
               </motion.h1>
 
               <motion.p

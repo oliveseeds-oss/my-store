@@ -356,10 +356,10 @@ export default function ProductList() {
 
   /* ── Page Title & Meta ── */
   useEffect(() => {
-    document.title = "Bespoke Design Products | Olive Seeds Studio";
+    document.title = "Bespoke Design Products | Olive Seeds Design Studio";
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute("content", "Explore our curated collection of premium design products, bespoke personalised objects, and custom corporate gifts crafted for distinguished spaces.");
+      metaDesc.setAttribute("content", "Explore our curated collection of bespoke design products — custom corporate gifts, branded décor, and premium design objects for discerning B2B clients.");
     }
   }, []);
 
@@ -455,8 +455,8 @@ export default function ProductList() {
       <FontLink />
 
       <SEO
-        title="Bespoke Design Products | Olive Seeds Studio"
-        description="Explore our curated collection of premium design products, bespoke personalised objects, and custom corporate gifts crafted for distinguished spaces."
+        title="Bespoke Design Products | Olive Seeds Design Studio"
+        description="Explore our curated collection of bespoke design products — custom corporate gifts, branded décor, and premium design objects for discerning B2B clients."
         keywords="bespoke design products, custom corporate gifts, branded décor, premium design objects, olive seeds design studio"
       />
 
@@ -940,7 +940,7 @@ export default function ProductList() {
               fontFamily: T.bodyFont, fontSize: "14px", color: "rgba(255,255,255,0.8)",
               lineHeight: 1.7, marginBottom: "32px",
             }}>
-              We welcome B2B enquiries for bulk, corporate, and institutional orders. Whether you require 50 pieces or 5,000 — our studio manages production, customisation, and delivery with the same precision applied to every individual commission.
+              We work directly with corporate procurement teams, interior design studios, and event agencies. Tiered pricing, custom branding, and dedicated production management available.
             </p>
             <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: "32px" }}>
               <input
@@ -977,7 +977,7 @@ export default function ProductList() {
             </div>
 
             <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", paddingTop: "24px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-              <Link to="/engraving#bulk-order" style={{
+              <Link to="/contact" style={{
                 display: "inline-flex",
                 alignItems: "center",
                 background: "linear-gradient(135deg, #C9A86A 0%, #a87c3a 100%)",
@@ -992,7 +992,7 @@ export default function ProductList() {
                 boxShadow: "0 6px 20px rgba(201,168,106,0.25)",
                 transition: "all 0.3s ease",
               }}>
-                Request a B2B Proposal
+                Request a B2B Quote
               </Link>
               <Link to="/engraving" style={{
                 display: "inline-flex",

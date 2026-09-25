@@ -5,60 +5,93 @@
     <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon-32x32.png?v=2" />
     <link rel="icon" type="image/png" sizes="16x16" href="%PUBLIC_URL%/favicon-16x16.png?v=2" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://apiosspanel.oliveseedsdesignstudio.com">
-     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=DM+Sans:wght@300;400&family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#1C1C1E" />
     <meta
       name="description"
-      content="Olive Seeds Design Studio offers custom laser-engraved products, instant-download digital templates, and professional design services. Worldwide shipping available."
+      content="Premium bespoke design studio crafting distinguished products and experiences for corporate clients, interior spaces, hospitality brands, and exclusive events worldwide."
     />
-    <meta name="keywords" content="custom laser engraving, wood carvings, acrylic signs, digital design templates, Figma kits, UI/UX design, luxury gifts" />
+    <meta name="keywords" content="bespoke design studio, corporate gifting, brand identity, architectural acrylic, hand-finished timber, custom commissions" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
-    <link rel="canonical" href="https://oliveseedsdesignstudio.com/" />
+    <link rel="canonical" href="https://www.oliveseedsdesignstudio.com/" />
     <link rel="alternate" type="application/json" href="%PUBLIC_URL%/ai-agent.json" title="AI Agent Directory" />
     
     <!-- Open Graph / Social Sharing Defaults -->
-    <meta property="og:site_name" content="Olive Seeds Studio" />
+    <meta property="og:site_name" content="Olive Seeds Design Studio" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Olive Seeds Studio | Premium Custom Engravings, Digital Downloads & Design Services" />
-    <meta property="og:description" content="Olive Seeds Design Studio offers custom laser-engraved products, instant-download digital templates, and professional design services. Worldwide shipping available." />
-    <meta property="og:image" content="https://oliveseedsdesignstudio.com/logo192.png" />
-    <meta property="og:url" content="https://oliveseedsdesignstudio.com/" />
+    <meta property="og:title" content="Olive Seeds Design Studio | Bespoke Luxury Design for Brands, Spaces & Occasions" />
+    <meta property="og:description" content="Premium bespoke design studio crafting distinguished products and experiences for corporate clients, interior spaces, hospitality brands, and exclusive events worldwide." />
+    <meta property="og:image" content="https://www.oliveseedsdesignstudio.com/logo192.png" />
+    <meta property="og:url" content="https://www.oliveseedsdesignstudio.com/" />
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Olive Seeds Studio | Premium Custom Engravings, Digital Downloads & Design Services" />
-    <meta name="twitter:description" content="Olive Seeds Design Studio offers custom laser-engraved products, instant-download digital templates, and professional design services." />
-    <meta name="twitter:image" content="https://oliveseedsdesignstudio.com/logo192.png" />
+    <meta name="twitter:title" content="Olive Seeds Design Studio | Bespoke Luxury Design for Brands, Spaces & Occasions" />
+    <meta name="twitter:description" content="Premium bespoke design studio crafting distinguished products and experiences for corporate clients, interior spaces, hospitality brands, and exclusive events worldwide." />
+    <meta name="twitter:image" content="https://www.oliveseedsdesignstudio.com/logo192.png" />
     
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/apple-touch-icon.png?v=2" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <title>Olive Seeds Studio | Premium Custom Engravings, Digital Downloads & Design Services</title>
+    <title>Olive Seeds Design Studio | Bespoke Luxury Design for Brands, Spaces & Occasions</title>
     
-    <!-- Structured Data for Google to recognize the Organization and Logo -->
+    <!-- Structured Data for Google: Organization Schema -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "url": "https://oliveseedsdesignstudio.com/",
-      "logo": "https://oliveseedsdesignstudio.com/android-chrome-192x192.png?v=2",
-      "name": "Olive Seeds Creative Studio"
+      "name": "Olive Seeds Design Studio",
+      "url": "https://www.oliveseedsdesignstudio.com",
+      "logo": "https://www.oliveseedsdesignstudio.com/android-chrome-192x192.png?v=2",
+      "description": "Premium bespoke design studio crafting custom products, brand identities, and visual experiences for corporate, hospitality, education, and lifestyle clients worldwide.",
+      "areaServed": "Worldwide",
+      "serviceType": [
+        "Bespoke Product Design",
+        "Brand Identity Design",
+        "Corporate Gifting",
+        "Event Design",
+        "Digital Design Assets",
+        "Interior Decor Design"
+      ]
     }
     </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+    <!-- Scroll Reveal Animation -->
+    <script>
+      (function() {
+        function initScrollReveal() {
+          const reveals = document.querySelectorAll('section, .card, .product, .product-card');
+          if (!('IntersectionObserver' in window)) return;
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+              }
+            });
+          }, { threshold: 0.08 });
+          reveals.forEach(el => {
+            if (!el.dataset.observed) {
+              el.dataset.observed = 'true';
+              el.style.opacity = '0';
+              el.style.transform = 'translateY(20px)';
+              el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+              observer.observe(el);
+            }
+          });
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initScrollReveal);
+        } else {
+          initScrollReveal();
+        }
+        setInterval(initScrollReveal, 1000);
+      })();
+    </script>
   </body>
 </html>

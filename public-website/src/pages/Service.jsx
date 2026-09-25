@@ -145,10 +145,10 @@ const PROCESS_STEPS = [
 
 export default function Service() {
   useEffect(() => {
-    document.title = "Bespoke Design Services | Olive Seeds Studio";
+    document.title = "Bespoke Design Services | Corporate & Brand Design — Olive Seeds";
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute("content", "Creative services spanning brand identity design, interior design products, corporate gifting, and event design for clients with exacting standards.");
+      metaDesc.setAttribute("content", "Premium creative services for corporations, hotels, institutions, and lifestyle brands — from brand identity and spatial design to corporate gifting.");
     }
     if (window.location.hash) {
       const el = document.getElementById(window.location.hash.substring(1));
@@ -668,8 +668,8 @@ export default function Service() {
       `}</style>
 
       <SEO
-        title="Bespoke Design Services | Olive Seeds Studio"
-        description="Creative services spanning brand identity design, interior design products, corporate gifting, and event design for clients with exacting standards."
+        title="Bespoke Design Services | Corporate & Brand Design — Olive Seeds"
+        description="Premium creative services for corporations, hotels, institutions, and lifestyle brands — from brand identity and spatial design to corporate gifting."
         keywords="bespoke design services, corporate identity, brand design, spatial design, corporate gifting, event design"
       />
       <Navbar />
@@ -709,7 +709,7 @@ export default function Service() {
               className="os-heading os-hero-h1"
               style={{ fontSize: 64, color: "var(--accent)", maxWidth: 880, margin: "0 auto 28px", lineHeight: 1.12 }}
             >
-              Services
+              What We Do
             </h1>
           </FadeUp>
 
@@ -724,7 +724,7 @@ export default function Service() {
                 fontWeight: 400,
               }}
             >
-              A considered range of design services — each one structured for clients who hold their brand to the highest standard.
+              Six creative disciplines. One consistent standard of excellence. We partner with organisations that believe design is an investment, not an expense.
             </p>
           </FadeUp>
 
@@ -1285,12 +1285,12 @@ export default function Service() {
             {/* Left info */}
             <div>
               <div className="section-divider" style={{ width: 44, height: 3, background: "var(--gold)", marginBottom: 20 }} />
-              <span className="os-label" style={{ display: "block", marginBottom: 14 }}>Start Your Project</span>
+              <span className="os-label" style={{ display: "block", marginBottom: 14 }}>Start a Conversation</span>
               <h2 className="os-heading" style={{ fontSize: 40, color: "var(--accent)", marginBottom: 20, fontWeight: 700 }}>
-                Begin Your Project Enquiry
+                Start a Conversation
               </h2>
               <p style={{ fontSize: 15.5, color: "var(--text-2)", lineHeight: 1.8, marginBottom: 40 }}>
-                Share your project brief below. A studio creative director will review your specifications and respond within one business day.
+                Every project begins with a conversation about what you need, when you need it, and what success looks like. We'd love to hear about what you're working on.
               </p>
 
               <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -1451,7 +1451,7 @@ export default function Service() {
                     disabled={submitting}
                     style={{ gridColumn: "span 2", justifyContent: "center", fontSize: 15, padding: "18px 32px", cursor: "pointer", marginTop: 12 }}
                   >
-                    {submitting ? "Sending Enquiry..." : "Send Project Enquiry"}
+                    {submitting ? "Sending..." : "Request a Proposal"}
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </button>
                 </form>

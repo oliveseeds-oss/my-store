@@ -144,6 +144,11 @@ export default function Engraving() {
   const [settings, setSettings] = useState({});
 
   useEffect(() => {
+    document.title = "Bespoke Design Products | Olive Seeds Design Studio";
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute("content", "Explore our curated collection of bespoke design products — custom corporate gifts, branded décor, and premium design objects for discerning B2B clients.");
+    }
     API.get("/settings")
       .then((r) => { if (r.data) setSettings(r.data); })
       .catch(() => {});
@@ -186,8 +191,8 @@ export default function Engraving() {
   return (
     <div style={{ background: "#FAF9F6", color: "#1E2522", minHeight: "100vh", fontFamily: "'Outfit', sans-serif" }}>
       <SEO
-        title="Bespoke Objects & Collections | Olive Seeds Studio"
-        description="Discover our precision craft journey, tactile materials, and request a tailored proposal for bespoke corporate commissions and volume orders."
+        title="Bespoke Design Products | Olive Seeds Design Studio"
+        description="Explore our curated collection of bespoke design products — custom corporate gifts, branded décor, and premium design objects for discerning B2B clients."
         keywords="bespoke objects, custom corporate collections, architectural nameplates, hand-finished timber, acrylic collection"
       />
 

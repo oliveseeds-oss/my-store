@@ -683,10 +683,10 @@ export default function DigitalProductList() {
 
   /* ── Page Title & Meta ── */
   useEffect(() => {
-    document.title = "Digital Design Templates | Olive Seeds Studio";
+    document.title = "Premium Digital Design Products | Templates & Brand Assets — Olive Seeds Studio";
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute("content", "Acquire studio-grade digital design templates, presentation systems, brand identity kits, and stationery suites crafted for executive distinction.");
+      metaDesc.setAttribute("content", "Download professionally crafted digital design products — presentation templates, brand kits, and business stationery for executives and premium brands.");
     }
   }, []);
 
@@ -799,8 +799,8 @@ export default function DigitalProductList() {
       }}
     >
       <SEO
-        title="Digital Design Templates | Olive Seeds Studio"
-        description="Acquire studio-grade digital design templates, presentation systems, brand identity kits, and stationery suites crafted for executive distinction."
+        title="Premium Digital Design Products | Templates & Brand Assets — Olive Seeds Studio"
+        description="Download professionally crafted digital design products — presentation templates, brand kits, and business stationery for executives and premium brands."
         keywords="digital design templates, brand identity design, presentation systems, business stationery suites, digital assets"
       />
 
@@ -1435,8 +1435,8 @@ export default function DigitalProductList() {
               lineHeight: 1.7,
               margin: 0,
             }}>
-              <strong style={{ color: T.textPrimary }}>Studio Quality &amp; Licensing: </strong>
-              All digital products are designed in-studio by our creative team. Files are delivered in professional formats — fully editable, clearly structured, and accompanied by usage guidance. Licensing for commercial and organisational use is included with every purchase.
+              <strong style={{ color: T.textPrimary }}>Instant Digital Delivery: </strong>
+              Instant digital delivery upon purchase. Layered, organised source files included with complete usage documentation.
             </p>
           </div>
         </div>

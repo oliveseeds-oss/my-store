@@ -41,18 +41,18 @@ function CountUp({ end, suffix = "" }) {
 
 export default function AboutUs() {
   useEffect(() => {
-    document.title = "About Us | Olive Seeds Bespoke Design Studio";
+    document.title = "About Olive Seeds Design Studio | Bespoke Design with Purpose";
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute("content", "Olive Seeds is a bespoke design studio creating distinguished products, corporate gifts, and brand expressions for hospitality and corporate leaders.");
+      metaDesc.setAttribute("content", "Olive Seeds Design Studio is a premium bespoke design practice creating distinguished products and custom experiences for corporate and lifestyle clients.");
     }
   }, []);
 
   return (
     <div style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }} className="min-h-screen">
       <SEO
-        title="About Us | Olive Seeds Bespoke Design Studio"
-        description="Olive Seeds is a bespoke design studio creating distinguished products, corporate gifts, and brand expressions for hospitality and corporate leaders."
+        title="About Olive Seeds Design Studio | Bespoke Design with Purpose"
+        description="Olive Seeds Design Studio is a premium bespoke design practice creating distinguished products and custom experiences for corporate and lifestyle clients."
         keywords="bespoke design studio, luxury craftsmanship, corporate gifting, spatial design, brand identity, olive seeds design studio"
       />
       <Navbar />
@@ -302,7 +302,7 @@ export default function AboutUs() {
             style={{ background: "#0D1512", color: "#FAF9F6" }}
             className="px-8 py-4 rounded-xl font-bold text-sm tracking-wide shadow-lg shadow-emerald-900/10 hover:scale-105 active:scale-95 transition-all"
           >
-            Contact the Studio
+            Get in Touch
           </Link>
           <Link
             to="/products"

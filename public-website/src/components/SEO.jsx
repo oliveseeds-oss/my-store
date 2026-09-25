@@ -170,7 +170,7 @@ export default function SEO({ title, description, keywords, ogImage, imageAlt, p
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "Home", "item": siteUrl },
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.oliveseedsdesignstudio.com" },
           { "@type": "ListItem", "position": 2, "name": pageName, "item": currentUrl }
         ]
       };
@@ -183,8 +183,52 @@ export default function SEO({ title, description, keywords, ogImage, imageAlt, p
         document.head.appendChild(scriptEl);
       }
       scriptEl.textContent = JSON.stringify(breadcrumbSchema);
+    } else {
+      // WEBSITE SCHEMA (HOMEPAGE ONLY)
+      const websiteSchema = {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Olive Seeds Design Studio",
+        "url": "https://www.oliveseedsdesignstudio.com"
+      };
+      let wsScript = document.querySelector("#website-schema");
+      if (!wsScript) {
+        wsScript = document.createElement("script");
+        wsScript.id = "website-schema";
+        wsScript.type = "application/ld+json";
+        document.head.appendChild(wsScript);
+      }
+      wsScript.textContent = JSON.stringify(websiteSchema);
     }
-  }, [dbSeo, title, description, keywords, ogImage, imageAlt, isProduct]);
+
+    // PART 3: PRODUCT SCHEMA (FOR PRODUCT DETAIL PAGES)
+    if (isProduct && productData) {
+      const prodSchema = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": productData.name || title,
+        "description": productData.description || description,
+        "brand": {
+          "@type": "Brand",
+          "name": "Olive Seeds Design Studio"
+        },
+        "offers": {
+          "@type": "Offer",
+          "priceCurrency": productData.currency || "USD",
+          "price": productData.price || "0.00",
+          "availability": "https://schema.org/InStock"
+        }
+      };
+      let prodScript = document.querySelector("#product-schema");
+      if (!prodScript) {
+        prodScript = document.createElement("script");
+        prodScript.id = "product-schema";
+        prodScript.type = "application/ld+json";
+        document.head.appendChild(prodScript);
+      }
+      prodScript.textContent = JSON.stringify(prodSchema);
+    }
+  }, [dbSeo, title, description, keywords, ogImage, imageAlt, isProduct, productData]);
 
   return null;
 }

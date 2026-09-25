@@ -82,7 +82,7 @@ export default function FaqPage() {
     }
     metaDesc.setAttribute(
       "content",
-      "Answers about our bespoke design products, B2B ordering, digital downloads, custom commissions, and delivery timelines."
+      "Answers about our bespoke design products, B2B ordering, digital downloads, and custom commissions."
     );
 
     API.get("/faqs")
@@ -155,7 +155,7 @@ export default function FaqPage() {
     <div style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }} className="min-h-screen flex flex-col">
       <SEO
         title="Frequently Asked Questions | Olive Seeds Design Studio"
-        description="Answers about our bespoke design products, B2B ordering, digital downloads, custom commissions, and delivery timelines."
+        description="Answers about our bespoke design products, B2B ordering, digital downloads, and custom commissions."
         keywords="FAQ, bespoke design questions, corporate orders, international shipping, digital downloads"
       />
       <Navbar />
@@ -176,7 +176,7 @@ export default function FaqPage() {
             Questions & Answers
           </h1>
           <p className="text-xs md:text-sm text-[#0D1512]/60 max-w-xl mx-auto leading-relaxed">
-            We believe in transparency. Here you will find honest answers to the questions we hear most often.
+            Clear answers to the questions we hear most often. If your question is not covered here, our studio is always available to help.
           </p>
         </div>
 
