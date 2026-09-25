@@ -152,7 +152,7 @@ export default function FaqPage() {
   }, [faqs]);
 
   return (
-    <div style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }} className="min-h-screen flex flex-col">
+    <div style={{ background: "#FFFFFF", color: "#181A18", fontFamily: "'DM Sans', sans-serif" }} className="min-h-screen flex flex-col">
       <SEO
         title="Frequently Asked Questions | Olive Seeds Design Studio"
         description="Answers about our bespoke design products, B2B ordering, digital downloads, and custom commissions."
@@ -166,30 +166,32 @@ export default function FaqPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-      <main className="flex-1 max-w-4xl mx-auto px-6 py-12 w-full">
-        {/* Header Title */}
-        <div className="text-center mb-10 space-y-3">
-          <span className="inline-flex items-center gap-1.5 bg-[#0D1512]/5 text-[#0D1512] text-xs font-bold px-3.5 py-1.5 rounded-full border border-[#0D1512]/10 uppercase tracking-widest">
-            <MdHelpOutline className="text-base text-amber-700" /> Studio Knowledgebase
+      {/* Header */}
+      <section style={{ background: "#FFFFFF", borderBottom: "1px solid #E7E7E2" }} className="py-14 sm:py-18 text-center">
+        <div className="max-w-4xl mx-auto px-6 space-y-3">
+          <span className="eyebrow">
+            <MdHelpOutline className="text-base text-[#A48855]" /> Studio Knowledgebase
           </span>
-          <h1 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-3xl md:text-4xl font-black tracking-tight text-[#0D1512]">
-            Questions & Answers
+          <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight text-[#181A18]">
+            Frequently Asked Questions
           </h1>
-          <p className="text-xs md:text-sm text-[#0D1512]/60 max-w-xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#676A65] max-w-xl mx-auto leading-relaxed">
             Clear answers to the questions we hear most often. If your question is not covered here, our studio is always available to help.
           </p>
         </div>
+      </section>
 
+      <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-10 w-full">
         {/* Search & Category Filter Bar */}
-        <div className="bg-white rounded-3xl border border-[#0D1512]/10 p-4 md:p-6 shadow-sm mb-8 space-y-4">
+        <div className="bg-white rounded-[4px] border border-[#E7E7E2] p-4 md:p-6 shadow-xs mb-8 space-y-4">
           <div className="relative">
-            <MdSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
+            <MdSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8A8D88] text-xl" />
             <input
               type="text"
               placeholder="Search questions or keywords (e.g., international, corporate, digital)..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-[#FAF9F6] border border-[#0D1512]/15 rounded-2xl pl-11 pr-4 py-3.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/30 text-[#0D1512]"
+              className="w-full bg-[#FFFFFF] border border-[#DADCD7] rounded-[4px] pl-11 pr-4 py-3 text-xs md:text-sm focus:outline-none focus:border-[#23483D] text-[#181A18] placeholder-[#8A8D88]"
             />
           </div>
 
@@ -199,10 +201,10 @@ export default function FaqPage() {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition shrink-0 ${
+                className={`px-3.5 py-1.5 rounded-[4px] text-xs font-medium uppercase tracking-wider transition shrink-0 cursor-pointer ${
                   selectedCategory === cat
-                    ? "bg-[#0D1512] text-[#FAF9F6] shadow-md"
-                    : "bg-[#FAF9F6] text-[#0D1512]/70 hover:bg-stone-200 border border-[#0D1512]/10"
+                    ? "bg-[#23483D] text-[#FFFFFF] border border-[#23483D]"
+                    : "bg-[#FFFFFF] text-[#676A65] hover:border-[#CACCC6] hover:text-[#181A18] border border-[#E7E7E2]"
                 }`}
               >
                 {cat}
@@ -213,9 +215,9 @@ export default function FaqPage() {
 
         {/* FAQ Accordion List */}
         {loading ? (
-          <div className="text-center py-16 text-xs text-[#0D1512]/50">Loading questions...</div>
+          <div className="text-center py-16 text-xs text-[#8A8D88]">Loading questions...</div>
         ) : filteredFaqs.length === 0 ? (
-          <div className="bg-white rounded-3xl border border-[#0D1512]/10 p-12 text-center text-xs text-[#0D1512]/60">
+          <div className="bg-white rounded-[4px] border border-[#E7E7E2] p-12 text-center text-xs sm:text-sm text-[#676A65]">
             No matching questions found for "{search}".
           </div>
         ) : (
@@ -223,12 +225,12 @@ export default function FaqPage() {
             {Object.keys(groupedFaqs).map((catName) => (
               <div key={catName} className="space-y-3">
                 {selectedCategory === "All" ? (
-                  <h2 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-sm font-bold text-amber-800 uppercase tracking-widest pt-2">
+                  <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-medium text-[#181A18] pt-2">
                     {catName}
                   </h2>
                 ) : (
-                  <h2 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-sm font-bold text-amber-800 uppercase tracking-widest pt-2">
-                    {selectedCategory} Questions
+                  <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-medium text-[#181A18] pt-2">
+                    {selectedCategory}
                   </h2>
                 )}
 
@@ -238,23 +240,23 @@ export default function FaqPage() {
                     return (
                       <div
                         key={f.id}
-                        className={`bg-white border rounded-2xl transition duration-200 overflow-hidden shadow-sm ${
-                          isOpen ? "border-[#0D1512]/30 ring-1 ring-[#0D1512]/10" : "border-[#0D1512]/10 hover:border-[#0D1512]/20"
+                        className={`bg-white border rounded-[4px] transition duration-200 overflow-hidden shadow-xs ${
+                          isOpen ? "border-[#23483D]" : "border-[#E7E7E2] hover:border-[#CACCC6]"
                         }`}
                       >
                         <button
                           onClick={() => setOpenId(isOpen ? null : f.id)}
-                          className="w-full px-6 py-4.5 flex items-center justify-between text-left gap-4 font-bold text-xs md:text-sm text-[#0D1512]"
+                          className="w-full px-5 py-4 flex items-center justify-between text-left gap-4 font-normal text-sm md:text-base text-[#181A18] cursor-pointer"
                         >
-                          <h3 className="leading-snug font-bold text-xs md:text-sm">{f.question}</h3>
-                          <span className="p-1 rounded-lg bg-[#FAF9F6] border border-[#0D1512]/10 text-stone-600 shrink-0">
+                          <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="leading-snug text-base sm:text-lg text-[#181A18] font-normal">{f.question}</h3>
+                          <span className="p-1 rounded-[2px] bg-[#F8F8F6] border border-[#E7E7E2] text-[#676A65] shrink-0">
                             {isOpen ? <MdExpandLess className="text-lg" /> : <MdExpandMore className="text-lg" />}
                           </span>
                         </button>
 
                         {isOpen && (
                           <div
-                            className="px-6 pb-5 pt-1 text-xs md:text-sm text-[#0D1512]/80 leading-relaxed border-t border-stone-100 prose max-w-none"
+                            className="px-5 pb-5 pt-1 text-xs sm:text-sm text-[#676A65] leading-relaxed border-t border-[#E7E7E2] prose max-w-none"
                             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(f.answer) }}
                           />
                         )}

@@ -303,7 +303,7 @@ export default function Engraving() {
           {/* Right graphics mockup */}
           <div className="hero-img-box">
             <img 
-              src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop" 
+              src={settings.engraving_hero_image || "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=1200&auto=format&fit=crop"} 
               alt="Precision craft tools calibrating depth on solid teakwood template"
               style={{ width: "100%", height: "100%", objectFit: "cover" }} 
             />
@@ -334,7 +334,7 @@ export default function Engraving() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "32px", alignItems: "center" }}>
             <div style={{ position: "relative", borderRadius: "4px", overflow: "hidden", border: "1px solid #E7E7E2", height: "380px" }}>
               <img 
-                src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=800&auto=format&fit=crop" 
+                src={settings.engraving_showcase_image || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=800&auto=format&fit=crop"} 
                 alt="Personalised presentation boxes ready for dispatch" 
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />

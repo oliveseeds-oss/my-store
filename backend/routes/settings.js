@@ -3,7 +3,7 @@ const db = require("../db");
 const { verifyAdmin } = require("../middleware/auth");
 
 router.get("/", async (req, res) => {
-  const [rows] = await db.query("SELECT site_name, site_email, phone, address, currency, shipping_fee, free_shipping_above, razorpay_key, razorpay_secret, paypal_client_id, paypal_client_secret, paypal_mode, shiprocket_email, shiprocket_password FROM settings WHERE id = 1");
+  const [rows] = await db.query("SELECT site_name, site_email, phone, address, currency, shipping_fee, free_shipping_above, razorpay_key, razorpay_secret, paypal_client_id, paypal_client_secret, paypal_mode, shiprocket_email, shiprocket_password, engraving_hero_image, engraving_showcase_image, about_story_image FROM settings WHERE id = 1");
   const settings = rows[0] || {};
   
   // Mask shiprocket password
@@ -30,7 +30,7 @@ router.get("/", async (req, res) => {
 });
 
 router.put("/", verifyAdmin, async (req, res) => {
-  const { site_name, site_email, phone, address, currency, shipping_fee, free_shipping_above, razorpay_key, razorpay_secret, paypal_client_id, paypal_client_secret, paypal_mode, shiprocket_email, shiprocket_password, admin_password } = req.body;
+  const { site_name, site_email, phone, address, currency, shipping_fee, free_shipping_above, razorpay_key, razorpay_secret, paypal_client_id, paypal_client_secret, paypal_mode, shiprocket_email, shiprocket_password, admin_password, engraving_hero_image, engraving_showcase_image, about_story_image } = req.body;
   
   // Handle shiprocket credential decryption/encryption migration
   const [current] = await db.query("SELECT shiprocket_password, razorpay_secret, paypal_client_secret, paypal_mode FROM settings WHERE id = 1");
@@ -63,8 +63,8 @@ router.put("/", verifyAdmin, async (req, res) => {
 
   const finalPaypalMode = paypal_mode || current[0]?.paypal_mode || "sandbox";
 
-  let query = "UPDATE settings SET site_name=?, site_email=?, phone=?, address=?, currency=?, shipping_fee=?, free_shipping_above=?, razorpay_key=?, razorpay_secret=?, paypal_client_id=?, paypal_client_secret=?, paypal_mode=?, shiprocket_email=?, shiprocket_password=?";
-  const params = [site_name, site_email, phone, address, currency, shipping_fee, free_shipping_above, razorpay_key, finalRazorpaySecret, paypal_client_id, finalPaypalSecret, finalPaypalMode, shiprocket_email, finalPassword];
+  let query = "UPDATE settings SET site_name=?, site_email=?, phone=?, address=?, currency=?, shipping_fee=?, free_shipping_above=?, razorpay_key=?, razorpay_secret=?, paypal_client_id=?, paypal_client_secret=?, paypal_mode=?, shiprocket_email=?, shiprocket_password=?, engraving_hero_image=?, engraving_showcase_image=?, about_story_image=?";
+  const params = [site_name, site_email, phone, address, currency, shipping_fee, free_shipping_above, razorpay_key, finalRazorpaySecret, paypal_client_id, finalPaypalSecret, finalPaypalMode, shiprocket_email, finalPassword, engraving_hero_image || null, engraving_showcase_image || null, about_story_image || null];
 
   if (admin_password) {
     const bcrypt = require("bcryptjs");

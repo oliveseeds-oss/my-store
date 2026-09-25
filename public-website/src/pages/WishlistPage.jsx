@@ -55,41 +55,44 @@ export default function WishlistPage() {
   };
 
   return (
-    <div style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }} className="min-h-screen flex flex-col">
+    <div style={{ background: "#FFFFFF", color: "#181A18", fontFamily: "'DM Sans', sans-serif" }} className="min-h-screen flex flex-col">
       <SEO title="My Saved Wishlist | Olive Seeds Studio" description="View and manage your saved products on Olive Seeds Studio." />
       <Navbar />
 
-      <main className="flex-1 max-w-6xl mx-auto px-6 py-12 w-full">
-        <div className="flex items-center justify-between border-b border-[#0D1512]/10 pb-6 mb-8">
+      <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 py-10 w-full">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#E7E7E2] pb-6 mb-8 gap-4">
           <div>
-            <h1 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-3xl font-black text-[#0D1512] flex items-center gap-3">
-              <MdFavorite className="text-rose-500" /> Saved Commissions &amp; Objects
+            <span className="eyebrow" style={{ marginBottom: 6 }}>
+              Curated Selection
+            </span>
+            <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-3xl sm:text-4xl font-normal text-[#181A18] flex items-center gap-3">
+              <MdFavorite className="text-[#A48855]" /> Saved Commissions &amp; Objects
             </h1>
-            <p className="text-xs text-[#0D1512]/60 mt-1">Curate your shortlisted bespoke pieces and studio assets.</p>
+            <p className="text-xs sm:text-sm text-[#676A65] mt-1">Curate your shortlisted bespoke pieces and studio assets.</p>
           </div>
 
-          <span className="bg-[#0D1512]/5 text-[#0D1512] text-xs font-bold px-3.5 py-1.5 rounded-full border border-[#0D1512]/10">
-            {wishlistItems.length} Saved Pieces
+          <span className="bg-[#F8F8F6] text-[#23483D] text-xs font-semibold px-3.5 py-1.5 rounded-[4px] border border-[#E7E7E2] self-start sm:self-auto">
+            {wishlistItems.length} {wishlistItems.length === 1 ? "Saved Piece" : "Saved Pieces"}
           </span>
         </div>
 
         {!member ? (
-          <div className="bg-white rounded-3xl border border-[#0D1512]/10 p-12 text-center space-y-4 shadow-sm max-w-md mx-auto my-8">
-            <MdFavoriteBorder className="text-5xl text-stone-300 mx-auto" />
-            <h3 className="font-bold text-[#0D1512]">Login to View Wishlist</h3>
-            <p className="text-xs text-stone-500">Please sign in to view your curated pieces across devices.</p>
-            <Link to="/login" className="inline-block bg-[#0D1512] text-white text-xs font-bold px-6 py-3 rounded-xl shadow-sm hover:bg-stone-800 transition">
+          <div className="bg-white rounded-[4px] border border-[#E7E7E2] p-10 sm:p-12 text-center space-y-4 shadow-xs max-w-md mx-auto my-8">
+            <MdFavoriteBorder className="text-4xl text-[#8A8D88] mx-auto" />
+            <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl font-normal text-[#181A18]">Login to View Wishlist</h3>
+            <p className="text-xs sm:text-sm text-[#676A65]">Please sign in to view your curated pieces across devices.</p>
+            <Link to="/login" className="btn-primary inline-flex text-xs">
               Sign In to Your Account
             </Link>
           </div>
         ) : loading ? (
-          <div className="text-center py-16 text-xs text-[#0D1512]/50">Loading saved items...</div>
+          <div className="text-center py-16 text-xs text-[#8A8D88]">Loading saved items...</div>
         ) : wishlistItems.length === 0 ? (
-          <div className="bg-white rounded-3xl border border-[#0D1512]/10 p-12 text-center space-y-4 shadow-sm max-w-md mx-auto my-8">
-            <MdShoppingBag className="text-5xl text-stone-300 mx-auto" />
-            <h3 className="font-bold text-[#0D1512]">Your Saved Collection is Empty</h3>
-            <p className="text-xs text-stone-500">Explore our collection and select the heart icon to curate pieces here.</p>
-            <Link to="/products" className="inline-block bg-[#0D1512] text-white text-xs font-bold px-6 py-3 rounded-xl shadow-sm hover:bg-stone-800 transition">
+          <div className="bg-white rounded-[4px] border border-[#E7E7E2] p-10 sm:p-12 text-center space-y-4 shadow-xs max-w-md mx-auto my-8">
+            <MdShoppingBag className="text-4xl text-[#8A8D88] mx-auto" />
+            <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl font-normal text-[#181A18]">Your Saved Collection is Empty</h3>
+            <p className="text-xs sm:text-sm text-[#676A65]">Explore our collection and select the heart icon to curate pieces here.</p>
+            <Link to="/products" className="btn-primary inline-flex text-xs">
               Explore Collection
             </Link>
           </div>
@@ -100,36 +103,36 @@ export default function WishlistPage() {
               const productLink = p.type === "digital" ? `/digital/${targetUid}` : `/products/${targetUid}`;
               const imgSrc = p.image || p.image_url || "/logo192.png";
               return (
-                <div key={p.wishlist_id || targetUid} className="bg-white border border-[#0D1512]/10 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md transition flex items-center justify-between gap-4">
+                <div key={p.wishlist_id || targetUid} className="bg-white border border-[#E7E7E2] rounded-[4px] p-4 sm:p-5 shadow-xs hover:border-[#CACCC6] transition flex items-center justify-between gap-4">
                   <div className="flex items-center gap-4 min-w-0">
-                    <Link to={productLink} className="w-16 h-16 sm:w-20 sm:h-20 bg-stone-100 rounded-xl overflow-hidden flex-shrink-0 border border-stone-200/60 block">
-                      <img src={imgSrc} alt={p.name} className="w-full h-full object-cover hover:scale-105 transition" />
+                    <Link to={productLink} className="w-16 h-16 sm:w-20 sm:h-20 bg-[#F8F8F6] rounded-[3px] overflow-hidden flex-shrink-0 border border-[#E7E7E2] block">
+                      <img src={imgSrc} alt={p.name} className="w-full h-full object-cover hover:scale-105 transition duration-300" />
                     </Link>
                     <div className="min-w-0 flex-1">
-                      <span className="inline-block text-[10px] font-extrabold uppercase tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md mb-1">
-                        {p.type === "digital" ? "Digital Asset" : (p.category || "Custom Printed")}
+                      <span className="inline-block text-[10px] font-semibold uppercase tracking-wider text-[#A48855] bg-[#F8F8F6] border border-[#E7E7E2] px-2 py-0.5 rounded-[2px] mb-1">
+                        {p.type === "digital" ? "Digital Asset" : (p.category || "Custom Piece")}
                       </span>
-                      <h2 className="text-sm sm:text-base font-bold truncate">
-                        <Link to={productLink} className="text-[#0D1512] hover:text-amber-700 transition">
+                      <h2 className="text-sm sm:text-base font-normal truncate">
+                        <Link to={productLink} style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-[#181A18] text-lg sm:text-xl hover:text-[#23483D] transition">
                           {p.name}
                         </Link>
                       </h2>
-                      <p className="font-extrabold text-sm sm:text-base text-[#0D1512] mt-1">
+                      <p className="font-semibold text-sm sm:text-base text-[#23483D] mt-0.5">
                         {convert(p.price)}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-                    <Link to={productLink} className="bg-[#0D1512] text-white text-xs font-bold px-4 py-2.5 rounded-xl hover:bg-stone-800 transition shadow-sm">
+                    <Link to={productLink} className="btn-secondary text-xs" style={{ padding: "9px 18px" }}>
                       View Piece
                     </Link>
                     <button
                       onClick={() => removeFromWishlist(p)}
-                      className="p-2.5 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition cursor-pointer"
+                      className="p-2 text-[#8A8D88] hover:text-[#181A18] hover:bg-[#F8F8F6] rounded-[3px] transition cursor-pointer"
                       title="Remove from saved pieces"
                     >
-                      <MdFavorite className="text-xl text-rose-500" />
+                      <MdFavorite className="text-lg text-[#A48855]" />
                     </button>
                   </div>
                 </div>

@@ -26,6 +26,9 @@ export default function Settings() {
     paypal_mode: "sandbox",
     shiprocket_email: "",
     shiprocket_password: "",
+    engraving_hero_image: "",
+    engraving_showcase_image: "",
+    about_story_image: "",
     admin_password: "",
     new_password: "",
   });
@@ -48,6 +51,9 @@ export default function Settings() {
           paypal_mode: res.data.paypal_mode || "sandbox",
           shiprocket_email: res.data.shiprocket_email || "",
           shiprocket_password: res.data.shiprocket_password || "",
+          engraving_hero_image: res.data.engraving_hero_image || "",
+          engraving_showcase_image: res.data.engraving_showcase_image || "",
+          about_story_image: res.data.about_story_image || "",
           admin_password: "",
           new_password: "",
         });
@@ -60,6 +66,21 @@ export default function Settings() {
   }, []);
 
   const update = (key, value) => setSettings({ ...settings, [key]: value });
+
+  const handleImageUpload = async (e, fieldKey) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("file", file);
+    try {
+      const res = await API.post("/uploads/file", formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+      update(fieldKey, res.data.url);
+    } catch (err) {
+      alert("Upload failed: " + (err.response?.data?.error || err.message));
+    }
+  };
 
   const save = async () => {
     setErrorMsg("");
@@ -80,6 +101,9 @@ export default function Settings() {
         paypal_mode: settings.paypal_mode,
         shiprocket_email: settings.shiprocket_email,
         shiprocket_password: settings.shiprocket_password,
+        engraving_hero_image: settings.engraving_hero_image,
+        engraving_showcase_image: settings.engraving_showcase_image,
+        about_story_image: settings.about_story_image,
       };
 
       if (settings.new_password) {
@@ -375,6 +399,105 @@ export default function Settings() {
               <p className="text-[10px] text-gray-400">
                 Enter your registered Shiprocket credentials to automatically book and assign shipments.
               </p>
+            </div>
+          </div>
+
+          {/* Page Media & Showcase Images */}
+          <div className="bg-white rounded-2xl border border-gray-100 p-5 flex flex-col gap-5 shadow-sm">
+            <div className="flex items-center justify-between pb-2 border-b border-gray-100">
+              <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider text-xs">
+                Page Media &amp; Showcase Images
+              </h3>
+              <span className="text-[10px] bg-emerald-50 text-emerald-700 font-semibold px-2 py-0.5 rounded-md">
+                Custom Page Photos
+              </span>
+            </div>
+            <p className="text-xs text-stone-500">
+              Customize the showcase photos displayed on your public website pages (e.g. Engraving / Bulk Orders and About Us). You can enter an image URL or upload directly from your device:
+            </p>
+
+            {/* Engraving Hero Image */}
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-semibold text-gray-700">Custom Objects &amp; Engraving — Hero Image</label>
+              <div className="flex gap-2 items-center">
+                <input
+                  type="text"
+                  value={settings.engraving_hero_image}
+                  onChange={(e) => update("engraving_hero_image", e.target.value)}
+                  placeholder="https://... or upload below"
+                  className="flex-1 border border-gray-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                />
+                <label className="bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold py-2 px-3 rounded-xl transition cursor-pointer shrink-0">
+                  📁 Upload
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => handleImageUpload(e, "engraving_hero_image")}
+                  />
+                </label>
+              </div>
+              {settings.engraving_hero_image && (
+                <div className="w-24 h-16 rounded-lg overflow-hidden border border-gray-200 mt-1">
+                  <img src={settings.engraving_hero_image} alt="Preview" className="w-full h-full object-cover" />
+                </div>
+              )}
+            </div>
+
+            {/* Engraving Workshop Showcase */}
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-semibold text-gray-700">Custom Objects &amp; Engraving — Workshop Showcase</label>
+              <div className="flex gap-2 items-center">
+                <input
+                  type="text"
+                  value={settings.engraving_showcase_image}
+                  onChange={(e) => update("engraving_showcase_image", e.target.value)}
+                  placeholder="https://... or upload below"
+                  className="flex-1 border border-gray-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                />
+                <label className="bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold py-2 px-3 rounded-xl transition cursor-pointer shrink-0">
+                  📁 Upload
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => handleImageUpload(e, "engraving_showcase_image")}
+                  />
+                </label>
+              </div>
+              {settings.engraving_showcase_image && (
+                <div className="w-24 h-16 rounded-lg overflow-hidden border border-gray-200 mt-1">
+                  <img src={settings.engraving_showcase_image} alt="Preview" className="w-full h-full object-cover" />
+                </div>
+              )}
+            </div>
+
+            {/* About Us Story Image */}
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-semibold text-gray-700">About Us — Studio Story Showcase</label>
+              <div className="flex gap-2 items-center">
+                <input
+                  type="text"
+                  value={settings.about_story_image}
+                  onChange={(e) => update("about_story_image", e.target.value)}
+                  placeholder="https://... or upload below"
+                  className="flex-1 border border-gray-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                />
+                <label className="bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold py-2 px-3 rounded-xl transition cursor-pointer shrink-0">
+                  📁 Upload
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => handleImageUpload(e, "about_story_image")}
+                  />
+                </label>
+              </div>
+              {settings.about_story_image && (
+                <div className="w-24 h-16 rounded-lg overflow-hidden border border-gray-200 mt-1">
+                  <img src={settings.about_story_image} alt="Preview" className="w-full h-full object-cover" />
+                </div>
+              )}
             </div>
           </div>
 

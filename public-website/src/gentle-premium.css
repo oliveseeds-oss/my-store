@@ -96,7 +96,7 @@ a.btn-primary {
   justify-content: center;
   gap: 8px;
   background-color: var(--brand);
-  color: #FFFFFF !important;
+  color: #FFFFFF;
   border: 1px solid var(--brand);
   border-radius: var(--radius);
   font-family: 'DM Sans', sans-serif;
@@ -115,7 +115,7 @@ button.btn-primary:hover,
 a.btn-primary:hover {
   background-color: var(--brand-dark);
   border-color: var(--brand-dark);
-  color: #FFFFFF !important;
+  color: #FFFFFF;
   transform: translateY(-2px);
   box-shadow: var(--shadow-sm);
 }
@@ -128,7 +128,7 @@ a.btn-secondary {
   justify-content: center;
   gap: 8px;
   background-color: transparent;
-  color: var(--text) !important;
+  color: var(--text);
   border: 1px solid var(--border-hover);
   border-radius: var(--radius);
   font-family: 'DM Sans', sans-serif;
@@ -146,7 +146,7 @@ button.btn-secondary:hover,
 a.btn-secondary:hover {
   background-color: var(--surface-warm);
   border-color: var(--brand);
-  color: var(--brand) !important;
+  color: var(--brand);
   transform: translateY(-2px);
 }
 
@@ -158,7 +158,7 @@ a.btn-gold {
   justify-content: center;
   gap: 8px;
   background-color: var(--gold);
-  color: #FFFFFF !important;
+  color: #FFFFFF;
   border: 1px solid var(--gold);
   border-radius: var(--radius);
   font-family: 'DM Sans', sans-serif;
@@ -177,7 +177,7 @@ button.btn-gold:hover,
 a.btn-gold:hover {
   background-color: #8E7342;
   border-color: #8E7342;
-  color: #FFFFFF !important;
+  color: #FFFFFF;
   transform: translateY(-2px);
   box-shadow: var(--shadow-sm);
 }
@@ -190,7 +190,7 @@ a.btn-outline {
   justify-content: center;
   gap: 8px;
   background-color: #FFFFFF;
-  color: var(--text) !important;
+  color: var(--text);
   border: 1px solid var(--border-hover);
   border-radius: var(--radius);
   font-family: 'DM Sans', sans-serif;
@@ -208,8 +208,40 @@ button.btn-outline:hover,
 a.btn-outline:hover {
   background-color: var(--surface-warm);
   border-color: var(--brand);
-  color: var(--brand) !important;
+  color: var(--brand);
   transform: translateY(-2px);
+}
+
+.btn-white-solid,
+button.btn-white-solid,
+a.btn-white-solid {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #FFFFFF;
+  color: var(--brand);
+  border: 1px solid #FFFFFF;
+  border-radius: var(--radius);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 13px 28px;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-white-solid:hover,
+button.btn-white-solid:hover,
+a.btn-white-solid:hover {
+  background-color: var(--surface-warm);
+  color: var(--brand-dark);
+  border-color: var(--surface-warm);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 /* ─── Global Product Cards & Containers ─── */

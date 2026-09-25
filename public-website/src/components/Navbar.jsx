@@ -33,7 +33,7 @@ export default function Navbar() {
 
         {/* Desktop Navigation Links */}
         <div className="hidden md:flex items-center gap-7 text-[12px] font-medium uppercase tracking-[0.14em] text-[#181A18]/80">
-          <Link to="/products" className="hover:text-[#23483D] transition">The Collection</Link>
+          <Link to="/products" className="hover:text-[#23483D] transition">Product Collections</Link>
           <Link to="/digital" className="hover:text-[#23483D] transition">Digital</Link>
           <Link to="/service" className="hover:text-[#23483D] transition">Service</Link>
           <Link to="/blog" className="hover:text-[#23483D] transition">Blog</Link>
@@ -72,7 +72,7 @@ export default function Navbar() {
               onClick={() => setIsMobileMenuOpen(false)}
               className="py-2.5 border-b border-[#E7E7E2]/60 hover:text-[#23483D] transition"
             >
-              The Collection
+              Product Collections
             </Link>
             <Link
               to="/digital"

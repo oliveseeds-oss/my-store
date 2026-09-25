@@ -48,6 +48,9 @@ async function initializeDatabase() {
   await runSafe("ALTER TABLE settings ADD COLUMN shiprocket_password VARCHAR(255) DEFAULT NULL");
   await runSafe("ALTER TABLE settings ADD COLUMN shiprocket_token TEXT DEFAULT NULL");
   await runSafe("ALTER TABLE settings ADD COLUMN shiprocket_token_expires TIMESTAMP NULL DEFAULT NULL");
+  await runSafe("ALTER TABLE settings ADD COLUMN engraving_hero_image VARCHAR(500) DEFAULT NULL");
+  await runSafe("ALTER TABLE settings ADD COLUMN engraving_showcase_image VARCHAR(500) DEFAULT NULL");
+  await runSafe("ALTER TABLE settings ADD COLUMN about_story_image VARCHAR(500) DEFAULT NULL");
   await runSafe("INSERT IGNORE INTO settings (id, site_name) VALUES (1, 'My Engraving Store')");
   await runSafe("ALTER TABLE gallery ADD COLUMN description TEXT DEFAULT NULL");
 

@@ -305,34 +305,32 @@ export default function Service() {
           display: inline-flex;
           align-items: center;
           gap: 10px;
-          background: linear-gradient(135deg, var(--accent) 0%, var(--accent-h) 100%);
-          color: #fff;
-          font-size: 13.5px;
-          font-weight: 600;
-          letter-spacing: 0.06em;
+          background: var(--accent);
+          color: #ffffff;
+          font-size: 12px;
+          font-weight: 500;
+          letter-spacing: 0.1em;
           text-transform: uppercase;
-          padding: 16px 36px;
-          border-radius: 100px;
-          border: 1px solid rgba(201, 168, 106, 0.3);
+          padding: 13px 28px;
+          border-radius: var(--radius);
+          border: 1px solid var(--accent);
           cursor: pointer;
           text-decoration: none;
-          box-shadow: 0 4px 20px rgba(15,39,68,0.15);
-          transition: background 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
-                      transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
-                      box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-                      border-color 0.35s ease;
+          box-shadow: none;
+          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .btn-primary:hover {
-          background: linear-gradient(135deg, var(--accent-h) 0%, #1e3a5f 100%);
-          transform: translateY(-4px) scale(1.02);
-          box-shadow: 0 20px 40px rgba(15,39,68,0.25), 0 0 0 3px rgba(201,168,106,0.3);
-          border-color: rgba(201,168,106,0.7);
+          background: var(--accent-h);
+          border-color: var(--accent-h);
+          color: #ffffff;
+          transform: translateY(-2px);
+          box-shadow: var(--shadow-sm);
         }
         .btn-primary svg {
-          transition: transform 0.3s ease;
+          transition: transform 0.25s ease;
         }
         .btn-primary:hover svg {
-          transform: translateX(6px);
+          transform: translateX(4px);
         }
 
         /* SECONDARY BTN */
@@ -340,30 +338,24 @@ export default function Service() {
           display: inline-flex;
           align-items: center;
           gap: 10px;
-          background: rgba(255, 255, 255, 0.4);
-          color: var(--accent);
-          font-size: 13.5px;
-          font-weight: 600;
-          letter-spacing: 0.06em;
+          background: #ffffff;
+          color: var(--text);
+          font-size: 12px;
+          font-weight: 500;
+          letter-spacing: 0.1em;
           text-transform: uppercase;
-          padding: 15px 34px;
-          border-radius: 100px;
-          border: 1.5px solid var(--border);
+          padding: 13px 28px;
+          border-radius: var(--radius);
+          border: 1px solid var(--border-hover, #CACCC6);
           cursor: pointer;
           text-decoration: none;
-          backdrop-filter: blur(8px);
-          transition: border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
-                      background 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
-                      transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-                      color 0.35s ease,
-                      box-shadow 0.35s ease;
+          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .btn-secondary:hover {
-          border-color: var(--gold);
-          background: var(--surface);
-          color: var(--gold);
-          transform: translateY(-4px) scale(1.02);
-          box-shadow: 0 16px 32px rgba(201,168,106,0.12), 0 0 0 2px rgba(201,168,106,0.15);
+          border-color: var(--accent);
+          background: var(--surface-warm);
+          color: var(--accent);
+          transform: translateY(-2px);
         }
 
         /* FORM INPUT */
@@ -612,39 +604,11 @@ export default function Service() {
 
         @media (min-width: 769px) {
           .service-hero-section {
-            background: linear-gradient(135deg, #0A1424 0%, #050A12 100%) !important;
-            padding-top: 150px !important;
-            padding-bottom: 140px !important;
-          }
-          .service-hero-section .os-heading {
-            color: #ffffff !important;
-          }
-          .service-hero-section p {
-            color: rgba(255, 255, 255, 0.72) !important;
-          }
-          .service-hero-section .btn-secondary {
-            background: rgba(255, 255, 255, 0.08) !important;
-            border-color: rgba(255, 255, 255, 0.2) !important;
-            color: #ffffff !important;
-          }
-          .service-hero-section .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.16) !important;
-            border-color: var(--gold) !important;
-            color: var(--gold) !important;
-          }
-          .service-hero-section .responsive-hero-mockup {
-            background: rgba(255, 255, 255, 0.04) !important;
-            border-color: rgba(255, 255, 255, 0.08) !important;
-            backdrop-filter: blur(24px) !important;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5) !important;
-          }
-          .service-hero-section .responsive-hero-mockup span {
-            background: rgba(255, 255, 255, 0.06) !important;
-            border-color: rgba(255, 255, 255, 0.1) !important;
-            color: rgba(255, 255, 255, 0.8) !important;
+            padding-top: 130px !important;
+            padding-bottom: 110px !important;
           }
           .service-hero-glow {
-            background: radial-gradient(circle, rgba(201, 168, 106, 0.16) 0%, transparent 70%) !important;
+            background: radial-gradient(circle, rgba(164, 136, 85, 0.08) 0%, transparent 70%) !important;
             animation: slowGlow 12s ease-in-out infinite;
           }
           .service-hero-mockup-animate {
@@ -877,7 +841,7 @@ export default function Service() {
                     ))}
                   </div>
 
-                  <a href="#contact" className="btn-primary" style={{ marginTop: 36, display: "inline-flex", background: "#ffffff", color: "var(--accent)" }}>
+                  <a href="#contact" className="btn-white-solid" style={{ marginTop: 36, display: "inline-flex", background: "#ffffff", color: "var(--accent)", border: "1px solid #ffffff", fontWeight: 600 }}>
                     Discuss Your Brief
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </a>
@@ -915,39 +879,89 @@ export default function Service() {
           <div className="responsive-grid-3">
             {SERVICES.map((s, i) => (
               <FadeUp key={i} delay={i * 0.08}>
-                <div className="service-card" style={{ height: "100%" }}>
-                  {/* Tag */}
-                  <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--accent)", background: "var(--bg)", border: "1px solid var(--border)", padding: "5px 12px", borderRadius: 8, display: "inline-block", marginBottom: 28 }}>
-                    {s.tag}
-                  </span>
+                <div
+                  className="service-card"
+                  style={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    padding: "36px 30px",
+                    background: "#FFFFFF",
+                    border: "1px solid var(--border)",
+                    borderRadius: "4px",
+                  }}
+                >
+                  <div>
+                    {/* Top Row: Service Number & Icon */}
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+                      <span
+                        style={{
+                          fontFamily: "'Cormorant Garamond', Georgia, serif",
+                          fontSize: "18px",
+                          fontWeight: 600,
+                          color: "var(--gold)",
+                          letterSpacing: "0.08em",
+                        }}
+                      >
+                        0{i + 1}
+                      </span>
+                      <div
+                        style={{
+                          width: 44,
+                          height: 44,
+                          borderRadius: 4,
+                          background: "var(--gold-soft)",
+                          border: "1px solid var(--gold-border)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {(() => {
+                          const IconComponent = Icons[s.iconKey];
+                          return IconComponent ? <IconComponent color="var(--gold)" size={20} /> : null;
+                        })()}
+                      </div>
+                    </div>
 
-                  {/* Icon */}
-                  <div
-                    style={{
-                      width: 52,
-                      height: 52,
-                      borderRadius: 12,
-                      background: "var(--gold-soft)",
-                      border: "1px solid var(--gold-border)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginBottom: 22,
-                    }}
-                  >
-                    {(() => {
-                      const IconComponent = Icons[s.iconKey];
-                      return IconComponent ? <IconComponent color="var(--gold)" size={24} /> : null;
-                    })()}
+                    <h3
+                      className="os-heading"
+                      style={{
+                        fontSize: 22,
+                        fontWeight: 600,
+                        color: "var(--accent)",
+                        marginBottom: 12,
+                        lineHeight: 1.25,
+                      }}
+                    >
+                      {s.title}
+                    </h3>
+
+                    <p style={{ fontSize: 14, color: "var(--text-2)", lineHeight: 1.75, marginBottom: 20 }}>
+                      {s.desc}
+                    </p>
                   </div>
 
-                  <h3 style={{ fontSize: 20, fontWeight: 700, color: "var(--accent)", marginBottom: 12, letterSpacing: "-0.02em" }}>
-                    {s.title}
-                  </h3>
-
-                  <p style={{ fontSize: 14.5, color: "var(--text-2)", lineHeight: 1.8, marginBottom: 0 }}>
-                    {s.desc}
-                  </p>
+                  {/* Docked Suitability Footer */}
+                  <div style={{ marginTop: "auto", paddingTop: 16, borderTop: "1px solid var(--border)" }}>
+                    <span
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 600,
+                        letterSpacing: "0.12em",
+                        textTransform: "uppercase",
+                        color: "var(--gold)",
+                        display: "block",
+                        marginBottom: 4,
+                      }}
+                    >
+                      Scope &amp; Fit
+                    </span>
+                    <span style={{ fontSize: 12.5, color: "var(--text-2)", lineHeight: 1.6, display: "block" }}>
+                      {s.tag.replace(/^Ideal for:\s*/i, "")}
+                    </span>
+                  </div>
                 </div>
               </FadeUp>
             ))}
@@ -1472,8 +1486,8 @@ export default function Service() {
             <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap", position: "relative", zIndex: 1 }}>
               <a
                 href="#contact"
-                className="btn-primary"
-                style={{ background: "#ffffff", color: "var(--accent)", fontSize: 15 }}
+                className="btn-white-solid"
+                style={{ background: "#ffffff", color: "var(--accent)", fontSize: 15, fontWeight: 600, border: "1px solid #ffffff" }}
               >
                 Start a Conversation
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" /></svg>

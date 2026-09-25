@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import API from "../api";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SEO from "../components/SEO";
@@ -40,12 +41,17 @@ function CountUp({ end, suffix = "" }) {
 }
 
 export default function AboutUs() {
+  const [settings, setSettings] = useState({});
+
   useEffect(() => {
     document.title = "About Olive Seeds Design Studio | Bespoke Design with Purpose";
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
       metaDesc.setAttribute("content", "Olive Seeds Design Studio is a premium bespoke design practice creating distinguished products and custom experiences for corporate and lifestyle clients.");
     }
+    API.get("/settings")
+      .then((r) => { if (r.data) setSettings(r.data); })
+      .catch(() => {});
   }, []);
 
   return (
@@ -129,8 +135,8 @@ export default function AboutUs() {
             </p>
           </div>
 
-          {/* Visual promise block */}
-          <div className="w-full">
+          {/* Visual promise & studio image block */}
+          <div className="w-full flex flex-col gap-6">
             <div
               style={{
                 background: "#F8F8F6",
@@ -162,6 +168,15 @@ export default function AboutUs() {
                   <p className="text-xs text-[#676A65]">Founder, Olive Seeds</p>
                 </div>
               </div>
+            </div>
+
+            {/* Studio Story Showcase Image */}
+            <div className="rounded-[4px] overflow-hidden border border-[#E7E7E2] shadow-xs">
+              <img
+                src={settings.about_story_image || "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=800&auto=format&fit=crop"}
+                alt="Olive Seeds Studio Atelier"
+                className="w-full h-44 sm:h-48 object-cover"
+              />
             </div>
           </div>
 
