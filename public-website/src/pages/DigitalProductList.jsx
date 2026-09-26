@@ -21,46 +21,7 @@ const SORT_OPTIONS = [
   { value: "rating", label: "Top Rated" },
 ];
 
-const COLLECTIONS = [
-  {
-    numeral: "I",
-    title: "UI/UX & Mobile App Systems",
-    desc: "Multi-platform Figma design kits, responsive design tokens, and iOS/Android app architectures crafted for visionary tech and consumer brands.",
-    category: "UI/UX Kits",
-  },
-  {
-    numeral: "II",
-    title: "Brand Identity Frameworks",
-    desc: "Complete visual identity guidelines, master logo systems, typographic proportion grids, and comprehensive corporate brand manuals.",
-    category: "Brand Identity Kits",
-  },
-  {
-    numeral: "III",
-    title: "Website & Landing Page Templates",
-    desc: "Production-ready Framer, Webflow, and React/Tailwind architectures optimized for blistering speed, luxury aesthetics, and high conversion.",
-    category: "Website Templates",
-  },
-  {
-    numeral: "IV",
-    title: "3D Models & Render Scenes",
-    desc: "Photorealistic 3D assets, OBJ/FBX geometry, studio lighting environments, and Blender master setups for hyper-realistic visual staging.",
-    category: "3D Models",
-  },
-  {
-    numeral: "V",
-    title: "AI Agent Templates & Workflows",
-    desc: "Orchestrated AI prompt architectures, autonomous agent blueprints, and modular workflow automations engineered for modern creative teams.",
-    category: "AI Agent Templates",
-  },
-  {
-    numeral: "VI",
-    title: "Digital Printables & Creative Assets",
-    desc: "High-resolution architectural art prints, minimalist planner suites, vector icon kits, and bespoke graphic toolkits ready for immediate deployment.",
-    category: "Digital Printables",
-  },
-];
-
-/* ─── Digital Product Card (No Overlap & Quiet Luxury) ─────────── */
+/* ─── Digital Product Card (Refined, Compact & Architectural) ─── */
 function DigitalCard({ p, onWishlist, isWishlisted }) {
   const { addToCart } = useCart();
   const { convert } = useCurrency();
@@ -71,8 +32,8 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
   const finalPrice = (p.discount_price !== null && p.discount_price !== undefined && p.discount_price !== "")
     ? Number(p.discount_price)
     : Number(p.price || 0);
-  const discount = (p.discount_price && p.price)
-    ? Math.round((1 - p.discount_price / p.price) * 100)
+  const discount = (p.discount_price && p.price && Number(p.discount_price) < Number(p.price))
+    ? Math.round((1 - Number(p.discount_price) / Number(p.price)) * 100)
     : 0;
 
   const handleAdd = (e) => {
@@ -89,7 +50,7 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
     setTimeout(() => setAdded(false), 1600);
   };
 
-  const formatBadge = p.file_format || (Array.isArray(p.tags) && p.tags[0]) || "DIGITAL ASSET";
+  const formatBadge = p.file_format || (Array.isArray(p.tags) && p.tags[0]) || "DIGITAL";
 
   return (
     <div 
@@ -97,8 +58,8 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Top Image Preview (~65-70% visual presence with consistent 4:5 aspect ratio) */}
-      <div className="relative aspect-[4/5] bg-[#FAF6EE] overflow-hidden border-b border-[#EAE4D6]/50">
+      {/* Top Image Preview (aspect-[4/3] keeps card size compact and balanced) */}
+      <div className="relative aspect-[4/3] bg-[#FAF6EE] overflow-hidden border-b border-[#EAE4D6]/50">
         <Link to={`/digital/${p.id}`} className="block w-full h-full">
           {img ? (
             <img 
@@ -112,21 +73,21 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
               decoding="async" 
             />
           ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center text-[#23483D] bg-[#FAF6EE] p-4 text-center">
-              <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 32, color: "rgba(164, 136, 85, 0.4)", letterSpacing: "0.1em" }}>OS</span>
-              <span style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.2em", color: "#A48855", fontWeight: 700, marginTop: 4 }}>Digital Vault</span>
+            <div className="w-full h-full flex flex-col items-center justify-center text-[#23483D] bg-[#FAF6EE] p-3 text-center">
+              <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 24, color: "rgba(164, 136, 85, 0.4)", letterSpacing: "0.1em" }}>OS</span>
+              <span style={{ fontSize: 8, textTransform: "uppercase", letterSpacing: "0.2em", color: "#A48855", fontWeight: 700, marginTop: 2 }}>Digital Archive</span>
             </div>
           )}
         </Link>
 
         {/* Discreet Micro-Badge */}
-        <div className="absolute top-2.5 left-2.5 z-10 pointer-events-none flex items-center gap-1.5">
+        <div className="absolute top-2 left-2 z-10 pointer-events-none flex items-center gap-1">
           {discount > 0 ? (
-            <span className="px-1.5 py-0.5 rounded-[2px] text-[8.5px] font-bold tracking-[0.1em] uppercase bg-[#23483D] text-white">
+            <span className="px-1.5 py-0.5 rounded-[2px] text-[8px] font-bold tracking-[0.08em] uppercase bg-[#23483D] text-white">
               −{discount}%
             </span>
           ) : (
-            <span className="px-1.5 py-0.5 rounded-[2px] text-[8.5px] font-semibold tracking-[0.1em] uppercase bg-white/95 text-[#23483D] border border-[#EAE4D6]">
+            <span className="px-1.5 py-0.5 rounded-[2px] text-[8px] font-semibold tracking-[0.08em] uppercase bg-white/95 text-[#23483D] border border-[#EAE4D6]">
               {formatBadge}
             </span>
           )}
@@ -141,30 +102,30 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
             onWishlist();
           }}
           aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-          className="absolute top-2.5 right-2.5 z-20 w-[30px] h-[30px] rounded-full flex items-center justify-center bg-white/90 border border-[#EAE4D6] cursor-pointer transition-opacity duration-200"
+          className="absolute top-2 right-2 z-20 w-[26px] h-[26px] sm:w-[28px] sm:h-[28px] rounded-full flex items-center justify-center bg-white/90 border border-[#EAE4D6] cursor-pointer transition-opacity duration-200"
           style={{ opacity: isWishlisted || hovered ? 1 : 0.85 }}
         >
           {isWishlisted ? (
-            <MdFavorite className="text-rose-600 text-sm" />
+            <MdFavorite className="text-rose-600 text-xs sm:text-sm" />
           ) : (
-            <MdFavoriteBorder className="text-stone-400 hover:text-stone-700 text-sm" />
+            <MdFavoriteBorder className="text-stone-400 hover:text-stone-700 text-xs sm:text-sm" />
           )}
         </button>
       </div>
 
-      {/* Content Area with Controlled Vertical Rhythm */}
-      <div className="p-3.5 sm:p-4 flex flex-col flex-1 justify-between">
+      {/* Content Area with Controlled Proportions */}
+      <div className="p-2.5 sm:p-3.5 flex flex-col flex-1 justify-between">
         <div>
           {/* Category */}
-          <p className="text-[9px] uppercase font-bold tracking-[0.18em] text-[#A48855] truncate mb-1.5 leading-tight min-h-[1.2em]">
-            {p.category_name || "Digital Architecture"}
+          <p className="text-[8px] sm:text-[9px] uppercase font-bold tracking-[0.16em] text-[#A48855] truncate mb-1 leading-tight min-h-[1.1em]">
+            {p.category_name || "Digital Edition"}
           </p>
 
-          {/* Asset Title (2 Lines Min Height) */}
-          <Link to={`/digital/${p.id}`} className="block mb-2.5">
+          {/* Asset Title */}
+          <Link to={`/digital/${p.id}`} className="block mb-2">
             <h3 
               style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} 
-              className={`text-[18px] sm:text-[19px] font-medium transition-colors duration-200 line-clamp-2 leading-[1.28] min-h-[2.56em] break-words ${
+              className={`text-[15px] sm:text-[17px] font-medium transition-colors duration-200 line-clamp-2 leading-[1.24] min-h-[2.48em] break-words ${
                 hovered ? "text-[#23483D]" : "text-[#181A18]"
               }`}
             >
@@ -173,49 +134,49 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
           </Link>
         </div>
 
-        {/* Pricing & Editorial CTA Row (mt-auto ensures perfect row alignment) */}
-        <div className="mt-auto pt-2.5 border-t border-[#FAF6EE] flex flex-col gap-3">
+        {/* Pricing & Editorial CTA Row */}
+        <div className="mt-auto pt-2 border-t border-[#FAF6EE] flex flex-col gap-2">
           <div className="flex items-baseline justify-between">
-            <div className="flex items-baseline gap-2">
+            <div className="flex items-baseline gap-1.5">
               <span 
                 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} 
-                className="text-[20px] font-semibold text-[#181A18]"
+                className="text-[17px] sm:text-[19px] font-semibold text-[#181A18]"
               >
                 {convert(finalPrice)}
               </span>
               {discount > 0 && (
-                <span className="text-[11.5px] text-[#8A8D88] line-through">
+                <span className="text-[10.5px] sm:text-[11px] text-[#8A8D88] line-through">
                   {convert(p.price)}
                 </span>
               )}
             </div>
             {p.file_format && (
-              <span className="text-[8.5px] font-semibold tracking-[0.12em] uppercase text-[#A48855]">
+              <span className="text-[8px] sm:text-[8.5px] font-semibold tracking-[0.1em] uppercase text-[#A48855]">
                 {p.file_format}
               </span>
             )}
           </div>
 
-          <div className="flex items-center justify-between gap-2.5 pt-0.5">
+          <div className="flex items-center justify-between gap-1.5 pt-0.5">
             <Link
               to={`/digital/${p.id}`}
-              className="group/cta inline-flex items-center gap-1.5 text-[10.5px] font-bold tracking-[0.15em] uppercase text-[#181A18] hover:text-[#23483D] transition-colors"
+              className="group/cta inline-flex items-center gap-1 text-[9.5px] sm:text-[10px] font-bold tracking-[0.12em] uppercase text-[#181A18] hover:text-[#23483D] transition-colors"
               style={{ fontFamily: "'DM Sans', sans-serif" }}
             >
-              <span>Inspect Piece</span>
-              <span className="inline-block transition-transform duration-200 group-hover/cta:translate-x-1 text-xs">→</span>
+              <span>Inspect</span>
+              <span className="inline-block transition-transform duration-200 group-hover/cta:translate-x-0.5 text-xs">→</span>
             </Link>
             <button
               onClick={handleAdd}
               aria-label="Add digital asset to order"
               title={added ? "Added to Order" : "Add to Order"}
-              className={`w-8 h-8 rounded-[3px] border border-[#EAE4D6] transition-all duration-200 cursor-pointer flex items-center justify-center shrink-0 ${
+              className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-[2px] border border-[#EAE4D6] transition-all duration-200 cursor-pointer flex items-center justify-center shrink-0 ${
                 added 
                   ? "bg-[#16a34a] text-white border-[#16a34a]" 
                   : "bg-[#FAF6EE] text-[#23483D] hover:bg-[#23483D] hover:text-white hover:border-[#23483D]"
               }`}
             >
-              {added ? <MdCheck className="text-sm" /> : <MdShoppingBag className="text-sm" />}
+              {added ? <MdCheck className="text-xs sm:text-sm" /> : <MdShoppingBag className="text-xs sm:text-sm" />}
             </button>
           </div>
         </div>
@@ -327,7 +288,7 @@ export default function DigitalProductList() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name || !form.company || !form.email || !form.project_type || !form.message) {
+    if (!form.name || !form.email || !form.project_type || !form.message) {
       alert("Please fill in all required fields.");
       return;
     }
@@ -361,72 +322,41 @@ export default function DigitalProductList() {
       />
       <Navbar />
 
-      {/* ── Masthead Hero ── */}
-      <section className="relative border-b border-[#EAE4D6] overflow-hidden" style={{ background: "#FAF6EE" }}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 relative z-10">
-          <div className="max-w-3xl">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#A48855]" />
-              <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase text-[#A48855]">
-                Digital Design Vault · Olive Seeds
-              </span>
-            </div>
-
+      {/* ── Masthead Hero (Simple, Calm & Premium Atelier Presentation) ── */}
+      <section className="relative border-b border-[#EAE4D6]" style={{ background: "#FAF6EE" }}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+          <div className="max-w-2xl">
+            <span className="text-[10px] font-bold tracking-[0.22em] uppercase text-[#A48855] block mb-2">
+              Atelier Digital Vault
+            </span>
             <h1 
               style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} 
-              className="text-3xl sm:text-5xl lg:text-6xl font-normal text-[#1C2B26] tracking-tight leading-[1.08] mb-4"
+              className="text-3xl sm:text-4xl lg:text-5xl font-normal text-[#1C2B26] tracking-tight leading-[1.12] mb-3"
             >
-              UI/UX Systems, Brand Kits, Templates &amp; Digital Assets
+              Curated Digital Works &amp; Systems
             </h1>
-
-            <p className="text-sm sm:text-base text-[#6B7C75] leading-relaxed max-w-2xl mb-8">
-              Curated executive digital assets — from production-ready UI/UX design systems, website and mobile app templates, to studio 3D models, AI agent workflows, brand identity suites, and digital printables. Engineered for discerning studios, founders, and collectors.
+            <p className="text-xs sm:text-sm text-[#6B7C75] leading-relaxed mb-6 max-w-xl">
+              Production UI/UX kits, responsive website architectures, 3D render scenes, AI agent workflows, and digital design editions engineered for modern creative practices.
             </p>
-
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+            <div className="flex items-center gap-3">
               <button
                 onClick={() => {
                   const el = document.getElementById("vault-archive");
                   if (el) el.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="px-6 py-3.5 bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D] text-xs font-bold tracking-[0.12em] uppercase rounded-[4px] transition shadow-sm cursor-pointer"
+                className="px-5 py-2.5 bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D] text-[11px] font-bold tracking-[0.12em] uppercase rounded-[2px] transition cursor-pointer"
               >
-                Explore Digital Vault ↓
+                Browse Collection ↓
               </button>
               <button
                 onClick={() => {
                   const el = document.getElementById("commission-brief");
                   if (el) el.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="px-6 py-3.5 bg-white hover:bg-stone-50 border border-[#EAE4D6] text-[#1C2B26] text-xs font-bold tracking-[0.12em] uppercase rounded-[4px] transition cursor-pointer"
+                className="px-5 py-2.5 bg-white hover:bg-stone-50 border border-[#EAE4D6] text-[#1C2B26] text-[11px] font-bold tracking-[0.12em] uppercase rounded-[2px] transition cursor-pointer"
               >
-                Custom Digital Commission
+                Custom Commission
               </button>
-            </div>
-          </div>
-
-          {/* 3 Value Pillars */}
-          <div className="mt-12 pt-8 border-t border-[#EAE4D6] grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div className="flex items-start gap-3">
-              <span className="text-sm font-bold text-[#A48855] font-mono">01</span>
-              <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Production-Grade Architecture</h4>
-                <p className="text-xs text-[#6B7C75] mt-0.5">Crafted in Figma, Framer, Webflow, React, and 3D master formats with clean token structures.</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <span className="text-sm font-bold text-[#A48855] font-mono">02</span>
-              <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Perpetual Commercial Rights</h4>
-                <p className="text-xs text-[#6B7C75] mt-0.5">Unrestricted use across private, client, and commercial venture deployments.</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <span className="text-sm font-bold text-[#A48855] font-mono">03</span>
-              <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Instant Cloud Release</h4>
-                <p className="text-xs text-[#6B7C75] mt-0.5">Immediate vault access upon checkout with lifetime re-download authorization.</p>
-              </div>
             </div>
           </div>
         </div>
@@ -618,11 +548,11 @@ export default function DigitalProductList() {
             })}
           </div>
 
-          {/* ── Product Grid (Guaranteed No Overlap on Mobile) ── */}
+          {/* ── Product Grid (Refined Proportions: 2 cols on mobile, 3-4 on desktop) ── */}
           {loading ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5 lg:gap-6">
               {[...Array(8)].map((_, i) => (
-                <div key={i} className="border border-[#EAE4D6] rounded-[4px] overflow-hidden bg-white animate-pulse">
+                <div key={i} className="border border-[#EAE4D6]/70 rounded-[2px] overflow-hidden bg-white animate-pulse">
                   <div className="aspect-[4/3] bg-stone-100" />
                   <div className="p-3 space-y-2">
                     <div className="h-2 bg-stone-200 rounded w-1/3" />
@@ -653,7 +583,7 @@ export default function DigitalProductList() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-7 sm:gap-x-8 gap-y-10 sm:gap-y-12">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5 lg:gap-6">
               {products.map((p) => (
                 <DigitalCard
                   key={p.id}
@@ -774,258 +704,129 @@ export default function DigitalProductList() {
         </div>
       )}
 
-      {/* ── Featured Curated Vaults (Roman Numerals, No Emojis) ── */}
-      <section className="border-t border-[#EAE4D6] py-14 sm:py-18 bg-[#FAF6EE]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="text-center max-w-2xl mx-auto mb-10">
-            <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#A48855] block mb-1">
-              Curated Disciplines
-            </span>
-            <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-3xl sm:text-4xl font-normal text-[#1C2B26]">
-              Atelier Specialized Collections
-            </h2>
-            <p className="text-xs sm:text-sm text-[#6B7C75] mt-2">
-              Each discipline contains tokenized hierarchies, responsive layouts, and layered production source archives.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {COLLECTIONS.map((col) => (
-              <div 
-                key={col.title}
-                onClick={() => setFilter("category", col.category)}
-                className="group bg-white border border-[#EAE4D6] hover:border-[#23483D] rounded-[4px] p-6 transition duration-300 shadow-xs hover:shadow-md cursor-pointer flex flex-col justify-between"
-              >
-                <div>
-                  <span className="font-serif text-2xl font-bold text-[#A48855] block mb-2 group-hover:scale-105 transition-transform">
-                    {col.numeral}.
-                  </span>
-                  <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-lg font-semibold text-[#1C2B26] group-hover:text-[#23483D] transition">
-                    {col.title}
-                  </h3>
-                  <p className="text-xs text-[#6B7C75] mt-2 leading-relaxed">
-                    {col.desc}
-                  </p>
-                </div>
-                <div className="mt-5 pt-3 border-t border-[#EAE4D6]/60 flex items-center justify-between text-xs font-semibold text-[#23483D]">
-                  <span>Filter Discipline</span>
-                  <span className="group-hover:translate-x-1 transition-transform">→</span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* White Glove Digital Assurance */}
-          <div className="mt-10 p-5 sm:p-6 bg-white border border-[#EAE4D6] rounded-[4px] flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left shadow-xs">
-            <div className="w-12 h-12 rounded-full border border-[#EAE4D6] bg-[#FAF6EE] flex items-center justify-center font-serif text-lg text-[#23483D] shrink-0">
-              OS
-            </div>
-            <div className="flex-1">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Studio File Integrity &amp; Verification</h4>
-              <p className="text-xs text-[#6B7C75] mt-0.5 leading-relaxed">
-                All digital deliverables are SHA-256 integrity-verified, uncompressed, and backed by lifetime re-downloads directly from your private Client Atelier.
-              </p>
-            </div>
-            <Link 
-              to="/profile?tab=digital" 
-              className="shrink-0 px-4 py-2 border border-[#23483D] text-[#23483D] hover:bg-[#23483D] hover:text-white text-xs font-bold tracking-[0.1em] rounded-[4px] transition uppercase"
-            >
-              Your Vault
-            </Link>
-          </div>
-
+      {/* ── Studio Digital License Assurance (Minimal & Restrained) ── */}
+      <section className="border-t border-[#EAE4D6] py-8 bg-[#FAF6EE]">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+          <p className="text-xs text-[#6B7C75] tracking-wide">
+            <span className="font-semibold text-[#1C2B26]">Olive Seeds Digital Guarantee:</span> All acquisitions include perpetual commercial licenses, clean tokenized production files, and immediate lifetime re-downloads directly from your account vault.
+          </p>
         </div>
       </section>
 
-      {/* ── Custom Commission Brief Section ── */}
-      <section id="commission-brief" className="border-t border-[#EAE4D6] py-16 sm:py-20 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
-            
-            {/* Left Column: Brief Context */}
-            <div className="lg:col-span-5 space-y-6">
-              <div>
-                <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#A48855] block mb-1">
-                  Bespoke Digital Engineering
-                </span>
-                <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-3xl sm:text-4xl font-normal text-[#1C2B26] leading-tight">
-                  Commission Custom UI/UX, Web, 3D, or AI Systems
-                </h2>
-                <p className="text-xs sm:text-sm text-[#6B7C75] mt-3 leading-relaxed">
-                  Require an enterprise design system, high-converting digital storefront, tailored 3D scene, or proprietary AI agent workflow? Our creative directors and technical architects accept select private commissions.
+      {/* ── Custom Commission Brief Section (Simple, Restrained, Elegant) ── */}
+      <section id="commission-brief" className="border-t border-[#EAE4D6] py-14 sm:py-18 bg-white">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8">
+            <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#A48855] block mb-1.5">
+              Private Commissions
+            </span>
+            <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl sm:text-3xl font-normal text-[#1C2B26]">
+              Commission Custom Digital Architecture
+            </h2>
+            <p className="text-xs text-[#6B7C75] mt-1.5 max-w-md mx-auto leading-relaxed">
+              Inquire regarding bespoke UI/UX design systems, production web architectures, tailored 3D scenes, or proprietary AI workflows.
+            </p>
+          </div>
+
+          <div className="bg-[#FAF6EE]/60 border border-[#EAE4D6] p-6 sm:p-8 rounded-[3px]">
+            {success ? (
+              <div className="text-center py-8 space-y-2.5">
+                <span className="w-10 h-10 mx-auto rounded-full bg-[#23483D] text-white flex items-center justify-center text-lg font-bold">✓</span>
+                <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-normal text-[#1C2B26]">
+                  Commission Brief Transmitted
+                </h3>
+                <p className="text-xs text-[#6B7C75] max-w-md mx-auto leading-relaxed">
+                  Your brief has been delivered to our creative director. We will review your technical parameters and respond within 24 hours.
                 </p>
               </div>
-
-              <div className="space-y-4 pt-2">
-                {[
-                  { id: "01", title: "Direct Director Review", desc: "Every project brief is personally assessed within 24 hours." },
-                  { id: "02", title: "Mutual Confidentiality", desc: "Standard NDA protection furnished prior to schematic disclosure." },
-                  { id: "03", title: "Framework Fidelity", desc: "Files delivered in Figma tokens, clean React/Webflow code, 3D FBX/OBJ, and vector master assets." }
-                ].map((item) => (
-                  <div key={item.id} className="flex gap-3.5 items-start">
-                    <span className="font-mono text-xs font-bold text-[#A48855] p-2 bg-[#FAF6EE] rounded-[4px] border border-[#EAE4D6] shrink-0">{item.id}</span>
-                    <div>
-                      <h4 className="text-xs font-bold text-[#1C2B26] uppercase tracking-wider">{item.title}</h4>
-                      <p className="text-xs text-[#6B7C75] mt-0.5">{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Right Column: Brief Form */}
-            <div className="lg:col-span-7 bg-[#FAF6EE] border border-[#EAE4D6] p-6 sm:p-8 rounded-[4px] shadow-xs">
-              {success ? (
-                <div className="text-center py-12 space-y-3">
-                  <span className="w-12 h-12 mx-auto rounded-full bg-[#23483D] text-white flex items-center justify-center text-xl font-bold">✓</span>
-                  <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl font-normal text-[#1C2B26]">
-                    Commission Brief Transmitted
-                  </h3>
-                  <p className="text-xs text-[#6B7C75] max-w-md mx-auto leading-relaxed">
-                    Thank you. Your project brief has been logged with our studio director. We will review your technical requirements and contact you within 24 hours.
-                  </p>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#A48855] block mb-1">
-                        Principal Name *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Jane Smith"
-                        value={form.name}
-                        onChange={(e) => setForm({ ...form, name: e.target.value })}
-                        className="w-full bg-white border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#A48855] block mb-1">
-                        Enterprise / Practice *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Acme Architecture Ltd."
-                        value={form.company}
-                        onChange={(e) => setForm({ ...form, company: e.target.value })}
-                        className="w-full bg-white border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#A48855] block mb-1">
-                        Correspondence Email *
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        placeholder="jane@practice.com"
-                        value={form.email}
-                        onChange={(e) => setForm({ ...form, email: e.target.value })}
-                        className="w-full bg-white border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#A48855] block mb-1">
-                        Telephone Line
-                      </label>
-                      <input
-                        type="tel"
-                        placeholder="+1 (555) 000-0000"
-                        value={form.phone}
-                        onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                        className="w-full bg-white border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div>
-                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#A48855] block mb-1">
-                        Discipline *
-                      </label>
-                      <select
-                        required
-                        value={form.project_type}
-                        onChange={(e) => setForm({ ...form, project_type: e.target.value })}
-                        className="w-full bg-white border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3 py-2.5 text-xs focus:outline-none text-[#1C2B26] cursor-pointer"
-                      >
-                        <option value="">Select scope...</option>
-                        <option>UI/UX Design System &amp; Mobile App</option>
-                        <option>Luxury Website &amp; Webflow/React Architecture</option>
-                        <option>Brand Identity Kit &amp; Corporate Guidelines</option>
-                        <option>Custom 3D Model &amp; Photorealistic Scene</option>
-                        <option>AI Agent Template &amp; Workflow Automation</option>
-                        <option>Bespoke Digital Printables &amp; Vector Asset Suite</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#A48855] block mb-1">
-                        Budget Allocation
-                      </label>
-                      <select
-                        value={form.budget_range}
-                        onChange={(e) => setForm({ ...form, budget_range: e.target.value })}
-                        className="w-full bg-white border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3 py-2.5 text-xs focus:outline-none text-[#1C2B26] cursor-pointer"
-                      >
-                        <option value="">Select scope...</option>
-                        <option>$2,000 – $5,000</option>
-                        <option>$5,000 – $15,000</option>
-                        <option>$15,000 – $50,000</option>
-                        <option>$50,000+</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#A48855] block mb-1">
-                        Target Schedule
-                      </label>
-                      <select
-                        value={form.timeline}
-                        onChange={(e) => setForm({ ...form, timeline: e.target.value })}
-                        className="w-full bg-white border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3 py-2.5 text-xs focus:outline-none text-[#1C2B26] cursor-pointer"
-                      >
-                        <option value="">Select target...</option>
-                        <option>Expedited (under 2 weeks)</option>
-                        <option>1 – 2 months</option>
-                        <option>2 – 4 months</option>
-                        <option>Ongoing retainer</option>
-                      </select>
-                    </div>
-                  </div>
-
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   <div>
-                    <label className="text-[10px] uppercase font-bold tracking-widest text-[#A48855] block mb-1">
-                      Project Specifications &amp; Goals *
+                    <label className="text-[9.5px] uppercase font-bold tracking-[0.14em] text-[#A48855] block mb-1">
+                      Your Name *
                     </label>
-                    <textarea
-                      rows={4}
+                    <input
+                      type="text"
                       required
-                      placeholder="Outline architectural parameters, required file formats, target dimensions, or creative goals..."
-                      value={form.message}
-                      onChange={(e) => setForm({ ...form, message: e.target.value })}
-                      className="w-full bg-white border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26] resize-none"
+                      placeholder="Jane Smith"
+                      value={form.name}
+                      onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      className="w-full bg-white border border-[#EAE4D6] focus:border-[#23483D] rounded-[2px] px-3 py-2 text-xs focus:outline-none text-[#1C2B26]"
                     />
                   </div>
+                  <div>
+                    <label className="text-[9.5px] uppercase font-bold tracking-[0.14em] text-[#A48855] block mb-1">
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="jane@studio.com"
+                      value={form.email}
+                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      className="w-full bg-white border border-[#EAE4D6] focus:border-[#23483D] rounded-[2px] px-3 py-2 text-xs focus:outline-none text-[#1C2B26]"
+                    />
+                  </div>
+                </div>
 
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="w-full py-3.5 bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D] text-xs font-bold tracking-[0.12em] uppercase rounded-[4px] transition shadow-xs active:scale-98 cursor-pointer disabled:opacity-50"
-                  >
-                    {submitting ? "Transmitting Brief..." : "Submit Project Brief →"}
-                  </button>
-                </form>
-              )}
-            </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div>
+                    <label className="text-[9.5px] uppercase font-bold tracking-[0.14em] text-[#A48855] block mb-1">
+                      Enterprise / Practice
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Studio / Brand (Optional)"
+                      value={form.company}
+                      onChange={(e) => setForm({ ...form, company: e.target.value })}
+                      className="w-full bg-white border border-[#EAE4D6] focus:border-[#23483D] rounded-[2px] px-3 py-2 text-xs focus:outline-none text-[#1C2B26]"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[9.5px] uppercase font-bold tracking-[0.14em] text-[#A48855] block mb-1">
+                      Discipline *
+                    </label>
+                    <select
+                      required
+                      value={form.project_type}
+                      onChange={(e) => setForm({ ...form, project_type: e.target.value })}
+                      className="w-full bg-white border border-[#EAE4D6] focus:border-[#23483D] rounded-[2px] px-3 py-2 text-xs focus:outline-none text-[#1C2B26] cursor-pointer"
+                    >
+                      <option value="">Select discipline...</option>
+                      <option>UI/UX Design System &amp; Mobile App</option>
+                      <option>Luxury Website &amp; Webflow/React Architecture</option>
+                      <option>Brand Identity Kit &amp; Corporate Guidelines</option>
+                      <option>Custom 3D Model &amp; Photorealistic Scene</option>
+                      <option>AI Agent Template &amp; Workflow Automation</option>
+                      <option>Bespoke Digital Printables &amp; Asset Suite</option>
+                    </select>
+                  </div>
+                </div>
 
+                <div>
+                  <label className="text-[9.5px] uppercase font-bold tracking-[0.14em] text-[#A48855] block mb-1">
+                    Project Brief &amp; Specifications *
+                  </label>
+                  <textarea
+                    rows={3}
+                    required
+                    placeholder="Briefly describe your objectives, deliverables, or architectural parameters..."
+                    value={form.message}
+                    onChange={(e) => setForm({ ...form, message: e.target.value })}
+                    className="w-full bg-white border border-[#EAE4D6] focus:border-[#23483D] rounded-[2px] px-3 py-2 text-xs focus:outline-none text-[#1C2B26] resize-none"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full py-2.5 bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D] text-[11px] font-bold tracking-[0.14em] uppercase rounded-[2px] transition cursor-pointer disabled:opacity-50"
+                >
+                  {submitting ? "Transmitting..." : "Submit Project Brief →"}
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </section>
