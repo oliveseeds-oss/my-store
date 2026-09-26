@@ -72,13 +72,27 @@ export default function Footer({ settings = {}, dark = false }) {
 
           {/* Brand Info */}
           <div className="flex flex-col gap-3.5 lg:col-span-1">
-            <p
-              className="text-2xl md:text-3xl font-normal tracking-wide text-[#F3F5F4] flex items-center gap-2"
-              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
-            >
-              <span>Olive Seeds</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880]" />
-            </p>
+            <Link to="/" className="inline-flex items-center gap-3 group" title="Olive Seeds Design Studio">
+              <div className="w-10 h-10 rounded-full overflow-hidden border border-[#C5A880]/50 p-0.5 bg-[#FAF6EE] shadow-sm group-hover:border-[#C5A880] group-hover:scale-105 transition-all shrink-0">
+                <img 
+                  src={settings?.logo_url || settings?.logo || "/android-chrome-192x192.png"} 
+                  alt="Olive Seeds Studio Logo" 
+                  className="w-full h-full object-cover rounded-full" 
+                />
+              </div>
+              <div>
+                <p
+                  className="text-2xl font-normal tracking-wide text-[#F3F5F4] flex items-center gap-1.5 leading-none"
+                  style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                >
+                  <span>Olive Seeds</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880]" />
+                </p>
+                <span className="text-[9px] uppercase tracking-[0.2em] text-[#C5A880] font-bold block mt-1">
+                  Design Studio
+                </span>
+              </div>
+            </Link>
             <p className="text-xs md:text-[13px] leading-relaxed text-[#9EA8A2]">
               We craft bespoke design objects, custom brand expressions, and curated visual experiences for discerning clients who understand that quality is never an accident.
             </p>
@@ -190,7 +204,14 @@ export default function Footer({ settings = {}, dark = false }) {
           className="pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-[#7E8F87]"
           style={{ borderTop: "1px solid #1F332B" }}
         >
-          <p>© {new Date().getFullYear()} Olive Seeds Design Studio. All rights reserved.</p>
+          <div className="flex items-center gap-2.5">
+            <img 
+              src={settings?.logo_url || settings?.logo || "/android-chrome-192x192.png"} 
+              alt="" 
+              className="w-5 h-5 rounded-full border border-[#C5A880]/30 opacity-80 shrink-0" 
+            />
+            <p>© {new Date().getFullYear()} Olive Seeds Design Studio. All rights reserved.</p>
+          </div>
           <p className="tracking-wide text-[#9EA8A2] flex items-center gap-2">
             <span className="text-[#C5A880]">✦</span>
             <span>Designed with intention. Delivered with care.</span>

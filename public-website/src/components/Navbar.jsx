@@ -25,9 +25,12 @@ export default function Navbar() {
             {isMobileMenuOpen ? <MdClose className="text-2xl" /> : <MdMenu className="text-2xl" />}
           </button>
 
-          <Link to="/" className="text-base sm:text-xl font-medium tracking-wide text-[#181A18] flex-shrink-0"
+          <Link to="/" className="flex items-center gap-2 sm:gap-2.5 text-base sm:text-xl font-medium tracking-wide text-[#181A18] flex-shrink-0 group"
             style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", letterSpacing: "0.04em" }}>
-            Olive Seeds
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden border border-[#A48855]/40 p-0.5 bg-[#FAF6EE] shadow-2xs group-hover:border-[#23483D] transition shrink-0">
+              <img src="/android-chrome-192x192.png" alt="Olive Seeds Logo" className="w-full h-full object-cover rounded-full" />
+            </div>
+            <span>Olive Seeds</span>
           </Link>
         </div>
 
