@@ -19,24 +19,24 @@ export default function CurrencySelector() {
     );
 
     return (
-        <div ref={ref} className="relative">
+        <div ref={ref} className="relative shrink-0">
             <button onClick={() => setOpen(!open)}
-                className="flex items-center gap-1.5 text-xs px-3 py-1.5 border border-stone-200
-                   bg-white hover:bg-stone-50 rounded-lg transition text-stone-600">
-                <span>{selected.flag_emoji}</span>
-                <span className="font-medium">{selected.currency_code}</span>
-                <span className="text-stone-400 text-xs">▼</span>
+                className="flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs px-2 py-1 sm:px-3 sm:py-1.5 border border-[#E7E7E2]
+                   bg-white hover:bg-[#FAF6EE] rounded-[4px] sm:rounded-lg transition text-[#181A18] font-sans cursor-pointer shrink-0">
+                <span className="text-xs sm:text-sm">{selected.flag_emoji}</span>
+                <span className="font-semibold">{selected.currency_code}</span>
+                <span className="text-[#8A8D88] text-[9px] sm:text-xs">▼</span>
             </button>
 
             {open && (
-                <div className="absolute right-0 top-full mt-1 w-64 bg-white border border-stone-200
-                        rounded-xl shadow-lg z-50 overflow-hidden">
-                    <div className="p-2 border-b border-stone-100">
+                <div className="absolute right-0 top-full mt-1 w-60 sm:w-64 max-w-[calc(100vw-32px)] bg-white border border-[#E7E7E2]
+                        rounded-[4px] sm:rounded-xl shadow-xl z-50 overflow-hidden font-sans">
+                    <div className="p-2 border-b border-[#E7E7E2]">
                         <input value={search} onChange={e => setSearch(e.target.value)}
                             placeholder="Search country..."
                             autoFocus
-                            className="w-full text-xs px-3 py-2 border border-stone-200 rounded-lg
-                         focus:outline-none focus:ring-2 focus:ring-indigo-200" />
+                            className="w-full text-xs px-3 py-1.5 sm:py-2 border border-[#E7E7E2] rounded-[4px]
+                         focus:outline-none focus:border-[#23483D]" />
                     </div>
                     <div className="max-h-56 overflow-y-auto">
                         {filtered.map(c => (

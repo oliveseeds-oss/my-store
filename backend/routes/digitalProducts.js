@@ -126,11 +126,22 @@ router.get("/:id", async (req, res) => {
     }
   }
   product.reviews = reviews;
-  const [related] = await db.query(
+  let [related] = await db.query(
     `SELECT product_uid as id, name, price, discount_price, images, thumbnail_url, rating, review_count
      FROM digital_products WHERE category_id = ? AND product_uid != ? AND is_active = TRUE LIMIT 6`,
     [product.category_id, product.product_uid]
   );
+  if (related.length < 4) {
+    const existingUids = [product.product_uid, ...related.map(r => r.id)];
+    const [fallbackRelated] = await db.query(
+      `SELECT product_uid as id, name, price, discount_price, images, thumbnail_url, rating, review_count
+       FROM digital_products WHERE product_uid NOT IN (?) AND is_active = TRUE ORDER BY created_at DESC LIMIT ?`,
+      [existingUids, 4 - related.length]
+    ).catch(() => [[]]);
+    if (fallbackRelated && fallbackRelated.length) {
+      related = [...related, ...fallbackRelated];
+    }
+  }
   product.related = related.map(r => ({ ...r, images: parseJSON(r.images) }));
   res.json(product);
 });

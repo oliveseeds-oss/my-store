@@ -14,23 +14,23 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 backdrop-blur-md bg-white/95 border-b border-[#E7E7E2]"
       style={{ fontFamily: "'DM Sans', sans-serif" }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2 sm:gap-4">
-        <div className="flex items-center gap-2 sm:gap-3">
+      <div className="max-w-7xl mx-auto px-2.5 sm:px-6 h-16 flex items-center justify-between gap-1 sm:gap-4">
+        <div className="flex items-center gap-1.5 sm:gap-3 min-w-0">
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 hover:bg-[#F5F4F1] rounded transition text-[#181A18]"
+            className="md:hidden p-1.5 sm:p-2 hover:bg-[#F5F4F1] rounded transition text-[#181A18] shrink-0"
             aria-label="Toggle menu"
           >
-            {isMobileMenuOpen ? <MdClose className="text-2xl" /> : <MdMenu className="text-2xl" />}
+            {isMobileMenuOpen ? <MdClose className="text-xl sm:text-2xl" /> : <MdMenu className="text-xl sm:text-2xl" />}
           </button>
 
-          <Link to="/" className="flex items-center gap-2 sm:gap-2.5 text-base sm:text-xl font-medium tracking-wide text-[#181A18] flex-shrink-0 group"
+          <Link to="/" className="flex items-center gap-1.5 sm:gap-2.5 text-base sm:text-xl font-medium tracking-wide text-[#181A18] group min-w-0"
             style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", letterSpacing: "0.04em" }}>
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden border border-[#A48855]/40 p-0.5 bg-[#FAF6EE] shadow-2xs group-hover:border-[#23483D] transition shrink-0">
+            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full overflow-hidden border border-[#A48855]/40 p-0.5 bg-[#FAF6EE] shadow-2xs group-hover:border-[#23483D] transition shrink-0">
               <img src="/android-chrome-192x192.png" alt="Olive Seeds Logo" className="w-full h-full object-cover rounded-full" />
             </div>
-            <span>Olive Seeds</span>
+            <span className="whitespace-nowrap truncate font-semibold">Olive Seeds</span>
           </Link>
         </div>
 
@@ -44,11 +44,11 @@ export default function Navbar() {
           <Link to="/contact" className="hover:text-[#23483D] transition">Contact</Link>
         </div>
 
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           <CurrencySelector />
           {member && <NotificationBell />}
-          <Link to="/cart" aria-label="Shopping Cart" className="relative p-2 hover:bg-[#F5F4F1] rounded transition text-[#181A18]">
-            <MdShoppingCart className="text-xl" />
+          <Link to="/cart" aria-label="Shopping Cart" className="relative p-1.5 sm:p-2 hover:bg-[#F5F4F1] rounded transition text-[#181A18]">
+            <MdShoppingCart className="text-lg sm:text-xl" />
             {count > 0 && (
               <span style={{ background: "#23483D", color: "#FFFFFF" }} className="absolute -top-0.5 -right-0.5 text-[9px]
                                 w-4 h-4 rounded-full flex items-center justify-center font-bold">
@@ -60,8 +60,8 @@ export default function Navbar() {
             aria-label={member ? "User Profile" : "Member Login"}
             title={member ? `Profile (${member.full_name || member.name || "Member"})` : "Login / Register"}
             className="flex items-center justify-center text-[#181A18] hover:bg-[#F5F4F1]
-                       p-2 rounded transition">
-            <MdPerson className="text-2xl" />
+                       p-1.5 sm:p-2 rounded transition">
+            <MdPerson className="text-xl sm:text-2xl" />
           </Link>
         </div>
       </div>

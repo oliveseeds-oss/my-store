@@ -190,35 +190,62 @@ router.get("/:id", async (req, res) => {
 // PUBLIC — GET /api/products/:id/related (Feature 5)
 router.get("/:id/related", async (req, res) => {
   try {
-    const [pRows] = await db.query(
-      "SELECT id, category, category_id FROM physical_products WHERE id = ? OR product_uid = ?",
+    let [pRows] = await db.query(
+      "SELECT id, category_id FROM products WHERE id = ? OR product_uid = ?",
       [req.params.id, req.params.id]
-    );
+    ).catch(() => [[]]);
+
+    if (!pRows.length) {
+      [pRows] = await db.query(
+        "SELECT id, category as category_id FROM physical_products WHERE id = ? OR product_uid = ?",
+        [req.params.id, req.params.id]
+      ).catch(() => [[]]);
+    }
 
     const currentId = pRows.length ? pRows[0].id : req.params.id;
-    const category = pRows.length ? pRows[0].category : null;
+    const categoryId = pRows.length ? pRows[0].category_id : null;
 
-    let query = "SELECT * FROM physical_products WHERE is_active = TRUE AND id != ?";
-    let params = [currentId];
-
-    if (category) {
-      query += " AND category = ?";
-      params.push(category);
+    let rows = [];
+    if (categoryId) {
+      const [catRows] = await db.query(
+        `SELECT p.*, c.name as category_name FROM products p
+         LEFT JOIN categories c ON p.category_id = c.id
+         WHERE p.is_active = TRUE AND p.id != ? AND p.category_id = ?
+         ORDER BY p.created_at DESC LIMIT 4`,
+        [currentId, categoryId]
+      ).catch(() => [[]]);
+      rows = catRows || [];
     }
 
-    query += " ORDER BY created_at DESC LIMIT 4";
-    let [rows] = await db.query(query, params);
-
-    // Fallback if less than 4 category matches
     if (rows.length < 4) {
+      const existingIds = [currentId, ...rows.map(r => r.id)];
       const [fallbackRows] = await db.query(
+        `SELECT p.*, c.name as category_name FROM products p
+         LEFT JOIN categories c ON p.category_id = c.id
+         WHERE p.is_active = TRUE AND p.id NOT IN (?)
+         ORDER BY p.created_at DESC LIMIT ?`,
+        [existingIds, 4 - rows.length]
+      ).catch(() => [[]]);
+      if (fallbackRows && fallbackRows.length) {
+        rows = [...rows, ...fallbackRows];
+      }
+    }
+
+    // Fallback to physical_products if products table is empty
+    if (!rows.length) {
+      const [physRows] = await db.query(
         "SELECT * FROM physical_products WHERE is_active = TRUE AND id != ? ORDER BY created_at DESC LIMIT 4",
         [currentId]
-      );
-      rows = fallbackRows;
+      ).catch(() => [[]]);
+      rows = physRows || [];
     }
 
-    res.json(rows);
+    res.json(rows.map(r => ({
+      ...r,
+      images: parseJSON(r.images),
+      sizes: parseJSON(r.sizes),
+      tags: parseJSON(r.tags)
+    })));
   } catch (err) {
     console.error("Error fetching related products:", err);
     res.status(500).json({ error: "Failed to fetch related products" });

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import API from '../api'
+import { MdNotificationsNone, MdOutlineNotificationsActive } from 'react-icons/md'
 
 const NotificationBell = () => {
   const [notifications, setNotifications] = useState([])
@@ -38,7 +39,6 @@ const NotificationBell = () => {
       const res = await API.get('/notifications/unread-count')
       setUnreadCount(res.data.count || 0)
     } catch (err) {
-      // Silent fail — do not show error to user
       if (err.response && (err.response.status === 401 || err.response.status === 403)) {
         setUnreadCount(0);
       }
@@ -105,87 +105,45 @@ const NotificationBell = () => {
       order_shipped: '🚚',
       order_out_for_delivery: '🛵',
       order_delivered: '🎉',
-      new_arrival: '✨',
-      general: '🔔'
+      new_arrival: '✦',
+      general: '✦'
     }
-    return icons[type] || '🔔'
+    return icons[type] || '✦'
   }
 
   return (
-    <div ref={panelRef} style={{ position: 'relative' }}>
-      {/* Bell Button */}
+    <div ref={panelRef} className="relative">
+      {/* Professional Studio Bell Button */}
       <button
         onClick={handleBellClick}
-        style={{
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          position: 'relative',
-          padding: '8px',
-          fontSize: '1.4rem'
-        }}
-        aria-label="Notifications"
+        className="relative p-1.5 sm:p-2 hover:bg-[#F5F4F1] rounded transition text-[#181A18] flex items-center justify-center cursor-pointer"
+        aria-label="Studio Notifications"
+        title={unreadCount > 0 ? `${unreadCount} unread notifications` : "Notifications"}
       >
-        🔔
+        <MdNotificationsNone className="text-xl sm:text-2xl text-[#181A18]" />
         {unreadCount > 0 && (
-          <span style={{
-            position: 'absolute',
-            top: '2px',
-            right: '2px',
-            background: '#e53e3e',
-            color: 'white',
-            borderRadius: '50%',
-            width: '18px',
-            height: '18px',
-            fontSize: '0.65rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontWeight: 'bold'
-          }}>
+          <span
+            style={{ background: "#23483D", color: "#FFFFFF" }}
+            className="absolute -top-0.5 -right-0.5 text-[9px] min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center font-bold border border-white"
+          >
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
       </button>
 
-      {/* Dropdown Panel */}
+      {/* Dropdown Panel with Mobile-Safe Viewport Positioning */}
       {isOpen && (
-        <div style={{
-          position: 'absolute',
-          right: 0,
-          top: '110%',
-          width: '320px',
-          maxHeight: '420px',
-          overflowY: 'auto',
-          background: 'white',
-          borderRadius: '12px',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
-          zIndex: 1000,
-          border: '1px solid #eee'
-        }}>
+        <div className="fixed sm:absolute top-16 sm:top-[115%] right-3 left-3 sm:left-auto sm:right-0 sm:w-80 max-h-[440px] bg-white border border-[#E7E7E2] rounded-[4px] shadow-2xl z-[1000] overflow-hidden flex flex-col animate-fade-in font-sans">
           {/* Header */}
-          <div style={{
-            padding: '14px 16px',
-            borderBottom: '1px solid #eee',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            position: 'sticky',
-            top: 0,
-            background: 'white'
-          }}>
-            <strong style={{ color: '#333' }}>Notifications</strong>
+          <div className="px-4 py-3 border-b border-[#E7E7E2] bg-white flex justify-between items-center sticky top-0 z-10">
+            <div className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#A48855]" />
+              <strong className="text-xs uppercase tracking-[0.14em] font-semibold text-[#181A18]">Studio Dispatch</strong>
+            </div>
             {unreadCount > 0 && (
               <button
                 onClick={markAllRead}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#6B7C3F',
-                  cursor: 'pointer',
-                  fontSize: '0.8rem',
-                  fontWeight: '600'
-                }}
+                className="text-[11px] text-[#23483D] hover:underline font-semibold cursor-pointer"
               >
                 Mark all read
               </button>
@@ -193,60 +151,51 @@ const NotificationBell = () => {
           </div>
 
           {/* Notification List */}
-          {loading ? (
-            <div style={{ padding: '24px', textAlign: 'center', color: '#888' }}>
-              Loading...
-            </div>
-          ) : notifications.length === 0 ? (
-            <div style={{ padding: '32px', textAlign: 'center', color: '#888' }}>
-              <div style={{ fontSize: '2rem' }}>🔔</div>
-              <p style={{ marginTop: '8px', fontSize: '0.9rem' }}>No notifications yet</p>
-            </div>
-          ) : (
-            notifications.map(n => (
-              <div
-                key={n.id}
-                onClick={() => markAsRead(n.id)}
-                style={{
-                  padding: '12px 16px',
-                  borderBottom: '1px solid #f5f5f5',
-                  background: n.is_read ? 'white' : '#f0f4e8',
-                  cursor: 'pointer',
-                  transition: 'background 0.2s'
-                }}
-              >
-                <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                  <span style={{ fontSize: '1.2rem' }}>{typeIcon(n.type)}</span>
-                  <div style={{ flex: 1 }}>
-                    <div style={{
-                      fontWeight: n.is_read ? 'normal' : 'bold',
-                      fontSize: '0.9rem',
-                      marginBottom: '2px',
-                      color: '#222'
-                    }}>
-                      {n.title}
+          <div className="overflow-y-auto max-h-[380px] divide-y divide-[#E7E7E2]/60">
+            {loading ? (
+              <div className="py-8 text-center text-xs text-[#8A8D88] animate-pulse">
+                Fetching notifications...
+              </div>
+            ) : notifications.length === 0 ? (
+              <div className="py-10 text-center px-4">
+                <div className="w-9 h-9 mx-auto mb-2 rounded-full bg-[#FAF6EE] border border-[#EAE4D6] flex items-center justify-center text-[#A48855]">
+                  <MdOutlineNotificationsActive className="text-lg" />
+                </div>
+                <p className="text-xs font-medium text-[#181A18]">All caught up</p>
+                <p className="text-[11px] text-[#8A8D88] mt-0.5">No unread notifications at this time.</p>
+              </div>
+            ) : (
+              notifications.map(n => (
+                <div
+                  key={n.id}
+                  onClick={() => markAsRead(n.id)}
+                  className={`p-3.5 transition cursor-pointer flex items-start gap-3 ${
+                    n.is_read ? 'bg-white hover:bg-[#FAF6EE]/50' : 'bg-[#FAF6EE] hover:bg-[#F5EEDB] border-l-2 border-[#23483D]'
+                  }`}
+                >
+                  <span className="text-sm shrink-0 mt-0.5 text-[#A48855]">
+                    {typeIcon(n.type)}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <h4 className={`text-xs truncate ${n.is_read ? 'font-medium text-[#181A18]' : 'font-semibold text-[#181A18]'}`}>
+                        {n.title}
+                      </h4>
+                      <span className="text-[10px] text-[#8A8D88] shrink-0 font-mono">
+                        {timeAgo(n.created_at)}
+                      </span>
                     </div>
-                    <div style={{ fontSize: '0.8rem', color: '#555', lineHeight: 1.4 }}>
+                    <p className="text-[11px] text-[#676A65] leading-relaxed line-clamp-2">
                       {n.message}
-                    </div>
-                    <div style={{ fontSize: '0.75rem', color: '#999', marginTop: '4px' }}>
-                      {timeAgo(n.created_at)}
-                    </div>
+                    </p>
                   </div>
                   {!n.is_read && (
-                    <div style={{
-                      width: '8px',
-                      height: '8px',
-                      borderRadius: '50%',
-                      background: '#6B7C3F',
-                      marginTop: '4px',
-                      flexShrink: 0
-                    }}/>
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#A48855] shrink-0 mt-1.5" />
                   )}
                 </div>
-              </div>
-            ))
-          )}
+              ))
+            )}
+          </div>
         </div>
       )}
     </div>

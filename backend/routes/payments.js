@@ -694,9 +694,14 @@ router.post("/paypal/create-order", async (req, res) => {
       numAmount = 1.00;
     }
     const formattedAmount = numAmount.toFixed(2);
-    const validCurrency = (currency_code && typeof currency_code === "string" && currency_code.trim()) 
+    let validCurrency = (currency_code && typeof currency_code === "string" && currency_code.trim()) 
       ? currency_code.trim().toUpperCase() 
       : "USD";
+
+    // PayPal does not support domestic INR transactions in India; fallback to USD
+    if (validCurrency === "INR") {
+      validCurrency = "USD";
+    }
 
     const orderPayload = {
       intent: "CAPTURE",
@@ -709,7 +714,13 @@ router.post("/paypal/create-order", async (req, res) => {
             value: formattedAmount
           }
         }
-      ]
+      ],
+      application_context: {
+        brand_name: "Olive Seeds",
+        landing_page: "NO_PREFERENCE",
+        user_action: "PAY_NOW",
+        shipping_preference: "NO_SHIPPING"
+      }
     };
 
     const orderRes = await fetch(`${baseUrl}/v2/checkout/orders`, {
@@ -735,7 +746,7 @@ router.post("/paypal/create-order", async (req, res) => {
       });
     }
 
-    return res.json({ orderId: orderData.id });
+    return res.json({ orderId: orderData.id, id: orderData.id });
   } catch (err) {
     console.error("Server PayPal create order error:", err.message);
     return res.status(500).json({ error: err.message });

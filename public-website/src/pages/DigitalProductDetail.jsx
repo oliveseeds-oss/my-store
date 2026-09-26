@@ -13,10 +13,9 @@ import ReviewSection from "../components/ReviewSection";
 import { getAllProductImages } from "../utils/imageHelper";
 import { 
   MdShield, MdOutlineFileDownload, MdOutlineCheckCircle, 
-  MdOutlineWorkspacePremium, MdShare, MdStar, MdStarBorder,
-  MdFavorite, MdFavoriteBorder, MdCheck, MdClose,
-  MdCreditCard, MdAccountBalanceWallet, MdArchitecture,
-  MdFolderOpen, MdLayers, MdSecurity, MdBolt
+  MdShare, MdStar, MdStarBorder,
+  MdFavorite, MdFavoriteBorder, MdCheck,
+  MdCreditCard, MdAccountBalanceWallet
 } from "react-icons/md";
 
 export default function DigitalProductDetail() {
@@ -30,7 +29,6 @@ export default function DigitalProductDetail() {
   const [selectedImg, setSelectedImg] = useState(0);
   const [added, setAdded] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
-  const [activeTab, setActiveTab] = useState("concept"); // 'concept', 'manifest', 'licensing', 'verification'
   const [copiedLink, setCopiedLink] = useState(false);
 
   const load = useCallback(async () => {
@@ -463,258 +461,145 @@ export default function DigitalProductDetail() {
           <AdBanner placement="Large Panel" />
         </div>
 
-        {/* ── Architectural Digital Dossier & Specification Suite ── */}
-        <section className="mt-14 pt-10 border-t border-[#EAE4D6]">
-          
-          <div className="max-w-3xl mb-8">
-            <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#A48855] block mb-1">
-              Technical Dossier
+        {/* ── ASSET OVERVIEW & SPECIFICATIONS HIGHLIGHT ── */}
+        {product.description && (
+          <div className="mt-12 pt-8 border-t border-[#EAE4D6] max-w-4xl">
+            <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#A48855] block mb-2">
+              System Overview &amp; Specifications
             </span>
-            <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-3xl sm:text-4xl font-normal text-[#1C2B26]">
-              Digital Architecture &amp; Specification Dossier
-            </h2>
-            <p className="text-xs sm:text-sm text-[#6B7C75] mt-1.5">
-              Inspect design system hierarchy, file formats, software interoperability, and commercial deployment rights.
-            </p>
+            <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl sm:text-3xl font-normal text-[#1C2B26] mb-4">
+              About this Digital Asset
+            </h3>
+            <div className="text-sm sm:text-base text-[#4A5550] leading-relaxed whitespace-pre-wrap">
+              {product.description}
+            </div>
+
+            {/* Quick Specs Highlight */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-[#EAE4D6]">
+              <div className="p-3 bg-[#FAF6EE] rounded-[3px] border border-[#EAE4D6]">
+                <span className="text-[9px] uppercase tracking-wider font-bold text-[#A48855] block mb-0.5">Formats</span>
+                <span className="text-xs font-semibold text-[#1C2B26] truncate block">{fileFormatText}</span>
+              </div>
+              <div className="p-3 bg-[#FAF6EE] rounded-[3px] border border-[#EAE4D6]">
+                <span className="text-[9px] uppercase tracking-wider font-bold text-[#A48855] block mb-0.5">Package Size</span>
+                <span className="text-xs font-semibold text-[#1C2B26] truncate block">{fileSizeText}</span>
+              </div>
+              <div className="p-3 bg-[#FAF6EE] rounded-[3px] border border-[#EAE4D6]">
+                <span className="text-[9px] uppercase tracking-wider font-bold text-[#A48855] block mb-0.5">Licensing</span>
+                <span className="text-xs font-semibold text-[#1C2B26] truncate block">Perpetual Commercial</span>
+              </div>
+              <div className="p-3 bg-[#FAF6EE] rounded-[3px] border border-[#EAE4D6]">
+                <span className="text-[9px] uppercase tracking-wider font-bold text-[#A48855] block mb-0.5">Delivery</span>
+                <span className="text-xs font-semibold text-[#1C2B26] truncate block">Instant Download</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── RECOMMENDED (SIMILAR) DIGITAL ASSETS ── */}
+        <section className="mt-14 pt-10 border-t border-[#EAE4D6]">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+            <div>
+              <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#A48855] block mb-1">
+                Curated Recommendations
+              </span>
+              <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl sm:text-3xl md:text-4xl font-normal text-[#1C2B26]">
+                Similar Assets &amp; Recommended Systems
+              </h2>
+              <p className="text-xs sm:text-sm text-[#6B7C75] mt-1">
+                Explore complementary digital templates, design kits, and studio systems crafted to accelerate your creative workflow.
+              </p>
+            </div>
+            <Link 
+              to="/digital" 
+              className="text-xs font-semibold text-[#23483D] hover:underline uppercase tracking-wider whitespace-nowrap self-start sm:self-end"
+            >
+              View Full Vault →
+            </Link>
           </div>
 
-          {/* Dossier Interactive Tabs */}
-          <div className="border-b border-[#EAE4D6] flex items-center gap-1 sm:gap-2 overflow-x-auto pb-px" style={{ scrollbarWidth: "none" }}>
-            {[
-              { id: "concept", label: "Asset Dossier & Philosophy", icon: <MdArchitecture className="text-base text-[#A48855]" /> },
-              { id: "manifest", label: "File Manifest & Technical Specs", icon: <MdFolderOpen className="text-base text-[#A48855]" /> },
-              { id: "licensing", label: "Commercial Rights & License", icon: <MdOutlineWorkspacePremium className="text-base text-[#A48855]" /> },
-              { id: "verification", label: "Integrity & Authenticity", icon: <MdSecurity className="text-base text-[#A48855]" /> },
-            ].map((tab) => {
-              const active = activeTab === tab.id;
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {related.slice(0, 4).map((r) => {
+              const rImg = r.thumbnail_url || (r.images && r.images[0]);
+              const rFinalPrice = (r.discount_price !== null && r.discount_price !== undefined && r.discount_price !== "")
+                ? Number(r.discount_price)
+                : Number(r.price || 0);
+              const rDiscount = (r.discount_price && r.price) ? Math.round((1 - r.discount_price / r.price) * 100) : 0;
+
               return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-3 text-xs font-semibold border-b-2 transition cursor-pointer whitespace-nowrap ${
-                    active
-                      ? "border-[#23483D] text-[#23483D] bg-[#FAF6EE]/60"
-                      : "border-transparent text-[#6B7C75] hover:text-[#1C2B26] hover:bg-[#FAF6EE]/30"
-                  }`}
+                <div
+                  key={r.id} 
+                  className="group bg-white border border-[#EAE4D6] hover:border-[#23483D] rounded-[3px] overflow-hidden p-3.5 transition flex flex-col justify-between shadow-2xs hover:shadow-md"
                 >
-                  {tab.icon}
-                  <span>{tab.label}</span>
-                </button>
+                  <Link 
+                    to={`/digital/${r.id}`}
+                    onClick={() => window.scrollTo(0, 0)}
+                    className="block relative overflow-hidden mb-3"
+                  >
+                    <div className="aspect-[16/10] bg-[#FAF6EE] rounded-[2px] overflow-hidden flex items-center justify-center relative">
+                      {rImg ? (
+                        <img 
+                          src={rImg} 
+                          alt={r.name} 
+                          className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500" 
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full border border-[#A48855]/30 flex flex-col items-center justify-center bg-white shadow-2xs">
+                          <span className="font-serif text-xs font-bold text-[#A48855]">OS</span>
+                        </div>
+                      )}
+                      {rDiscount > 0 && (
+                        <span className="absolute top-2 left-2 text-[8.5px] font-bold px-1.5 py-0.5 rounded-[2px] bg-[#23483D] text-[#FAF6EE] tracking-wider uppercase">
+                          −{rDiscount}%
+                        </span>
+                      )}
+                    </div>
+                  </Link>
+
+                  <div className="flex flex-col flex-1">
+                    <Link to={`/digital/${r.id}`} onClick={() => window.scrollTo(0, 0)}>
+                      <h4 
+                        style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} 
+                        className="text-base sm:text-lg font-medium text-[#1C2B26] group-hover:text-[#23483D] transition line-clamp-2 min-h-[2.5em] mb-2"
+                      >
+                        {r.name}
+                      </h4>
+                    </Link>
+
+                    <div className="mt-auto pt-2.5 border-t border-[#EAE4D6]/70 flex items-baseline justify-between mb-3">
+                      <div className="flex items-baseline gap-1.5">
+                        <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-lg sm:text-xl font-bold text-[#1C2B26]">
+                          {rFinalPrice === 0 ? "Free" : convert(rFinalPrice)}
+                        </span>
+                        {r.discount_price && Number(r.discount_price) < Number(r.price) && (
+                          <span className="text-[11px] line-through text-[#8A8D88]">
+                            {convert(r.price)}
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-[9.5px] uppercase font-bold text-[#A48855] tracking-wider">
+                        Vault Asset
+                      </span>
+                    </div>
+
+                    <Link
+                      to={`/digital/${r.id}`}
+                      onClick={() => window.scrollTo(0, 0)}
+                      className="w-full py-2 text-center text-xs font-semibold text-[#23483D] bg-[#FAF6EE] hover:bg-[#23483D] hover:text-white transition rounded-[2px] uppercase tracking-wider"
+                    >
+                      Inspect Asset →
+                    </Link>
+                  </div>
+                </div>
               );
             })}
           </div>
-
-          {/* Tab 1: Asset Dossier & Philosophy */}
-          {activeTab === "concept" && (
-            <div className="py-8 space-y-6 animate-fadeIn max-w-4xl">
-              <div className="p-6 bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px]">
-                <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl font-normal text-[#1C2B26] mb-3">
-                  System Architecture &amp; Creative Intent
-                </h3>
-                <p className="text-xs sm:text-sm text-[#6B7C75] leading-relaxed whitespace-pre-wrap">
-                  {product.description || "Crafted to exacting studio standards, this digital asset bridges bespoke visual design sensibility with high-performance production tolerances. Each system is authored natively in industry-leading software (Figma, React, Webflow, 3D, and AI frameworks), ensuring uncompromised precision, modular scalability, and instant commercial readiness."}
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                <div className="p-5 border border-[#EAE4D6] rounded-[4px] bg-white">
-                  <MdArchitecture className="text-2xl text-[#A48855] mb-2" />
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Design System Precision</h4>
-                  <p className="text-xs text-[#6B7C75] mt-1 leading-relaxed">
-                    Clean token structures, auto-layout hierarchies, and verified component libraries ensure rapid assembly and zero visual artifacting across all screens.
-                  </p>
-                </div>
-                <div className="p-5 border border-[#EAE4D6] rounded-[4px] bg-white">
-                  <MdLayers className="text-2xl text-[#A48855] mb-2" />
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Executive Standard</h4>
-                  <p className="text-xs text-[#6B7C75] mt-1 leading-relaxed">
-                    Typography hierarchies, grid ratios, and proportion canons are calibrated to meet Fortune 500 board, high-growth startup, and luxury brand scrutiny.
-                  </p>
-                </div>
-                <div className="p-5 border border-[#EAE4D6] rounded-[4px] bg-white">
-                  <MdBolt className="text-2xl text-[#A48855] mb-2" />
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Production Ready</h4>
-                  <p className="text-xs text-[#6B7C75] mt-1 leading-relaxed">
-                    Zero missing font warnings or broken assets. Complete source files, documentation, and design tokens are packaged into the release archive.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Tab 2: File Manifest & Technical Specs */}
-          {activeTab === "manifest" && (
-            <div className="py-8 space-y-6 animate-fadeIn max-w-4xl">
-              <div className="bg-white border border-[#EAE4D6] rounded-[4px] overflow-hidden shadow-xs">
-                <div className="bg-[#FAF6EE] px-5 py-3 border-b border-[#EAE4D6]">
-                  <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-normal text-[#1C2B26]">
-                    Technical File Manifest &amp; Software Compatibility
-                  </h3>
-                </div>
-                <div className="divide-y divide-[#EAE4D6] text-xs">
-                  <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
-                    <span className="font-bold text-[#A48855] uppercase tracking-wider">Primary Formats</span>
-                    <span className="sm:col-span-2 text-[#1C2B26] font-medium">{fileFormatText}</span>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
-                    <span className="font-bold text-[#A48855] uppercase tracking-wider">Payload Archive</span>
-                    <span className="sm:col-span-2 text-[#1C2B26] font-medium">{fileSizeText}</span>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
-                    <span className="font-bold text-[#A48855] uppercase tracking-wider">Supported Software</span>
-                    <span className="sm:col-span-2 text-[#1C2B26]">Figma, Webflow, React, Next.js, Blender, Cinema 4D, Adobe Creative Cloud, Framer, and Modern AI Pipelines</span>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
-                    <span className="font-bold text-[#A48855] uppercase tracking-wider">Layer Structure</span>
-                    <span className="sm:col-span-2 text-[#1C2B26]">Cleanly named, grouped, zero unlinked assets, non-destructive vector paths</span>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
-                    <span className="font-bold text-[#A48855] uppercase tracking-wider">Color &amp; Scale Space</span>
-                    <span className="sm:col-span-2 text-[#1C2B26]">Scalable Vectors, 8pt Grid Standards &amp; Display P3 / sRGB Color Palettes</span>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
-                    <span className="font-bold text-[#A48855] uppercase tracking-wider">Typography Hierarchy</span>
-                    <span className="sm:col-span-2 text-[#1C2B26]">Cormorant Garamond &amp; DM Sans Google Fonts open-source pairing</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Tab 3: Commercial Rights & Licensing */}
-          {activeTab === "licensing" && (
-            <div className="py-8 space-y-6 animate-fadeIn max-w-4xl">
-              <div className="p-6 bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px] space-y-4">
-                <div className="flex items-center gap-2">
-                  <MdOutlineWorkspacePremium className="text-xl text-[#A48855]" />
-                  <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl font-normal text-[#1C2B26]">
-                    Commercial Deployment License Terms
-                  </h3>
-                </div>
-                <p className="text-xs sm:text-sm text-[#6B7C75] leading-relaxed">
-                  Every acquisition from the Olive Seeds Digital Vault includes an unrestricted Perpetual Commercial Multi-Project License.
-                </p>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                  <div className="p-4 bg-white border border-[#EAE4D6] rounded-[3px]">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-800 uppercase tracking-wider mb-1.5">
-                      <MdCheck /> Authorized Use
-                    </div>
-                    <ul className="text-xs text-[#6B7C75] space-y-1">
-                      <li>• Unlimited commercial &amp; client projects</li>
-                      <li>• Multi-platform web, mobile app development &amp; client deliverables</li>
-                      <li>• Corporate presentations, pitches &amp; marketing campaigns</li>
-                      <li>• Modification and adaptation for brand design guidelines</li>
-                    </ul>
-                  </div>
-
-                  <div className="p-4 bg-white border border-[#EAE4D6] rounded-[3px]">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-rose-800 uppercase tracking-wider mb-1.5">
-                      <MdClose /> Restricted Use
-                    </div>
-                    <ul className="text-xs text-[#6B7C75] space-y-1">
-                      <li>• Resale, sub-licensing, or raw file re-distribution</li>
-                      <li>• Inclusion in competing digital template vaults</li>
-                      <li>• Claiming raw un-modified geometry as original authoring</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Tab 4: Integrity & Authenticity */}
-          {activeTab === "verification" && (
-            <div className="py-8 space-y-6 animate-fadeIn max-w-4xl">
-              <div className="p-6 bg-white border border-[#EAE4D6] rounded-[4px] space-y-4">
-                <div className="flex items-center gap-2">
-                  <MdSecurity className="text-xl text-[#A48855]" />
-                  <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl font-normal text-[#1C2B26]">
-                    Studio Security & Integrity Guarantee
-                  </h3>
-                </div>
-                <p className="text-xs sm:text-sm text-[#6B7C75] leading-relaxed">
-                  Your acquisition payload is mirrored across redundant encrypted cloud storage clusters. Download links never expire and can be retrieved at any hour via your private Client Atelier.
-                </p>
-
-                <div className="p-4 bg-[#FAF6EE] border border-[#EAE4D6] rounded-[3px] font-mono text-[11px] text-[#23483D] space-y-1.5">
-                  <p className="flex items-center gap-2"><MdCheck className="text-emerald-700" /> SHA256 CHECKSUM: VERIFIED & SEALED</p>
-                  <p className="flex items-center gap-2"><MdCheck className="text-emerald-700" /> MALWARE SCAN: 0/72 CLEAN ENGINES</p>
-                  <p className="flex items-center gap-2"><MdCheck className="text-emerald-700" /> CLOUD BACKUP: GLOBAL REDUNDANCY ACTIVE</p>
-                </div>
-              </div>
-            </div>
-          )}
-
         </section>
 
         {/* ── Authenticated Customer Reviews ── */}
         <section className="mt-14 pt-10 border-t border-[#EAE4D6]">
           <ReviewSection productId={product.id || product.product_uid} dark={false} />
         </section>
-
-        {/* ── Related Digital Assets Carousel / Grid ── */}
-        {related.length > 0 && (
-          <section className="mt-16 pt-10 border-t border-[#EAE4D6]">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#A48855] block mb-1">
-                  Complementary Assets
-                </span>
-                <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl sm:text-3xl font-normal text-[#1C2B26]">
-                  Archived from the Same Studio Collection
-                </h2>
-              </div>
-              <Link 
-                to="/digital" 
-                className="text-xs font-semibold text-[#23483D] hover:underline uppercase tracking-wider"
-              >
-                View Complete Vault →
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-              {related.slice(0, 4).map((r) => {
-                const img = r.thumbnail_url || (r.images && r.images[0]);
-                const price = r.discount_price || r.price;
-                return (
-                  <Link 
-                    key={r.id} 
-                    to={`/digital/${r.id}`}
-                    onClick={() => window.scrollTo(0, 0)}
-                    className="group border border-[#EAE4D6] hover:border-[#23483D] rounded-[4px] bg-white overflow-hidden p-3 transition shadow-xs hover:shadow-md flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="aspect-[16/10] bg-[#FAF6EE] rounded-[3px] overflow-hidden mb-2.5 flex items-center justify-center">
-                        {img ? (
-                          <img src={img} alt={r.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                        ) : (
-                          <div className="w-10 h-10 rounded-full border border-[#A48855]/30 flex flex-col items-center justify-center bg-white shadow-2xs">
-                            <span className="font-serif text-xs font-bold text-[#A48855]">OS</span>
-                          </div>
-                        )}
-                      </div>
-                      <h4 
-                        style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} 
-                        className="text-sm sm:text-base font-medium text-[#1C2B26] group-hover:text-[#23483D] transition line-clamp-2"
-                      >
-                        {r.name}
-                      </h4>
-                    </div>
-                    <div className="pt-2 border-t border-[#EAE4D6]/60 mt-3 flex items-center justify-between">
-                      <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-base font-bold text-[#1C2B26]">
-                        {convert(price)}
-                      </span>
-                      <span className="text-[10px] uppercase font-bold text-[#A48855]">
-                        Inspect →
-                      </span>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </section>
-        )}
 
       </main>
 

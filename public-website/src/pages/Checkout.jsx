@@ -16,11 +16,9 @@ import {
 } from "react-icons/md";
 
 import {
-  PayPalProvider,
-  PayPalOneTimePaymentButton,
-  usePayPal,
-  INSTANCE_LOADING_STATE,
-} from "@paypal/react-paypal-js/sdk-v6";
+  PayPalScriptProvider,
+  PayPalButtons,
+} from "@paypal/react-paypal-js";
 
 const loadRazorpayScript = () => {
   return new Promise((resolve) => {
@@ -50,7 +48,6 @@ function PayPalButtonSection({
   setPaymentMethod,
   checkShippingEligibility
 }) {
-  const { loadingStatus, error } = usePayPal();
   const isSupported = PAYPAL_SUPPORTED_CURRENCIES.has(selected?.currency_code);
   const activePaypalCurrency = isSupported ? selected.currency_code : "USD";
 
@@ -74,27 +71,19 @@ function PayPalButtonSection({
     ? "0.50"
     : rawConverted.toFixed(2);
 
-  if (loadingStatus === INSTANCE_LOADING_STATE.PENDING) {
-    return (
-      <div className="text-center py-4 text-xs text-stone-500 font-bold flex items-center justify-center gap-2 animate-pulse">
-        <span>⏳</span> Initializing PayPal secure payment...
-      </div>
-    );
-  }
-
-  if (loadingStatus === INSTANCE_LOADING_STATE.REJECTED) {
-    return (
-      <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 font-bold text-center">
-        Failed to load PayPal: {error?.message || "Please refresh or try Razorpay"}
-      </div>
-    );
-  }
-
   return (
     <div className="w-full flex flex-col items-center">
-      <div className="w-full">
-        <PayPalOneTimePaymentButton
-          createOrder={async () => {
+      <div className="w-full min-w-full paypal-button-container">
+        <PayPalButtons
+          style={{
+            layout: "vertical",
+            color: "gold",
+            shape: "rect",
+            label: "paypal",
+            height: 48,
+          }}
+          className="w-full"
+          createOrder={async (data, actions) => {
             if (!checkShippingEligibility()) {
               throw new Error("Please complete required shipping details first.");
             }
@@ -106,7 +95,7 @@ function PayPalButtonSection({
               if (!res.data?.orderId) {
                 throw new Error(res.data?.error || "Failed to create PayPal order.");
               }
-              return { orderId: res.data.orderId };
+              return res.data.orderId;
             } catch (createErr) {
               const msg = createErr.response?.data?.error || createErr.message || "PayPal checkout failed.";
               console.error("PayPal createOrder error:", msg);
@@ -121,9 +110,9 @@ function PayPalButtonSection({
               throw createErr;
             }
           }}
-          onApprove={async (data) => {
+          onApprove={async (data, actions) => {
             try {
-              const orderId = data?.orderId || data?.orderID;
+              const orderId = data?.orderID || data?.orderId;
               if (!orderId) {
                 throw new Error("No PayPal order confirmation ID returned from PayPal.");
               }
@@ -156,7 +145,6 @@ function PayPalButtonSection({
               alert("PayPal encountered a processing error. If paying from India, please select Razorpay for instant checkout.");
             }
           }}
-          presentationMode="auto"
         />
       </div>
       <p className="text-[9px] text-stone-400 text-center font-bold uppercase tracking-widest mt-2">
@@ -903,11 +891,13 @@ export default function Checkout() {
                         ⏳ Loading PayPal configuration...
                       </div>
                     ) : siteSettings.paypal_client_id && !siteSettings.paypal_client_id.includes("your_paypal") ? (
-                      <PayPalProvider
-                        clientId={siteSettings.paypal_client_id}
-                        environment={siteSettings.paypal_mode || (siteSettings.paypal_client_id.startsWith("sb") || siteSettings.paypal_client_id.includes("sandbox") ? "sandbox" : "production")}
-                        components={["paypal-payments"]}
-                        pageType="checkout"
+                      <PayPalScriptProvider
+                        key={`${siteSettings.paypal_client_id}-${PAYPAL_SUPPORTED_CURRENCIES.has(selected?.currency_code) ? selected.currency_code : "USD"}`}
+                        options={{
+                          clientId: siteSettings.paypal_client_id,
+                          currency: PAYPAL_SUPPORTED_CURRENCIES.has(selected?.currency_code) ? selected.currency_code : "USD",
+                          intent: "capture",
+                        }}
                       >
                         <PayPalButtonSection
                           total={total}
@@ -920,7 +910,7 @@ export default function Checkout() {
                           setPaymentMethod={setPaymentMethod}
                           checkShippingEligibility={checkShippingEligibility}
                         />
-                      </PayPalProvider>
+                      </PayPalScriptProvider>
                     ) : (
                       <div className="p-4 bg-amber-50 border border-amber-200 rounded-[4px] text-xs text-amber-800 font-semibold text-center">
                         PayPal gateway is currently unavailable or disabled in store settings.
