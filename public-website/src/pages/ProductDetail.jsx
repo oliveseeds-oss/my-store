@@ -229,6 +229,19 @@ export default function ProductDetail() {
   const [customValues, setCustomValues] = useState({});
   const [customErrors, setCustomErrors] = useState({});
   const [uploadingField, setUploadingField] = useState(null);
+  const [activeDetailTab, setActiveDetailTab] = useState("description");
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2400);
+  };
+
+  const handleShareWhatsApp = () => {
+    const text = encodeURIComponent(`Discover "${product?.name || 'Bespoke Piece'}" from Olive Seeds Design Studio:\n${window.location.href}`);
+    window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank", "noopener,noreferrer");
+  };
 
   const load = useCallback(async () => {
     const r = await API.get(`/products/${id}`);
@@ -655,41 +668,24 @@ export default function ProductDetail() {
               </button>
             </div>
 
-            {/* FEATURE 7: Social Share Buttons */}
-            <div className="flex items-center gap-2 flex-wrap pt-1 pb-1">
-              <span className="text-xs text-stone-500 font-bold w-full sm:w-auto">Share this product:</span>
-              <a
-                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center text-xs font-bold bg-[#1877F2] text-white rounded-[4px] hover:opacity-90 transition"
-              >
-                Facebook
-              </a>
-              <a
-                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(product.name)}&url=${encodeURIComponent(window.location.href)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center text-xs font-bold bg-black text-white rounded-[4px] hover:opacity-90 transition"
-              >
-                Twitter/X
-              </a>
-              <a
-                href={`https://pinterest.com/pin/create/button/?url=${encodeURIComponent(window.location.href)}&media=${encodeURIComponent(product.image_url || "")}&description=${encodeURIComponent(product.name)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center text-xs font-bold bg-[#BD081C] text-white rounded-[4px] hover:opacity-90 transition"
-              >
-                Pinterest
-              </a>
+            {/* Quiet Luxury Studio Share Row */}
+            <div className="flex items-center gap-2 pt-1 pb-1">
+              <span className="text-[11px] uppercase tracking-[0.14em] text-[#8A8D88] font-semibold">Share Piece:</span>
               <button
-                onClick={() => {
-                  navigator.clipboard.writeText(window.location.href);
-                  alert("Link copied to clipboard.");
-                }}
-                className="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center text-xs font-bold bg-[#FAF6EE] border border-[#E7E7E2] text-stone-700 rounded-[4px] hover:bg-stone-200 transition"
+                type="button"
+                onClick={handleShareWhatsApp}
+                className="px-3 py-1.5 inline-flex items-center gap-1.5 text-xs font-medium bg-[#FAF6EE] border border-[#EAE4D6] text-[#23483D] rounded-[4px] hover:border-[#23483D] transition cursor-pointer"
+                title="Share via WhatsApp"
               >
-                Copy Link
+                <span>WhatsApp</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleCopyLink}
+                className="px-3 py-1.5 inline-flex items-center gap-1.5 text-xs font-medium bg-white border border-[#EAE4D6] text-[#181A18] rounded-[4px] hover:bg-[#FAF6EE] transition cursor-pointer"
+                title="Copy piece link"
+              >
+                <span>{copiedLink ? "✓ Link Copied" : "Copy Link"}</span>
               </button>
             </div>
 
@@ -966,73 +962,228 @@ export default function ProductDetail() {
 
             {/* CTAs */}
             <div className="flex flex-col gap-3 pt-4">
-              <button onClick={handleAddToCart}
+              <button 
+                onClick={handleAddToCart}
                 disabled={product.stock === 0}
                 className={`w-full py-4 font-semibold text-xs uppercase tracking-widest transition-all rounded-[4px] cursor-pointer
                   ${added ? "bg-emerald-700 text-white"
                     : product.stock === 0 ? "bg-stone-200 text-stone-400 cursor-not-allowed"
-                      : "bg-[#23483D] hover:bg-[#16352D] text-white"}`}>
-                {added ? "✓ Added to Order" : "Add to Order"}
+                      : "bg-[#23483D] hover:bg-[#16352D] text-white"}`}
+              >
+                {added ? "✓ Added to Studio Order" : "Acquire Piece — Add to Order"}
               </button>
               <button
+                type="button"
                 className="w-full py-4 font-semibold text-xs uppercase tracking-widest bg-white border border-[#23483D] text-[#23483D] hover:bg-[#FAF6EE] transition-all rounded-[4px] cursor-pointer"
-                onClick={() => handleDirectCheckout("paypal")}>
-                Commission This Piece — Secure Checkout
+                onClick={() => handleDirectCheckout("razorpay")}
+              >
+                Direct Commission — Instant Checkout
               </button>
             </div>
 
-            {/* Payment Integration UI */}
-            <div className="border border-[#E7E7E2] bg-white p-5 flex flex-col gap-3.5 rounded-[4px] mt-3">
-              <span className="text-[10px] text-[#23483D] font-bold uppercase tracking-widest block" style={{ letterSpacing: "0.12em" }}>🔒 SECURE CHECKOUT OPTIONS</span>
-              <p className="text-[11.5px] text-[#676A65] leading-normal">Select payment partner to complete transaction securely:</p>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => handleDirectCheckout("razorpay")}
-                  className="flex items-center justify-center gap-2 py-3 px-3 border border-[#E7E7E2] rounded-[4px] hover:border-[#23483D] hover:bg-[#FAF6EE] transition cursor-pointer text-xs font-semibold text-[#181A18]"
-                >
-                  💳 Razorpay
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDirectCheckout("paypal")}
-                  className="flex items-center justify-center gap-2 py-3 px-3 border border-[#E7E7E2] rounded-[4px] hover:border-[#23483D] hover:bg-[#FAF6EE] transition cursor-pointer text-xs font-semibold text-[#181A18]"
-                >
-                  🅿️ PayPal
-                </button>
+            {/* Quiet Luxury Studio Assurance & White-Glove Guarantee */}
+            <div className="border border-[#EAE4D6] bg-[#FAF6EE]/80 p-5 rounded-[4px] mt-2 space-y-4">
+              <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.16em] text-[#8A8D88] font-semibold border-b border-[#EAE4D6] pb-2.5">
+                <span>Studio Assurance</span>
+                <span>Encrypted Direct Commission</span>
               </div>
-            </div>
-
-            {/* Perks */}
-            <div className="border border-[#E7E7E2] bg-[#FAF6EE] p-5 flex flex-col gap-3 rounded-[4px] mt-1">
-              {[
-                ["🚚", "Complimentary delivery on qualifying orders"],
-                ["🔄", "Seven-day studio review policy"],
-                ["🔒", "Encrypted payment via Razorpay & PayPal"],
-                ["✏️", "Bespoke precision-crafted detailing"],
-              ].map(([icon, text]) => (
-                <div key={text} className="flex items-center gap-2.5 text-xs text-[#676A65]">
-                  <span>{icon}</span> {text}
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-[#2D312E]">
+                <div className="flex items-start gap-2.5">
+                  <span className="text-[#A48855] text-sm">✦</span>
+                  <div>
+                    <strong className="block text-[11px] font-semibold text-[#181A18]">Noble Timber Provenance</strong>
+                    <span className="text-[10.5px] text-[#676A65] leading-relaxed">Certified hardwoods with natural grain variation.</span>
+                  </div>
                 </div>
-              ))}
+                <div className="flex items-start gap-2.5">
+                  <span className="text-[#A48855] text-sm">✦</span>
+                  <div>
+                    <strong className="block text-[11px] font-semibold text-[#181A18]">Insured Doorstep Dispatch</strong>
+                    <span className="text-[10.5px] text-[#676A65] leading-relaxed">Multi-layer protective archival packaging.</span>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <span className="text-[#A48855] text-sm">✦</span>
+                  <div>
+                    <strong className="block text-[11px] font-semibold text-[#181A18]">Bespoke Joinery & Precision</strong>
+                    <span className="text-[10.5px] text-[#676A65] leading-relaxed">Master artisan hand-finishing & laser detail.</span>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <span className="text-[#A48855] text-sm">✦</span>
+                  <div>
+                    <strong className="block text-[11px] font-semibold text-[#181A18]">7-Day Studio Inspection</strong>
+                    <span className="text-[10.5px] text-[#676A65] leading-relaxed">Complete satisfaction guarantee upon delivery.</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-2 border-t border-[#EAE4D6] flex items-center justify-between text-[10px] text-[#8A8D88]">
+                <span>Secured via Razorpay &amp; PayPal</span>
+                <span className="tracking-wider uppercase font-medium">Global Delivery Available</span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Dynamic High-Attention Brand Banner Ad Panel */}
-        <div className="mt-10">
+        {/* Dynamic Brand Banner Ad Panel */}
+        <div className="mt-12 mb-10">
           <AdBanner placement="Large Panel" />
         </div>
 
-        {/* ── Description ── */}
-        <div className="mt-10 border-t border-[#E7E7E2] pt-8">
-          <h2 className="text-xl md:text-2xl font-normal text-[#181A18] mb-4" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
-            Studio Description & Details
-          </h2>
-          <p className="text-[#676A65] leading-relaxed whitespace-pre-wrap text-sm">
-            {product.description}
-          </p>
-        </div>
+        {/* ── ARCHITECTURAL DOSSIER & SPECIFICATIONS SUITE ── */}
+        <section className="mt-12 pt-10 border-t border-[#EAE4D6]">
+          {/* Dossier Header & Tabs */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#EAE4D6] pb-4 mb-8">
+            <div>
+              <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#A48855] block mb-1">
+                Studio Archive &amp; Dossier
+              </span>
+              <h2 
+                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                className="text-2xl sm:text-3xl md:text-4xl font-normal text-[#181A18] tracking-tight"
+              >
+                Piece Specifications &amp; Craftsmanship
+              </h2>
+            </div>
+
+            {/* Navigation Tabs */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+              {[
+                { id: "description", label: "The Piece" },
+                { id: "specs", label: "Materiality & Specs" },
+                { id: "care", label: "White-Glove Care" },
+                { id: "guarantee", label: "Studio Provenance" }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveDetailTab(tab.id)}
+                  className={`px-4 py-2 rounded-[4px] text-xs font-medium uppercase tracking-[0.1em] transition whitespace-nowrap cursor-pointer ${
+                    activeDetailTab === tab.id
+                      ? "bg-[#23483D] text-white"
+                      : "bg-[#FAF6EE] text-[#676A65] hover:text-[#181A18] border border-[#EAE4D6]"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Tab 1: The Architectural Piece (Description) */}
+          {activeDetailTab === "description" && (
+            <div className="max-w-4xl mx-auto py-2">
+              <div className="editorial-article-body text-[#2D312E] leading-relaxed text-sm sm:text-base space-y-5">
+                <p className="text-base sm:text-lg text-[#181A18] font-serif italic border-l-2 border-[#A48855] pl-4 py-1 bg-[#FAF6EE]/50 rounded-r-[4px]">
+                  "Crafted with architectural precision, balancing noble materiality with enduring timeless form."
+                </p>
+                <div className="whitespace-pre-wrap leading-relaxed text-[#3A3E3B]">
+                  {product.description || "Every piece in the Olive Seeds Studio collection is individually shaped from hand-selected hardwood timber, finished with botanical sealants to honor natural grain texture."}
+                </div>
+              </div>
+
+              {/* Studio Key Attributes Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 pt-8 border-t border-[#EAE4D6]">
+                <div className="p-4 bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px]">
+                  <span className="text-[10.5px] uppercase tracking-[0.14em] text-[#A48855] font-semibold block mb-1">Authentic Timber</span>
+                  <p className="text-xs text-[#2D312E] leading-relaxed">Solid seasoned timber without synthetic veneers or plastic laminates.</p>
+                </div>
+                <div className="p-4 bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px]">
+                  <span className="text-[10.5px] uppercase tracking-[0.14em] text-[#A48855] font-semibold block mb-1">Hand-Rubbed Finish</span>
+                  <p className="text-xs text-[#2D312E] leading-relaxed">Protected with non-toxic natural beeswax and plant-derived oils.</p>
+                </div>
+                <div className="p-4 bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px]">
+                  <span className="text-[10.5px] uppercase tracking-[0.14em] text-[#A48855] font-semibold block mb-1">Tailored Commission</span>
+                  <p className="text-xs text-[#2D312E] leading-relaxed">Available with custom monograms, corporate logos, or personalized text.</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tab 2: Materiality & Specifications */}
+          {activeDetailTab === "specs" && (
+            <div className="max-w-4xl mx-auto py-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="p-4 bg-white border border-[#EAE4D6] rounded-[4px] flex flex-col justify-between">
+                  <span className="text-[10.5px] uppercase tracking-[0.14em] text-[#8A8D88] font-semibold">Primary Material</span>
+                  <span className="text-sm font-semibold text-[#181A18] mt-1.5">{product.material || "Seasoned Architectural Hardwood (Teak / Walnut / Rosewood)"}</span>
+                </div>
+                <div className="p-4 bg-white border border-[#EAE4D6] rounded-[4px] flex flex-col justify-between">
+                  <span className="text-[10.5px] uppercase tracking-[0.14em] text-[#8A8D88] font-semibold">Selected Dimensions</span>
+                  <span className="text-sm font-semibold text-[#181A18] mt-1.5">{selectedSize ? `Dimension: ${selectedSize}` : (product.dimensions || "Standard Studio Dimensions")}</span>
+                </div>
+                <div className="p-4 bg-white border border-[#EAE4D6] rounded-[4px] flex flex-col justify-between">
+                  <span className="text-[10.5px] uppercase tracking-[0.14em] text-[#8A8D88] font-semibold">Surface Treatment</span>
+                  <span className="text-sm font-semibold text-[#181A18] mt-1.5">{product.finish || "Hand-buffed matte satin organic wax finish"}</span>
+                </div>
+                <div className="p-4 bg-white border border-[#EAE4D6] rounded-[4px] flex flex-col justify-between">
+                  <span className="text-[10.5px] uppercase tracking-[0.14em] text-[#8A8D88] font-semibold">Joinery &amp; Milling</span>
+                  <span className="text-sm font-semibold text-[#181A18] mt-1.5">5-Axis High-Precision CNC with Artisan Hand-Assembly</span>
+                </div>
+                <div className="p-4 bg-white border border-[#EAE4D6] rounded-[4px] flex flex-col justify-between">
+                  <span className="text-[10.5px] uppercase tracking-[0.14em] text-[#8A8D88] font-semibold">Studio Origin</span>
+                  <span className="text-sm font-semibold text-[#181A18] mt-1.5">Olive Seeds Design Studio, India (Worldwide Export)</span>
+                </div>
+                <div className="p-4 bg-white border border-[#EAE4D6] rounded-[4px] flex flex-col justify-between">
+                  <span className="text-[10.5px] uppercase tracking-[0.14em] text-[#8A8D88] font-semibold">Personalization Capability</span>
+                  <span className="text-sm font-semibold text-[#181A18] mt-1.5">{product.enable_personalization ? "Precision Laser Engraving Supported" : "Standard Edition (Custom Inscriptions on Request)"}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tab 3: White-Glove Care & Packaging */}
+          {activeDetailTab === "care" && (
+            <div className="max-w-4xl mx-auto py-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="p-6 bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px]">
+                  <h4 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-normal text-[#181A18] mb-3">
+                    Timber Preservation &amp; Care
+                  </h4>
+                  <ul className="text-xs text-[#2D312E] space-y-2.5 leading-relaxed list-disc pl-4">
+                    <li>Clean exclusively with a dry or lightly dampened microfiber cloth.</li>
+                    <li>Avoid harsh chemical cleaners, alcohol sprays, or abrasive scouring pads.</li>
+                    <li>Keep away from continuous direct tropical sun exposure or excessive steam.</li>
+                    <li>Apply a thin layer of natural beeswax or mineral wood polish once annually to maintain deep grain lustre.</li>
+                  </ul>
+                </div>
+                <div className="p-6 bg-white border border-[#EAE4D6] rounded-[4px]">
+                  <h4 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-normal text-[#181A18] mb-3">
+                    Archival Packaging &amp; Dispatch
+                  </h4>
+                  <ul className="text-xs text-[#2D312E] space-y-2.5 leading-relaxed list-disc pl-4">
+                    <li>Packed in bespoke foam-cushioned archival kraft crates to prevent transit impact.</li>
+                    <li>Despatched via insured priority air courier with real-time tracking updates.</li>
+                    <li>Includes certificate of studio inspection and authentic craft documentation.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tab 4: Studio Provenance & Guarantee */}
+          {activeDetailTab === "guarantee" && (
+            <div className="max-w-4xl mx-auto py-2">
+              <div className="bg-[#FAF6EE] border border-[#EAE4D6] rounded-[6px] p-8 text-center space-y-4">
+                <span className="text-3xl text-[#A48855] block">✦</span>
+                <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl sm:text-3xl font-normal text-[#181A18]">
+                  Certificate of Olive Seeds Authenticity
+                </h3>
+                <p className="text-xs sm:text-sm text-[#676A65] max-w-xl mx-auto leading-relaxed">
+                  Every piece leaving our studio undergoes rigorous dimensional verification and timber humidity stabilization. We guarantee genuine solid hardwood craftsmanship, zero composite substitutes, and lifelong aesthetic endurance.
+                </p>
+                <div className="pt-4 border-t border-[#EAE4D6] inline-flex items-center gap-6 text-[11px] uppercase tracking-[0.14em] text-[#23483D] font-semibold">
+                  <span>Registered Studio Seal</span>
+                  <span>•</span>
+                  <span>Master Joinery Verified</span>
+                  <span>•</span>
+                  <span>Made in India</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </section>
 
         {/* Customer Reviews Section */}
         <ReviewSection productId={product.id} />

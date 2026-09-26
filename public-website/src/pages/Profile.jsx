@@ -3,23 +3,27 @@ import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import API from "../api";
 import { useMember } from "../context/MemberContext";
 import { useCart } from "../context/CartContext";
+import { useCurrency } from "../context/CurrencyContext";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SEO from "../components/SEO";
 import { 
   MdShoppingBag, MdLock, MdHome, MdCloudDownload, 
-  MdFavorite, MdExitToApp, MdArrowBack, MdCheckCircle, MdSave, MdNotifications 
+  MdFavorite, MdExitToApp, MdArrowBack, MdCheckCircle, MdSave, MdNotifications,
+  MdOutlineLocalShipping, MdOutlineReceiptLong, MdShield
 } from "react-icons/md";
 import SmartAddressForm from "../components/SmartAddressForm";
 
 export default function Profile() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { member, login, logout } = useMember();
   const { addToCart } = useCart();
+  const { convert } = useCurrency();
   const navigate = useNavigate();
+
   const [orders, setOrders] = useState([]);
   const [wishlist, setWishlist] = useState([]);
-  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "home"); // 'home', 'orders', 'security', 'addresses', 'digital', 'wishlist'
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "home");
   
   // Profile editing form states
   const [profile, setProfile] = useState({
@@ -39,6 +43,12 @@ export default function Profile() {
   const [loadingWishlist, setLoadingWishlist] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [loadingNotifications, setLoadingNotifications] = useState(false);
+
+  // Sync tab with URL
+  const switchTab = (tab) => {
+    setActiveTab(tab);
+    setSearchParams(tab === "home" ? {} : { tab });
+  };
 
   const fetchNotifications = useCallback(async () => {
     setLoadingNotifications(true);
@@ -70,7 +80,7 @@ export default function Profile() {
     setLoadingOrders(true);
     try {
       const r = await API.get("/orders/my");
-      setOrders(r.data);
+      setOrders(Array.isArray(r.data) ? r.data : []);
     } catch (err) {
       console.error("Failed to load orders:", err);
     } finally {
@@ -126,9 +136,8 @@ export default function Profile() {
     setSuccessMsg("");
     try {
       await API.put("/members/profile", profile);
-      setSuccessMsg("Profile and address saved successfully.");
+      setSuccessMsg("Client dossier updated and secured successfully.");
 
-      // Update the local member context to keep Navbar and Profile headers synced in real time
       const stored = JSON.parse(localStorage.getItem("member") || "{}");
       if (stored.member) {
         login({
@@ -149,7 +158,7 @@ export default function Profile() {
         });
       }
 
-      setTimeout(() => setSuccessMsg(""), 4000);
+      setTimeout(() => setSuccessMsg(""), 4500);
     } catch (err) {
       console.error("Failed to save profile:", err);
     } finally {
@@ -159,7 +168,6 @@ export default function Profile() {
 
   const handleRemoveWishlist = async (itemOrId) => {
     const targetId = typeof itemOrId === "object" ? (itemOrId.product_uid || itemOrId.slug || itemOrId.id || itemOrId.wishlist_id) : itemOrId;
-    // Optimistic removal from UI state
     setWishlist((prev) =>
       prev.filter((item) => {
         if (typeof itemOrId === "object") {
@@ -182,666 +190,931 @@ export default function Profile() {
 
   const handleAddWishlistToCart = (item) => {
     const p = {
-      id: item.product_uid,
-      product_uid: item.product_uid,
+      id: item.product_uid || item.id,
+      product_uid: item.product_uid || item.id,
       name: item.product_type === "digital" ? item.digital_name : item.product_name,
       price: item.product_type === "digital" ? item.digital_price : item.product_price,
       image_url: item.product_type === "digital" ? item.digital_image : item.product_image,
       thumbnail_url: item.product_type === "digital" ? item.digital_image : item.product_image,
-      type: item.product_type
+      type: item.product_type || "physical"
     };
     addToCart(p);
   };
 
-  const STATUS_COLOR = {
-    Processing: "bg-[#FAF9F6] text-[#0D1512] border-[#0D1512]/30",
-    Shipped: "bg-blue-50 text-blue-700 border-blue-200",
-    Delivered: "bg-green-50 text-green-700 border-green-200",
-    Cancelled: "bg-red-50 text-red-600 border-red-200",
+  // Initials for avatar monogram
+  const memberInitials = (profile.full_name || member?.name || "Client")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(w => w[0].toUpperCase())
+    .join("");
+
+  const unreadNotificationsCount = notifications.filter(n => !n.is_read).length;
+  const digitalOrders = orders.filter(o => o.type === "digital");
+
+  const STATUS_PILL = {
+    Processing: "bg-[#FAF6EE] text-[#A48855] border-[#EAE4D6]",
+    Shipped: "bg-[#23483D]/10 text-[#23483D] border-[#23483D]/20",
+    Delivered: "bg-[#23483D] text-[#FAF6EE] border-[#23483D]",
+    Cancelled: "bg-stone-100 text-stone-500 border-stone-300",
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#FAF9F6", color: "#0D1512", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+    <div className="min-h-screen flex flex-col" style={{ background: "#FFFFFF", color: "#1C2B26", fontFamily: "'DM Sans', sans-serif" }}>
       <SEO
-        title="Member Account | Olive Seeds Studio"
-        description="Manage your account profile, track active shipments, review orders, and access purchased digital assets."
+        title="Client Atelier & Concierge | Olive Seeds Studio"
+        description="Private patron dossier, commissioned acquisition tracking, digital vault access, and white-glove delivery management."
         noIndex={true}
       />
       <Navbar />
-      
-      {/* Breadcrumbs */}
-      <div style={{ background: "#0D1512" }} className="text-[#FAF9F6] text-xs py-3 shadow-inner">
-        <div className="max-w-5xl mx-auto px-4 flex items-center gap-2">
-          <Link to="/" className="hover:text-white/80 transition">Home</Link>
-          <span className="opacity-60">›</span>
-          <span 
-            className="cursor-pointer hover:text-white/80 transition"
-            onClick={() => setActiveTab("home")}
-          >
-            Your Account
-          </span>
-          {activeTab !== "home" && (
-            <>
-              <span className="opacity-60">›</span>
-              <span className="text-white capitalize">
-                {activeTab === "security" ? "Login & Security" : activeTab === "addresses" ? "Your Addresses" : activeTab}
-              </span>
-            </>
-          )}
-        </div>
-      </div>
 
-      <div className="flex-grow max-w-5xl w-full mx-auto px-4 py-8">
-        
-        {/* Header Summary */}
-        <div className="flex items-center justify-between border-b border-[#0D1512]/15 pb-5 mb-8">
-          <div>
-            <h1 className="text-3xl font-black tracking-tight" style={{ fontFamily: "'Outfit', sans-serif", color: "#0D1512" }}>
-              Your Account
-            </h1>
-            <p className="text-[#0D1512]/70 text-xs mt-1">
-              Welcome back, <strong className="text-[#0D1512]">{profile.full_name || member?.name}</strong> · Registered member
-            </p>
-          </div>
-          <div className="text-right">
-            <span style={{ background: "#0D1512", color: "#FAF9F6" }} className="text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow">
-              {profile.country || "India"} Region
-            </span>
-          </div>
+      {/* ── Atelier Masthead ── */}
+      <section className="relative border-b border-[#EAE4D6] overflow-hidden" style={{ background: "#FAF6EE" }}>
+        {/* Subtle decorative watermark */}
+        <div className="absolute right-6 -bottom-10 select-none pointer-events-none opacity-[0.03] text-stone-900 font-serif text-[180px] leading-none">
+          OS
         </div>
 
-        {/* ─── HOME VIEW (Amazon-style Card Grid) ─── */}
-        {activeTab === "home" && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fadeIn">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 relative z-10">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             
-            {/* Card 1: Your Orders */}
-            <div 
-              onClick={() => setActiveTab("orders")}
-              style={{ background: "white", borderColor: "rgba(27, 57, 49, 0.15)" }}
-              className="rounded-2xl border hover:border-[#0D1512] p-6 
-                         flex gap-4 cursor-pointer shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-0.5"
-            >
-              <div className="text-3xl text-[#0D1512] flex-shrink-0 mt-0.5"><MdShoppingBag /></div>
+            {/* Patron Profile Info */}
+            <div className="flex items-center gap-4 sm:gap-5">
+              <div 
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center shrink-0 border border-[#A48855]/40 shadow-sm"
+                style={{ background: "#FFFFFF", color: "#23483D" }}
+              >
+                <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl sm:text-3xl font-medium tracking-wider">
+                  {memberInitials}
+                </span>
+              </div>
+
               <div>
-                <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="font-bold text-[#0D1512] text-sm leading-snug">Your Orders</h3>
-                <p className="text-[#0D1512]/60 text-xs mt-1.5 leading-relaxed">
-                  Track orders, view receipts, download official e-invoices, and review historical physical & digital purchases.
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-[#A48855]">
+                    Private Client Atelier
+                  </span>
+                  <span className="w-1 h-1 rounded-full bg-[#A48855]" />
+                  <span className="text-[10px] tracking-[0.16em] uppercase font-bold px-2.5 py-0.5 rounded-[3px] border border-[#23483D]/20 text-[#23483D] bg-[#23483D]/5">
+                    Patron Portfolio
+                  </span>
+                </div>
+
+                <h1 
+                  style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} 
+                  className="text-2xl sm:text-4xl font-normal text-[#1C2B26] mt-0.5 tracking-tight"
+                >
+                  {profile.full_name || member?.name || "Distinguished Client"}
+                </h1>
+
+                <p className="text-xs text-[#6B7C75] mt-1 flex items-center gap-2 flex-wrap">
+                  <span>{profile.email || member?.email}</span>
+                  {profile.country && (
+                    <>
+                      <span className="opacity-40">·</span>
+                      <span className="text-stone-700 font-medium">{profile.country} Jurisdiction</span>
+                    </>
+                  )}
                 </p>
               </div>
             </div>
 
-            {/* Card 2: Login & Security */}
-            <div 
-              onClick={() => setActiveTab("security")}
-              style={{ background: "white", borderColor: "rgba(27, 57, 49, 0.15)" }}
-              className="rounded-2xl border hover:border-[#0D1512] p-6 
-                         flex gap-4 cursor-pointer shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-0.5"
-            >
-              <div className="text-3xl text-[#0D1512] flex-shrink-0 mt-0.5"><MdLock /></div>
-              <div>
-                <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="font-bold text-[#0D1512] text-sm leading-snug">Login & Security</h3>
-                <p className="text-[#0D1512]/60 text-xs mt-1.5 leading-relaxed">
-                  Update your contact details, personal name, login credentials, and default account phone number details.
+            {/* Quick Metrics Pillar */}
+            <div className="flex items-center gap-4 sm:gap-6 border-t md:border-t-0 md:border-l border-[#EAE4D6] pt-4 md:pt-0 md:pl-6">
+              <div className="text-center px-2">
+                <p className="text-[10px] uppercase tracking-[0.18em] text-[#6B7C75] font-semibold">Commissions</p>
+                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl sm:text-3xl font-bold text-[#23483D] mt-0.5">
+                  {orders.length}
+                </p>
+              </div>
+              <div className="w-[1px] h-8 bg-[#EAE4D6]" />
+              <div className="text-center px-2">
+                <p className="text-[10px] uppercase tracking-[0.18em] text-[#6B7C75] font-semibold">Vault Assets</p>
+                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl sm:text-3xl font-bold text-[#23483D] mt-0.5">
+                  {digitalOrders.length}
+                </p>
+              </div>
+              <div className="w-[1px] h-8 bg-[#EAE4D6]" />
+              <div className="text-center px-2">
+                <p className="text-[10px] uppercase tracking-[0.18em] text-[#6B7C75] font-semibold">Saved Pieces</p>
+                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl sm:text-3xl font-bold text-[#23483D] mt-0.5">
+                  {wishlist.length}
                 </p>
               </div>
             </div>
 
-            {/* Card 3: Your Addresses */}
-            <div 
-              onClick={() => setActiveTab("addresses")}
-              style={{ background: "white", borderColor: "rgba(27, 57, 49, 0.15)" }}
-              className="rounded-2xl border hover:border-[#0D1512] p-6 
-                         flex gap-4 cursor-pointer shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-0.5"
-            >
-              <div className="text-3xl text-[#0D1512] flex-shrink-0 mt-0.5"><MdHome /></div>
-              <div>
-                <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="font-bold text-[#0D1512] text-sm leading-snug">Your Addresses</h3>
-                <p className="text-[#0D1512]/60 text-xs mt-1.5 leading-relaxed">
-                  Edit default shipping location details, apartments, pins, city, state, and destination parameters for checkout.
-                </p>
-              </div>
+          </div>
+        </div>
+
+        {/* ── Luxury Navigation Tab Bar (Desktop & Mobile Swipeable) ── */}
+        <div className="border-t border-[#EAE4D6] bg-white/70 backdrop-blur-sm">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <nav className="flex items-center gap-1 sm:gap-2 overflow-x-auto py-2 no-scrollbar scroll-smooth" style={{ scrollbarWidth: "none" }}>
+              {[
+                { key: "home", label: "Overview", icon: "🏛️" },
+                { key: "orders", label: "Commissions & Orders", count: orders.length, icon: "📜" },
+                { key: "digital", label: "Digital Vault", count: digitalOrders.length, icon: "💾" },
+                { key: "addresses", label: "Delivery Sanctum", icon: "📍" },
+                { key: "wishlist", label: "Curated Wishlist", count: wishlist.length, icon: "⚜️" },
+                { key: "security", label: "Client Dossier", icon: "🔐" },
+                { key: "notifications", label: "Studio Despatches", count: unreadNotificationsCount, icon: "📬" },
+              ].map((tab) => {
+                const isActive = activeTab === tab.key;
+                return (
+                  <button
+                    key={tab.key}
+                    onClick={() => switchTab(tab.key)}
+                    className={`whitespace-nowrap flex items-center gap-2 px-3 sm:px-4 py-2 text-xs font-medium rounded-[4px] transition cursor-pointer shrink-0 ${
+                      isActive
+                        ? "bg-[#23483D] text-[#FAF6EE] shadow-sm font-semibold"
+                        : "text-[#6B7C75] hover:text-[#1C2B26] hover:bg-[#FAF6EE]"
+                    }`}
+                  >
+                    <span>{tab.icon}</span>
+                    <span>{tab.label}</span>
+                    {tab.count !== undefined && tab.count > 0 && (
+                      <span 
+                        className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                          isActive 
+                            ? "bg-[#A48855] text-white" 
+                            : "bg-stone-200/80 text-stone-700"
+                        }`}
+                      >
+                        {tab.count}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Main Atelier Body ── */}
+      <main className="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        
+        {/* ─── 0. ATELIER OVERVIEW (ARCHITECTURAL TILES) ─── */}
+        {activeTab === "home" && (
+          <div className="space-y-8 animate-fadeIn">
+            <div>
+              <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#A48855] block mb-1">
+                Concierge Portfolio
+              </span>
+              <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl sm:text-3xl font-medium text-[#1C2B26]">
+                Client Sanctum Overview
+              </h2>
+              <p className="text-xs text-[#6B7C75] mt-1 max-w-xl">
+                Direct access to your commissioned handcrafted furniture, digital CAD assets, white-glove dispatch parameters, and private patron dossier.
+              </p>
             </div>
 
-            {/* Card 4: Digital Content */}
-            <div 
-              onClick={() => setActiveTab("digital")}
-              style={{ background: "white", borderColor: "rgba(27, 57, 49, 0.15)" }}
-              className="rounded-2xl border hover:border-[#0D1512] p-6 
-                         flex gap-4 cursor-pointer shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-0.5"
-            >
-              <div className="text-3xl text-[#0D1512] flex-shrink-0 mt-0.5"><MdCloudDownload /></div>
-              <div>
-                <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="font-bold text-[#0D1512] text-sm leading-snug">Digital Purchases</h3>
-                <p className="text-[#0D1512]/60 text-xs mt-1.5 leading-relaxed">
-                  Instantly access your digital product purchases, downloadable assets, invoice references, and licensed formats.
-                </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              
+              {/* Tile 1: Orders */}
+              <div 
+                onClick={() => switchTab("orders")}
+                className="group p-6 rounded-[4px] border border-[#EAE4D6] hover:border-[#23483D] bg-white transition duration-300 cursor-pointer shadow-sm hover:shadow-md flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="w-10 h-10 rounded-full bg-[#FAF6EE] text-[#23483D] flex items-center justify-center text-xl border border-[#EAE4D6] group-hover:scale-105 transition">
+                      <MdShoppingBag />
+                    </span>
+                    <span className="text-[11px] font-bold text-[#A48855] tracking-wider uppercase">
+                      {orders.length} Records
+                    </span>
+                  </div>
+                  <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-semibold text-[#1C2B26] group-hover:text-[#23483D] transition">
+                    Commissions & Orders
+                  </h3>
+                  <p className="text-xs text-[#6B7C75] mt-2 leading-relaxed">
+                    Track white-glove timber dispatch status, inspect purchase histories, and retrieve authenticated digital e-invoices.
+                  </p>
+                </div>
+                <div className="mt-5 pt-3 border-t border-[#EAE4D6]/60 flex items-center text-xs font-semibold text-[#23483D] group-hover:translate-x-1 transition">
+                  Inspect Acquisitions →
+                </div>
               </div>
+
+              {/* Tile 2: Digital Vault */}
+              <div 
+                onClick={() => switchTab("digital")}
+                className="group p-6 rounded-[4px] border border-[#EAE4D6] hover:border-[#23483D] bg-white transition duration-300 cursor-pointer shadow-sm hover:shadow-md flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="w-10 h-10 rounded-full bg-[#FAF6EE] text-[#23483D] flex items-center justify-center text-xl border border-[#EAE4D6] group-hover:scale-105 transition">
+                      <MdCloudDownload />
+                    </span>
+                    <span className="text-[11px] font-bold text-[#A48855] tracking-wider uppercase">
+                      {digitalOrders.length} Assets
+                    </span>
+                  </div>
+                  <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-semibold text-[#1C2B26] group-hover:text-[#23483D] transition">
+                    Digital Design Vault
+                  </h3>
+                  <p className="text-xs text-[#6B7C75] mt-2 leading-relaxed">
+                    Direct access to licensed CAD schematics, 3D architectural models, DWG drawings, and vector stationery kits.
+                  </p>
+                </div>
+                <div className="mt-5 pt-3 border-t border-[#EAE4D6]/60 flex items-center text-xs font-semibold text-[#23483D] group-hover:translate-x-1 transition">
+                  Access Downloads →
+                </div>
+              </div>
+
+              {/* Tile 3: Addresses */}
+              <div 
+                onClick={() => switchTab("addresses")}
+                className="group p-6 rounded-[4px] border border-[#EAE4D6] hover:border-[#23483D] bg-white transition duration-300 cursor-pointer shadow-sm hover:shadow-md flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="w-10 h-10 rounded-full bg-[#FAF6EE] text-[#23483D] flex items-center justify-center text-xl border border-[#EAE4D6] group-hover:scale-105 transition">
+                      <MdHome />
+                    </span>
+                    <span className="text-[11px] font-bold text-[#A48855] tracking-wider uppercase">
+                      {profile.city ? "Verified" : "Default"}
+                    </span>
+                  </div>
+                  <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-semibold text-[#1C2B26] group-hover:text-[#23483D] transition">
+                    Delivery Sanctum
+                  </h3>
+                  <p className="text-xs text-[#6B7C75] mt-2 leading-relaxed">
+                    Manage private residential freight coordinates, gated dispatch instructions, and global delivery jurisdictions.
+                  </p>
+                </div>
+                <div className="mt-5 pt-3 border-t border-[#EAE4D6]/60 flex items-center text-xs font-semibold text-[#23483D] group-hover:translate-x-1 transition">
+                  Edit Delivery Destination →
+                </div>
+              </div>
+
+              {/* Tile 4: Wishlist */}
+              <div 
+                onClick={() => switchTab("wishlist")}
+                className="group p-6 rounded-[4px] border border-[#EAE4D6] hover:border-[#23483D] bg-white transition duration-300 cursor-pointer shadow-sm hover:shadow-md flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="w-10 h-10 rounded-full bg-[#FAF6EE] text-[#23483D] flex items-center justify-center text-xl border border-[#EAE4D6] group-hover:scale-105 transition">
+                      <MdFavorite />
+                    </span>
+                    <span className="text-[11px] font-bold text-[#A48855] tracking-wider uppercase">
+                      {wishlist.length} Curated
+                    </span>
+                  </div>
+                  <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-semibold text-[#1C2B26] group-hover:text-[#23483D] transition">
+                    Curated Wishlist
+                  </h3>
+                  <p className="text-xs text-[#6B7C75] mt-2 leading-relaxed">
+                    Review shortlisted studio crafts, monitor production schedules, and swiftly commission pieces to cart.
+                  </p>
+                </div>
+                <div className="mt-5 pt-3 border-t border-[#EAE4D6]/60 flex items-center text-xs font-semibold text-[#23483D] group-hover:translate-x-1 transition">
+                  View Curated List →
+                </div>
+              </div>
+
+              {/* Tile 5: Credentials & Dossier */}
+              <div 
+                onClick={() => switchTab("security")}
+                className="group p-6 rounded-[4px] border border-[#EAE4D6] hover:border-[#23483D] bg-white transition duration-300 cursor-pointer shadow-sm hover:shadow-md flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="w-10 h-10 rounded-full bg-[#FAF6EE] text-[#23483D] flex items-center justify-center text-xl border border-[#EAE4D6] group-hover:scale-105 transition">
+                      <MdLock />
+                    </span>
+                    <span className="text-[11px] font-bold text-[#A48855] tracking-wider uppercase">
+                      Encrypted
+                    </span>
+                  </div>
+                  <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-semibold text-[#1C2B26] group-hover:text-[#23483D] transition">
+                    Patron Credentials
+                  </h3>
+                  <p className="text-xs text-[#6B7C75] mt-2 leading-relaxed">
+                    Maintain your authenticated personal name, encrypted email contact, telephone line, and regional security profile.
+                  </p>
+                </div>
+                <div className="mt-5 pt-3 border-t border-[#EAE4D6]/60 flex items-center text-xs font-semibold text-[#23483D] group-hover:translate-x-1 transition">
+                  Manage Credentials →
+                </div>
+              </div>
+
+              {/* Tile 6: Notifications */}
+              <div 
+                onClick={() => switchTab("notifications")}
+                className="group p-6 rounded-[4px] border border-[#EAE4D6] hover:border-[#23483D] bg-white transition duration-300 cursor-pointer shadow-sm hover:shadow-md flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="w-10 h-10 rounded-full bg-[#FAF6EE] text-[#23483D] flex items-center justify-center text-xl border border-[#EAE4D6] group-hover:scale-105 transition">
+                      <MdNotifications />
+                    </span>
+                    <span className="text-[11px] font-bold text-[#A48855] tracking-wider uppercase">
+                      {unreadNotificationsCount ? `${unreadNotificationsCount} Unread` : "Archived"}
+                    </span>
+                  </div>
+                  <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-semibold text-[#1C2B26] group-hover:text-[#23483D] transition">
+                    Studio Despatches
+                  </h3>
+                  <p className="text-xs text-[#6B7C75] mt-2 leading-relaxed">
+                    Official dispatch tracking notices, private previews, studio bulletins, and commission progression logs.
+                  </p>
+                </div>
+                <div className="mt-5 pt-3 border-t border-[#EAE4D6]/60 flex items-center text-xs font-semibold text-[#23483D] group-hover:translate-x-1 transition">
+                  Read Despatches →
+                </div>
+              </div>
+
             </div>
 
-            {/* Card 5: Your Wishlist */}
-            <div 
-              onClick={() => setActiveTab("wishlist")}
-              style={{ background: "white", borderColor: "rgba(27, 57, 49, 0.15)" }}
-              className="rounded-2xl border hover:border-[#0D1512] p-6 
-                         flex gap-4 cursor-pointer shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-0.5"
-            >
-              <div className="text-3xl text-[#0D1512] flex-shrink-0 mt-0.5"><MdFavorite /></div>
-              <div>
-                <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="font-bold text-[#0D1512] text-sm leading-snug">Your Wishlist</h3>
-                <p className="text-[#0D1512]/60 text-xs mt-1.5 leading-relaxed">
-                  Manage your wishlisted items, transfer products instantly to the shopping cart, or delete saved records.
-                </p>
+            {/* Quiet Luxury Sign Out Bar */}
+            <div className="border-t border-[#EAE4D6] pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-2.5 text-xs text-[#6B7C75]">
+                <MdShield className="text-[#A48855] text-base" />
+                <span>Protected Patron Session · Olive Seeds Studio Authenticated</span>
               </div>
-            </div>
-
-            {/* Card 6: Notifications */}
-            <div 
-              onClick={() => setActiveTab("notifications")}
-              style={{ background: "white", borderColor: "rgba(27, 57, 49, 0.15)" }}
-              className="rounded-2xl border hover:border-[#0D1512] p-6 
-                         flex gap-4 cursor-pointer shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-0.5"
-            >
-              <div className="text-3xl text-[#0D1512] flex-shrink-0 mt-0.5"><MdNotifications /></div>
-              <div>
-                <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="font-bold text-[#0D1512] text-sm leading-snug">Notifications</h3>
-                <p className="text-[#0D1512]/60 text-xs mt-1.5 leading-relaxed">
-                  View full order status notifications, shipping updates, broadcasts, and announcements.
-                </p>
-              </div>
-            </div>
-
-            {/* Card 6: Logout */}
-            <div 
-              onClick={() => { logout(); navigate("/"); }}
-              style={{ background: "white", borderColor: "rgba(27, 57, 49, 0.1)" }}
-              className="rounded-2xl border hover:border-red-400 p-6 
-                         flex gap-4 cursor-pointer shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-0.5 group"
-            >
-              <div className="text-3xl text-stone-400 group-hover:text-red-500 flex-shrink-0 mt-0.5 transition"><MdExitToApp /></div>
-              <div>
-                <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="font-bold text-[#0D1512] group-hover:text-red-600 text-sm leading-snug transition">Sign Out</h3>
-                <p className="text-[#0D1512]/65 text-xs mt-1.5 leading-relaxed">
-                  Safely sign out of this member session on this browser. Clears cached tokens and account parameters securely.
-                </p>
-              </div>
+              <button
+                onClick={() => { logout(); navigate("/"); }}
+                className="text-xs font-medium text-stone-600 hover:text-red-700 px-4 py-2 border border-[#EAE4D6] hover:border-red-300 rounded-[4px] bg-[#FAF6EE]/50 hover:bg-red-50 transition cursor-pointer flex items-center gap-2"
+              >
+                <MdExitToApp className="text-sm" /> Sign Out Session
+              </button>
             </div>
 
           </div>
         )}
 
-        {/* ─── TAB CONTENTS ─── */}
-        {activeTab !== "home" && (
-          <div style={{ background: "white", borderColor: "rgba(27, 57, 49, 0.15)" }} className="rounded-[2rem] border shadow-xl p-6 md:p-10 animate-fadeIn">
-            
-            {/* Back to Account Link */}
-            <button 
-              onClick={() => setActiveTab("home")}
-              className="flex items-center gap-1.5 text-xs text-[#0D1512] hover:text-[#0D1512]/80 font-black mb-8 transition uppercase tracking-wider"
-            >
-              <MdArrowBack className="text-sm" /> Back to Your Account
-            </button>
-
-            {/* 1. Orders Panel */}
-            {activeTab === "orders" && (
+        {/* ─── 1. COMMISSIONS & ORDERS PANEL ─── */}
+        {activeTab === "orders" && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="flex items-center justify-between border-b border-[#EAE4D6] pb-4">
               <div>
-                <h2 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-2xl font-black text-[#0D1512] mb-1">Your Orders</h2>
-                <p className="text-xs text-[#0D1512]/60 mb-8">Review your historical physical & digital order statements</p>
-                
-                {loadingOrders ? (
-                  <div className="text-center py-10 text-[#0D1512]/50 text-xs font-bold animate-pulse uppercase tracking-widest">Loading orders...</div>
-                ) : orders.length === 0 ? (
-                  <div style={{ background: "#FAF9F6/20", borderColor: "rgba(27, 57, 49, 0.1)" }} className="border border-dashed rounded-2xl p-12 text-center">
-                    <p className="text-[#0D1512]/60 text-sm font-medium">You haven't placed any orders yet.</p>
-                    <Link to="/products" className="inline-block mt-4 text-xs font-bold text-[#0D1512] hover:underline">
-                      Start browsing premium crafts →
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    {orders.map((o) => (
-                      <div key={o.id} style={{ borderColor: "rgba(27, 57, 49, 0.15)" }} className="border rounded-2xl overflow-hidden shadow-sm bg-white">
-                        {/* Header bar */}
-                        <div style={{ background: "#FAF9F6/40", borderBottomColor: "rgba(27, 57, 49, 0.1)" }} className="border-b p-4 flex flex-wrap justify-between items-center gap-4">
-                          <div className="flex gap-6 text-[11px] text-[#0D1512]/70">
-                            <div>
-                              <p className="uppercase font-bold text-[9px] tracking-widest text-[#0D1512]/50 mb-0.5">Order Placed</p>
-                              <p className="font-bold text-[#0D1512]">
-                                {new Date(o.created_at).toLocaleDateString("en-IN", {
-                                  year: "numeric", month: "short", day: "numeric"
-                                })}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="uppercase font-bold text-[9px] tracking-widest text-[#0D1512]/50 mb-0.5">Total Amount</p>
-                              <p className="font-extrabold text-[#0D1512]">₹{o.total}</p>
-                            </div>
-                            <div>
-                              <p className="uppercase font-bold text-[9px] tracking-widest text-[#0D1512]/50 mb-0.5">Shipment Type</p>
-                              <p className="font-bold text-[#0D1512] capitalize">{o.type}</p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className="uppercase font-bold text-[9px] tracking-widest text-[#0D1512]/50 mb-0.5">Order #ID</p>
-                            <p className="font-mono text-xs font-black text-[#0D1512]">{o.id}</p>
-                          </div>
+                <button 
+                  onClick={() => switchTab("home")}
+                  className="flex items-center gap-1.5 text-xs text-[#6B7C75] hover:text-[#23483D] font-bold mb-2 transition uppercase tracking-wider cursor-pointer"
+                >
+                  <MdArrowBack /> Atelier Overview
+                </button>
+                <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl sm:text-3xl font-normal text-[#1C2B26]">
+                  Commissioned Acquisitions
+                </h2>
+                <p className="text-xs text-[#6B7C75] mt-1">Review official statements for bespoke handcrafted pieces and digital suites.</p>
+              </div>
+            </div>
+
+            {loadingOrders ? (
+              <div className="text-center py-16 text-[#6B7C75] text-xs font-semibold animate-pulse tracking-widest uppercase">
+                Retrieving Atelier Ledgers...
+              </div>
+            ) : orders.length === 0 ? (
+              <div className="border border-dashed border-[#EAE4D6] rounded-[4px] p-12 text-center bg-[#FAF6EE]/40">
+                <span className="text-3xl block mb-2 opacity-40">🪵</span>
+                <p className="text-[#1C2B26] font-medium text-sm">No commissions recorded in this ledger.</p>
+                <p className="text-xs text-[#6B7C75] mt-1">Your handcrafted acquisitions and digital purchases will appear here.</p>
+                <Link 
+                  to="/products" 
+                  className="inline-block mt-4 px-5 py-2.5 bg-[#23483D] text-[#FAF6EE] text-xs font-semibold rounded-[4px] hover:bg-[#16352D] transition tracking-wider uppercase"
+                >
+                  Explore Collections →
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {orders.map((o) => (
+                  <div key={o.id} className="border border-[#EAE4D6] rounded-[4px] bg-white overflow-hidden shadow-sm">
+                    {/* Header Strip */}
+                    <div className="bg-[#FAF6EE] border-b border-[#EAE4D6] px-5 py-4 flex flex-wrap justify-between items-center gap-4 text-xs">
+                      <div className="flex flex-wrap gap-6 text-[#6B7C75]">
+                        <div>
+                          <p className="uppercase text-[9px] font-bold tracking-widest text-[#A48855]">Commission Date</p>
+                          <p className="font-medium text-[#1C2B26] mt-0.5">
+                            {new Date(o.created_at).toLocaleDateString("en-IN", {
+                              year: "numeric", month: "short", day: "numeric"
+                            })}
+                          </p>
                         </div>
-                        {/* Body content */}
-                        <div className="p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                          <div className="flex-1 space-y-3">
-                            <div className="flex items-center gap-2">
-                              <span className={`text-[10px] font-black px-2.5 py-0.5 rounded border uppercase tracking-wider
-                                ${STATUS_COLOR[o.status] || "bg-[#FAF9F6] text-[#0D1512] border-[#0D1512]/30"}`}>
-                                {o.status}
-                              </span>
-                            </div>
-                            <div className="space-y-1.5 pl-0.5">
-                              {o.items?.map((item) => (
-                                <p key={item.id} className="text-xs text-[#0D1512] font-semibold">
-                                  {item.product_name} <strong className="text-[#0D1512]/40 font-black ml-1">×{item.qty}</strong>
-                                </p>
-                              ))}
-                            </div>
-                          </div>
-                          <div className="flex flex-col gap-2 w-full md:w-auto">
-                            {o.type === "physical" ? (
-                              <Link 
-                                to={`/track-order?order=${o.order_uid || o.id}`}
-                                className="text-center px-4 py-2.5 border border-[#0D1512]/20 hover:border-[#0D1512] text-xs font-bold text-[#0D1512] bg-white rounded-xl transition"
-                              >
-                                🚚 Track Package
-                              </Link>
-                            ) : (
-                              <button 
-                                onClick={() => setActiveTab("digital")}
-                                className="text-center px-4 py-2.5 border border-[#0D1512]/20 hover:border-[#0D1512] text-xs font-bold text-[#0D1512] bg-white rounded-xl transition"
-                              >
-                                💿 Access Download Link
-                              </button>
-                            )}
-                            <a 
-                              href={`/invoice/${o.order_uid || o.id}`}
-                              target="_blank" 
-                              rel="noreferrer"
-                              style={{ background: "#0D1512", color: "#FAF9F6" }}
-                              className="text-center px-4 py-2.5 text-xs font-bold rounded-xl shadow transition active:scale-95"
-                            >
-                              🧾 View E-Invoice
-                            </a>
-                          </div>
+                        <div>
+                          <p className="uppercase text-[9px] font-bold tracking-widest text-[#A48855]">Acquisition Value</p>
+                          <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-base font-bold text-[#23483D] mt-0.5">
+                            {convert(o.total)}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="uppercase text-[9px] font-bold tracking-widest text-[#A48855]">Type</p>
+                          <p className="font-medium text-[#1C2B26] mt-0.5 capitalize">{o.type} Craft</p>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
 
-            {/* 2. Login & Security Panel */}
-            {activeTab === "security" && (
-              <div className="max-w-xl">
-                <h2 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-2xl font-black text-[#0D1512] mb-1">Login & Security</h2>
-                <p className="text-xs text-[#0D1512]/60 mb-8">Manage your profile details and credential configurations</p>
-
-                {successMsg && (
-                  <div style={{ background: "#FAF9F6", borderColor: "rgba(27, 57, 49, 0.2)" }} className="flex items-center gap-2 text-[#0D1512] text-xs px-4 py-3 rounded-xl mb-6 font-semibold border">
-                    <MdCheckCircle className="text-base text-green-600" /> {successMsg}
-                  </div>
-                )}
-
-                <form onSubmit={handleSave} className="space-y-5">
-                  <div>
-                    <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">Full Name</label>
-                    <input 
-                      type="text" 
-                      required
-                      value={profile.full_name}
-                      onChange={(e) => setProfile({...profile, full_name: e.target.value})}
-                      style={{ borderColor: "rgba(27, 57, 49, 0.2)" }}
-                      className="w-full bg-[#FAF9F6]/20 border rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-                      placeholder="John Doe"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">Email Address</label>
-                    <input 
-                      type="email" 
-                      required
-                      value={profile.email}
-                      onChange={(e) => setProfile({...profile, email: e.target.value})}
-                      style={{ borderColor: "rgba(27, 57, 49, 0.2)" }}
-                      className="w-full bg-[#FAF9F6]/20 border rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-                      placeholder="your@email.com"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[10px] uppercase font-bold text-[#0D1512]/60 mb-1.5 block tracking-widest">Phone Number</label>
-                    <div className="flex gap-2">
-                      <select
-                        value={profile.phone?.split(" ")[0]?.startsWith("+") ? profile.phone.split(" ")[0] : "+91"}
-                        onChange={(e) => {
-                          const numOnly = profile.phone?.replace(/^\+\d+\s*/, "") || "";
-                          setProfile({...profile, phone: `${e.target.value} ${numOnly}`});
-                        }}
-                        style={{ borderColor: "rgba(27, 57, 49, 0.2)" }}
-                        className="bg-[#FAF9F6]/20 border rounded-xl px-3 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512] font-mono shrink-0"
-                      >
-                        <option value="+91">🇮🇳 +91</option>
-                        <option value="+1">🇺🇸 +1</option>
-                        <option value="+44">🇬🇧 +44</option>
-                        <option value="+61">🇦🇺 +61</option>
-                        <option value="+1">🇨🇦 +1</option>
-                        <option value="+971">🇦🇪 +971</option>
-                        <option value="+65">🇸🇬 +65</option>
-                        <option value="+49">🇩🇪 +49</option>
-                        <option value="+33">🇫🇷 +33</option>
-                        <option value="+966">🇸🇦 +966</option>
-                        <option value="+974">🇶🇦 +974</option>
-                        <option value="+60">🇲🇾 +60</option>
-                        <option value="+64">🇳🇿 +64</option>
-                        <option value="+965">🇰🇼 +965</option>
-                        <option value="+973">🇧🇭 +973</option>
-                        <option value="+32">🇧🇪 +32</option>
-                        <option value="+31">🇳🇱 +31</option>
-                        <option value="+47">🇳🇴 +47</option>
-                        <option value="+41">🇨🇭 +41</option>
-                      </select>
-                      <input 
-                        type="text" 
-                        value={profile.phone?.replace(/^\+\d+\s*/, "") || profile.phone || ""}
-                        onChange={(e) => {
-                          const currentPrefix = profile.phone?.split(" ")[0]?.startsWith("+") ? profile.phone.split(" ")[0] : "+91";
-                          setProfile({...profile, phone: `${currentPrefix} ${e.target.value}`});
-                        }}
-                        style={{ borderColor: "rgba(27, 57, 49, 0.2)" }}
-                        className="w-full bg-[#FAF9F6]/20 border rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D1512]/40 text-[#0D1512]"
-                        placeholder="98765 43210"
-                      />
+                      <div className="text-right">
+                        <p className="uppercase text-[9px] font-bold tracking-widest text-[#A48855]">Order Reference</p>
+                        <p className="font-mono text-xs font-bold text-[#1C2B26] mt-0.5">#{o.order_uid || o.id}</p>
+                      </div>
                     </div>
-                  </div>
 
-                  <button
-                    type="submit"
-                    disabled={saving}
-                    style={{ background: "#0D1512", color: "#FAF9F6" }}
-                    className="flex items-center justify-center gap-2 rounded-xl px-6 py-4 text-xs font-black tracking-wider uppercase shadow-lg active:scale-95 transition mt-6 disabled:opacity-50"
-                  >
-                    <MdSave className="text-base" /> {saving ? "Saving Changes..." : "Save Account Settings"}
-                  </button>
-                </form>
-              </div>
-            )}
-
-            {/* 3. Your Addresses Panel */}
-            {activeTab === "addresses" && (
-              <div>
-                <h2 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-2xl font-black text-[#0D1512] mb-1">Your Addresses</h2>
-                <p className="text-xs text-[#0D1512]/60 mb-8">Manage shipping locations and destination parameters</p>
-
-                {successMsg && (
-                  <div style={{ background: "#FAF9F6", borderColor: "rgba(27, 57, 49, 0.2)" }} className="flex items-center gap-2 text-[#0D1512] text-xs px-4 py-3 rounded-xl mb-6 font-semibold border">
-                    <MdCheckCircle className="text-base text-green-600" /> {successMsg}
-                  </div>
-                )}
-
-                {/* Active Saved Address Summary Card */}
-                {(profile.street_address || profile.city) && (
-                  <div className="max-w-2xl bg-stone-50 border border-stone-200/80 rounded-2xl p-5 mb-8 shadow-sm">
-                    <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="text-[10px] uppercase tracking-wider font-extrabold bg-[#0D1512] text-[#FAF9F6] px-2.5 py-0.5 rounded-md">
-                        Default Shipping Address
-                      </span>
-                      <span className="text-xs font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded-full border border-green-200">
-                        ✓ Saved & Active
-                      </span>
-                    </div>
-                    <p className="font-bold text-sm text-[#0D1512]">{profile.full_name || member?.name || "Member"}</p>
-                    <p className="text-xs text-stone-600 mt-1 leading-relaxed">
-                      {[profile.street_address, profile.apt_suite, profile.city, profile.state, profile.pincode, profile.country].filter(Boolean).join(", ")}
-                    </p>
-                    {profile.phone && <p className="text-xs text-stone-500 font-mono mt-1">📞 {profile.phone}</p>}
-                  </div>
-                )}
-
-                <form onSubmit={handleSave} className="max-w-2xl space-y-5">
-                  <SmartAddressForm
-                    form={{
-                      name: profile.full_name,
-                      phone: profile.phone,
-                      delivery_street: profile.street_address,
-                      delivery_apt: profile.apt_suite,
-                      delivery_city: profile.city,
-                      delivery_state: profile.state,
-                      country: profile.country,
-                      delivery_pincode: profile.pincode
-                    }}
-                    onChange={(updated) => {
-                      setProfile((prev) => ({
-                        ...prev,
-                        full_name: updated.name !== undefined ? updated.name : (updated.full_name !== undefined ? updated.full_name : prev.full_name),
-                        phone: updated.phone !== undefined ? updated.phone : prev.phone,
-                        street_address: updated.delivery_street !== undefined ? updated.delivery_street : (updated.street_address !== undefined ? updated.street_address : prev.street_address),
-                        apt_suite: updated.delivery_apt !== undefined ? updated.delivery_apt : (updated.apt_suite !== undefined ? updated.apt_suite : prev.apt_suite),
-                        city: updated.delivery_city !== undefined ? updated.delivery_city : (updated.city !== undefined ? updated.city : prev.city),
-                        state: updated.delivery_state !== undefined ? updated.delivery_state : (updated.state !== undefined ? updated.state : prev.state),
-                        country: updated.country || prev.country,
-                        pincode: updated.delivery_pincode !== undefined ? updated.delivery_pincode : (updated.pincode !== undefined ? updated.pincode : prev.pincode)
-                      }));
-                    }}
-                    isPhysical={false}
-                  />
-
-                  <button
-                    type="submit"
-                    disabled={saving}
-                    style={{ background: "#0D1512", color: "#FAF9F6" }}
-                    className="flex items-center justify-center gap-2 rounded-xl px-6 py-4 text-xs font-black tracking-wider uppercase shadow-lg active:scale-95 transition mt-6 disabled:opacity-50"
-                  >
-                    <MdSave className="text-base" /> {saving ? "Saving Changes..." : "Save Delivery Location"}
-                  </button>
-                </form>
-              </div>
-            )}
-
-            {/* 4. Digital Purchases Panel */}
-            {activeTab === "digital" && (
-              <div>
-                <h2 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-2xl font-black text-[#0D1512] mb-1">Digital Purchases</h2>
-                <p className="text-xs text-[#0D1512]/60 mb-8">Instantly access and redownload your acquired digital assets</p>
-                
-                {loadingOrders ? (
-                  <div className="text-center py-10 text-[#0D1512]/50 text-xs font-bold animate-pulse uppercase tracking-widest">Loading items...</div>
-                ) : orders.filter(o => o.type === "digital").length === 0 ? (
-                  <div style={{ background: "#FAF9F6/20", borderColor: "rgba(27, 57, 49, 0.1)" }} className="border border-dashed rounded-2xl p-12 text-center">
-                    <p className="text-[#0D1512]/60 text-sm font-medium">You haven't bought any digital products yet.</p>
-                    <Link to="/digital" className="inline-block mt-4 text-xs font-bold text-[#0D1512] hover:underline">
-                      Explore digital plans & bundles →
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {orders.filter(o => o.type === "digital").map((o) => (
-                      <div key={o.id} style={{ borderColor: "rgba(27, 57, 49, 0.15)" }} className="border rounded-2xl p-6 shadow-sm bg-[#FAF9F6]/10">
-                        <div className="flex justify-between items-start border-b border-[#0D1512]/10 pb-3 mb-4">
-                          <div>
-                            <p className="font-black text-[#0D1512] text-sm">Order #{o.id}</p>
-                            <p className="text-[10px] text-[#0D1512]/60 mt-0.5">Purchased on {new Date(o.created_at).toLocaleDateString()}</p>
-                          </div>
-                          <span className="text-[10px] bg-green-50 text-green-700 border border-green-200 font-black px-2 py-0.5 rounded uppercase">
-                            Paid ✓
+                    {/* Body Items & Actions */}
+                    <div className="p-5 sm:p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                      <div className="flex-1 space-y-3">
+                        <div className="flex items-center gap-2">
+                          <span className={`text-[10px] font-bold px-3 py-1 rounded-[3px] border uppercase tracking-wider ${
+                            STATUS_PILL[o.status] || "bg-[#FAF6EE] text-[#1C2B26] border-[#EAE4D6]"
+                          }`}>
+                            {o.status}
                           </span>
                         </div>
-                        <div className="space-y-4">
-                          {o.items?.map((item, idx) => (
-                            <div key={idx} className="flex justify-between items-center gap-4 flex-wrap">
-                              <div>
-                                <p className="text-xs font-bold text-[#0D1512]">{item.product_name}</p>
-                                <p className="text-[9px] text-[#0D1512]/50 mt-0.5 font-mono">UID: {item.product_uid}</p>
-                              </div>
-                              <a 
-                                href={`${API.defaults.baseURL}/digital-products/download/${item.product_uid}`} 
-                                target="_blank"
-                                rel="noreferrer"
-                                style={{ background: "#0D1512", color: "#FAF9F6" }}
-                                className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[10px] font-black tracking-wider uppercase transition shadow active:scale-95"
-                              >
-                                <MdCloudDownload /> Download File
-                              </a>
+
+                        <div className="space-y-2 pt-1">
+                          {o.items?.map((item) => (
+                            <div key={item.id} className="text-xs text-[#1C2B26] flex items-center gap-2">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#A48855]" />
+                              <span className="font-medium">{item.product_name}</span>
+                              <span className="text-[#6B7C75] text-[11px]">× {item.qty}</span>
                             </div>
                           ))}
                         </div>
                       </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
 
-            {/* 5. Your Wishlist Panel */}
-            {activeTab === "wishlist" && (
-              <div>
-                <h2 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-2xl font-black text-[#0D1512] mb-1">Your Wishlist</h2>
-                <p className="text-xs text-[#0D1512]/60 mb-8">Manage your saved crafts and premium items</p>
-
-                {loadingWishlist ? (
-                  <div className="text-center py-10 text-[#0D1512]/50 text-xs font-bold animate-pulse uppercase tracking-widest">Loading wishlist...</div>
-                ) : wishlist.length === 0 ? (
-                  <div style={{ background: "#FAF9F6/20", borderColor: "rgba(27, 57, 49, 0.1)" }} className="border border-dashed rounded-2xl p-12 text-center">
-                    <p className="text-[#0D1512]/60 text-sm font-medium">Your wishlist is currently empty.</p>
-                    <Link to="/products" className="inline-block mt-4 text-xs font-bold text-[#0D1512] hover:underline">
-                      Go add premium products →
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {wishlist.map((item) => {
-                      const itemImg = item.image || item.image_url || item.product_image || item.digital_image;
-                      const itemName = item.name || item.product_name || item.digital_name || "Saved Product";
-                      const itemPrice = item.price || item.product_price || item.digital_price || 0;
-                      const itemType = item.type || item.product_type || "physical";
-                      const targetUid = item.product_uid || item.slug || item.product_id || item.id;
-                      const productLink = itemType === "digital" ? `/digital/${targetUid}` : `/products/${targetUid}`;
-
-                      return (
-                        <div key={item.wishlist_id || item.id} style={{ borderColor: "rgba(27, 57, 49, 0.12)" }} className="border rounded-2xl p-4 sm:p-5 flex items-center justify-between gap-4 bg-white hover:shadow-md transition">
-                          <div className="flex items-center gap-4 min-w-0">
-                            <Link to={productLink} className="w-16 h-16 sm:w-20 sm:h-20 bg-stone-100 rounded-xl overflow-hidden flex-shrink-0 border border-stone-200/60 block flex items-center justify-center">
-                              {itemImg ? (
-                                <img src={itemImg} alt={itemName} className="w-full h-full object-cover hover:scale-105 transition" />
-                              ) : (
-                                <span className="text-2xl">{itemType === "digital" ? "📦" : "🪵"}</span>
-                              )}
-                            </Link>
-                            <div className="min-w-0 flex-1">
-                              <span className="inline-block text-[10px] font-extrabold uppercase tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md mb-1 capitalize">
-                                {itemType} Product
-                              </span>
-                              <Link to={productLink} style={{ fontFamily: "'Outfit', sans-serif" }} className="block font-bold text-sm sm:text-base text-[#0D1512] hover:text-amber-700 transition truncate">
-                                {itemName}
-                              </Link>
-                              <p className="font-black text-sm sm:text-base text-[#0D1512] mt-1">
-                                ₹{itemPrice}
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-                            <button
-                              onClick={() => handleAddWishlistToCart(item)}
-                              style={{ background: "#0D1512", color: "#FAF9F6" }}
-                              className="py-2.5 px-4 font-bold text-xs rounded-xl shadow active:scale-95 transition flex items-center justify-center gap-1.5 cursor-pointer"
-                            >
-                              🛒 Add to Cart
-                            </button>
-                            <button
-                              onClick={() => handleRemoveWishlist(item)}
-                              className="p-2 text-red-500 hover:bg-red-50 rounded-xl border border-transparent hover:border-red-200 transition cursor-pointer text-xs font-bold"
-                              title="Remove item"
-                            >
-                              Remove
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* 6. Notifications & History Panel */}
-            {activeTab === "notifications" && (
-              <div>
-                <div className="flex justify-between items-center mb-6">
-                  <div>
-                    <h2 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-2xl font-black text-[#0D1512] mb-1">
-                      Notifications & Updates
-                    </h2>
-                    <p className="text-xs text-[#0D1512]/60">Stay updated on order changes, account announcements, and studio updates</p>
-                  </div>
-                  {notifications.some(n => !n.is_read) && (
-                    <button
-                      onClick={markAllReadNotifications}
-                      className="text-xs font-bold px-4 py-2 rounded-xl bg-[#0D1512] text-[#FAF9F6] hover:bg-[#0D1512]/80 transition shadow cursor-pointer"
-                    >
-                      Mark all as read
-                    </button>
-                  )}
-                </div>
-
-                {loadingNotifications ? (
-                  <div className="bg-[#FAF9F6]/40 rounded-2xl border border-stone-200 p-12 text-center text-gray-500">
-                    <p className="text-xs font-bold animate-pulse text-[#0D1512]/60 uppercase tracking-widest">Loading notifications...</p>
-                  </div>
-                ) : notifications.length === 0 ? (
-                  <div style={{ background: "#FAF9F6/20", borderColor: "rgba(27, 57, 49, 0.1)" }} className="border border-dashed rounded-2xl p-12 text-center space-y-2">
-                    <div className="text-4xl mb-2">🔔</div>
-                    <h3 className="font-bold text-[#0D1512] text-sm">No Notifications Yet</h3>
-                    <p className="text-xs text-stone-500 max-w-sm mx-auto">You'll see real-time updates here when your order status changes or studio announcements arrive.</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {notifications.map((n) => (
-                      <div
-                        key={n.id}
-                        onClick={() => markSingleReadNotification(n.id)}
-                        className={`p-4 sm:p-5 rounded-2xl border transition cursor-pointer flex justify-between items-start shadow-sm hover:shadow-md ${
-                          n.is_read ? "bg-white border-stone-200/70" : "bg-amber-50/60 border-amber-200"
-                        }`}
-                      >
-                        <div className="flex gap-3.5 items-start min-w-0">
-                          <span className="text-2xl p-2 bg-stone-100/80 rounded-xl shrink-0">
-                            {n.type === 'order_confirmed' ? '📦' :
-                             n.type === 'order_shipped' ? '🚚' :
-                             n.type === 'order_out_for_delivery' ? '🛵' :
-                             n.type === 'order_delivered' ? '🎉' :
-                             n.type === 'new_arrival' ? '✨' : '🔔'}
-                          </span>
-                          <div className="min-w-0 flex-1">
-                            <h4 className={`text-xs sm:text-sm ${n.is_read ? 'font-bold text-stone-800' : 'font-black text-[#0D1512]'}`}>
-                              {n.title}
-                            </h4>
-                            <p className="text-xs text-stone-600 mt-1 leading-relaxed">
-                              {n.message}
-                            </p>
-                            <p className="text-[10px] font-medium text-stone-400 mt-2 font-mono">
-                              {new Date(n.created_at).toLocaleString()}
-                            </p>
-                          </div>
-                        </div>
-                        {!n.is_read && (
-                          <span className="w-2.5 h-2.5 rounded-full bg-amber-600 shrink-0 mt-1" />
+                      <div className="flex flex-col sm:flex-row md:flex-col gap-2.5 w-full md:w-auto shrink-0">
+                        {o.type === "physical" ? (
+                          <Link 
+                            to={`/track-order?order=${o.order_uid || o.id}`}
+                            className="text-center px-4 py-2.5 border border-[#23483D] text-[#23483D] hover:bg-[#23483D] hover:text-white text-xs font-semibold rounded-[4px] transition flex items-center justify-center gap-1.5"
+                          >
+                            <MdOutlineLocalShipping className="text-sm" /> White-Glove Tracking
+                          </Link>
+                        ) : (
+                          <button 
+                            onClick={() => switchTab("digital")}
+                            className="text-center px-4 py-2.5 border border-[#23483D] text-[#23483D] hover:bg-[#23483D] hover:text-white text-xs font-semibold rounded-[4px] transition flex items-center justify-center gap-1.5 cursor-pointer"
+                          >
+                            <MdCloudDownload className="text-sm" /> Access Digital Files
+                          </button>
                         )}
+                        <a 
+                          href={`/invoice/${o.order_uid || o.id}`}
+                          target="_blank" 
+                          rel="noreferrer"
+                          className="text-center px-4 py-2.5 bg-[#FAF6EE] hover:bg-[#EAE4D6]/70 border border-[#EAE4D6] text-[#1C2B26] text-xs font-semibold rounded-[4px] transition flex items-center justify-center gap-1.5"
+                        >
+                          <MdOutlineReceiptLong className="text-sm text-[#A48855]" /> Authenticated E-Invoice
+                        </a>
                       </div>
-                    ))}
+                    </div>
                   </div>
-                )}
+                ))}
               </div>
             )}
-
           </div>
         )}
 
-      </div>
+        {/* ─── 2. DIGITAL VAULT PANEL ─── */}
+        {activeTab === "digital" && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="flex items-center justify-between border-b border-[#EAE4D6] pb-4">
+              <div>
+                <button 
+                  onClick={() => switchTab("home")}
+                  className="flex items-center gap-1.5 text-xs text-[#6B7C75] hover:text-[#23483D] font-bold mb-2 transition uppercase tracking-wider cursor-pointer"
+                >
+                  <MdArrowBack /> Atelier Overview
+                </button>
+                <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl sm:text-3xl font-normal text-[#1C2B26]">
+                  Digital Design Vault
+                </h2>
+                <p className="text-xs text-[#6B7C75] mt-1">Instant high-speed download access to all acquired CAD models, vector templates, and brand suites.</p>
+              </div>
+            </div>
+
+            {loadingOrders ? (
+              <div className="text-center py-16 text-[#6B7C75] text-xs font-semibold animate-pulse tracking-widest uppercase">
+                Unlocking Vault Credentials...
+              </div>
+            ) : digitalOrders.length === 0 ? (
+              <div className="border border-dashed border-[#EAE4D6] rounded-[4px] p-12 text-center bg-[#FAF6EE]/40">
+                <span className="text-3xl block mb-2 opacity-40">💾</span>
+                <p className="text-[#1C2B26] font-medium text-sm">Your digital vault contains no licensed assets.</p>
+                <p className="text-xs text-[#6B7C75] mt-1">Acquired digital templates, 3D CAD files, and design kits are automatically deposited here.</p>
+                <Link 
+                  to="/digital" 
+                  className="inline-block mt-4 px-5 py-2.5 bg-[#23483D] text-[#FAF6EE] text-xs font-semibold rounded-[4px] hover:bg-[#16352D] transition tracking-wider uppercase"
+                >
+                  Explore Digital Atelier →
+                </Link>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {digitalOrders.map((o) => (
+                  <div key={o.id} className="border border-[#EAE4D6] rounded-[4px] p-5 sm:p-6 bg-white shadow-sm flex flex-col justify-between">
+                    <div>
+                      <div className="flex justify-between items-start border-b border-[#EAE4D6] pb-3 mb-4">
+                        <div>
+                          <p className="font-serif font-bold text-[#1C2B26] text-base">Vault Release #{o.id}</p>
+                          <p className="text-[10px] text-[#6B7C75] mt-0.5">Licensed on {new Date(o.created_at).toLocaleDateString()}</p>
+                        </div>
+                        <span className="text-[10px] bg-[#23483D]/10 text-[#23483D] border border-[#23483D]/20 font-bold px-2.5 py-0.5 rounded-[3px] uppercase">
+                          Authenticated ✓
+                        </span>
+                      </div>
+
+                      <div className="space-y-4">
+                        {o.items?.map((item, idx) => (
+                          <div key={idx} className="flex justify-between items-center gap-3 p-3 bg-[#FAF6EE] border border-[#EAE4D6]/80 rounded-[4px]">
+                            <div className="min-w-0 flex-1">
+                              <p className="text-xs font-semibold text-[#1C2B26] truncate">{item.product_name}</p>
+                              <p className="text-[9px] text-[#A48855] font-mono mt-0.5 truncate">UID: {item.product_uid}</p>
+                            </div>
+                            <a 
+                              href={`${API.defaults.baseURL}/digital-products/download/${item.product_uid}`} 
+                              target="_blank"
+                              rel="noreferrer"
+                              className="shrink-0 flex items-center gap-1.5 px-3.5 py-2 bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D] text-[10px] font-bold uppercase tracking-wider rounded-[3px] transition shadow-sm"
+                            >
+                              <MdCloudDownload className="text-xs" /> Download File
+                            </a>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="mt-4 pt-3 border-t border-[#EAE4D6]/60 flex items-center justify-between text-[11px] text-[#6B7C75]">
+                      <span>Lifetime re-download authorized</span>
+                      <a href={`/invoice/${o.order_uid || o.id}`} target="_blank" rel="noreferrer" className="text-[#23483D] hover:underline font-semibold">
+                        Receipt
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ─── 3. DELIVERY SANCTUM PANEL ─── */}
+        {activeTab === "addresses" && (
+          <div className="space-y-6 animate-fadeIn max-w-3xl">
+            <div className="flex items-center justify-between border-b border-[#EAE4D6] pb-4">
+              <div>
+                <button 
+                  onClick={() => switchTab("home")}
+                  className="flex items-center gap-1.5 text-xs text-[#6B7C75] hover:text-[#23483D] font-bold mb-2 transition uppercase tracking-wider cursor-pointer"
+                >
+                  <MdArrowBack /> Atelier Overview
+                </button>
+                <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl sm:text-3xl font-normal text-[#1C2B26]">
+                  Delivery Sanctum
+                </h2>
+                <p className="text-xs text-[#6B7C75] mt-1">Configure default destination coordinates for white-glove packaging and freight logistics.</p>
+              </div>
+            </div>
+
+            {successMsg && (
+              <div className="flex items-center gap-2 text-[#23483D] bg-[#23483D]/10 border border-[#23483D]/30 text-xs px-4 py-3 rounded-[4px] font-medium">
+                <MdCheckCircle className="text-base text-[#23483D]" /> {successMsg}
+              </div>
+            )}
+
+            {/* Active Destination Card */}
+            {(profile.street_address || profile.city) && (
+              <div className="bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px] p-5 shadow-sm">
+                <div className="flex items-center justify-between gap-2 mb-3">
+                  <span className="text-[10px] uppercase tracking-[0.16em] font-bold bg-[#23483D] text-[#FAF6EE] px-2.5 py-0.5 rounded-[3px]">
+                    Active Delivery Destination
+                  </span>
+                  <span className="text-xs font-semibold text-[#23483D] flex items-center gap-1">
+                    ✓ Verified on File
+                  </span>
+                </div>
+                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-lg font-bold text-[#1C2B26]">
+                  {profile.full_name || member?.name || "Member Residence"}
+                </p>
+                <p className="text-xs text-[#6B7C75] mt-1 leading-relaxed">
+                  {[profile.street_address, profile.apt_suite, profile.city, profile.state, profile.pincode, profile.country].filter(Boolean).join(", ")}
+                </p>
+                {profile.phone && <p className="text-xs text-[#6B7C75] font-mono mt-2">📞 {profile.phone}</p>}
+              </div>
+            )}
+
+            <form onSubmit={handleSave} className="space-y-6 bg-white border border-[#EAE4D6] p-6 rounded-[4px] shadow-sm">
+              <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-normal text-[#1C2B26]">
+                Update Destination Parameters
+              </h3>
+              
+              <SmartAddressForm
+                form={{
+                  name: profile.full_name,
+                  phone: profile.phone,
+                  delivery_street: profile.street_address,
+                  delivery_apt: profile.apt_suite,
+                  delivery_city: profile.city,
+                  delivery_state: profile.state,
+                  country: profile.country,
+                  delivery_pincode: profile.pincode
+                }}
+                onChange={(updated) => {
+                  setProfile((prev) => ({
+                    ...prev,
+                    full_name: updated.name !== undefined ? updated.name : (updated.full_name !== undefined ? updated.full_name : prev.full_name),
+                    phone: updated.phone !== undefined ? updated.phone : prev.phone,
+                    street_address: updated.delivery_street !== undefined ? updated.delivery_street : (updated.street_address !== undefined ? updated.street_address : prev.street_address),
+                    apt_suite: updated.delivery_apt !== undefined ? updated.delivery_apt : (updated.apt_suite !== undefined ? updated.apt_suite : prev.apt_suite),
+                    city: updated.delivery_city !== undefined ? updated.delivery_city : (updated.city !== undefined ? updated.city : prev.city),
+                    state: updated.delivery_state !== undefined ? updated.delivery_state : (updated.state !== undefined ? updated.state : prev.state),
+                    country: updated.country || prev.country,
+                    pincode: updated.delivery_pincode !== undefined ? updated.delivery_pincode : (updated.pincode !== undefined ? updated.pincode : prev.pincode)
+                  }));
+                }}
+                isPhysical={false}
+              />
+
+              <button
+                type="submit"
+                disabled={saving}
+                className="w-full sm:w-auto px-6 py-3.5 bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D] text-xs font-semibold tracking-wider uppercase rounded-[4px] transition shadow-sm active:scale-98 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              >
+                <MdSave className="text-sm" /> {saving ? "Securing Coordinates..." : "Save Delivery Sanctum"}
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* ─── 4. CURATED WISHLIST PANEL ─── */}
+        {activeTab === "wishlist" && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="flex items-center justify-between border-b border-[#EAE4D6] pb-4">
+              <div>
+                <button 
+                  onClick={() => switchTab("home")}
+                  className="flex items-center gap-1.5 text-xs text-[#6B7C75] hover:text-[#23483D] font-bold mb-2 transition uppercase tracking-wider cursor-pointer"
+                >
+                  <MdArrowBack /> Atelier Overview
+                </button>
+                <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl sm:text-3xl font-normal text-[#1C2B26]">
+                  Curated Private Wishlist
+                </h2>
+                <p className="text-xs text-[#6B7C75] mt-1">Review saved studio crafts, monitor production schedules, and acquire pieces to cart.</p>
+              </div>
+            </div>
+
+            {loadingWishlist ? (
+              <div className="text-center py-16 text-[#6B7C75] text-xs font-semibold animate-pulse tracking-widest uppercase">
+                Loading Curated Archive...
+              </div>
+            ) : wishlist.length === 0 ? (
+              <div className="border border-dashed border-[#EAE4D6] rounded-[4px] p-12 text-center bg-[#FAF6EE]/40">
+                <span className="text-3xl block mb-2 opacity-40">⚜️</span>
+                <p className="text-[#1C2B26] font-medium text-sm">Your curated wishlist is empty.</p>
+                <p className="text-xs text-[#6B7C75] mt-1">Bookmark bespoke furniture pieces or digital suites as you explore the collection.</p>
+                <Link 
+                  to="/products" 
+                  className="inline-block mt-4 px-5 py-2.5 bg-[#23483D] text-[#FAF6EE] text-xs font-semibold rounded-[4px] hover:bg-[#16352D] transition tracking-wider uppercase"
+                >
+                  Explore Collection →
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {wishlist.map((item) => {
+                  const itemImg = item.image || item.image_url || item.product_image || item.digital_image;
+                  const itemName = item.name || item.product_name || item.digital_name || "Bespoke Piece";
+                  const itemPrice = item.price || item.product_price || item.digital_price || 0;
+                  const itemType = item.type || item.product_type || "physical";
+                  const targetUid = item.product_uid || item.slug || item.product_id || item.id;
+                  const productLink = itemType === "digital" ? `/digital/${targetUid}` : `/products/${targetUid}`;
+
+                  return (
+                    <div 
+                      key={item.wishlist_id || item.id} 
+                      className="border border-[#EAE4D6] rounded-[4px] p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white hover:border-[#A48855] transition shadow-sm"
+                    >
+                      <div className="flex items-center gap-4 min-w-0">
+                        <Link to={productLink} className="w-16 h-16 sm:w-20 sm:h-20 bg-[#FAF6EE] rounded-[4px] overflow-hidden shrink-0 border border-[#EAE4D6] block flex items-center justify-center">
+                          {itemImg ? (
+                            <img src={itemImg} alt={itemName} className="w-full h-full object-cover hover:scale-105 transition" />
+                          ) : (
+                            <span className="text-xl">{itemType === "digital" ? "💾" : "🪵"}</span>
+                          )}
+                        </Link>
+                        <div className="min-w-0 flex-1">
+                          <span className="inline-block text-[9px] font-bold uppercase tracking-[0.16em] text-[#A48855] mb-1">
+                            {itemType} Collection
+                          </span>
+                          <Link to={productLink} style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="block font-medium text-base sm:text-lg text-[#1C2B26] hover:text-[#23483D] transition truncate">
+                            {itemName}
+                          </Link>
+                          <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-base sm:text-lg font-bold text-[#23483D] mt-0.5">
+                            {convert(itemPrice)}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
+                        <button
+                          onClick={() => handleAddWishlistToCart(item)}
+                          className="px-4 py-2 bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D] text-xs font-semibold tracking-wider uppercase rounded-[4px] transition shadow-sm cursor-pointer flex items-center gap-1.5"
+                        >
+                          <MdShoppingBag className="text-sm" /> Add to Cart
+                        </button>
+                        <button
+                          onClick={() => handleRemoveWishlist(item)}
+                          className="text-xs text-stone-500 hover:text-red-700 px-2 py-1 transition cursor-pointer"
+                          title="Remove item from wishlist"
+                        >
+                          Relinquish
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ─── 5. CLIENT DOSSIER & SECURITY PANEL ─── */}
+        {activeTab === "security" && (
+          <div className="space-y-6 animate-fadeIn max-w-xl">
+            <div className="border-b border-[#EAE4D6] pb-4">
+              <button 
+                onClick={() => switchTab("home")}
+                className="flex items-center gap-1.5 text-xs text-[#6B7C75] hover:text-[#23483D] font-bold mb-2 transition uppercase tracking-wider cursor-pointer"
+              >
+                <MdArrowBack /> Atelier Overview
+              </button>
+              <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl sm:text-3xl font-normal text-[#1C2B26]">
+                Patron Credentials & Dossier
+              </h2>
+              <p className="text-xs text-[#6B7C75] mt-1">Manage private correspondence channels and authenticated account parameters.</p>
+            </div>
+
+            {successMsg && (
+              <div className="flex items-center gap-2 text-[#23483D] bg-[#23483D]/10 border border-[#23483D]/30 text-xs px-4 py-3 rounded-[4px] font-medium">
+                <MdCheckCircle className="text-base text-[#23483D]" /> {successMsg}
+              </div>
+            )}
+
+            <form onSubmit={handleSave} className="space-y-5 bg-white border border-[#EAE4D6] p-6 rounded-[4px] shadow-sm">
+              <div>
+                <label className="text-[10px] uppercase font-bold text-[#A48855] tracking-widest block mb-1.5">
+                  Patron Legal Name
+                </label>
+                <input 
+                  type="text" 
+                  required
+                  value={profile.full_name}
+                  onChange={(e) => setProfile({...profile, full_name: e.target.value})}
+                  className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
+                  placeholder="e.g. Alistair Vance"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] uppercase font-bold text-[#A48855] tracking-widest block mb-1.5">
+                  Encrypted Email Address
+                </label>
+                <input 
+                  type="email" 
+                  required
+                  value={profile.email}
+                  onChange={(e) => setProfile({...profile, email: e.target.value})}
+                  className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
+                  placeholder="client@sanctum.com"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] uppercase font-bold text-[#A48855] tracking-widest block mb-1.5">
+                  Private Telephone Line
+                </label>
+                <div className="flex gap-2">
+                  <select
+                    value={profile.phone?.split(" ")[0]?.startsWith("+") ? profile.phone.split(" ")[0] : "+91"}
+                    onChange={(e) => {
+                      const numOnly = profile.phone?.replace(/^\+\d+\s*/, "") || "";
+                      setProfile({...profile, phone: `${e.target.value} ${numOnly}`});
+                    }}
+                    className="bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-2.5 py-2.5 text-xs focus:outline-none text-[#1C2B26] font-mono shrink-0"
+                  >
+                    <option value="+91">🇮🇳 +91</option>
+                    <option value="+1">🇺🇸 +1</option>
+                    <option value="+44">🇬🇧 +44</option>
+                    <option value="+61">🇦🇺 +61</option>
+                    <option value="+1">🇨🇦 +1</option>
+                    <option value="+971">🇦🇪 +971</option>
+                    <option value="+65">🇸🇬 +65</option>
+                    <option value="+49">🇩🇪 +49</option>
+                    <option value="+33">🇫🇷 +33</option>
+                    <option value="+966">🇸🇦 +966</option>
+                    <option value="+974">🇶🇦 +974</option>
+                    <option value="+60">🇲🇾 +60</option>
+                    <option value="+64">🇳🇿 +64</option>
+                    <option value="+41">🇨🇭 +41</option>
+                  </select>
+                  <input 
+                    type="text" 
+                    value={profile.phone?.replace(/^\+\d+\s*/, "") || profile.phone || ""}
+                    onChange={(e) => {
+                      const currentPrefix = profile.phone?.split(" ")[0]?.startsWith("+") ? profile.phone.split(" ")[0] : "+91";
+                      setProfile({...profile, phone: `${currentPrefix} ${e.target.value}`});
+                    }}
+                    className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
+                    placeholder="98765 43210"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="w-full sm:w-auto px-6 py-3.5 bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D] text-xs font-semibold tracking-wider uppercase rounded-[4px] transition shadow-sm active:scale-98 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                >
+                  <MdSave className="text-sm" /> {saving ? "Encrypting Changes..." : "Save Patron Credentials"}
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* ─── 6. STUDIO DESPATCHES (NOTIFICATIONS) PANEL ─── */}
+        {activeTab === "notifications" && (
+          <div className="space-y-6 animate-fadeIn max-w-3xl">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#EAE4D6] pb-4">
+              <div>
+                <button 
+                  onClick={() => switchTab("home")}
+                  className="flex items-center gap-1.5 text-xs text-[#6B7C75] hover:text-[#23483D] font-bold mb-2 transition uppercase tracking-wider cursor-pointer"
+                >
+                  <MdArrowBack /> Atelier Overview
+                </button>
+                <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl sm:text-3xl font-normal text-[#1C2B26]">
+                  Studio Despatches & Updates
+                </h2>
+                <p className="text-xs text-[#6B7C75] mt-1">Official bulletins, production schedules, and dispatch status alerts.</p>
+              </div>
+
+              {notifications.some(n => !n.is_read) && (
+                <button
+                  onClick={markAllReadNotifications}
+                  className="text-xs font-semibold px-4 py-2 border border-[#23483D] text-[#23483D] hover:bg-[#23483D] hover:text-white rounded-[4px] transition shadow-sm cursor-pointer self-start sm:self-auto"
+                >
+                  Mark all as read
+                </button>
+              )}
+            </div>
+
+            {loadingNotifications ? (
+              <div className="text-center py-16 text-[#6B7C75] text-xs font-semibold animate-pulse tracking-widest uppercase">
+                Loading Despatches...
+              </div>
+            ) : notifications.length === 0 ? (
+              <div className="border border-dashed border-[#EAE4D6] rounded-[4px] p-12 text-center bg-[#FAF6EE]/40 space-y-2">
+                <span className="text-3xl block mb-2 opacity-40">📬</span>
+                <p className="text-[#1C2B26] font-medium text-sm">No active studio despatches.</p>
+                <p className="text-xs text-[#6B7C75] max-w-sm mx-auto">You will receive bespoke notices when your commissions undergo seasoning, assembly, or white-glove transit.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {notifications.map((n) => (
+                  <div
+                    key={n.id}
+                    onClick={() => markSingleReadNotification(n.id)}
+                    className={`p-4 sm:p-5 rounded-[4px] border transition cursor-pointer flex justify-between items-start shadow-sm hover:shadow-md ${
+                      n.is_read ? "bg-white border-[#EAE4D6]" : "bg-[#FAF6EE] border-[#A48855]"
+                    }`}
+                  >
+                    <div className="flex gap-3.5 items-start min-w-0">
+                      <span className="text-xl p-2 bg-white rounded-[4px] border border-[#EAE4D6] shrink-0">
+                        {n.type === 'order_confirmed' ? '📦' :
+                         n.type === 'order_shipped' ? '🚚' :
+                         n.type === 'order_out_for_delivery' ? '🛵' :
+                         n.type === 'order_delivered' ? '✨' :
+                         n.type === 'new_arrival' ? '⚜️' : '📬'}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <h4 className={`text-xs sm:text-sm ${n.is_read ? 'font-semibold text-[#1C2B26]' : 'font-bold text-[#23483D]'}`}>
+                          {n.title}
+                        </h4>
+                        <p className="text-xs text-[#6B7C75] mt-1 leading-relaxed">
+                          {n.message}
+                        </p>
+                        <p className="text-[10px] text-[#A48855] font-mono mt-2">
+                          {new Date(n.created_at).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                    {!n.is_read && (
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#A48855] shrink-0 mt-1 ml-2" title="Unread" />
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+      </main>
+
       <Footer />
     </div>
   );

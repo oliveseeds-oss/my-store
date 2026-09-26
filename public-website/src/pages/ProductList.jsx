@@ -99,13 +99,13 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
 
   return (
     <div
-      className="product-card"
+      className="product-card group"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        background: T.card,
+        background: "#FFFFFF",
         borderRadius: 4,
-        border: `1px solid ${hovered ? "#CACCC6" : T.border}`,
+        border: `1px solid ${hovered ? "#D5CAA8" : "#EAE4D6"}`,
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
@@ -113,14 +113,14 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
         transition: "box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease",
         boxShadow: hovered
           ? "0 12px 30px rgba(20,25,22,0.06)"
-          : "0 2px 10px rgba(20,25,22,0.02)",
-        transform: hovered ? "translateY(-4px)" : "translateY(0)",
+          : "0 2px 8px rgba(20,25,22,0.02)",
+        transform: hovered ? "translateY(-3px)" : "translateY(0)",
         position: "relative",
       }}
     >
-      {/* Image */}
+      {/* Image Frame */}
       <Link to={`/products/${p.id}`} style={{ display: "block", position: "relative", overflow: "hidden" }}>
-        <div className="product-card-image-wrap" style={{ height: 220, width: "100%", background: "#FAF6EE", overflow: "hidden", position: "relative", flexShrink: 0 }}>
+        <div style={{ height: 230, width: "100%", background: "#FAF6EE", overflow: "hidden", position: "relative", flexShrink: 0 }}>
           {img ? (
             <img
               src={img}
@@ -132,79 +132,83 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
-                transition: "transform 0.6s ease",
-                transform: hovered ? "scale(1.05)" : "scale(1)",
+                transition: "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
+                transform: hovered ? "scale(1.06)" : "scale(1)",
                 display: "block",
               }}
             />
           ) : (
             <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ fontSize: 56 }}>🪵</span>
+              <span style={{ fontSize: 48, opacity: 0.8 }}>🪵</span>
             </div>
           )}
 
-          {/* Quick Preview pill */}
-          {hovered && (
-            <div style={{
-              position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)",
+          {/* Quick View Overlay Pill */}
+          <div 
+            style={{
+              position: "absolute", bottom: 12, left: "50%", transform: `translateX(-50%) translateY(${hovered ? "0" : "8px"})`,
+              opacity: hovered ? 1 : 0,
               background: "rgba(255,255,255,0.95)",
               backdropFilter: "blur(8px)",
-              borderRadius: 4,
-              border: `1px solid ${T.border}`,
-              padding: "6px 14px",
-              fontSize: 11,
-              fontFamily: T.bodyFont,
+              borderRadius: 3,
+              border: "1px solid #EAE4D6",
+              padding: "5px 14px",
+              fontSize: 10.5,
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 600,
-              color: T.accent,
-              letterSpacing: "0.1em",
+              color: "#23483D",
+              letterSpacing: "0.14em",
               textTransform: "uppercase",
               whiteSpace: "nowrap",
-              boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
-            }}>
-              Quick Preview
-            </div>
-          )}
+              boxShadow: "0 4px 14px rgba(0,0,0,0.06)",
+              transition: "all 0.25s ease",
+            }}
+          >
+            Inspect Piece
+          </div>
         </div>
 
-        {/* Badges */}
-        <div style={{ position: "absolute", top: 10, left: 10, display: "flex", flexWrap: "wrap", gap: 6, zIndex: 10, maxWidth: "calc(100% - 54px)" }}>
-          {discount > 0 && (
-            <span style={{
-              fontSize: 10, fontWeight: 700, padding: "3px 8px",
-              borderRadius: 4, background: "#7f1d1d", color: "#fff",
-              fontFamily: T.bodyFont, letterSpacing: "0.05em",
-            }}>
-              -{discount}% OFF
-            </span>
-          )}
-          {tags.slice(0, 1).map((t) => (
-            <span key={t} style={{
-              fontSize: 10, fontWeight: 700, padding: "3px 8px",
-              borderRadius: 4, fontFamily: T.bodyFont, letterSpacing: "0.05em",
-              background: "#FAF6EE",
-              border: `1px solid ${T.border}`,
-              color: T.accent,
-            }}>
-              {t}
-            </span>
-          ))}
-        </div>
+        {/* Single Discreet Status Tag (No Clutter) */}
+        {(discount > 0 || tags.length > 0) && (
+          <div style={{ position: "absolute", top: 10, left: 10, zIndex: 10, display: "flex", gap: 5 }}>
+            {discount > 0 ? (
+              <span style={{
+                fontSize: 9.5, fontWeight: 700, padding: "2.5px 7px",
+                borderRadius: 2, background: "#23483D", color: "#FFFFFF",
+                fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.08em",
+                textTransform: "uppercase"
+              }}>
+                Exclusive • -{discount}%
+              </span>
+            ) : (
+              <span style={{
+                fontSize: 9.5, fontWeight: 600, padding: "2.5px 7px",
+                borderRadius: 2, background: "rgba(250, 246, 238, 0.94)",
+                border: "1px solid #EAE4D6", color: "#23483D",
+                fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.08em",
+                textTransform: "uppercase"
+              }}>
+                {tags[0]}
+              </span>
+            )}
+          </div>
+        )}
 
-        {/* Wishlist Button - minimum 44px tap target */}
+        {/* Wishlist Button */}
         <button
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); onWishlist(); }}
           aria-label="Add to Wishlist"
           style={{
             position: "absolute", top: 8, right: 8, zIndex: 25,
-            width: 38, height: 38, borderRadius: "50%",
+            width: 34, height: 34, borderRadius: "50%",
             background: "rgba(255,255,255,0.92)",
-            backdropFilter: "blur(8px)",
-            border: `1px solid ${T.border}`, cursor: "pointer",
+            backdropFilter: "blur(6px)",
+            border: "1px solid #EAE4D6", cursor: "pointer",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 16,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+            fontSize: 15,
+            boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
             transition: "all 0.2s ease",
-            color: isWishlisted ? "#e11d48" : "#64748b",
+            color: isWishlisted ? "#e11d48" : "#8A8D88",
           }}
         >
           {isWishlisted ? "♥" : "♡"}
@@ -212,94 +216,97 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
       </Link>
 
       {/* Card Body */}
-      <div className="product-card-content" style={{ padding: "18px 20px 20px", display: "flex", flexDirection: "column", flex: 1 }}>
+      <div style={{ padding: "16px 18px 18px", display: "flex", flexDirection: "column", flex: 1 }}>
         {p.category_name && (
           <p style={{
-            fontSize: 10, textTransform: "uppercase", letterSpacing: "0.18em",
-            color: T.accent, fontFamily: T.bodyFont, fontWeight: 600, marginBottom: 6,
+            fontSize: 10, textTransform: "uppercase", letterSpacing: "0.16em",
+            color: "#A48855", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, marginBottom: 5,
           }}>
             {p.category_name}
           </p>
         )}
 
         <Link to={`/products/${p.id}`} style={{ textDecoration: "none" }}>
-          <h3 className="product-card-name" style={{
-            fontFamily: T.headingFont, fontWeight: 600,
-            fontSize: 17, lineHeight: 1.4,
-            color: hovered ? T.accent : T.text,
+          <h3 style={{
+            fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 500,
+            fontSize: 18, lineHeight: 1.3,
+            color: hovered ? "#23483D" : "#181A18",
             transition: "color 0.2s ease",
             display: "-webkit-box", WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical", overflow: "hidden",
-            minHeight: "2.8em",
-            marginBottom: 10,
+            minHeight: "2.6em",
+            marginBottom: 6,
           }}>
             {p.name}
           </h3>
         </Link>
 
-        <StarRating rating={p.rating} count={p.review_count} />
-
-        {/* Badges row */}
-        <div style={{ display: "flex", gap: 6, marginTop: 10, flexWrap: "wrap" }}>
-          <span style={{
-            fontSize: 10, padding: "3px 9px", borderRadius: 4,
-            background: "#FAF6EE", color: T.accent, border: `1px solid ${T.border}`,
-            fontFamily: T.bodyFont, fontWeight: 600, letterSpacing: "0.08em",
-          }}>
-            ✨ Precision-Marked
-          </span>
-          {tags.includes("Best Seller") && (
+        {/* Quiet Price & Stock Row */}
+        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginTop: "auto", paddingTop: 10, borderTop: "1px solid #FAF6EE" }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
             <span style={{
-              fontSize: 10, padding: "3px 9px", borderRadius: 4,
-              background: "#FAF6EE", color: T.highlight, border: `1px solid ${T.border}`,
-              fontFamily: T.bodyFont, fontWeight: 600, letterSpacing: "0.08em",
+              fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 22, fontWeight: 500, color: "#181A18",
             }}>
-              ⭐ Best Seller
+              {convert(finalPrice)}
+            </span>
+            {p.discount_price && (
+              <span style={{ fontSize: 12, textDecoration: "line-through", color: "#8A8D88" }}>
+                {convert(p.price)}
+              </span>
+            )}
+          </div>
+          {p.stock <= 5 && p.stock > 0 && (
+            <span style={{ fontSize: 10, color: "#991b1b", fontWeight: 600, letterSpacing: "0.04em" }}>
+              {p.stock} left
             </span>
           )}
         </div>
 
-        <div className="product-card-price" style={{ display: "flex", alignItems: "flex-end", gap: 8, marginTop: "auto", paddingTop: 14 }}>
-          <span style={{
-            fontFamily: T.headingFont, fontSize: 24, fontWeight: 700, color: T.text,
-          }}>
-            {convert(finalPrice)}
-          </span>
-          {p.discount_price && (
-            <span style={{ fontSize: 13, textDecoration: "line-through", color: "#8A8D88", marginBottom: 3 }}>
-              {convert(p.price)}
-            </span>
-          )}
+        {/* Clean Luxury Action */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 8, marginTop: 12 }}>
+          <Link
+            to={`/products/${p.id}`}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "9px 0",
+              borderRadius: 3,
+              border: "1px solid #EAE4D6",
+              textDecoration: "none",
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 11,
+              fontWeight: 600,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              transition: "all 0.2s ease",
+              background: "#FAF6EE",
+              color: "#23483D",
+            }}
+          >
+            View Piece
+          </Link>
+          <button
+            onClick={handleAdd}
+            aria-label="Add to cart"
+            title={added ? "Added to Order" : "Add to Order"}
+            style={{
+              padding: "0 14px",
+              borderRadius: 3,
+              border: "none",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              background: added ? "#16a34a" : "#23483D",
+              color: "#FFFFFF",
+              fontSize: 13,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}
+          >
+            {added ? "✓" : "+"}
+          </button>
         </div>
-
-        {p.stock <= 5 && p.stock > 0 && (
-          <p style={{ fontSize: 11, color: "#b91c1c", marginTop: 6, fontFamily: T.bodyFont, fontWeight: 600 }}>
-            Only {p.stock} left in stock
-          </p>
-        )}
-
-        <button
-          onClick={handleAdd}
-          className="product-card-button"
-          style={{
-            marginTop: 14,
-            width: "100%",
-            padding: "10px 0",
-            borderRadius: 4,
-            border: "none",
-            cursor: "pointer",
-            fontFamily: T.bodyFont,
-            fontSize: 12,
-            fontWeight: 600,
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            transition: "all 0.2s ease",
-            background: added ? "#16a34a" : T.accent,
-            color: "#fff",
-          }}
-        >
-          {added ? "✓ Added to Order" : "Add to Order"}
-        </button>
       </div>
     </div>
   );

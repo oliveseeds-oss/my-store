@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import WhatsAppChat from "./components/WhatsAppChat";
 import CuteLoader from "./components/CuteLoader";
+import ErrorBoundary from "./components/ErrorBoundary";
 import { CartProvider } from "./context/CartContext";
 import { MemberProvider } from "./context/MemberContext";
 import { CurrencyProvider } from "./context/CurrencyContext";
@@ -40,12 +41,28 @@ const ShippingPolicy = lazy(() => import("./pages/ShippingPolicy"));
 const CookiesPolicy = lazy(() => import("./pages/CookiesPolicy"));
 const AboutUs = lazy(() => import("./pages/AboutUs"));
 
+
+// Preload high-intent routes in idle time for zero-latency page transitions
+const preloadKeyRoutes = () => {
+  if (typeof window !== "undefined") {
+    setTimeout(() => {
+      import("./pages/ProductList").catch(() => {});
+      import("./pages/ProductDetail").catch(() => {});
+      import("./pages/Cart").catch(() => {});
+      import("./pages/Checkout").catch(() => {});
+      import("./pages/Profile").catch(() => {});
+      import("./pages/DigitalProductList").catch(() => {});
+    }, 1500);
+  }
+};
+
 // ── Scroll to Top on Route Change ──
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
     initGA4();
     window.scrollTo(0, 0);
+    preloadKeyRoutes();
   }, [pathname]);
   return null;
 }
@@ -58,8 +75,9 @@ export default function App() {
           <BrowserRouter>
             <ScrollToTop />
             <WhatsAppChat />
-            <Suspense fallback={<CuteLoader />}>
-              <main>
+            <ErrorBoundary>
+              <Suspense fallback={<CuteLoader />}>
+                <main>
                 <Routes>
                   <Route path="/"                   element={<Home />} />
                   <Route path="/products"           element={<ProductList />} />
@@ -107,7 +125,8 @@ export default function App() {
                 </Routes>
               </main>
             </Suspense>
-          </BrowserRouter>
+          </ErrorBoundary>
+        </BrowserRouter>
         </CartProvider>
       </CurrencyProvider>
     </MemberProvider>

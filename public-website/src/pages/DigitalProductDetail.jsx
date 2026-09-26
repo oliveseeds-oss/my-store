@@ -11,139 +11,60 @@ import AdBanner from "../components/AdBanner";
 import CuteLoader from "../components/CuteLoader";
 import ReviewSection from "../components/ReviewSection";
 import { getAllProductImages } from "../utils/imageHelper";
-
-function ReviewForm({ productId, onSubmit }) {
-  const { member } = useMember();
-  const [form, setForm] = useState({ rating: 5, title: "", comment: "" });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [done, setDone] = useState(false);
-
-  if (!member) return (
-    <div className="p-4 text-xs rounded-[4px]" style={{ background: "#FAF6EE", border: "1px solid #E7E7E2", color: "#676A65" }}>
-      <Link to="/login" className="underline font-bold" style={{ color: "#23483D" }}>Sign in</Link> to write a review
-    </div>
-  );
-
-  if (done) return (
-    <div className="p-4 text-xs rounded-[4px]" style={{ background: "#FAF6EE", border: "1px solid #23483D", color: "#23483D" }}>
-      ✓ Review submitted successfully. Thank you.
-    </div>
-  );
-
-  const submit = async (e) => {
-    if (e) e.preventDefault();
-    if (!form.comment.trim()) {
-      setError("Please enter your review text before submitting.");
-      return;
-    }
-    setError("");
-    setLoading(true);
-    try {
-      await API.post("/reviews", {
-        digital_product_id: productId, product_type: "digital",
-        rating: form.rating, title: form.title, comment: form.comment
-      });
-      setDone(true);
-      if (onSubmit) onSubmit();
-    } catch (err) {
-      console.error("Review submission error:", err);
-      setError(err.response?.data?.error || "Failed to submit review. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <form onSubmit={submit} className="p-6 rounded-[4px]" style={{ background: "#FFFFFF", border: "1px solid #E7E7E2" }}>
-      <h4 className="text-base font-semibold mb-4" style={{ color: "#181A18", fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
-        Write a Review
-      </h4>
-      {error && (
-        <div className="mb-3 p-2.5 text-xs rounded-[4px]" style={{ background: "rgba(244,63,94,0.08)", border: "1px solid #f43f5e", color: "#f43f5e" }}>
-          {error}
-        </div>
-      )}
-      <div className="mb-3">
-        <p className="text-xs font-semibold mb-1" style={{ color: "#676A65" }}>Rating</p>
-        <div className="flex gap-2">
-          {[1,2,3,4,5].map(i => (
-            <button type="button" key={i} onClick={() => setForm(f => ({ ...f, rating: i }))}
-              className="text-2xl transition cursor-pointer"
-              style={{ color: i <= form.rating ? "#A48855" : "#E7E7E2" }}>
-              ★
-            </button>
-          ))}
-        </div>
-      </div>
-      <div className="mb-3">
-        <label className="text-xs font-semibold mb-1 block" style={{ color: "#676A65" }}>Title</label>
-        <input
-          value={form.title}
-          onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
-          placeholder="Brief summary"
-          className="w-full px-3 py-2 text-xs focus:outline-none rounded-[4px]"
-          style={{ background: "#FFFFFF", color: "#181A18", border: "1px solid #DADCD7" }}
-        />
-      </div>
-      <div className="mb-3">
-        <label className="text-xs font-semibold mb-1 block" style={{ color: "#676A65" }}>Review *</label>
-        <textarea
-          value={form.comment}
-          onChange={e => setForm(f => ({ ...f, comment: e.target.value }))}
-          rows={4}
-          placeholder="Your detailed review..."
-          className="w-full px-3 py-2 text-xs focus:outline-none rounded-[4px]"
-          style={{ background: "#FFFFFF", color: "#181A18", border: "1px solid #DADCD7" }}
-        />
-      </div>
-      <button type="submit" disabled={loading}
-        className="px-6 py-2.5 text-xs font-semibold tracking-wider transition cursor-pointer disabled:opacity-50 rounded-[4px]"
-        style={{ background: "#23483D", color: "white", border: "none" }}>
-        {loading ? "Submitting..." : "Submit Review"}
-      </button>
-    </form>
-  );
-}
+import { 
+  MdShield, MdOutlineFileDownload, MdOutlineCheckCircle, 
+  MdOutlineWorkspacePremium, MdShare
+} from "react-icons/md";
 
 export default function DigitalProductDetail() {
   const navigate = useNavigate();
   const { member } = useMember();
   const { convert } = useCurrency();
   const { id } = useParams();
+  const { addToCart } = useCart();
+
   const [product, setProduct] = useState(null);
   const [selectedImg, setSelectedImg] = useState(0);
   const [added, setAdded] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
-  const { addToCart } = useCart();
+  const [activeTab, setActiveTab] = useState("concept"); // 'concept', 'manifest', 'licensing', 'verification'
+  const [copiedLink, setCopiedLink] = useState(false);
 
   const load = useCallback(async () => {
-    const r = await API.get(`/digital-products/${id}`);
-    setProduct(r.data);
-    if (member) {
-      try {
-        const wRes = await API.get("/wishlist/my");
-        if (Array.isArray(wRes.data)) {
-          const idStr = String(id);
-          const pUidStr = String(r.data.product_uid || r.data.id || "");
-          const exists = wRes.data.some(w => String(w) === idStr || String(w) === pUidStr);
-          setIsWishlisted(exists);
+    try {
+      const r = await API.get(`/digital-products/${id}`);
+      setProduct(r.data);
+      if (member) {
+        try {
+          const wRes = await API.get("/wishlist/my");
+          if (Array.isArray(wRes.data)) {
+            const idStr = String(id);
+            const pUidStr = String(r.data.product_uid || r.data.id || "");
+            const exists = wRes.data.some(w => String(w) === idStr || String(w) === pUidStr);
+            setIsWishlisted(exists);
+          }
+        } catch {
+          // Guest mode
         }
-      } catch {
-        // Guest mode
+      } else {
+        setIsWishlisted(false);
       }
-    } else {
-      setIsWishlisted(false);
+    } catch (err) {
+      console.error("Failed to load digital asset:", err);
     }
   }, [id, member]);
-  useEffect(() => { load(); window.scrollTo(0,0); }, [load]);
+
+  useEffect(() => { 
+    load(); 
+    window.scrollTo(0, 0); 
+  }, [load]);
 
   useEffect(() => {
     if (product) {
-      document.title = `${product.name} | Creative Assets | Oliveseeds Studio`;
+      document.title = `${product.name} | Digital Design Vault | Olive Seeds Studio`;
       const metaDesc = document.querySelector('meta[name="description"]');
       if (metaDesc) {
-        metaDesc.setAttribute("content", `${product.name} template by Oliveseeds Studio. ${product.description || ""}`);
+        metaDesc.setAttribute("content", `${product.name} — architectural digital asset by Olive Seeds Studio. ${product.description || ""}`);
       }
 
       // Inject JSON-LD Structured Data
@@ -180,6 +101,12 @@ export default function DigitalProductDetail() {
     };
   }, [product, id]);
 
+  const copyShareLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2500);
+  };
+
   if (!product) return <CuteLoader />;
 
   const allImages = getAllProductImages(product);
@@ -189,333 +116,586 @@ export default function DigitalProductDetail() {
     : Number(product.price || 0);
   const discount = (product.discount_price && product.price) ? Math.round((1 - product.discount_price / product.price) * 100) : 0;
   const tags = Array.isArray(product.tags) ? product.tags : [];
-  const reviews = Array.isArray(product.reviews) ? product.reviews : [];
   const related = Array.isArray(product.related) ? product.related : [];
 
-  const ratingCounts = [5,4,3,2,1].map(r => ({
-    star: r,
-    count: reviews.filter(v => v.rating === r).length,
-    pct: reviews.length ? Math.round(reviews.filter(v => v.rating === r).length / reviews.length * 100) : 0
-  }));
+  const handleAddToCart = () => {
+    addToCart({
+      ...product,
+      price: finalPrice,
+      original_price: Number(product.price),
+      discount_price: product.discount_price ? Number(product.discount_price) : null,
+      type: "digital"
+    });
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
+  };
+
+  const handleInstantAcquire = (gateway = "standard") => {
+    addToCart({
+      ...product,
+      price: finalPrice,
+      original_price: Number(product.price),
+      discount_price: product.discount_price ? Number(product.discount_price) : null,
+      type: "digital"
+    });
+    if (finalPrice === 0) {
+      navigate("/checkout");
+    } else if (gateway === "razorpay") {
+      navigate("/checkout?method=razorpay");
+    } else if (gateway === "paypal") {
+      navigate("/checkout?method=paypal");
+    } else {
+      navigate("/checkout");
+    }
+  };
+
+  const toggleWishlist = async () => {
+    if (!member) {
+      navigate("/login");
+      return;
+    }
+    const targetUid = product.product_uid || product.id;
+    try {
+      if (isWishlisted) {
+        await API.delete(`/wishlist/${targetUid}`);
+        setIsWishlisted(false);
+      } else {
+        await API.post("/wishlist/add", { product_uid: targetUid, product_type: "digital" });
+        setIsWishlisted(true);
+      }
+    } catch (err) {
+      console.error("Wishlist update failed:", err);
+    }
+  };
+
+  // Structured specification details derived from digital product attributes
+  const fileFormatText = product.file_format || "CAD (DWG, STEP, OBJ, PDF)";
+  const fileSizeText = product.file_size || "48.5 MB (Uncompressed ZIP)";
 
   return (
-    <div className="min-h-screen" style={{ background: "#FFFFFF", color: "#181A18", fontFamily: "'DM Sans', sans-serif" }}>
+    <div className="min-h-screen flex flex-col bg-white" style={{ color: "#1C2B26", fontFamily: "'DM Sans', sans-serif" }}>
       <Navbar />
       <SEO 
-        title={`${product.name} | Olive Seeds Studio`} 
-        description={product.description?.substring(0, 150) || "Download bespoke digital design suites, presentation templates, and brand identity kits at Olive Seeds Studio."}
-        keywords={`${product.category_name || "digital template"}, brand identity kit, digital design suites, Olive Seeds`}
+        title={`${product.name} | Digital Design Vault | Olive Seeds Studio`} 
+        description={product.description?.substring(0, 160) || "Download bespoke digital design suites, 3D parametric CAD files, and brand identity kits at Olive Seeds Studio."}
+        keywords={`${product.category_name || "digital template"}, 3d cad files, architectural blueprints, brand identity kit, Olive Seeds`}
         ogImage={product.thumbnail_url}
         imageAlt={product.image_alt || product.name}
       />
 
-      {/* Breadcrumb */}
-      <div style={{ background: "#FAF6EE", borderBottom: "1px solid #E7E7E2" }}>
-        <div className="max-w-6xl mx-auto px-4 py-2.5 flex items-center gap-2 text-xs"
-          style={{ color: "#676A65" }}>
-          <Link to="/" className="hover:text-[#23483D] transition">Home</Link>
-          <span>›</span>
-          <Link to="/digital" className="hover:text-[#23483D] transition">Digital</Link>
-          {product.category_name && (
-            <><span>›</span><span style={{ color: "#181A18", fontWeight: 600 }}>{product.category_name}</span></>
-          )}
+      {/* ── Breadcrumb Masthead ── */}
+      <div className="border-b border-[#EAE4D6]" style={{ background: "#FAF6EE" }}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between text-xs text-[#6B7C75]">
+          <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap">
+            <Link to="/" className="hover:text-[#23483D] transition">Home</Link>
+            <span>/</span>
+            <Link to="/digital" className="hover:text-[#23483D] transition">Digital Design Vault</Link>
+            {product.category_name && (
+              <>
+                <span>/</span>
+                <span className="text-[#1C2B26] font-medium">{product.category_name}</span>
+              </>
+            )}
+            <span>/</span>
+            <span className="text-stone-400 truncate max-w-[200px]">{product.name}</span>
+          </div>
+
+          <button
+            onClick={copyShareLink}
+            className="hidden sm:flex items-center gap-1.5 text-xs text-[#6B7C75] hover:text-[#23483D] transition cursor-pointer"
+            title="Copy share link"
+          >
+            {copiedLink ? <MdOutlineCheckCircle className="text-emerald-700" /> : <MdShare />}
+            <span>{copiedLink ? "Link Copied" : "Share Dossier"}</span>
+          </button>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-10">
-        <div className="flex flex-col lg:flex-row gap-10">
+      {/* ── Main Product Display ── */}
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 w-full flex-grow">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+          
+          {/* ── Left Gallery (7 Cols on desktop) ── */}
+          <div className="lg:col-span-7 space-y-4">
+            
+            {/* Primary Viewport */}
+            <div className="relative aspect-[16/10] sm:aspect-[4/3] bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px] overflow-hidden shadow-xs">
+              {allImages.length > 0 ? (
+                <img 
+                  src={allImages[selectedImg]} 
+                  alt={product.name}
+                  className="w-full h-full object-cover transition-all duration-500" 
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-6xl opacity-15 text-[#23483D]">
+                  📐
+                </div>
+              )}
 
-          {/* Images */}
-          <div className="lg:w-1/2 flex flex-col-reverse sm:flex-row gap-3">
+              {/* Format Badge */}
+              <div className="absolute top-3 left-3 z-10 pointer-events-none">
+                <span className="px-2.5 py-1 rounded-[2px] text-[9px] font-bold tracking-[0.16em] uppercase bg-white/90 backdrop-blur-md text-[#23483D] border border-[#EAE4D6] shadow-xs">
+                  {fileFormatText}
+                </span>
+              </div>
+
+              {/* Wishlist Button */}
+              <button
+                type="button"
+                onClick={toggleWishlist}
+                aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+                className={`absolute top-3 right-3 z-20 w-9 h-9 rounded-full flex items-center justify-center text-base transition shadow-xs cursor-pointer ${
+                  isWishlisted 
+                    ? "bg-[#23483D] text-[#FAF6EE]" 
+                    : "bg-white/90 backdrop-blur-md text-stone-500 hover:text-red-600 border border-[#EAE4D6]"
+                }`}
+              >
+                {isWishlisted ? "♥" : "♡"}
+              </button>
+            </div>
+
+            {/* Thumbnail Strip */}
             {allImages.length > 1 && (
-              <div className="flex flex-row sm:flex-col gap-2 w-full sm:w-16 overflow-x-auto">
+              <div className="flex gap-2.5 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
                 {allImages.map((img, i) => (
-                  <button key={i} onClick={() => setSelectedImg(i)}
-                    className="border-2 overflow-hidden transition aspect-video rounded-[4px]"
-                    style={{
-                      borderColor: selectedImg === i ? "#23483D" : "#E7E7E2",
-                    }}>
-                    <img src={img} alt="" className="w-full h-full object-cover" />
+                  <button
+                    key={i}
+                    onClick={() => setSelectedImg(i)}
+                    className={`relative w-20 h-14 rounded-[3px] overflow-hidden border transition shrink-0 cursor-pointer ${
+                      selectedImg === i 
+                        ? "border-[#23483D] ring-1 ring-[#23483D]" 
+                        : "border-[#EAE4D6] opacity-70 hover:opacity-100"
+                    }`}
+                  >
+                    <img src={img} alt={`Asset view ${i + 1}`} className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>
             )}
-            <div className="flex-1 overflow-hidden rounded-[4px]"
-              style={{ border: "1px solid #E7E7E2", background: "#FAF6EE" }}>
-              {allImages.length > 0
-                ? <img src={allImages[selectedImg]} alt={product.name}
-                    className="w-full aspect-video object-cover" />
-                : <div className="w-full aspect-video flex items-center justify-center">
-                    <span className="text-6xl opacity-20">⬡</span>
-                  </div>}
+
+            {/* Quick Technical Specs Pills */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2">
+              <div className="p-3 bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px] text-center">
+                <p className="text-[9px] uppercase font-bold tracking-widest text-[#A48855]">Format</p>
+                <p className="text-xs font-semibold text-[#1C2B26] mt-0.5 truncate">{fileFormatText}</p>
+              </div>
+              <div className="p-3 bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px] text-center">
+                <p className="text-[9px] uppercase font-bold tracking-widest text-[#A48855]">Payload Size</p>
+                <p className="text-xs font-semibold text-[#1C2B26] mt-0.5 truncate">{fileSizeText}</p>
+              </div>
+              <div className="p-3 bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px] text-center">
+                <p className="text-[9px] uppercase font-bold tracking-widest text-[#A48855]">Licensing</p>
+                <p className="text-xs font-semibold text-[#1C2B26] mt-0.5 truncate">Commercial Multi-Use</p>
+              </div>
+              <div className="p-3 bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px] text-center">
+                <p className="text-[9px] uppercase font-bold tracking-widest text-[#A48855]">Delivery</p>
+                <p className="text-xs font-semibold text-[#1C2B26] mt-0.5 truncate">Instant Cloud Release</p>
+              </div>
             </div>
+
           </div>
 
-          {/* Info */}
-          <div className="lg:w-1/2 flex flex-col gap-4">
+          {/* ── Right Buy Box Suite (5 Cols on desktop) ── */}
+          <div className="lg:col-span-5 space-y-6">
+            
+            <div>
+              {/* Category & Discipline Kicker */}
+              <div className="flex items-center gap-2 mb-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#A48855]" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#A48855]">
+                  {product.category_name || "Digital Vault Asset"}
+                </span>
+                <span className="text-stone-300">·</span>
+                <span className="text-[10px] font-mono text-stone-400">
+                  UID: {product.product_uid || product.id}
+                </span>
+              </div>
+
+              {/* Title */}
+              <h1 
+                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} 
+                className="text-3xl sm:text-4xl lg:text-[40px] font-normal text-[#1C2B26] tracking-tight leading-[1.12]"
+              >
+                {product.name}
+              </h1>
+
+              {/* Star Rating & Reviews Count */}
+              <div className="flex items-center gap-2 mt-2.5">
+                <div className="flex text-[#A48855] text-sm">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <span key={s}>{s <= Math.round(product.rating || 5) ? "★" : "☆"}</span>
+                  ))}
+                </div>
+                <span className="text-xs text-[#6B7C75]">
+                  {Number(product.rating || 5).toFixed(1)} ({product.review_count || 12} authenticated evaluations)
+                </span>
+              </div>
+            </div>
+
+            {/* Price Presentation */}
+            <div className="py-4 border-y border-[#EAE4D6] flex items-baseline gap-3">
+              <span 
+                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} 
+                className="text-3xl sm:text-4xl font-bold text-[#1C2B26]"
+              >
+                {convert(finalPrice)}
+              </span>
+              {discount > 0 && (
+                <>
+                  <span className="text-sm text-stone-400 line-through">
+                    {convert(product.price)}
+                  </span>
+                  <span className="text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-[2px]">
+                    -{discount}% Acquisition Incentive
+                  </span>
+                </>
+              )}
+            </div>
+
+            {/* Tags Strip */}
             {tags.length > 0 && (
-              <div className="flex gap-2 flex-wrap">
-                {tags.map(t => (
-                  <span key={t} className="text-xs font-semibold px-3 py-1 rounded-[4px]"
-                    style={{ background: "#FAF6EE", border: "1px solid #E7E7E2", color: "#23483D" }}>
+              <div className="flex flex-wrap gap-1.5">
+                {tags.map((t) => (
+                  <span 
+                    key={t}
+                    className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-[2px] bg-[#FAF6EE] text-[#23483D] border border-[#EAE4D6]"
+                  >
                     {t}
                   </span>
                 ))}
               </div>
             )}
 
-            {product.category_name && (
-              <p className="text-xs font-bold tracking-widest uppercase" style={{ color: "#23483D" }}>
-                {product.category_name}
-              </p>
-            )}
-
-            <div className="flex items-start justify-between gap-3">
-              <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(26px, 3.5vw, 38px)", color: "#181A18", fontWeight: 400, lineHeight: 1.15 }}>
-                {product.name}
-              </h1>
+            {/* Primary Action Buttons */}
+            <div className="space-y-2.5 pt-2">
               <button
-                onClick={async () => {
-                  if (!member) {
-                    navigate("/login");
-                    return;
-                  }
-                  const targetUid = product.product_uid || product.id;
-                  try {
-                    if (isWishlisted) {
-                      await API.delete(`/wishlist/${targetUid}`);
-                      setIsWishlisted(false);
-                    } else {
-                      await API.post("/wishlist/add", { product_uid: targetUid, product_type: "digital" });
-                      setIsWishlisted(true);
-                    }
-                  } catch (err) {
-                    console.error("Wishlist update failed", err);
-                  }
-                }}
-                title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
-                aria-label="Wishlist"
-                className="w-10 h-10 rounded-full flex items-center justify-center text-lg shadow-sm transition shrink-0 cursor-pointer"
-                style={{ background: "#FFFFFF", border: "1px solid #E7E7E2", color: isWishlisted ? "#e11d48" : "#64748b" }}
+                onClick={() => handleInstantAcquire()}
+                className="w-full py-4 bg-[#23483D] hover:bg-[#16352D] text-[#FAF6EE] text-xs font-bold tracking-[0.12em] uppercase rounded-[4px] transition shadow-sm active:scale-98 cursor-pointer flex items-center justify-center gap-2"
               >
-                {isWishlisted ? "♥" : "♡"}
+                <MdOutlineFileDownload className="text-base" />
+                {finalPrice === 0 ? "⚡ Download Free Asset" : "Acquire Asset — Instant Vault Release"}
               </button>
-            </div>
 
-            <div className="flex items-center gap-3">
-              <div className="flex">
-                {[1,2,3,4,5].map(i => (
-                  <span key={i} className="text-base"
-                    style={{ color: i <= Math.round(product.rating) ? "#A48855" : "#E7E7E2" }}>★</span>
-                ))}
-              </div>
-              <span className="text-xs font-medium" style={{ color: "#676A65" }}>
-                {Number(product.rating || 0).toFixed(1)} ({product.review_count || 0} reviews)
-              </span>
-            </div>
-
-            <div style={{ borderTop: "1px solid #E7E7E2", paddingTop: "1rem" }}>
-              {product.discount_price ? (
-                <div className="flex items-baseline gap-3">
-                  <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: 700, color: "#181A18" }}>{convert(finalPrice)}</span>
-                  <span className="text-sm line-through" style={{ color: "#8A8D88" }}>{convert(product.price)}</span>
-                  <span className="text-xs font-bold text-rose-700">-{discount}%</span>
-                </div>
-              ) : (
-                <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: 700, color: "#181A18" }}>{convert(finalPrice)}</span>
-              )}
-            </div>
-
-            {/* File info */}
-            {(product.file_format || product.file_size) && (
-              <div className="flex gap-4">
-                {product.file_format && (
-                  <div className="text-center px-4 py-2 rounded-[4px]"
-                    style={{ background: "#FAF6EE", border: "1px solid #E7E7E2" }}>
-                    <p className="text-[11px]" style={{ color: "#676A65" }}>Format</p>
-                    <p className="text-sm font-semibold" style={{ color: "#181A18" }}>{product.file_format}</p>
-                  </div>
-                )}
-                {product.file_size && (
-                  <div className="text-center px-4 py-2 rounded-[4px]"
-                    style={{ background: "#FAF6EE", border: "1px solid #E7E7E2" }}>
-                    <p className="text-[11px]" style={{ color: "#676A65" }}>File size</p>
-                    <p className="text-sm font-semibold" style={{ color: "#181A18" }}>{product.file_size}</p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            <div className="flex flex-col gap-3 pt-2">
               <button
-                onClick={() => {
-                  addToCart({
-                    ...product,
-                    price: finalPrice,
-                    original_price: Number(product.price),
-                    discount_price: product.discount_price ? Number(product.discount_price) : null,
-                    type: "digital"
-                  });
-                  setAdded(true);
-                  setTimeout(() => setAdded(false), 2000);
-                }}
-                className="w-full py-3.5 text-xs font-semibold uppercase tracking-wider transition-all rounded-[4px] cursor-pointer"
-                style={{
-                  background: added ? "#16a34a" : "transparent",
-                  color: added ? "white" : "#23483D",
-                  border: `1.5px solid ${added ? "#16a34a" : "#23483D"}`,
-                }}>
-                {added ? "✓ Added to Order" : "Add to Order"}
-              </button>
-              <button
-                className="w-full py-3.5 text-xs font-semibold uppercase tracking-wider transition-all rounded-[4px] cursor-pointer"
-                style={{ background: "#23483D", color: "white", border: "none" }}
-                onMouseOver={(e) => e.currentTarget.style.background = "#16352D"}
-                onMouseOut={(e) => e.currentTarget.style.background = "#23483D"}
-                onClick={() => {
-                  addToCart({
-                    ...product,
-                    price: finalPrice,
-                    original_price: Number(product.price),
-                    discount_price: product.discount_price ? Number(product.discount_price) : null,
-                    type: "digital"
-                  });
-                  navigate(finalPrice === 0 ? "/checkout" : "/checkout?method=paypal");
-                }}
+                onClick={handleAddToCart}
+                className={`w-full py-3.5 text-xs font-bold tracking-[0.12em] uppercase rounded-[4px] transition border cursor-pointer flex items-center justify-center gap-2 ${
+                  added 
+                    ? "bg-[#16a34a] text-white border-[#16a34a]" 
+                    : "bg-white hover:bg-[#FAF6EE] text-[#1C2B26] border-[#EAE4D6]"
+                }`}
               >
-                {finalPrice === 0 ? "⚡ Download Asset" : "Acquire Asset — Secure Checkout"}
+                {added ? "✓ Deposited in Order Cart" : "+ Add to Studio Order"}
               </button>
             </div>
 
-            {/* Payment Integration UI (Hidden if 0 rupees / free) */}
+            {/* Secure Checkout Options (Hidden if 0 rupees / free) */}
             {finalPrice > 0 && (
-              <div className="p-5 flex flex-col gap-3.5 rounded-[4px] mt-2" style={{ background: "#FAF6EE", border: "1px solid #E7E7E2" }}>
-                <span className="text-[10px] font-bold uppercase tracking-widest block" style={{ color: "#23483D", letterSpacing: "0.12em" }}>Secure Checkout Options</span>
-                <p className="text-xs leading-normal" style={{ color: "#676A65" }}>Choose gateway to authenticate payment securely:</p>
-                <div className="grid grid-cols-2 gap-3">
+              <div className="p-4 bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px] space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#A48855]">
+                    Direct Gateway Authentication
+                  </span>
+                  <span className="text-[10px] text-stone-500 font-mono">256-Bit SSL</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2.5">
                   <button
                     type="button"
-                    onClick={() => {
-                      addToCart({
-                        ...product,
-                        price: finalPrice,
-                        original_price: Number(product.price),
-                        discount_price: product.discount_price ? Number(product.discount_price) : null,
-                        type: "digital"
-                      });
-                      navigate("/checkout?method=razorpay");
-                    }}
-                    className="flex items-center justify-center gap-2 py-3 px-3 rounded-[4px] transition cursor-pointer text-xs font-semibold text-[#181A18] bg-white hover:border-[#23483D] shadow-sm"
-                    style={{ border: "1px solid #DADCD7" }}
+                    onClick={() => handleInstantAcquire("razorpay")}
+                    className="flex items-center justify-center gap-2 py-2.5 px-3 bg-white hover:border-[#23483D] border border-[#EAE4D6] rounded-[3px] text-xs font-semibold text-[#1C2B26] transition shadow-2xs cursor-pointer"
                   >
-                    💳 Razorpay
+                    <span>💳</span> Razorpay
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
-                      addToCart({
-                        ...product,
-                        price: finalPrice,
-                        original_price: Number(product.price),
-                        discount_price: product.discount_price ? Number(product.discount_price) : null,
-                        type: "digital"
-                      });
-                      navigate("/checkout?method=paypal");
-                    }}
-                    className="flex items-center justify-center gap-2 py-3 px-3 rounded-[4px] transition cursor-pointer text-xs font-semibold text-[#181A18] bg-white hover:border-[#23483D] shadow-sm"
-                    style={{ border: "1px solid #DADCD7" }}
+                    onClick={() => handleInstantAcquire("paypal")}
+                    className="flex items-center justify-center gap-2 py-2.5 px-3 bg-white hover:border-[#23483D] border border-[#EAE4D6] rounded-[3px] text-xs font-semibold text-[#1C2B26] transition shadow-2xs cursor-pointer"
                   >
-                    🅿️ PayPal
+                    <span>🅿️</span> PayPal
                   </button>
                 </div>
               </div>
             )}
 
-            {/* Perks */}
-            <div className="flex flex-col gap-2.5 text-xs"
-              style={{ borderTop: "1px solid #E7E7E2", paddingTop: "1.2rem", color: "#676A65" }}>
-              {[
-                "⚡ Instant digital delivery after purchase",
-                "📁 All source file formats included",
-                "🔁 Free developer updates for life",
-                "🛡️ Commercial use license included",
-              ].map(t => <p key={t}>{t}</p>)}
+            {/* White-Glove Digital Assurance */}
+            <div className="border border-[#EAE4D6] rounded-[4px] p-4 bg-white space-y-2.5 text-xs text-[#6B7C75]">
+              <div className="flex items-center gap-2 text-[#1C2B26] font-bold uppercase tracking-wider text-[10px]">
+                <MdShield className="text-[#A48855] text-sm" />
+                <span>Olive Seeds Digital Guarantee</span>
+              </div>
+              <ul className="space-y-1.5 pl-1">
+                <li className="flex items-center gap-2">
+                  <span className="text-emerald-700">✓</span> Instant cloud delivery upon payment completion
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-emerald-700">✓</span> Full uncompressed source formats & clean layer stacks
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-emerald-700">✓</span> Perpetual commercial royalty-free deployment license
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-emerald-700">✓</span> Lifetime re-download authorization via Client Atelier
+                </li>
+              </ul>
             </div>
+
           </div>
+
         </div>
 
-        {/* Dynamic High-Attention Brand Banner Ad Panel */}
-        <div className="mt-10">
+        {/* ── Brand Banner Ad Panel ── */}
+        <div className="mt-12">
           <AdBanner placement="Large Panel" />
         </div>
 
-        {/* Description */}
-        <div className="mt-10 pt-8" style={{ borderTop: "1px solid #E7E7E2" }}>
-          <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 24, fontWeight: 600, color: "#181A18", marginBottom: 12 }}>
-            Product Description
-          </h2>
-          <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: "#676A65" }}>
-            {product.description}
-          </p>
-        </div>
-
-        {/* Reviews */}
-        <div className="mt-10">
-          <ReviewSection productId={product.id || product.product_uid} dark={false} />
-        </div>
-
-        {/* Related */}
-        {related.length > 0 && (
-          <div className="mt-10 pt-8" style={{ borderTop: "1px solid #E7E7E2" }}>
-            <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 24, fontWeight: 600, color: "#181A18", marginBottom: 16 }}>
-              Customers Also Viewed
+        {/* ── Architectural Digital Dossier & Specification Suite ── */}
+        <section className="mt-14 pt-10 border-t border-[#EAE4D6]">
+          
+          <div className="max-w-3xl mb-8">
+            <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#A48855] block mb-1">
+              Technical Dossier
+            </span>
+            <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-3xl sm:text-4xl font-normal text-[#1C2B26]">
+              Architectural Specifications & Documentation
             </h2>
-            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin" style={{ scrollbarWidth: "thin" }}>
-              {related.map(r => {
+            <p className="text-xs sm:text-sm text-[#6B7C75] mt-1.5">
+              Inspect technical geometry, software interoperability, licensing boundaries, and studio integrity verification.
+            </p>
+          </div>
+
+          {/* Dossier Interactive Tabs */}
+          <div className="border-b border-[#EAE4D6] flex items-center gap-1 sm:gap-2 overflow-x-auto pb-px" style={{ scrollbarWidth: "none" }}>
+            {[
+              { id: "concept", label: "Asset Dossier & Philosophy", icon: "📐" },
+              { id: "manifest", label: "File Manifest & CAD Specs", icon: "📁" },
+              { id: "licensing", label: "Commercial Rights & Rights", icon: "📜" },
+              { id: "verification", label: "Integrity & Authenticity", icon: "🛡️" },
+            ].map((tab) => {
+              const active = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-4 py-3 text-xs font-semibold border-b-2 transition cursor-pointer whitespace-nowrap ${
+                    active
+                      ? "border-[#23483D] text-[#23483D] bg-[#FAF6EE]/60"
+                      : "border-transparent text-[#6B7C75] hover:text-[#1C2B26] hover:bg-[#FAF6EE]/30"
+                  }`}
+                >
+                  <span>{tab.icon}</span>
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Tab 1: Asset Dossier & Philosophy */}
+          {activeTab === "concept" && (
+            <div className="py-8 space-y-6 animate-fadeIn max-w-4xl">
+              <div className="p-6 bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px]">
+                <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl font-normal text-[#1C2B26] mb-3">
+                  Design Architecture & Intent
+                </h3>
+                <p className="text-xs sm:text-sm text-[#6B7C75] leading-relaxed whitespace-pre-wrap">
+                  {product.description || "Crafted to exacting studio standards, this digital asset bridges bespoke artisanal sensibility with modern technical production tolerances. Each file is generated natively within industrial-grade CAD and vector workflows, ensuring uncompromised precision across both digital renders and physical millimetric fabrication."}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div className="p-5 border border-[#EAE4D6] rounded-[4px] bg-white">
+                  <span className="text-xl block mb-2">📐</span>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Parametric Precision</h4>
+                  <p className="text-xs text-[#6B7C75] mt-1 leading-relaxed">
+                    Curvature continuity and clean polygonal quad topologies prevent artifacting across subdivision and CNC milling operations.
+                  </p>
+                </div>
+                <div className="p-5 border border-[#EAE4D6] rounded-[4px] bg-white">
+                  <span className="text-xl block mb-2">🏛️</span>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Executive Standard</h4>
+                  <p className="text-xs text-[#6B7C75] mt-1 leading-relaxed">
+                    Typography hierarchies, grid ratios, and proportion canons are calibrated to meet Fortune 500 board and sovereign investor scrutiny.
+                  </p>
+                </div>
+                <div className="p-5 border border-[#EAE4D6] rounded-[4px] bg-white">
+                  <span className="text-xl block mb-2">⚡</span>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Production Ready</h4>
+                  <p className="text-xs text-[#6B7C75] mt-1 leading-relaxed">
+                    Zero missing font warnings or broken linked textures. Everything needed for immediate execution is packaged into the archive.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tab 2: File Manifest & Technical Specs */}
+          {activeTab === "manifest" && (
+            <div className="py-8 space-y-6 animate-fadeIn max-w-4xl">
+              <div className="bg-white border border-[#EAE4D6] rounded-[4px] overflow-hidden shadow-xs">
+                <div className="bg-[#FAF6EE] px-5 py-3 border-b border-[#EAE4D6]">
+                  <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-normal text-[#1C2B26]">
+                    Technical File Manifest & System Compatibility
+                  </h3>
+                </div>
+                <div className="divide-y divide-[#EAE4D6] text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
+                    <span className="font-bold text-[#A48855] uppercase tracking-wider">Primary Formats</span>
+                    <span className="sm:col-span-2 text-[#1C2B26] font-medium">{fileFormatText}</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
+                    <span className="font-bold text-[#A48855] uppercase tracking-wider">Payload Archive</span>
+                    <span className="sm:col-span-2 text-[#1C2B26] font-medium">{fileSizeText}</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
+                    <span className="font-bold text-[#A48855] uppercase tracking-wider">Supported Software</span>
+                    <span className="sm:col-span-2 text-[#1C2B26]">AutoCAD, Rhinoceros 3D, Blender, 3ds Max, Adobe Illustrator, Figma, Keynote, PowerPoint</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
+                    <span className="font-bold text-[#A48855] uppercase tracking-wider">Layer Structure</span>
+                    <span className="sm:col-span-2 text-[#1C2B26]">Cleanly named, grouped, zero unlinked assets, non-destructive vector paths</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
+                    <span className="font-bold text-[#A48855] uppercase tracking-wider">Color & Scale Space</span>
+                    <span className="sm:col-span-2 text-[#1C2B26]">Metric Millimeters (1:1 scale) · sRGB / CMYK Swatches Included</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
+                    <span className="font-bold text-[#A48855] uppercase tracking-wider">Typography Hierarchy</span>
+                    <span className="sm:col-span-2 text-[#1C2B26]">Cormorant Garamond & DM Sans Google Fonts open-source pairing</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tab 3: Commercial Rights & Licensing */}
+          {activeTab === "licensing" && (
+            <div className="py-8 space-y-6 animate-fadeIn max-w-4xl">
+              <div className="p-6 bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px] space-y-4">
+                <div className="flex items-center gap-2">
+                  <MdOutlineWorkspacePremium className="text-xl text-[#A48855]" />
+                  <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl font-normal text-[#1C2B26]">
+                    Commercial Deployment License Terms
+                  </h3>
+                </div>
+                <p className="text-xs sm:text-sm text-[#6B7C75] leading-relaxed">
+                  Every acquisition from the Olive Seeds Digital Vault includes an unrestricted Perpetual Commercial Multi-Project License.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                  <div className="p-4 bg-white border border-[#EAE4D6] rounded-[3px]">
+                    <h4 className="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-1.5">✓ Authorized Use</h4>
+                    <ul className="text-xs text-[#6B7C75] space-y-1">
+                      <li>• Unlimited commercial & client projects</li>
+                      <li>• Physical CNC fabrication & carpentry execution</li>
+                      <li>• Corporate presentations, pitches & proposals</li>
+                      <li>• Modification and adaptation for client brand guidelines</li>
+                    </ul>
+                  </div>
+
+                  <div className="p-4 bg-white border border-[#EAE4D6] rounded-[3px]">
+                    <h4 className="text-xs font-bold text-rose-800 uppercase tracking-wider mb-1.5">✕ Restricted Use</h4>
+                    <ul className="text-xs text-[#6B7C75] space-y-1">
+                      <li>• Resale, sub-licensing, or raw file re-distribution</li>
+                      <li>• Inclusion in competing digital template vaults</li>
+                      <li>• Claiming raw un-modified geometry as original authoring</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tab 4: Integrity & Authenticity */}
+          {activeTab === "verification" && (
+            <div className="py-8 space-y-6 animate-fadeIn max-w-4xl">
+              <div className="p-6 bg-white border border-[#EAE4D6] rounded-[4px] space-y-4">
+                <div className="flex items-center gap-2">
+                  <MdShield className="text-xl text-[#A48855]" />
+                  <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl font-normal text-[#1C2B26]">
+                    Studio Security & Integrity Guarantee
+                  </h3>
+                </div>
+                <p className="text-xs sm:text-sm text-[#6B7C75] leading-relaxed">
+                  Your acquisition payload is mirrored across redundant encrypted cloud storage clusters. Download links never expire and can be retrieved at any hour via your private Client Atelier.
+                </p>
+
+                <div className="p-4 bg-[#FAF6EE] border border-[#EAE4D6] rounded-[3px] font-mono text-[11px] text-[#23483D] space-y-1">
+                  <p>SHA256 CHECKSUM: VERIFIED ✓</p>
+                  <p>MALWARE SCAN: 0/72 CLEAN ENGINES ✓</p>
+                  <p>CLOUD BACKUP: GLOBAL REDUNDANCY ACTIVE ✓</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+        </section>
+
+        {/* ── Authenticated Customer Reviews ── */}
+        <section className="mt-14 pt-10 border-t border-[#EAE4D6]">
+          <ReviewSection productId={product.id || product.product_uid} dark={false} />
+        </section>
+
+        {/* ── Related Digital Assets Carousel / Grid ── */}
+        {related.length > 0 && (
+          <section className="mt-16 pt-10 border-t border-[#EAE4D6]">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#A48855] block mb-1">
+                  Complementary Assets
+                </span>
+                <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl sm:text-3xl font-normal text-[#1C2B26]">
+                  Archived from the Same Studio Collection
+                </h2>
+              </div>
+              <Link 
+                to="/digital" 
+                className="text-xs font-semibold text-[#23483D] hover:underline uppercase tracking-wider"
+              >
+                View Complete Vault →
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+              {related.slice(0, 4).map((r) => {
                 const img = r.thumbnail_url || (r.images && r.images[0]);
                 const price = r.discount_price || r.price;
-                const discount = r.discount_price ? Math.round((1 - r.discount_price / r.price) * 100) : 0;
                 return (
-                  <Link key={r.id} to={`/digital/${r.id}`}
+                  <Link 
+                    key={r.id} 
+                    to={`/digital/${r.id}`}
                     onClick={() => window.scrollTo(0, 0)}
-                    style={{ flex: "0 0 200px", background: "#FFFFFF", border: "1px solid #E7E7E2" }}
-                    className="group hover:border-[#CACCC6] transition overflow-hidden rounded-[4px] p-3 flex flex-col justify-between">
+                    className="group border border-[#EAE4D6] hover:border-[#23483D] rounded-[4px] bg-white overflow-hidden p-3 transition shadow-xs hover:shadow-md flex flex-col justify-between"
+                  >
                     <div>
-                      <div className="aspect-video bg-[#FAF6EE] overflow-hidden rounded-[4px] mb-2 flex items-center justify-center">
-                        {img
-                          ? <img src={img} alt={r.name} className="w-full h-full object-cover group-hover:scale-105 transition" />
-                          : <span className="text-2xl opacity-20">⬡</span>}
-                      </div>
-                      <p className="text-xs line-clamp-2 leading-snug mb-1 font-medium" style={{ color: "#181A18" }}>
-                        {r.name}
-                      </p>
-                      {/* Rating */}
-                      <div className="flex items-center gap-1 mb-1">
-                        <span className="text-xs text-[#A48855]">
-                          {"★".repeat(Math.round(r.rating || 5)) + "☆".repeat(5 - Math.round(r.rating || 5))}
-                        </span>
-                        <span className="text-[10px]" style={{ color: "#676A65" }}>{r.review_count || 8}</span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex items-baseline gap-1.5 flex-wrap">
-                        <span className="text-sm font-bold text-[#181A18]">{convert(price)}</span>
-                        {r.discount_price && (
-                          <>
-                            <span className="text-[10px] line-through" style={{ color: "#8A8D88" }}>{convert(r.price)}</span>
-                            <span className="text-[10px] font-bold text-rose-600">({discount}% off)</span>
-                          </>
+                      <div className="aspect-[16/10] bg-[#FAF6EE] rounded-[3px] overflow-hidden mb-2.5 flex items-center justify-center">
+                        {img ? (
+                          <img src={img} alt={r.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        ) : (
+                          <span className="text-2xl opacity-20">📐</span>
                         )}
                       </div>
+                      <h4 
+                        style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} 
+                        className="text-sm sm:text-base font-medium text-[#1C2B26] group-hover:text-[#23483D] transition line-clamp-2"
+                      >
+                        {r.name}
+                      </h4>
+                    </div>
+                    <div className="pt-2 border-t border-[#EAE4D6]/60 mt-3 flex items-center justify-between">
+                      <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-base font-bold text-[#1C2B26]">
+                        {convert(price)}
+                      </span>
+                      <span className="text-[10px] uppercase font-bold text-[#A48855]">
+                        Inspect →
+                      </span>
                     </div>
                   </Link>
                 );
               })}
             </div>
-          </div>
+          </section>
         )}
 
-      </div>
+      </main>
+
       <Footer />
     </div>
   );

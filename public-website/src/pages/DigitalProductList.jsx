@@ -10,382 +10,41 @@ import SEO from "../components/SEO";
 import AdBanner from "../components/AdBanner";
 import { getProductMainImage } from "../utils/imageHelper";
 
-/* ─── Google Fonts injected once ─────────────────────────── */
-if (typeof document !== "undefined" && !document.getElementById("olive-fonts")) {
-  const link = document.createElement("link");
-  link.id = "olive-fonts";
-  link.rel = "stylesheet";
-  link.href =
-    "https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap";
-  document.head.appendChild(link);
-}
-
-/* ─── Design tokens ───────────────────────────────────────── */
-const T = {
-  bg: "#FFFFFF",
-  surface1: "#FFFFFF",
-  surface2: "#FAF6EE",
-  textPrimary: "#181A18",
-  textSecondary: "#676A65",
-  accent1: "#23483D",
-  accent2: "#16352D",
-  accent3: "#A48855",
-  border: "#E7E7E2",
-};
-
 const SORT_OPTIONS = [
-  { value: "newest", label: "Newest" },
-  { value: "price_asc", label: "Price: Low → High" },
-  { value: "price_desc", label: "Price: High → Low" },
+  { value: "newest", label: "Latest Drops" },
+  { value: "price_asc", label: "Price: Low to High" },
+  { value: "price_desc", label: "Price: High to Low" },
   { value: "rating", label: "Top Rated" },
 ];
 
-/* ─── Shared styles injected once ────────────────────────── */
-const GLOBAL_CSS = `
-  :root {
-    --bg: ${T.bg};
-    --s1: ${T.surface1};
-    --s2: ${T.surface2};
-    --tp: ${T.textPrimary};
-    --ts: ${T.textSecondary};
-    --a1: ${T.accent1};
-    --a2: ${T.accent2};
-    --a3: ${T.accent3};
-    --bd: ${T.border};
-  }
-  .sora { font-family: 'Cormorant Garamond', Georgia, serif; }
-  .inter { font-family: 'DM Sans', sans-serif; }
-
-  /* Vault category pill */
-  .vault-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 18px;
-    border-radius: 4px;
-    font-size: 12.5px;
-    font-weight: 500;
-    font-family: 'DM Sans', sans-serif;
-    letter-spacing: 0.03em;
-    border: 1px solid var(--bd);
-    color: var(--ts);
-    background: #FFFFFF;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-  }
-  .vault-pill:hover {
-    border-color: var(--a1);
-    color: var(--a1);
-    background: rgba(35,72,61,0.04);
-  }
-  .vault-pill.active {
-    border-color: var(--a1);
-    color: #FFFFFF;
-    background: var(--a1);
-    box-shadow: none;
-  }
-  .dcard {
-    position: relative;
-    overflow: hidden;
-    border-radius: 4px;
-    border: 1px solid var(--bd);
-    background: var(--s1);
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    transition: transform 0.3s ease,
-                box-shadow 0.3s ease,
-                border-color 0.3s ease;
-    will-change: transform;
-    box-shadow: 0 4px 18px rgba(20,25,22,0.03);
-  }
-  .dcard:hover {
-    transform: translateY(-4px);
-    border-color: #CACCC6;
-    box-shadow: 0 12px 30px rgba(20,25,22,0.06);
-  }
-  .dcard__glow {
-    display: none;
-  }
- 
-  .dcard__img-wrap {
-    position: relative;
-    height: 220px;
-    overflow: hidden;
-    background: #FAF6EE;
-    flex-shrink: 0;
-  }
-  .dcard__img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.6s ease;
-  }
-  .dcard:hover .dcard__img {
-    transform: scale(1.05);
-  }
-  .dcard__img-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(24,26,24,0.05) 0%, transparent 60%);
-  }
-
-
-
-  /* Filter sidebar */
-  .filter-btn {
-    display: block;
-    width: 100%;
-    text-align: left;
-    padding: 9px 12px;
-    border-radius: 4px;
-    font-size: 13px;
-    font-weight: 500;
-    font-family: 'DM Sans', sans-serif;
-    border: 1px solid transparent;
-    color: var(--ts);
-    background: transparent;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  .filter-btn:hover {
-    background: #FAF6EE;
-    color: var(--a1);
-    border-color: var(--bd);
-  }
-  .filter-btn.active {
-    background: #FAF6EE;
-    color: var(--a1);
-    border-color: var(--a1);
-    font-weight: 600;
-  }
-
-  /* Input / select */
-  .vault-input {
-    outline: none;
-    background: #FFFFFF;
-    border: 1px solid #DADCD7;
-    border-radius: 4px;
-    color: var(--tp);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13.5px;
-    padding: 10px 42px 10px 14px;
-    width: 260px;
-    transition: border-color 0.2s;
-  }
-  .vault-input::placeholder { color: #8A8D88; }
-  .vault-input:focus { border-color: var(--a1); }
-
-  .vault-select {
-    outline: none;
-    background: #FFFFFF;
-    border: 1px solid #DADCD7;
-    border-radius: 4px;
-    color: var(--tp);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13.5px;
-    padding: 10px 14px;
-    cursor: pointer;
-    transition: border-color 0.2s;
-  }
-  .vault-select:focus { border-color: var(--a1); }
-
-  /* Cart button */
-  .cart-btn {
-    width: 100%;
-    padding: 11px 0;
-    border-radius: 4px;
-    font-weight: 600;
-    font-size: 12px;
-    font-family: 'DM Sans', sans-serif;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    border: none;
-    cursor: pointer;
-    background: var(--a1);
-    color: #FFFFFF;
-    transition: background-color 0.2s ease;
-  }
-  .cart-btn:hover { background: var(--a2); }
-  .cart-btn:active { transform: scale(0.98); }
-
-  /* Skeleton pulse */
-  @keyframes skeletonPulse {
-    0%,100% { opacity: 0.4; }
-    50% { opacity: 0.7; }
-  }
-  .skeleton { animation: skeletonPulse 1.6s ease-in-out infinite; }
-
-  /* Ambient floating orbs */
-  @keyframes orb1 {
-    0%,100% { transform: translate(0,0) scale(1); }
-    50% { transform: translate(15px,-20px) scale(1.04); }
-  }
-  @keyframes orb2 {
-    0%,100% { transform: translate(0,0) scale(1); }
-    50% { transform: translate(-15px,15px) scale(0.96); }
-  }
-  .orb1 { animation: orb1 14s ease-in-out infinite; }
-  .orb2 { animation: orb2 18s ease-in-out infinite; }
-
-  /* Sticky vault nav */
-  .vault-nav-sticky {
-    position: sticky;
-    top: 0;
-    z-index: 40;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    background: rgba(255, 255, 255, 0.95);
-    border-bottom: 1px solid var(--bd);
-  }
-
-  /* Hide scrollbar for category nav */
-  .cats-scroll::-webkit-scrollbar { display: none; }
-  .cats-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-
-  /* Collection card */
-  .coll-card {
-    border-radius: 4px;
-    padding: 20px;
-    border: 1px solid var(--bd);
-    background: #FFFFFF;
-    cursor: pointer;
-    transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
-  }
-  .coll-card:hover {
-    border-color: #CACCC6;
-    background: #FFFFFF;
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(20,25,22,0.04);
-  }
-
-  /* Newsletter input */
-  .nl-input {
-    flex: 1;
-    background: #FFFFFF;
-    border: 1px solid #DADCD7;
-    border-radius: 4px;
-    padding: 12px 16px;
-    color: var(--tp);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s;
-    min-width: 0;
-  }
-  .nl-input::placeholder { color: #8A8D88; }
-  .nl-input:focus { border-color: var(--a1); }
-
-  .mobile-filter-btn {
-    display: none;
-  }
-  @media (max-width: 1023px) {
-    .mobile-filter-btn {
-      display: block !important;
-    }
-  }
-
-  @keyframes mobOrb1 {
-    0%, 100% { transform: translate(0,0) scale(0.7); }
-    50% { transform: translate(15px,-20px) scale(0.75); }
-  }
-  @keyframes mobOrb2 {
-    0%, 100% { transform: translate(0,0) scale(0.7); }
-    50% { transform: translate(-12px,15px) scale(0.65); }
-  }
-
-  @media (max-width: 768px) {
-    .vault-orb-card:nth-of-type(1) {
-      left: calc(50% - 78px - 60px) !important;
-      top: calc(50% - 48px - 50px) !important;
-      animation: mobOrb1 12s ease-in-out infinite !important;
-    }
-    .vault-orb-card:nth-of-type(2) {
-      left: calc(50% - 78px + 60px) !important;
-      top: calc(50% - 48px - 50px) !important;
-      animation: mobOrb2 15s ease-in-out infinite !important;
-      animation-delay: 1.5s !important;
-    }
-    .vault-orb-card:nth-of-type(3) {
-      left: calc(50% - 78px - 60px) !important;
-      top: calc(50% - 48px + 50px) !important;
-      animation: mobOrb2 18s ease-in-out infinite !important;
-      animation-delay: 3s !important;
-    }
-    .vault-orb-card:nth-of-type(4) {
-      left: calc(50% - 78px + 60px) !important;
-      top: calc(50% - 48px + 50px) !important;
-      animation: mobOrb1 21s ease-in-out infinite !important;
-      animation-delay: 4.5s !important;
-    }
-  }
-
-  .digital-products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 20px;
-    align-items: stretch;
-  }
-
-  @media (max-width: 768px) {
-    .digital-products-grid {
-      grid-template-columns: repeat(2, 1fr) !important;
-      gap: 12px !important;
-    }
-    .dcard__img-wrap {
-      height: 180px !important;
-    }
-    .product-card-content {
-      padding: 12px !important;
-    }
-  }
-`;
-
-function injectStyles() {
-  if (typeof document !== "undefined") {
-    let s = document.getElementById("olive-vault-css");
-    if (!s) {
-      s = document.createElement("style");
-      s.id = "olive-vault-css";
-      document.head.appendChild(s);
-    }
-    s.textContent = GLOBAL_CSS;
-  }
-}
-
-
-
-/* ─── Featured collections ───────────────────────────────── */
 const COLLECTIONS = [
   {
+    icon: "📐",
+    title: "Parametric CAD & 3D Blueprints",
+    desc: "Production-ready millimetric 3D CAD models (STEP, OBJ, DWG) engineered to exacting tolerances for precision fabrication and bespoke joinery.",
+    category: "CAD & 3D Models",
+  },
+  {
+    icon: "🏛️",
+    title: "Brand Identity Frameworks",
+    desc: "Complete corporate identity systems for distinguished practices. Includes vector typography, grid architectures, and comprehensive brand guidelines.",
+    category: "Brand Identity Kits",
+  },
+  {
     icon: "📊",
-    title: "Presentation Templates",
-    desc: "Designed for executives and corporate teams who present at the highest level. Clean architecture, considered typography, and a visual language that commands the room — without saying a word.",
-    accent: T.accent1,
+    title: "Executive Presentation Systems",
+    desc: "Editorial slide architectures and pitch decks designed for executive boardrooms, sovereign capital briefs, and high-stakes venture summits.",
+    category: "Presentation Templates",
   },
   {
-    icon: "✨",
-    title: "Brand Identity Kits",
-    desc: "Complete brand starter systems for organisations ready to establish a distinguished visual presence. Includes logo frameworks, colour systems, typography guides, and application examples.",
-    accent: T.accent2,
-  },
-  {
-    icon: "📄",
-    title: "Business Stationery Suites",
-    desc: "Letterheads, business card layouts, email signatures, and document templates — produced as a unified system that carries your identity consistently across every professional communication.",
-    accent: T.accent3,
-  },
-  {
-    icon: "📱",
-    title: "Social Media Design Systems",
-    desc: "Structured visual systems for organisations that take their digital presence seriously. Template sets designed for consistency, adaptability, and a presence that reads as premium across every platform.",
-    accent: "#F59E0B",
+    icon: "📜",
+    title: "Architectural Stationery Suites",
+    desc: "Typography hierarchies, letterheads, proposal dossiers, and certificates calibrated for luxury physical embossing or digital correspondence.",
+    category: "Business Stationery",
   },
 ];
 
-
-/* ─── DigitalCard ─────────────────────────────────────────── */
+/* ─── Digital Product Card ────────────────────────────────────── */
 function DigitalCard({ p, onWishlist, isWishlisted }) {
   const { addToCart } = useCart();
   const { convert } = useCurrency();
@@ -398,10 +57,10 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
   const discount = (p.discount_price && p.price)
     ? Math.round((1 - p.discount_price / p.price) * 100)
     : 0;
-  const tags = Array.isArray(p.tags) ? p.tags : [];
 
   const handleAdd = (e) => {
     e.preventDefault();
+    e.stopPropagation();
     addToCart({
       ...p,
       price: finalPrice,
@@ -410,251 +69,150 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
       type: "digital"
     });
     setAdded(true);
-    setTimeout(() => setAdded(false), 1500);
+    setTimeout(() => setAdded(false), 1600);
   };
 
+  const formatBadge = p.file_format || (Array.isArray(p.tags) && p.tags[0]) || "DIGITAL ASSET";
+
   return (
-    <div className="dcard" style={{ position: "relative" }}>
-      <div className="dcard__glow" />
-
-      {/* Image */}
-      <Link to={`/digital/${p.id}`} style={{ display: "block" }}>
-        <div className="dcard__img-wrap" style={{ position: "relative" }}>
+    <div className="group relative flex flex-col justify-between bg-white border border-[#EAE4D6] hover:border-[#23483D] rounded-[4px] overflow-hidden transition-all duration-300 shadow-sm hover:shadow-md">
+      
+      {/* Top Image Preview */}
+      <div className="relative aspect-[16/10] sm:aspect-[4/3] bg-[#FAF6EE] overflow-hidden border-b border-[#EAE4D6]/70">
+        <Link to={`/digital/${p.id}`} className="block w-full h-full">
           {img ? (
-            <img src={img} alt={p.name} className="dcard__img" loading="lazy" decoding="async" />
+            <img 
+              src={img} 
+              alt={p.name} 
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
+              loading="lazy" 
+              decoding="async" 
+            />
           ) : (
-            <div
-              style={{
-                width: "100%", height: "100%",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 48, color: "rgba(110,231,249,0.15)",
-              }}
-            >
-              ⬡
+            <div className="w-full h-full flex items-center justify-center text-4xl opacity-15 text-[#23483D]">
+              📐
             </div>
           )}
-          <div className="dcard__img-overlay" />
-
-          {/* Wishlist Button Inside Image Wrap Top-Right - minimum 44px tap target */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onWishlist();
-            }}
-            aria-label="Add to Wishlist"
-            style={{
-              position: "absolute",
-              top: 8,
-              right: 8,
-              zIndex: 30,
-              width: 38,
-              height: 38,
-              borderRadius: "50%",
-              background: "rgba(255,255,255,0.92)",
-              backdropFilter: "blur(8px)",
-              border: "1px solid #E7E7E2",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 16,
-              boxShadow: "0 2px 8px rgba(20,25,22,0.06)",
-              color: isWishlisted ? "#e11d48" : "#64748b",
-              transition: "all 0.2s ease",
-            }}
-          >
-            {isWishlisted ? "♥" : "♡"}
-          </button>
-
-          {/* Badges Container Top-Left */}
-          <div style={{ position: "absolute", top: 10, left: 10, display: "flex", flexWrap: "wrap", gap: 6, zIndex: 10, maxWidth: "calc(100% - 52px)" }}>
-            {discount > 0 && (
-              <span style={{
-                padding: "3px 8px",
-                borderRadius: 4,
-                fontSize: 10,
-                fontWeight: 700,
-                fontFamily: "'DM Sans', sans-serif",
-                background: "#7f1d1d",
-                color: "#fff",
-              }}>
-                -{discount}%
-              </span>
-            )}
-            {tags.length > 0 && (
-              <span style={{
-                padding: "3px 8px",
-                borderRadius: 4,
-                fontSize: 10,
-                fontWeight: 700,
-                fontFamily: "'DM Sans', sans-serif",
-                background: "#FAF6EE",
-                border: "1px solid #E7E7E2",
-                color: T.accent1,
-              }}>
-                {tags[0]}
-              </span>
-            )}
-          </div>
-
-          {p.file_format && (
-            <div style={{ position: "absolute", bottom: 10, left: 10, zIndex: 10 }}>
-              <span style={{
-                padding: "3px 8px",
-                borderRadius: 4,
-                fontSize: 10,
-                fontWeight: 600,
-                fontFamily: "'DM Sans', sans-serif",
-                background: "rgba(255,255,255,0.92)",
-                border: "1px solid #E7E7E2",
-                color: "#181A18",
-              }}>
-                {p.file_format}
-              </span>
-            </div>
-          )}
-        </div>
-      </Link>
-
-      {/* Body */}
-      <div className="product-card-content" style={{ padding: "18px 20px 22px", display: "flex", flexDirection: "column", flex: 1, gap: 10 }}>
-        {p.category_name && (
-          <p style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: 10,
-            fontWeight: 700,
-            letterSpacing: "0.18em",
-            textTransform: "uppercase",
-            color: T.accent1,
-            margin: 0,
-          }}>
-            {p.category_name}
-          </p>
-        )}
-
-        <Link to={`/digital/${p.id}`} style={{ textDecoration: "none" }}>
-          <h3
-            className="sora product-card-name"
-            style={{
-              fontSize: 17,
-              fontWeight: 600,
-              lineHeight: 1.35,
-              color: T.textPrimary,
-              margin: 0,
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-              minHeight: "2.8em",
-            }}
-          >
-            {p.name}
-          </h3>
         </Link>
 
-        {/* Rating */}
-        <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
-          {[1, 2, 3, 4, 5].map((i) => (
-            <span
-              key={i}
-              style={{
-                fontSize: 12,
-                color: i <= Math.round(p.rating) ? "#A48855" : "#E7E7E2",
-              }}
-            >
-              ★
-            </span>
-          ))}
-          <span style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: 11,
-            color: "#676A65",
-            marginLeft: 4,
-          }}>
-            ({p.review_count || 0})
+        {/* Discreet Micro-Badge */}
+        <div className="absolute top-2.5 left-2.5 z-10 pointer-events-none">
+          <span className="px-2 py-0.5 rounded-[2px] text-[9px] font-bold tracking-[0.12em] uppercase bg-white/90 backdrop-blur-md text-[#23483D] border border-[#EAE4D6] shadow-xs">
+            {formatBadge}
           </span>
         </div>
 
-        {/* Price */}
-        <div className="product-card-price" style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: "auto", paddingTop: 8 }}>
-          <span
-            style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontSize: 24,
-              fontWeight: 700,
-              color: T.textPrimary,
-            }}
-          >
-            {convert(finalPrice)}
-          </span>
-          {p.discount_price && (
-            <span style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 13,
-              textDecoration: "line-through",
-              color: "#8A8D88",
-            }}>
-              {convert(p.price)}
-            </span>
-          )}
-        </div>
-
+        {/* Minimal Wishlist Heart Button */}
         <button
-          onClick={handleAdd}
-          className="cart-btn product-card-button"
-          style={{
-            background: added ? "#16a34a" : T.accent1,
-            color: "#fff",
-            marginTop: 8,
-            width: "100%",
-            borderRadius: 4,
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onWishlist();
           }}
+          aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+          className={`absolute top-2.5 right-2.5 z-20 w-8 h-8 rounded-full flex items-center justify-center text-sm transition shadow-xs cursor-pointer ${
+            isWishlisted 
+              ? "bg-[#23483D] text-[#FAF6EE]" 
+              : "bg-white/90 backdrop-blur-md text-stone-500 hover:text-red-600 border border-[#EAE4D6]"
+          }`}
         >
-          {added ? "✓ Added to Order" : "Add to Order"}
+          {isWishlisted ? "♥" : "♡"}
         </button>
       </div>
-    </div>
-  );
-}
 
-/* ─── Skeleton card ───────────────────────────────────────── */
-function SkeletonCard() {
-  return (
-    <div
-      className="skeleton"
-      style={{
-        borderRadius: 20,
-        border: "1px solid rgba(255,255,255,0.05)",
-        overflow: "hidden",
-        background: T.surface1,
-      }}
-    >
-      <div style={{ aspectRatio: "16/9", background: "rgba(255,255,255,0.04)" }} />
-      <div style={{ padding: "16px 18px 20px", display: "flex", flexDirection: "column", gap: 10 }}>
-        <div style={{ height: 10, borderRadius: 6, background: "rgba(255,255,255,0.05)", width: "40%" }} />
-        <div style={{ height: 14, borderRadius: 6, background: "rgba(255,255,255,0.05)" }} />
-        <div style={{ height: 14, borderRadius: 6, background: "rgba(255,255,255,0.05)", width: "70%" }} />
-        <div style={{ height: 40, borderRadius: 12, background: "rgba(255,255,255,0.04)", marginTop: 8 }} />
+      {/* Content Area */}
+      <div className="p-3.5 sm:p-4 flex flex-col flex-1 justify-between gap-3">
+        <div>
+          {p.category_name && (
+            <p className="text-[9px] sm:text-[10px] uppercase font-bold tracking-[0.16em] text-[#A48855] truncate mb-1">
+              {p.category_name}
+            </p>
+          )}
+
+          <Link to={`/digital/${p.id}`} className="block">
+            <h3 
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} 
+              className="text-base sm:text-lg font-medium text-[#1C2B26] group-hover:text-[#23483D] transition line-clamp-2 leading-snug"
+            >
+              {p.name}
+            </h3>
+          </Link>
+        </div>
+
+        {/* Pricing & Acquisition Bar */}
+        <div className="pt-2 border-t border-[#EAE4D6]/60 flex items-center justify-between gap-2 mt-auto">
+          <div className="min-w-0">
+            <div className="flex items-baseline gap-1.5 flex-wrap">
+              <span 
+                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} 
+                className="text-lg sm:text-xl font-bold text-[#1C2B26]"
+              >
+                {convert(finalPrice)}
+              </span>
+              {discount > 0 && (
+                <span className="text-[11px] text-stone-400 line-through">
+                  {convert(p.price)}
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1.5 shrink-0">
+            <Link
+              to={`/digital/${p.id}`}
+              className="px-2.5 py-1.5 text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase border border-[#EAE4D6] hover:border-[#23483D] text-[#1C2B26] rounded-[3px] transition"
+            >
+              View
+            </Link>
+            <button
+              onClick={handleAdd}
+              aria-label="Add digital asset to order"
+              className={`px-3 py-1.5 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase rounded-[3px] transition shadow-xs cursor-pointer flex items-center gap-1 ${
+                added 
+                  ? "bg-[#16a34a] text-white" 
+                  : "bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D]"
+              }`}
+            >
+              {added ? "✓ Added" : "+ Add"}
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
   );
 }
 
-/* ─── Main page ───────────────────────────────────────────── */
-export default function DigitalProductList() {
-  injectStyles();
+/* ─── Skeleton Card ───────────────────────────────────────────── */
+function SkeletonCard() {
+  return (
+    <div className="border border-[#EAE4D6] rounded-[4px] overflow-hidden bg-white animate-pulse">
+      <div className="aspect-[4/3] bg-stone-100" />
+      <div className="p-4 space-y-3">
+        <div className="h-2.5 bg-stone-200 rounded w-1/3" />
+        <div className="h-4 bg-stone-200 rounded w-4/5" />
+        <div className="h-4 bg-stone-200 rounded w-2/3" />
+        <div className="pt-2 border-t border-stone-100 flex justify-between items-center">
+          <div className="h-5 bg-stone-200 rounded w-1/4" />
+          <div className="h-7 bg-stone-200 rounded w-16" />
+        </div>
+      </div>
+    </div>
+  );
+}
 
+/* ─── Main Digital Products Page ───────────────────────────────── */
+export default function DigitalProductList() {
   const navigate = useNavigate();
   const location = useLocation();
   const { slug } = useParams();
   const { member } = useMember();
+  
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const [filters, setFilters] = useState({
     search: "",
@@ -665,16 +223,7 @@ export default function DigitalProductList() {
     minRating: "",
   });
 
-  /* ── Page Title & Meta ── */
-  useEffect(() => {
-    document.title = "Premium Digital Design Products | Templates & Brand Assets — Olive Seeds Studio";
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-      metaDesc.setAttribute("content", "Download professionally crafted digital design products — presentation templates, brand kits, and business stationery for executives and premium brands.");
-    }
-  }, []);
-
-  /* ── Sync category from URL search query or route parameter ── */
+  /* Sync category from URL search query or route parameter */
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const cat = slug || urlParams.get("category") || urlParams.get("category_id") || "";
@@ -719,19 +268,25 @@ export default function DigitalProductList() {
     setLoading(true);
     const params = new URLSearchParams();
     Object.entries(filters).forEach(([k, v]) => { if (v) params.set(k, v); });
-    const [r, c] = await Promise.all([
-      API.get(`/digital-products?${params}`),
-      API.get("/categories?type=digital"),
-    ]);
-    setProducts(r.data);
-    setCategories(c.data);
-    setLoading(false);
+    try {
+      const [r, c] = await Promise.all([
+        API.get(`/digital-products?${params}`),
+        API.get("/categories?type=digital"),
+      ]);
+      setProducts(Array.isArray(r.data) ? r.data : []);
+      setCategories(Array.isArray(c.data) ? c.data : []);
+    } catch (err) {
+      console.error("Failed to load digital assets:", err);
+    } finally {
+      setLoading(false);
+    }
   }, [filters]);
 
   useEffect(() => { load(); loadWishlist(); }, [load, loadWishlist]);
 
   const setFilter = (key, val) => setFilters((f) => ({ ...f, [key]: val }));
 
+  /* Custom project brief form */
   const [form, setForm] = useState({
     name: "",
     company: "",
@@ -773,1076 +328,460 @@ export default function DigitalProductList() {
   };
 
   return (
-    <div
-      className="inter"
-      style={{
-        minHeight: "100vh",
-        background: T.bg,
-        position: "relative",
-        overflowX: "hidden",
-      }}
-    >
+    <div className="min-h-screen flex flex-col bg-white" style={{ color: "#1C2B26", fontFamily: "'DM Sans', sans-serif" }}>
       <SEO
-        title="Premium Digital Design Products | Templates & Brand Assets — Olive Seeds Studio"
-        description="Download professionally crafted digital design products — presentation templates, brand kits, and business stationery for executives and premium brands."
-        keywords="digital design templates, brand identity design, presentation systems, business stationery suites, digital assets"
+        title="The Digital Design Vault & CAD Atelier | Olive Seeds Studio"
+        description="Download precision parametric CAD models, 3D architectural blueprints, vector presentation suites, and corporate brand identity kits."
+        keywords="architectural cad files, 3d furniture blueprints, parametric obj dwg, brand identity kits, executive presentation systems"
       />
+      <Navbar />
 
-      <style>{`
-        /* Contact Section Responsive Adjustments for Mobile */
-        @media (max-width: 768px) {
-          #contact-section {
-            padding: 48px 16px !important;
-          }
-          .responsive-split-1-2 {
-            grid-template-columns: 1fr !important;
-            gap: 40px !important;
-          }
-          .contact-form-card {
-            padding: 24px 16px !important;
-            border-radius: 16px !important;
-          }
-          .responsive-form {
-            grid-template-columns: 1fr !important;
-            gap: 12px !important;
-          }
-          .responsive-form > div {
-            grid-column: span 1 !important;
-          }
-          .responsive-form > button {
-            grid-column: span 1 !important;
-          }
-        }
-      `}</style>
+      {/* ── Architectural Masthead & Quiet Luxury Hero ── */}
+      <section className="relative border-b border-[#EAE4D6] overflow-hidden" style={{ background: "#FAF6EE" }}>
+        {/* Subtle decorative watermark */}
+        <div className="absolute right-8 -bottom-14 select-none pointer-events-none opacity-[0.03] text-stone-900 font-serif text-[240px] leading-none">
+          CAD
+        </div>
 
-      {/* ── Ambient background subtle accents ── */}
-      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", overflow: "hidden", zIndex: 0 }}>
-        <div
-          className="orb1"
-          style={{
-            position: "absolute",
-            top: "-15%",
-            left: "-10%",
-            width: 700,
-            height: 700,
-            borderRadius: "50%",
-            background: `radial-gradient(circle, rgba(35,72,61,0.025) 0%, transparent 70%)`,
-            filter: "blur(60px)",
-          }}
-        />
-        <div
-          className="orb2"
-          style={{
-            position: "absolute",
-            bottom: "-20%",
-            right: "-12%",
-            width: 800,
-            height: 800,
-            borderRadius: "50%",
-            background: `radial-gradient(circle, rgba(164,136,85,0.02) 0%, transparent 70%)`,
-            filter: "blur(80px)",
-          }}
-        />
-      </div>
-
-      {/* ── Global Navbar ── */}
-      <div style={{ position: "relative", zIndex: 50 }}>
-        <Navbar />
-      </div>
-
-      {/* ── Hero ── */}
-      <section
-        className="digital-hero"
-        style={{
-          position: "relative",
-          padding: "90px 24px 70px",
-          overflow: "hidden",
-          background: "#FFFFFF",
-          borderBottom: `1px solid ${T.border}`,
-        }}
-      >
-        <div style={{ maxWidth: 1280, margin: "0 auto", position: "relative", zIndex: 2 }}>
-          <div className="digital-hero-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "center" }}>
-            {/* Left */}
-            <div>
-              <div style={{ marginBottom: 18 }}>
-                <span style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  padding: "6px 14px",
-                  borderRadius: 4,
-                  fontSize: 11,
-                  fontWeight: 700,
-                  letterSpacing: "0.2em",
-                  textTransform: "uppercase",
-                  fontFamily: "'DM Sans', sans-serif",
-                  background: "#FAF6EE",
-                  border: `1px solid ${T.border}`,
-                  color: T.accent1,
-                  whiteSpace: "nowrap",
-                }}>
-                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: T.accent1, display: "inline-block" }} />
-                  Olive Seeds Design Studio
-                </span>
-              </div>
-
-              <h1
-                style={{
-                  fontFamily: "'Cormorant Garamond', Georgia, serif",
-                  fontSize: "clamp(38px, 5.5vw, 64px)",
-                  fontWeight: 400,
-                  lineHeight: 1.1,
-                  color: T.textPrimary,
-                  margin: "0 0 16px",
-                  letterSpacing: "-0.5px",
-                }}
-              >
-                Digital Design Systems & Assets
-              </h1>
-
-              <p
-                style={{
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: "clamp(15px, 1.8vw, 17px)",
-                  lineHeight: 1.75,
-                  color: T.textSecondary,
-                  margin: "0 0 32px",
-                  maxWidth: 520,
-                }}
-              >
-                Studio-quality design, instantly available. Each digital product is crafted to the same exacting standard as our commissioned work — built for professionals who understand that presentation shapes perception.
-              </p>
-
-              <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-                <button
-                  onClick={() => {
-                    const el = document.getElementById("products-section");
-                    if (el) el.scrollIntoView({ behavior: "smooth" });
-                  }}
-                  style={{
-                    padding: "14px 28px",
-                    borderRadius: 4,
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontWeight: 600,
-                    fontSize: 13,
-                    letterSpacing: "0.04em",
-                    border: "none",
-                    cursor: "pointer",
-                    background: T.accent1,
-                    color: "#FFFFFF",
-                    transition: "background-color 0.2s, transform 0.2s",
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.background = T.accent2;
-                    e.currentTarget.style.transform = "translateY(-1px)";
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.background = T.accent1;
-                    e.currentTarget.style.transform = "translateY(0)";
-                  }}
-                >
-                  Explore Collection
-                </button>
-                <button
-                  onClick={() => {
-                    const el = document.getElementById("contact-section");
-                    if (el) el.scrollIntoView({ behavior: "smooth" });
-                  }}
-                  style={{
-                    padding: "14px 28px",
-                    borderRadius: 4,
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontWeight: 600,
-                    fontSize: 13,
-                    letterSpacing: "0.04em",
-                    cursor: "pointer",
-                    background: "transparent",
-                    color: T.textPrimary,
-                    border: `1px solid ${T.border}`,
-                    transition: "border-color 0.2s, background 0.2s",
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.borderColor = "#CACCC6";
-                    e.currentTarget.style.background = "#FAF6EE";
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.borderColor = T.border;
-                    e.currentTarget.style.background = "transparent";
-                  }}
-                >
-                  Custom Project Brief
-                </button>
-              </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 relative z-10">
+          <div className="max-w-3xl">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#A48855]" />
+              <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase text-[#A48855]">
+                Digital Design Vault & CAD Atelier
+              </span>
             </div>
 
-            {/* Right: floating preview cards */}
-            <div style={{ position: "relative", height: 360, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              {[
-                { label: "Presentation Templates", icon: "📊", x: 0, y: 0, accent: T.accent1 },
-                { label: "Brand Identity Kits", icon: "✨", x: 160, y: -50, accent: T.accent3 },
-                { label: "Business Stationery", icon: "📄", x: 30, y: 140, accent: T.accent1 },
-                { label: "Social Media Systems", icon: "📱", x: 200, y: 90, accent: T.accent3 },
-              ].map((card, i) => (
-                <div
-                  key={card.label}
-                  className="vault-orb-card"
-                  style={{
-                    position: "absolute",
-                    left: `calc(50% - 90px + ${card.x}px)`,
-                    top: `calc(50% - 48px + ${card.y}px)`,
-                    width: 156,
-                    padding: "14px 16px",
-                    borderRadius: 4,
-                    border: `1px solid ${T.border}`,
-                    background: "#FFFFFF",
-                    boxShadow: "0 10px 28px rgba(20,25,22,0.06)",
-                    animation: `orb${(i % 2) + 1} ${12 + i * 3}s ease-in-out infinite`,
-                    animationDelay: `${i * 1.5}s`,
-                  }}
-                >
-                  <div style={{ fontSize: 24, marginBottom: 8 }}>{card.icon}</div>
-                  <div style={{
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: T.textPrimary,
-                    marginBottom: 6,
-                  }}>
-                    {card.label}
-                  </div>
-                  <div style={{
-                    height: 2,
-                    borderRadius: 2,
-                    background: card.accent,
-                    width: "40%",
-                  }} />
-                </div>
-              ))}
+            <h1 
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} 
+              className="text-3xl sm:text-5xl lg:text-6xl font-normal text-[#1C2B26] tracking-tight leading-[1.08] mb-4"
+            >
+              Architectural Blueprints, Parametric CAD & Digital Systems
+            </h1>
+
+            <p className="text-sm sm:text-base text-[#6B7C75] leading-relaxed max-w-2xl mb-8">
+              Precision-crafted 3D geometry, production-ready vector suites, and executive brand design systems engineered to exacting studio tolerances — instantly downloadable for commercial deployment.
+            </p>
+
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+              <button
+                onClick={() => {
+                  const el = document.getElementById("vault-archive");
+                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="px-6 py-3.5 bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D] text-xs font-semibold tracking-wider uppercase rounded-[4px] transition shadow-sm cursor-pointer"
+              >
+                Explore Vault Archive ↓
+              </button>
+              <button
+                onClick={() => {
+                  const el = document.getElementById("commission-brief");
+                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="px-6 py-3.5 bg-white hover:bg-stone-50 border border-[#EAE4D6] text-[#1C2B26] text-xs font-semibold tracking-wider uppercase rounded-[4px] transition cursor-pointer"
+              >
+                Custom Design Brief
+              </button>
             </div>
           </div>
+
+          {/* 3 Value Pillars */}
+          <div className="mt-12 pt-8 border-t border-[#EAE4D6] grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="flex items-start gap-3">
+              <span className="text-sm font-bold text-[#A48855] font-mono">01</span>
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Millimetric CAD Tolerances</h4>
+                <p className="text-xs text-[#6B7C75] mt-0.5">Engineered in DWG, STEP, and OBJ with verified joinery vectors.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-sm font-bold text-[#A48855] font-mono">02</span>
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Perpetual Commercial Rights</h4>
+                <p className="text-xs text-[#6B7C75] mt-0.5">Unrestricted use across private, client, and commercial projects.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-sm font-bold text-[#A48855] font-mono">03</span>
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Instant Cloud Release</h4>
+                <p className="text-xs text-[#6B7C75] mt-0.5">Immediate vault access upon checkout with lifetime re-download rights.</p>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 
-
-
-      {/* ── Ad Banner ── */}
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "32px 24px 24px", position: "relative", zIndex: 2 }}>
+      {/* ── Brand Banner Ad ── */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 w-full">
         <AdBanner placement="Horizontal Banner" />
       </div>
 
-
-
-      {/* ── Main Products Section ── */}
-      <section id="products-section" style={{ padding: "32px 24px 80px", position: "relative", zIndex: 2 }}>
-        <div style={{ maxWidth: 1280, margin: "0 auto", display: "flex", gap: 28 }}>
-
-          {/* ── Sidebar ── */}
-          <aside style={{ width: 250, flexShrink: 0, display: "none" }} className="vault-sidebar">
-            <style>{`
-              @media(min-width:1024px){.vault-sidebar{display:block!important;}}
-              .vault-sidebar-inner::-webkit-scrollbar {
-                width: 5px;
-              }
-              .vault-sidebar-inner::-webkit-scrollbar-track {
-                background: transparent;
-              }
-              .vault-sidebar-inner::-webkit-scrollbar-thumb {
-                background: rgba(110,231,249,0.3);
-                border-radius: 10px;
-              }
-            `}</style>
-            <div
-              className="vault-sidebar-inner"
-              style={{
-                position: "sticky",
-                top: 88,
-                maxHeight: "calc(100vh - 108px)",
-                overflowY: "auto",
-                overflowX: "hidden",
-                overscrollBehavior: "contain",
-                borderRadius: 18,
-                border: `1px solid ${T.border}`,
-                background: T.surface1,
-                scrollbarWidth: "thin",
-                scrollbarColor: "rgba(110,231,249,0.3) transparent",
-              }}
-            >
-              {/* Categories */}
-              <div style={{ padding: "20px 16px" }}>
-                <p className="sora" style={{
-                  fontSize: 10,
-                  fontWeight: 700,
-                  letterSpacing: "0.22em",
-                  textTransform: "uppercase",
-                  color: T.accent1,
-                  marginBottom: 14,
-                }}>
-                  Categories
-                </p>
-                <button
-                  onClick={() => setFilter("category", "")}
-                  className={`filter-btn${!filters.category ? " active" : ""}`}
-                >
-                  All Products
-                </button>
-                {categories.map((c) => (
-                  <button
-                    key={c.id}
-                    onClick={() => setFilter("category", c.name)}
-                    className={`filter-btn${filters.category === c.name ? " active" : ""}`}
-                  >
-                    {c.name}
-                  </button>
-                ))}
-              </div>
-
-              {/* Divider */}
-              <div style={{ height: 1, background: T.border, margin: "0 16px" }} />
-
-              {/* Sort */}
-              <div style={{ padding: "16px" }}>
-                <p className="sora" style={{
-                  fontSize: 10,
-                  fontWeight: 700,
-                  letterSpacing: "0.22em",
-                  textTransform: "uppercase",
-                  color: T.accent2,
-                  marginBottom: 12,
-                }}>
-                  Sort By
-                </p>
-                {SORT_OPTIONS.map((o) => (
-                  <button
-                    key={o.value}
-                    onClick={() => setFilter("sort", o.value)}
-                    className={`filter-btn${filters.sort === o.value ? " active" : ""}`}
-                  >
-                    {o.label}
-                  </button>
-                ))}
-              </div>
-
-              {/* Divider */}
-              <div style={{ height: 1, background: T.border, margin: "0 16px" }} />
-
-              {/* Price Range */}
-              <div style={{ padding: "16px" }}>
-                <p className="sora" style={{
-                  fontSize: 10,
-                  fontWeight: 700,
-                  letterSpacing: "0.22em",
-                  textTransform: "uppercase",
-                  color: T.accent1,
-                  marginBottom: 12,
-                }}>
-                  Price Range
-                </p>
-                <div style={{ display: "flex", gap: 8 }}>
-                  <input
-                    type="number"
-                    placeholder="Min"
-                    value={filters.minPrice}
-                    onChange={(e) => setFilter("minPrice", e.target.value)}
-                    className="vault-input"
-                    style={{ width: "100%", paddingRight: 8, fontSize: 12 }}
-                  />
-                  <input
-                    type="number"
-                    placeholder="Max"
-                    value={filters.maxPrice}
-                    onChange={(e) => setFilter("maxPrice", e.target.value)}
-                    className="vault-input"
-                    style={{ width: "100%", paddingRight: 8, fontSize: 12 }}
-                  />
-                </div>
-              </div>
-
-              {/* Divider */}
-              <div style={{ height: 1, background: T.border, margin: "0 16px" }} />
-
-              {/* Customer Rating */}
-              <div style={{ padding: "16px" }}>
-                <p className="sora" style={{
-                  fontSize: 10,
-                  fontWeight: 700,
-                  letterSpacing: "0.22em",
-                  textTransform: "uppercase",
-                  color: T.accent1,
-                  marginBottom: 12,
-                }}>
-                  Customer Rating
-                </p>
-                {[4, 3, 2, 1].map((r) => (
-                  <button
-                    key={r}
-                    onClick={() => setFilter("minRating", filters.minRating === r ? "" : r)}
-                    className={`filter-btn${filters.minRating === r ? " active" : ""}`}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
-                      width: "100%",
-                      textAlign: "left",
-                      marginBottom: 4,
-                    }}
-                  >
-                    <span>
-                      {[1, 2, 3, 4, 5].map((i) => (
-                        <span key={i} style={{ color: i <= r ? "#FBBF24" : "rgba(255,255,255,0.12)", fontSize: 12 }}>★</span>
-                      ))}
-                    </span>
-                    & Up
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Sidebar Ad */}
-            <div style={{ marginTop: 20 }}>
-              <AdBanner placement="Vertical Tower" />
-            </div>
-          </aside>
-
-          {/* ── Product Grid ── */}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            {/* Controls bar */}
-            <div style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 12,
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: 28,
-              paddingTop: 8,
-            }}>
-              <p style={{ fontFamily: "Inter, sans-serif", fontSize: 13.5, color: T.textSecondary, margin: 0 }}>
-                {loading
-                  ? "Loading premium assets…"
-                  : `${products.length} products available`}
-              </p>
-
-              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
-                {/* Search */}
-                <div style={{ position: "relative" }}>
-                  <input
-                    value={filters.search}
-                    onChange={(e) => setFilter("search", e.target.value)}
-                    placeholder="Search premium products…"
-                    className="vault-input"
-                  />
-                  <span style={{
-                    position: "absolute",
-                    right: 14,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    color: T.accent1,
-                    fontSize: 16,
-                    pointerEvents: "none",
-                  }}>
-                    ⌕
-                  </span>
-                </div>
-
-                {/* Sort (mobile) */}
-                <select
-                  value={filters.sort}
-                  onChange={(e) => setFilter("sort", e.target.value)}
-                  className="vault-select"
-                >
-                  {SORT_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value} style={{ background: T.bg }}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-
-                {/* Mobile Filter Toggle */}
-                <button
-                  className="mobile-filter-btn"
-                  onClick={() => setShowMobileFilters(true)}
-                  style={{
-                    padding: "10px 16px",
-                    borderRadius: 12, border: `1px solid ${T.border}`,
-                    fontFamily: "Inter, sans-serif", fontSize: 13,
-                    background: T.surface1, color: T.textPrimary,
-                    cursor: "pointer",
-                    display: "none"
-                  }}
-                >
-                  🎛️ Filters
-                </button>
-              </div>
-            </div>
-
-            {/* Horizontal Category Filter Pills (Mobile & Desktop quick filter) */}
-            <div className="cats-scroll" style={{
-              display: "flex",
-              gap: 8,
-              overflowX: "auto",
-              WebkitOverflowScrolling: "touch",
-              paddingBottom: 14,
-              marginBottom: 24,
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
-            }}>
-              {[{ id: "", name: "All Products" }, ...categories].map((c) => {
-                const isActive = filters.category === c.name || (!filters.category && c.id === "");
-                return (
-                  <button
-                    key={c.id || "all"}
-                    onClick={() => setFilter("category", c.id === "" ? "" : c.name)}
-                    className={`vault-pill${isActive ? " active" : ""}`}
-                    style={{ flexShrink: 0 }}
-                  >
-                    {c.name}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Grid */}
-            {loading ? (
-              <div className="digital-products-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 20 }}>
-                {[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}
-              </div>
-            ) : products.length === 0 ? (
-              <div style={{
-                padding: "60px 20px",
-                textAlign: "center",
-                borderRadius: 20,
-                border: `1px solid ${T.border}`,
-                background: T.surface1,
-                color: "#888",
-              }}>
-                <div style={{ fontSize: 48, opacity: 0.15, marginBottom: 16 }}>⬡</div>
-                <p className="sora" style={{ fontSize: 18, fontWeight: 700, color: T.textPrimary, margin: "0 0 8px" }}>
-                  No Products Found
-                </p>
-                <p style={{ fontFamily: "Inter, sans-serif", fontSize: "1.1rem", color: "#888", margin: 0 }}>
-                  {filters.category
-                    ? "No products found in this category yet."
-                    : "Try adjusting your filters or search terms."}
-                </p>
-              </div>
-            ) : (
-              <div className="digital-products-grid" style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-                gap: 20,
-              }}>
-                {products.map((p) => (
-                  <DigitalCard
-                    key={p.id}
-                    p={p}
-                    onWishlist={() => toggleWishlist(p.product_uid || p.id)}
-                    isWishlisted={wishlist.includes(p.product_uid || p.id)}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Featured Collections ── */}
-      <section style={{ padding: "48px 24px 72px", position: "relative", zIndex: 2, borderTop: `1px solid ${T.border}` }}>
-        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-          <div style={{ marginBottom: 24, textAlign: "center" }}>
-            <p style={{
-              fontFamily: "Inter, sans-serif",
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-              color: T.accent2,
-              marginBottom: 8,
-            }}>
-              Curated Vaults
-            </p>
-            <h2 className="sora" style={{
-              fontSize: "clamp(20px, 2.5vw, 28px)",
-              fontWeight: 800,
-              color: T.textPrimary,
-              letterSpacing: "-0.5px",
-              margin: 0,
-            }}>
-              Featured Collections
-            </h2>
-          </div>
-          <div className="collections-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 20 }}>
-            {COLLECTIONS.map((col) => (
-              <div key={col.title} className="coll-card" style={{ padding: "20px", borderRadius: "18px" }}>
-                <div style={{ fontSize: 24, marginBottom: 10 }}>{col.icon}</div>
-                <h3 className="sora" style={{ fontSize: 13.5, fontWeight: 700, color: T.textPrimary, margin: "0 0 6px", letterSpacing: "-0.2px" }}>
-                  {col.title}
-                </h3>
-                <p style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: T.textSecondary, margin: "0 0 14px", lineHeight: 1.5 }}>
-                  {col.desc}
-                </p>
-                <div style={{ height: 2, borderRadius: 2, background: `linear-gradient(90deg, ${col.accent}, transparent)`, width: "40%" }} />
-              </div>
-            ))}
-          </div>
-
-          {/* Trust Note */}
-          <div style={{
-            marginTop: 40,
-            padding: "24px 32px",
-            borderRadius: 16,
-            background: "rgba(110,231,249,0.04)",
-            border: `1px solid rgba(110,231,249,0.2)`,
-            display: "flex",
-            alignItems: "center",
-            gap: 16,
-          }}>
-            <span style={{ fontSize: 24, flexShrink: 0 }}>🛡️</span>
-            <p style={{
-              fontFamily: "Inter, sans-serif",
-              fontSize: 13.5,
-              color: T.textSecondary,
-              lineHeight: 1.7,
-              margin: 0,
-            }}>
-              <strong style={{ color: T.textPrimary }}>Instant Digital Delivery: </strong>
-              Instant digital delivery upon purchase. Layered, organised source files included with complete usage documentation.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Newsletter ── */}
-      <section style={{
-        position: "relative",
-        zIndex: 2,
-        borderTop: `1px solid ${T.border}`,
-        padding: "72px 24px",
-        background: "#FAF6EE",
-        overflow: "hidden",
-      }}>
-        <div style={{ maxWidth: 560, margin: "0 auto", textAlign: "center", position: "relative" }}>
-          <span style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            padding: "5px 14px",
-            borderRadius: 4,
-            fontSize: 11,
-            fontWeight: 700,
-            letterSpacing: "0.18em",
-            textTransform: "uppercase",
-            fontFamily: "'DM Sans', sans-serif",
-            background: "#FFFFFF",
-            border: `1px solid ${T.border}`,
-            color: T.accent1,
-            marginBottom: 16,
-          }}>
-            Studio Updates
-          </span>
-
-          <h2 style={{
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontSize: "clamp(26px, 3.5vw, 40px)",
-            fontWeight: 400,
-            color: T.textPrimary,
-            letterSpacing: "-0.5px",
-            margin: "0 0 14px",
-          }}>
-            Stay Ahead of the Curve
-          </h2>
-          <p style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: 14.5,
-            color: T.textSecondary,
-            margin: "0 0 28px",
-            lineHeight: 1.6,
-          }}>
-            Get new releases, exclusive assets, early access drops, and studio resources delivered directly.
-          </p>
-
-          <div style={{ display: "flex", gap: 10, maxWidth: 440, margin: "0 auto" }}>
-            <input
-              type="email"
-              placeholder="your@email.com"
-              className="nl-input"
-            />
-            <button style={{
-              padding: "12px 22px",
-              borderRadius: 4,
-              fontFamily: "'DM Sans', sans-serif",
-              fontWeight: 600,
-              fontSize: 13,
-              letterSpacing: "0.04em",
-              border: "none",
-              cursor: "pointer",
-              background: T.accent1,
-              color: "#FFFFFF",
-              whiteSpace: "nowrap",
-              transition: "background-color 0.2s",
-            }}
-            onMouseOver={(e) => e.currentTarget.style.background = T.accent2}
-            onMouseOut={(e) => e.currentTarget.style.background = T.accent1}
-            >
-              Get Access
-            </button>
-          </div>
-
-          <div style={{ display: "flex", justifyContent: "center", gap: 24, marginTop: 20, flexWrap: "wrap" }}>
-            {["New Releases", "Exclusive Assets", "Early Access"].map((t) => (
-              <span key={t} style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 12,
-                color: "#676A65",
-                display: "flex",
-                alignItems: "center",
-                gap: 5,
-              }}>
-                <span style={{ color: T.accent1, fontSize: 10 }}>✓</span> {t}
+      {/* ── Main Vault Archive Section ── */}
+      <section id="vault-archive" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow">
+        
+        {/* Controls Bar: Search, Category Pills & Sort */}
+        <div className="space-y-4 mb-8">
+          
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#A48855] block">
+                Atelier Catalog
               </span>
-            ))}
-          </div>
-        </div>
-      </section>
+              <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl sm:text-3xl font-medium text-[#1C2B26]">
+                Curated Digital Assets
+              </h2>
+            </div>
 
-      {/* Mobile Filters Drawer Overlay */}
-      {showMobileFilters && (
-        <div style={{
-          position: "fixed", inset: 0, zIndex: 9999,
-          background: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "flex-end"
-        }}>
-          <div style={{
-            width: "300px", background: "#FFFFFF", height: "100%", overflowY: "auto",
-            padding: "30px 24px", display: "flex", flexDirection: "column", gap: 20,
-            position: "relative", boxShadow: "-8px 0 32px rgba(0,0,0,0.15)"
-          }}>
-            <button
-              onClick={() => setShowMobileFilters(false)}
-              style={{
-                position: "absolute", top: 20, right: 20,
-                border: "none", background: "none", fontSize: 24, cursor: "pointer",
-                color: T.textPrimary
-              }}
-            >
-              ×
-            </button>
-            <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 24, fontWeight: 600, margin: "0 0 10px 0", color: T.textPrimary }}>Filters</h3>
-            
-            {/* Categories */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              <p style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 10,
-                fontWeight: 700,
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                color: T.accent1,
-                marginBottom: 10,
-              }}>
-                Categories
-              </p>
-              <button
-                onClick={() => { setFilter("category", ""); setShowMobileFilters(false); }}
-                className={`filter-btn${!filters.category ? " active" : ""}`}
+            {/* Search Input & Sort Dropdown */}
+            <div className="flex items-center gap-3 flex-wrap">
+              <div className="relative min-w-[220px] sm:min-w-[260px]">
+                <input
+                  type="text"
+                  value={filters.search}
+                  onChange={(e) => setFilter("search", e.target.value)}
+                  placeholder="Search assets, CAD, formats..."
+                  className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2 text-xs focus:outline-none text-[#1C2B26]"
+                />
+                {filters.search && (
+                  <button 
+                    onClick={() => setFilter("search", "")}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 text-xs"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+
+              <select
+                value={filters.sort}
+                onChange={(e) => setFilter("sort", e.target.value)}
+                className="bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3 py-2 text-xs focus:outline-none text-[#1C2B26] cursor-pointer"
               >
-                All Products
-              </button>
-              {categories.map((c) => (
+                {SORT_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Horizontal Category Filter Pills (Touch friendly, no scrollbars) */}
+          <div className="flex items-center gap-2 overflow-x-auto py-1 scroll-smooth" style={{ scrollbarWidth: "none" }}>
+            {[{ id: "", name: "All Digital Assets" }, ...categories].map((c) => {
+              const isActive = filters.category === c.name || (!filters.category && c.id === "");
+              return (
                 <button
-                  key={c.id}
-                  onClick={() => { setFilter("category", c.name); setShowMobileFilters(false); }}
-                  className={`filter-btn${filters.category === c.name ? " active" : ""}`}
+                  key={c.id || "all"}
+                  onClick={() => setFilter("category", c.id === "" ? "" : c.name)}
+                  className={`whitespace-nowrap px-4 py-2 rounded-[4px] text-xs transition cursor-pointer shrink-0 font-medium ${
+                    isActive
+                      ? "bg-[#23483D] text-[#FAF6EE] shadow-sm font-semibold"
+                      : "bg-[#FAF6EE] text-[#6B7C75] hover:text-[#1C2B26] border border-[#EAE4D6]"
+                  }`}
                 >
                   {c.name}
                 </button>
-              ))}
-            </div>
-
-            {/* Price Range */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <p style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 10,
-                fontWeight: 700,
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                color: T.accent1,
-              }}>
-                Price Range
-              </p>
-              <div style={{ display: "flex", gap: 8 }}>
-                <input
-                  type="number"
-                  placeholder="Min"
-                  value={filters.minPrice}
-                  onChange={(e) => setFilter("minPrice", e.target.value)}
-                  className="vault-input"
-                  style={{ width: "100%", paddingRight: 10 }}
-                />
-                <input
-                  type="number"
-                  placeholder="Max"
-                  value={filters.maxPrice}
-                  onChange={(e) => setFilter("maxPrice", e.target.value)}
-                  className="vault-input"
-                  style={{ width: "100%", paddingRight: 10 }}
-                />
-              </div>
-            </div>
-
-            {/* Rating */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              <p style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 10,
-                fontWeight: 700,
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                color: T.accent1,
-              }}>
-                Rating
-              </p>
-              {[4, 3, 2, 1].map((r) => (
-                <button
-                  key={r}
-                  onClick={() => { setFilter("minRating", filters.minRating === r ? "" : r); setShowMobileFilters(false); }}
-                  style={{
-                    display: "flex", alignItems: "center", gap: 8,
-                    padding: "9px 12px", borderRadius: 4, border: "none",
-                    cursor: "pointer", width: "100%",
-                    fontFamily: "'DM Sans', sans-serif", fontSize: 13,
-                    background: filters.minRating === r ? "#FAF6EE" : "transparent",
-                    color: filters.minRating === r ? T.accent1 : T.textSecondary,
-                    textAlign: "left",
-                  }}
-                >
-                  <span>
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <span key={i} style={{ color: i <= r ? "#A48855" : "#E7E7E2", fontSize: 12 }}>★</span>
-                    ))}
-                  </span>
-                  & Up
-                </button>
-              ))}
-            </div>
+              );
+            })}
           </div>
+
         </div>
-      )}
 
-      {/* ── Contact Section ── */}
-      <section id="contact-section" style={{ padding: "80px 24px", position: "relative", zIndex: 2, background: "#FAF6EE", borderTop: `1px solid ${T.border}` }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "60px" }} className="responsive-split-1-2">
-            {/* Left Column */}
-            <div>
-              <div style={{ width: 44, height: 2, background: T.accent1, marginBottom: 20 }} />
-              <span style={{ display: "block", marginBottom: 12, fontSize: 11, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: T.accent1, fontFamily: "'DM Sans', sans-serif" }}>Start Your Project</span>
-              <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 38, color: T.textPrimary, marginBottom: 18, fontWeight: 400, lineHeight: 1.15 }}>
-                Let's build something extraordinary
-              </h2>
-              <p style={{ fontSize: 15, color: T.textSecondary, lineHeight: 1.8, marginBottom: 36, fontFamily: "'DM Sans', sans-serif" }}>
-                Fill out the brief and our senior design director will review your project specifications and respond within 24 hours.
+        {/* ── Product Grid ── */}
+        {loading ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+            {[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}
+          </div>
+        ) : products.length === 0 ? (
+          <div className="border border-dashed border-[#EAE4D6] rounded-[4px] p-16 text-center bg-[#FAF6EE]/30">
+            <span className="text-4xl block mb-3 opacity-30">📐</span>
+            <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl font-normal text-[#1C2B26]">
+              No Assets Found
+            </h3>
+            <p className="text-xs text-[#6B7C75] mt-1.5 max-w-sm mx-auto">
+              {filters.category
+                ? `No assets currently filed under "${filters.category}". Explore our complete vault archive.`
+                : "No matching digital files or CAD assets found for your query. Try resetting your search filter."}
+            </p>
+            <button
+              onClick={() => setFilters({ search: "", category: "", sort: "newest", minPrice: "", maxPrice: "", minRating: "" })}
+              className="mt-5 px-5 py-2.5 bg-[#23483D] text-[#FAF6EE] text-xs font-semibold uppercase tracking-wider rounded-[4px] hover:bg-[#16352D] transition cursor-pointer"
+            >
+              Reset Vault Filters
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+            {products.map((p) => (
+              <DigitalCard
+                key={p.id}
+                p={p}
+                onWishlist={() => toggleWishlist(p.product_uid || p.id)}
+                isWishlisted={wishlist.includes(String(p.product_uid || p.id))}
+              />
+            ))}
+          </div>
+        )}
+
+      </section>
+
+      {/* ── Featured Curated Vaults ── */}
+      <section className="border-t border-[#EAE4D6] py-14 sm:py-18 bg-[#FAF6EE]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#A48855] block mb-1">
+              Curated Disciplines
+            </span>
+            <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-3xl sm:text-4xl font-normal text-[#1C2B26]">
+              Atelier Specialized Collections
+            </h2>
+            <p className="text-xs sm:text-sm text-[#6B7C75] mt-2">
+              Each discipline contains calibrated geometry, standardized font hierarchies, and layered source archives.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {COLLECTIONS.map((col) => (
+              <div 
+                key={col.title}
+                onClick={() => setFilter("category", col.category)}
+                className="group bg-white border border-[#EAE4D6] hover:border-[#23483D] rounded-[4px] p-6 transition duration-300 shadow-sm hover:shadow-md cursor-pointer flex flex-col justify-between"
+              >
+                <div>
+                  <span className="text-2xl block mb-3 group-hover:scale-110 transition-transform">
+                    {col.icon}
+                  </span>
+                  <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-lg font-semibold text-[#1C2B26] group-hover:text-[#23483D] transition">
+                    {col.title}
+                  </h3>
+                  <p className="text-xs text-[#6B7C75] mt-2 leading-relaxed">
+                    {col.desc}
+                  </p>
+                </div>
+                <div className="mt-5 pt-3 border-t border-[#EAE4D6]/60 flex items-center justify-between text-xs font-semibold text-[#23483D]">
+                  <span>Filter Collection</span>
+                  <span className="group-hover:translate-x-1 transition-transform">→</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* White Glove Digital Assurance */}
+          <div className="mt-10 p-5 sm:p-6 bg-white border border-[#EAE4D6] rounded-[4px] flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left shadow-sm">
+            <span className="text-3xl shrink-0">🛡️</span>
+            <div className="flex-1">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Studio File Integrity & Verification</h4>
+              <p className="text-xs text-[#6B7C75] mt-0.5 leading-relaxed">
+                All digital deliverables are SHA-256 integrity-verified, uncompressed, and backed by lifetime re-downloads directly from your private Client Atelier.
               </p>
+            </div>
+            <Link 
+              to="/profile?tab=digital" 
+              className="shrink-0 px-4 py-2 border border-[#23483D] text-[#23483D] hover:bg-[#23483D] hover:text-white text-xs font-semibold rounded-[4px] transition uppercase tracking-wider"
+            >
+              Your Vault
+            </Link>
+          </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        </div>
+      </section>
+
+      {/* ── Custom Commission Brief Section ── */}
+      <section id="commission-brief" className="border-t border-[#EAE4D6] py-16 sm:py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+            
+            {/* Left Column: Brief Context */}
+            <div className="lg:col-span-5 space-y-6">
+              <div>
+                <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#A48855] block mb-1">
+                  Bespoke Architectural Services
+                </span>
+                <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-3xl sm:text-4xl font-normal text-[#1C2B26] leading-tight">
+                  Commission Custom CAD or Brand Systems
+                </h2>
+                <p className="text-xs sm:text-sm text-[#6B7C75] mt-3 leading-relaxed">
+                  Require custom parametric 3D models, specialized joinery blueprints, or an exclusive corporate identity architecture? Our creative directors accept select commissions each quarter.
+                </p>
+              </div>
+
+              <div className="space-y-4 pt-2">
                 {[
-                  { icon: "⏱", title: "24-hour response", desc: "Every inquiry reviewed personally" },
-                  { icon: "🔒", title: "Strict confidentiality", desc: "NDA available on request" },
-                  { icon: "💬", title: "Free consultation", desc: "30-minute strategy call included" },
-                ].map((item, i) => (
-                  <div key={i} style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
-                    <span style={{ fontSize: 20, flexShrink: 0, lineHeight: 1 }}>{item.icon}</span>
+                  { icon: "⏱", title: "Direct Director Review", desc: "Every project brief is personally assessed within 24 hours." },
+                  { icon: "🔒", title: "Mutual Confidentiality", desc: "Standard NDA protection furnished prior to schematic disclosure." },
+                  { icon: "📐", title: "Parametric Precision", desc: "Files furnished in native Rhino, STEP, DWG, and vector master formats." }
+                ].map((item, idx) => (
+                  <div key={idx} className="flex gap-3.5 items-start">
+                    <span className="text-lg shrink-0 p-2 bg-[#FAF6EE] rounded-[4px] border border-[#EAE4D6]">{item.icon}</span>
                     <div>
-                      <div style={{ fontSize: 14, fontWeight: 700, color: T.textPrimary, fontFamily: "'DM Sans', sans-serif" }}>{item.title}</div>
-                      <div style={{ fontSize: 13, color: T.textSecondary, marginTop: 2, fontFamily: "'DM Sans', sans-serif" }}>{item.desc}</div>
+                      <h4 className="text-xs font-bold text-[#1C2B26] uppercase tracking-wider">{item.title}</h4>
+                      <p className="text-xs text-[#6B7C75] mt-0.5">{item.desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Right Column Form */}
-            <div
-              className="contact-form-card"
-              style={{
-                background: "#FFFFFF",
-                border: `1px solid ${T.border}`,
-                borderRadius: 4,
-                padding: "36px",
-                boxShadow: "0 10px 30px rgba(20,25,22,0.04)",
-              }}
-            >
+            {/* Right Column: Brief Form */}
+            <div className="lg:col-span-7 bg-[#FAF6EE] border border-[#EAE4D6] p-6 sm:p-8 rounded-[4px] shadow-sm">
               {success ? (
-                <div style={{ textAlign: "center", padding: "40px 20px" }}>
-                  <div style={{ fontSize: "48px", color: T.accent1, marginBottom: "16px" }}>✓</div>
-                  <h3 style={{ fontSize: "20px", fontWeight: 700, color: T.textPrimary, marginBottom: "10px", fontFamily: "'DM Sans', sans-serif" }}>Enquiry Received</h3>
-                  <p style={{ fontSize: "14.5px", color: T.textSecondary, lineHeight: 1.6, fontFamily: "'DM Sans', sans-serif" }}>
-                    Thank you for your enquiry. Our creative director will review your brief and respond within 24 hours.
+                <div className="text-center py-12 space-y-3">
+                  <span className="text-4xl block text-[#23483D]">✓</span>
+                  <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl font-normal text-[#1C2B26]">
+                    Commission Brief Transmitted
+                  </h3>
+                  <p className="text-xs text-[#6B7C75] max-w-md mx-auto leading-relaxed">
+                    Thank you. Your project brief has been logged with our studio director. We will review your technical requirements and contact you within 24 hours.
                   </p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }} className="responsive-form">
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary, fontFamily: "'DM Sans', sans-serif" }}>Full Name *</label>
-                    <input
-                      type="text"
-                      placeholder="Jane Smith"
-                      required
-                      value={form.name}
-                      onChange={e => setForm({ ...form, name: e.target.value })}
-                      style={{
-                        padding: "12px 14px", borderRadius: 4, border: `1px solid #DADCD7`,
-                        background: "#FFFFFF", color: T.textPrimary, outline: "none", fontSize: 13.5
-                      }}
-                    />
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#A48855] block mb-1">
+                        Principal Name *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Jane Smith"
+                        value={form.name}
+                        onChange={(e) => setForm({ ...form, name: e.target.value })}
+                        className="w-full bg-white border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#A48855] block mb-1">
+                        Enterprise / Practice *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Acme Architecture Ltd."
+                        value={form.company}
+                        onChange={(e) => setForm({ ...form, company: e.target.value })}
+                        className="w-full bg-white border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
+                      />
+                    </div>
                   </div>
 
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary, fontFamily: "'DM Sans', sans-serif" }}>Company *</label>
-                    <input
-                      type="text"
-                      placeholder="Acme Inc."
-                      required
-                      value={form.company}
-                      onChange={e => setForm({ ...form, company: e.target.value })}
-                      style={{
-                        padding: "12px 14px", borderRadius: 4, border: `1px solid #DADCD7`,
-                        background: "#FFFFFF", color: T.textPrimary, outline: "none", fontSize: 13.5
-                      }}
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#A48855] block mb-1">
+                        Correspondence Email *
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        placeholder="jane@practice.com"
+                        value={form.email}
+                        onChange={(e) => setForm({ ...form, email: e.target.value })}
+                        className="w-full bg-white border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#A48855] block mb-1">
+                        Telephone Line
+                      </label>
+                      <input
+                        type="tel"
+                        placeholder="+1 (555) 000-0000"
+                        value={form.phone}
+                        onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                        className="w-full bg-white border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
+                      />
+                    </div>
                   </div>
 
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary, fontFamily: "'DM Sans', sans-serif" }}>Email Address *</label>
-                    <input
-                      type="email"
-                      placeholder="jane@company.com"
-                      required
-                      value={form.email}
-                      onChange={e => setForm({ ...form, email: e.target.value })}
-                      style={{
-                        padding: "12px 14px", borderRadius: 4, border: `1px solid #DADCD7`,
-                        background: "#FFFFFF", color: T.textPrimary, outline: "none", fontSize: 13.5
-                      }}
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#A48855] block mb-1">
+                        Discipline *
+                      </label>
+                      <select
+                        required
+                        value={form.project_type}
+                        onChange={(e) => setForm({ ...form, project_type: e.target.value })}
+                        className="w-full bg-white border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3 py-2.5 text-xs focus:outline-none text-[#1C2B26] cursor-pointer"
+                      >
+                        <option value="">Select scope...</option>
+                        <option>3D Parametric CAD / BIM</option>
+                        <option>Joinery Blueprints & CNC</option>
+                        <option>Corporate Brand Identity</option>
+                        <option>Executive Keynote Presentation</option>
+                        <option>Custom Architectural Model</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#A48855] block mb-1">
+                        Budget Allocation
+                      </label>
+                      <select
+                        value={form.budget_range}
+                        onChange={(e) => setForm({ ...form, budget_range: e.target.value })}
+                        className="w-full bg-white border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3 py-2.5 text-xs focus:outline-none text-[#1C2B26] cursor-pointer"
+                      >
+                        <option value="">Select scope...</option>
+                        <option>$2,000 – $5,000</option>
+                        <option>$5,000 – $15,000</option>
+                        <option>$15,000 – $50,000</option>
+                        <option>$50,000+</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#A48855] block mb-1">
+                        Target Schedule
+                      </label>
+                      <select
+                        value={form.timeline}
+                        onChange={(e) => setForm({ ...form, timeline: e.target.value })}
+                        className="w-full bg-white border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3 py-2.5 text-xs focus:outline-none text-[#1C2B26] cursor-pointer"
+                      >
+                        <option value="">Select target...</option>
+                        <option>Expedited (under 2 weeks)</option>
+                        <option>1 – 2 months</option>
+                        <option>2 – 4 months</option>
+                        <option>Ongoing retainer</option>
+                      </select>
+                    </div>
                   </div>
 
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary, fontFamily: "'DM Sans', sans-serif" }}>Phone Number</label>
-                    <input
-                      type="tel"
-                      placeholder="+1 (555) 000-0000"
-                      value={form.phone}
-                      onChange={e => setForm({ ...form, phone: e.target.value })}
-                      style={{
-                        padding: "12px 14px", borderRadius: 4, border: `1px solid #DADCD7`,
-                        background: "#FFFFFF", color: T.textPrimary, outline: "none", fontSize: 13.5
-                      }}
-                    />
-                  </div>
-
-                  <div style={{ gridColumn: "span 2", display: "flex", flexDirection: "column", gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary, fontFamily: "'DM Sans', sans-serif" }}>Project Type *</label>
-                    <select
-                      required
-                      value={form.project_type}
-                      onChange={e => setForm({ ...form, project_type: e.target.value })}
-                      style={{
-                        padding: "12px 14px", borderRadius: 4, border: `1px solid #DADCD7`,
-                        background: "#FFFFFF", color: T.textPrimary, outline: "none", fontSize: 13.5, cursor: "pointer"
-                      }}
-                    >
-                      <option value="">Select a service...</option>
-                      <option>UI / UX Design</option>
-                      <option>Website Design & Development</option>
-                      <option>Mobile App Design</option>
-                      <option>Mobile App Development</option>
-                      <option>Brand Identity</option>
-                      <option>Graphic Design</option>
-                      <option>AI Integration</option>
-                      <option>Automation / N8N</option>
-                      <option>Design System</option>
-                      <option>Startup MVP</option>
-                      <option>Other</option>
-                    </select>
-                  </div>
-
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary, fontFamily: "'DM Sans', sans-serif" }}>Budget Range</label>
-                    <select
-                      value={form.budget_range}
-                      onChange={e => setForm({ ...form, budget_range: e.target.value })}
-                      style={{
-                        padding: "12px 14px", borderRadius: 4, border: `1px solid #DADCD7`,
-                        background: "#FFFFFF", color: T.textPrimary, outline: "none", fontSize: 13.5, cursor: "pointer"
-                      }}
-                    >
-                      <option value="">Select budget...</option>
-                      <option>Under $2,000</option>
-                      <option>$2,000 – $5,000</option>
-                      <option>$5,000 – $15,000</option>
-                      <option>$15,000 – $50,000</option>
-                      <option>$50,000+</option>
-                    </select>
-                  </div>
-
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary, fontFamily: "'DM Sans', sans-serif" }}>Timeline</label>
-                    <select
-                      value={form.timeline}
-                      onChange={e => setForm({ ...form, timeline: e.target.value })}
-                      style={{
-                        padding: "12px 14px", borderRadius: 4, border: `1px solid #DADCD7`,
-                        background: "#FFFFFF", color: T.textPrimary, outline: "none", fontSize: 13.5, cursor: "pointer"
-                      }}
-                    >
-                      <option value="">Ideal timeline...</option>
-                      <option>ASAP (less than 2 weeks)</option>
-                      <option>1 – 2 months</option>
-                      <option>2 – 4 months</option>
-                      <option>4+ months</option>
-                      <option>Not sure yet</option>
-                    </select>
-                  </div>
-
-                  <div style={{ gridColumn: "span 2", display: "flex", flexDirection: "column", gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary, fontFamily: "'DM Sans', sans-serif" }}>Project Details *</label>
+                  <div>
+                    <label className="text-[10px] uppercase font-bold tracking-widest text-[#A48855] block mb-1">
+                      Project Specifications & Goals *
+                    </label>
                     <textarea
                       rows={4}
-                      placeholder="Tell us about your project, goals, and any specific requirements..."
                       required
+                      placeholder="Outline architectural parameters, required file formats, target dimensions, or creative goals..."
                       value={form.message}
-                      onChange={e => setForm({ ...form, message: e.target.value })}
-                      style={{
-                        padding: "12px 14px", borderRadius: 4, border: `1px solid #DADCD7`,
-                        background: "#FFFFFF", color: T.textPrimary, outline: "none", fontSize: 13.5, resize: "none"
-                      }}
+                      onChange={(e) => setForm({ ...form, message: e.target.value })}
+                      className="w-full bg-white border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26] resize-none"
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={submitting}
-                    style={{
-                      gridColumn: "span 2", padding: "14px", borderRadius: 4, border: "none",
-                      background: T.accent1,
-                      color: "#FFFFFF", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em",
-                      cursor: submitting ? "not-allowed" : "pointer", fontSize: 13, marginTop: 10,
-                      fontFamily: "'DM Sans', sans-serif"
-                    }}
+                    className="w-full py-3.5 bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D] text-xs font-semibold tracking-wider uppercase rounded-[4px] transition shadow-sm active:scale-98 cursor-pointer disabled:opacity-50"
                   >
-                    {submitting ? "Sending..." : "Submit Inquiry"}
+                    {submitting ? "Transmitting Brief..." : "Submit Project Brief →"}
                   </button>
                 </form>
               )}
             </div>
+
           </div>
         </div>
       </section>
 
-      {/* ── Footer ── */}
-      <div style={{ position: "relative", zIndex: 2 }}>
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 }

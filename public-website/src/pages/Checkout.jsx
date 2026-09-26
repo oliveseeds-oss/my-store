@@ -188,14 +188,13 @@ export default function Checkout() {
   const [shippingLoading, setShippingLoading] = useState(false);
   const [shippingZoneInfo, setShippingZoneInfo] = useState("");
   const [shippingError, setShippingError] = useState("");
+  const [siteSettings, setSiteSettings] = useState(null);
 
   const shipping = hasPhysicalItems
     ? (selectedMethod
       ? (selectedMethod.is_free ? 0 : (selectedMethod.shipping_cost_inr !== undefined ? Number(selectedMethod.shipping_cost_inr) : Number(selectedMethod.shipping_cost)))
       : (parseFloat(siteSettings?.shipping_fee) || 60))
     : 0;
-
-  const [siteSettings, setSiteSettings] = useState(null);
 
   // Coupon state
   const [couponCode, setCouponCode] = useState("");
@@ -226,7 +225,7 @@ export default function Checkout() {
     const params = new URLSearchParams(window.location.search);
     const m = params.get("method") || params.get("gateway");
     if (m === "paypal" || m === "razorpay") return m;
-    return selected.currency_code === "INR" ? "razorpay" : "paypal";
+    return selected?.currency_code === "INR" ? "razorpay" : "paypal";
   });
 
   useEffect(() => {
