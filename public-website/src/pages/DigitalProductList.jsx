@@ -24,27 +24,39 @@ const SORT_OPTIONS = [
 const COLLECTIONS = [
   {
     numeral: "I",
-    title: "Parametric CAD & 3D Blueprints",
-    desc: "Production-ready millimetric 3D CAD models (STEP, OBJ, DWG) engineered to exacting tolerances for precision fabrication and bespoke joinery.",
-    category: "CAD & 3D Models",
+    title: "UI/UX & Mobile App Systems",
+    desc: "Multi-platform Figma design kits, responsive design tokens, and iOS/Android app architectures crafted for visionary tech and consumer brands.",
+    category: "UI/UX Kits",
   },
   {
     numeral: "II",
     title: "Brand Identity Frameworks",
-    desc: "Complete corporate identity systems for distinguished practices. Includes vector typography, grid architectures, and comprehensive brand guidelines.",
+    desc: "Complete visual identity guidelines, master logo systems, typographic proportion grids, and comprehensive corporate brand manuals.",
     category: "Brand Identity Kits",
   },
   {
     numeral: "III",
-    title: "Executive Presentation Systems",
-    desc: "Editorial slide architectures and pitch decks designed for executive boardrooms, sovereign capital briefs, and high-stakes venture summits.",
-    category: "Presentation Templates",
+    title: "Website & Landing Page Templates",
+    desc: "Production-ready Framer, Webflow, and React/Tailwind architectures optimized for blistering speed, luxury aesthetics, and high conversion.",
+    category: "Website Templates",
   },
   {
     numeral: "IV",
-    title: "Architectural Stationery Suites",
-    desc: "Typography hierarchies, letterheads, proposal dossiers, and certificates calibrated for luxury physical embossing or digital correspondence.",
-    category: "Business Stationery",
+    title: "3D Models & Render Scenes",
+    desc: "Photorealistic 3D assets, OBJ/FBX geometry, studio lighting environments, and Blender master setups for hyper-realistic visual staging.",
+    category: "3D Models",
+  },
+  {
+    numeral: "V",
+    title: "AI Agent Templates & Workflows",
+    desc: "Orchestrated AI prompt architectures, autonomous agent blueprints, and modular workflow automations engineered for modern creative teams.",
+    category: "AI Agent Templates",
+  },
+  {
+    numeral: "VI",
+    title: "Digital Printables & Creative Assets",
+    desc: "High-resolution architectural art prints, minimalist planner suites, vector icon kits, and bespoke graphic toolkits ready for immediate deployment.",
+    category: "Digital Printables",
   },
 ];
 
@@ -77,7 +89,7 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
     setTimeout(() => setAdded(false), 1600);
   };
 
-  const formatBadge = p.file_format || (Array.isArray(p.tags) && p.tags[0]) || "CAD ASSET";
+  const formatBadge = p.file_format || (Array.isArray(p.tags) && p.tags[0]) || "DIGITAL ASSET";
 
   return (
     <div 
@@ -97,9 +109,11 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
               decoding="async" 
             />
           ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center text-[#A48855]/50 bg-[#FAF6EE]">
-              <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 28, letterSpacing: "0.1em" }}>CAD</span>
-              <span style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.2em", color: "#A48855", fontWeight: 700, marginTop: 4 }}>Atelier Vault</span>
+            <div className="w-full h-full flex flex-col items-center justify-center text-[#23483D] bg-[#FAF6EE] p-4 text-center">
+              <div className="w-12 h-12 rounded-full border border-[#A48855]/40 flex flex-col items-center justify-center bg-white shadow-2xs mb-2">
+                <span className="font-serif text-lg font-bold tracking-widest text-[#A48855]">OS</span>
+              </div>
+              <span style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.2em", color: "#A48855", fontWeight: 700 }}>Digital Vault</span>
             </div>
           )}
         </Link>
@@ -325,9 +339,9 @@ export default function DigitalProductList() {
   return (
     <div className="min-h-screen flex flex-col bg-white" style={{ color: "#1C2B26", fontFamily: "'DM Sans', sans-serif" }}>
       <SEO
-        title="The Digital Design Vault & CAD Atelier | Olive Seeds Studio"
-        description="Download precision parametric CAD models, 3D architectural blueprints, vector presentation suites, and corporate brand identity kits."
-        keywords="architectural cad files, 3d furniture blueprints, parametric obj dwg, brand identity kits, executive presentation systems"
+        title="Digital Design Vault — UI/UX, Web Templates, 3D & AI Systems | Olive Seeds"
+        description="Acquire bespoke UI/UX design kits, website & mobile app templates, brand identity frameworks, 3D models, AI agent templates, and digital printables by Olive Seeds."
+        keywords="ui ux kits, website templates, mobile app ui, brand identity kits, 3d models, ai agent templates, digital printables, figma design systems"
       />
       <Navbar />
 
@@ -338,7 +352,7 @@ export default function DigitalProductList() {
             <div className="flex items-center gap-2 mb-3">
               <span className="w-1.5 h-1.5 rounded-full bg-[#A48855]" />
               <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase text-[#A48855]">
-                Digital Design Vault &amp; CAD Atelier
+                Digital Design Vault · Olive Seeds
               </span>
             </div>
 
@@ -346,11 +360,11 @@ export default function DigitalProductList() {
               style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} 
               className="text-3xl sm:text-5xl lg:text-6xl font-normal text-[#1C2B26] tracking-tight leading-[1.08] mb-4"
             >
-              Architectural Blueprints, Parametric CAD &amp; Digital Systems
+              UI/UX Systems, Brand Kits, Templates &amp; Digital Assets
             </h1>
 
             <p className="text-sm sm:text-base text-[#6B7C75] leading-relaxed max-w-2xl mb-8">
-              Precision-crafted 3D geometry, production-ready vector suites, and executive brand design systems engineered to exacting studio tolerances — instantly downloadable for commercial deployment.
+              Curated executive digital assets — from production-ready UI/UX design systems, website and mobile app templates, to studio 3D models, AI agent workflows, brand identity suites, and digital printables. Engineered for discerning studios, founders, and collectors.
             </p>
 
             <div className="flex flex-wrap items-center gap-3 sm:gap-4">
@@ -361,7 +375,7 @@ export default function DigitalProductList() {
                 }}
                 className="px-6 py-3.5 bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D] text-xs font-bold tracking-[0.12em] uppercase rounded-[4px] transition shadow-sm cursor-pointer"
               >
-                Explore Vault Archive ↓
+                Explore Digital Vault ↓
               </button>
               <button
                 onClick={() => {
@@ -370,7 +384,7 @@ export default function DigitalProductList() {
                 }}
                 className="px-6 py-3.5 bg-white hover:bg-stone-50 border border-[#EAE4D6] text-[#1C2B26] text-xs font-bold tracking-[0.12em] uppercase rounded-[4px] transition cursor-pointer"
               >
-                Custom Design Brief
+                Custom Digital Commission
               </button>
             </div>
           </div>
@@ -380,22 +394,22 @@ export default function DigitalProductList() {
             <div className="flex items-start gap-3">
               <span className="text-sm font-bold text-[#A48855] font-mono">01</span>
               <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Millimetric CAD Tolerances</h4>
-                <p className="text-xs text-[#6B7C75] mt-0.5">Engineered in DWG, STEP, and OBJ with verified joinery vectors.</p>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Production-Grade Architecture</h4>
+                <p className="text-xs text-[#6B7C75] mt-0.5">Crafted in Figma, Framer, Webflow, React, and 3D master formats with clean token structures.</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <span className="text-sm font-bold text-[#A48855] font-mono">02</span>
               <div>
                 <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Perpetual Commercial Rights</h4>
-                <p className="text-xs text-[#6B7C75] mt-0.5">Unrestricted use across private, client, and commercial projects.</p>
+                <p className="text-xs text-[#6B7C75] mt-0.5">Unrestricted use across private, client, and commercial venture deployments.</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <span className="text-sm font-bold text-[#A48855] font-mono">03</span>
               <div>
                 <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Instant Cloud Release</h4>
-                <p className="text-xs text-[#6B7C75] mt-0.5">Immediate vault access upon checkout with lifetime re-download rights.</p>
+                <p className="text-xs text-[#6B7C75] mt-0.5">Immediate vault access upon checkout with lifetime re-download authorization.</p>
               </div>
             </div>
           </div>
@@ -529,7 +543,7 @@ export default function DigitalProductList() {
                   type="text"
                   value={filters.search}
                   onChange={(e) => setFilter("search", e.target.value)}
-                  placeholder="Search assets, CAD, formats..."
+                  placeholder="Search UI kits, templates, 3D, branding..."
                   className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2 text-xs focus:outline-none text-[#1C2B26]"
                 />
                 <MdSearch className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 text-lg pointer-events-none" />
@@ -605,7 +619,7 @@ export default function DigitalProductList() {
           ) : products.length === 0 ? (
             <div className="border border-dashed border-[#EAE4D6] rounded-[4px] p-16 text-center bg-[#FAF6EE]/40">
               <div className="w-14 h-14 mx-auto mb-3 rounded-full border border-[#EAE4D6] bg-white flex items-center justify-center font-serif text-lg text-[#A48855]">
-                CAD
+                OS
               </div>
               <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl font-normal text-[#1C2B26]">
                 No Assets Found
@@ -613,7 +627,7 @@ export default function DigitalProductList() {
               <p className="text-xs text-[#6B7C75] mt-1.5 max-w-sm mx-auto">
                 {filters.category
                   ? `No assets currently filed under "${filters.category}". Explore our complete vault archive.`
-                  : "No matching digital files or CAD assets found. Try resetting your search filter."}
+                  : "No matching digital designs or templates found. Try resetting your search filter."}
               </p>
               <button
                 onClick={() => setFilters({ search: "", category: "", sort: "newest", minPrice: "", maxPrice: "", minRating: "" })}
@@ -756,11 +770,11 @@ export default function DigitalProductList() {
               Atelier Specialized Collections
             </h2>
             <p className="text-xs sm:text-sm text-[#6B7C75] mt-2">
-              Each discipline contains calibrated geometry, standardized font hierarchies, and layered source archives.
+              Each discipline contains tokenized hierarchies, responsive layouts, and layered production source archives.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {COLLECTIONS.map((col) => (
               <div 
                 key={col.title}
@@ -817,13 +831,13 @@ export default function DigitalProductList() {
             <div className="lg:col-span-5 space-y-6">
               <div>
                 <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#A48855] block mb-1">
-                  Bespoke Architectural Services
+                  Bespoke Digital Engineering
                 </span>
                 <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-3xl sm:text-4xl font-normal text-[#1C2B26] leading-tight">
-                  Commission Custom CAD or Brand Systems
+                  Commission Custom UI/UX, Web, 3D, or AI Systems
                 </h2>
                 <p className="text-xs sm:text-sm text-[#6B7C75] mt-3 leading-relaxed">
-                  Require custom parametric 3D models, specialized joinery blueprints, or an exclusive corporate identity architecture? Our creative directors accept select commissions each quarter.
+                  Require an enterprise design system, high-converting digital storefront, tailored 3D scene, or proprietary AI agent workflow? Our creative directors and technical architects accept select private commissions.
                 </p>
               </div>
 
@@ -831,7 +845,7 @@ export default function DigitalProductList() {
                 {[
                   { id: "01", title: "Direct Director Review", desc: "Every project brief is personally assessed within 24 hours." },
                   { id: "02", title: "Mutual Confidentiality", desc: "Standard NDA protection furnished prior to schematic disclosure." },
-                  { id: "03", title: "Parametric Precision", desc: "Files furnished in native Rhino, STEP, DWG, and vector master formats." }
+                  { id: "03", title: "Framework Fidelity", desc: "Files delivered in Figma tokens, clean React/Webflow code, 3D FBX/OBJ, and vector master assets." }
                 ].map((item) => (
                   <div key={item.id} className="flex gap-3.5 items-start">
                     <span className="font-mono text-xs font-bold text-[#A48855] p-2 bg-[#FAF6EE] rounded-[4px] border border-[#EAE4D6] shrink-0">{item.id}</span>
@@ -927,11 +941,12 @@ export default function DigitalProductList() {
                         className="w-full bg-white border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3 py-2.5 text-xs focus:outline-none text-[#1C2B26] cursor-pointer"
                       >
                         <option value="">Select scope...</option>
-                        <option>3D Parametric CAD / BIM</option>
-                        <option>Joinery Blueprints &amp; CNC</option>
-                        <option>Corporate Brand Identity</option>
-                        <option>Executive Keynote Presentation</option>
-                        <option>Custom Architectural Model</option>
+                        <option>UI/UX Design System &amp; Mobile App</option>
+                        <option>Luxury Website &amp; Webflow/React Architecture</option>
+                        <option>Brand Identity Kit &amp; Corporate Guidelines</option>
+                        <option>Custom 3D Model &amp; Photorealistic Scene</option>
+                        <option>AI Agent Template &amp; Workflow Automation</option>
+                        <option>Bespoke Digital Printables &amp; Vector Asset Suite</option>
                       </select>
                     </div>
 

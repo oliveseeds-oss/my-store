@@ -64,10 +64,10 @@ export default function DigitalProductDetail() {
 
   useEffect(() => {
     if (product) {
-      document.title = `${product.name} | Digital Design Vault | Olive Seeds Studio`;
+      document.title = `${product.name} | Digital Design Vault | Olive Seeds`;
       const metaDesc = document.querySelector('meta[name="description"]');
       if (metaDesc) {
-        metaDesc.setAttribute("content", `${product.name} — architectural digital asset by Olive Seeds Studio. ${product.description || ""}`);
+        metaDesc.setAttribute("content", `${product.name} — executive digital design asset by Olive Seeds. ${product.description || ""}`);
       }
 
       // Inject JSON-LD Structured Data
@@ -172,16 +172,16 @@ export default function DigitalProductDetail() {
   };
 
   // Structured specification details derived from digital product attributes
-  const fileFormatText = product.file_format || "CAD (DWG, STEP, OBJ, PDF)";
+  const fileFormatText = product.file_format || "Figma, React / Webflow, 3D (OBJ/FBX), Vector AI";
   const fileSizeText = product.file_size || "48.5 MB (Uncompressed ZIP)";
 
   return (
     <div className="min-h-screen flex flex-col bg-white" style={{ color: "#1C2B26", fontFamily: "'DM Sans', sans-serif" }}>
       <Navbar />
       <SEO 
-        title={`${product.name} | Digital Design Vault | Olive Seeds Studio`} 
-        description={product.description?.substring(0, 160) || "Download bespoke digital design suites, 3D parametric CAD files, and brand identity kits at Olive Seeds Studio."}
-        keywords={`${product.category_name || "digital template"}, 3d cad files, architectural blueprints, brand identity kit, Olive Seeds`}
+        title={`${product.name} | Digital Design Vault | Olive Seeds`} 
+        description={product.description?.substring(0, 160) || "Download bespoke UI/UX design systems, website and mobile app templates, brand identity kits, 3D models, and digital files at Olive Seeds."}
+        keywords={`${product.category_name || "digital template"}, ui ux kit, website template, mobile app ui, brand identity kit, 3d models, ai agent, Olive Seeds`}
         ogImage={product.thumbnail_url}
         imageAlt={product.image_alt || product.name}
       />
@@ -235,7 +235,7 @@ export default function DigitalProductDetail() {
                     <span className="font-serif text-2xl font-bold tracking-widest text-[#A48855]">OS</span>
                     <span className="text-[8px] uppercase tracking-widest text-[#6B7C75]">Vault</span>
                   </div>
-                  <span className="text-xs uppercase tracking-widest text-[#6B7C75]">Architectural CAD Suite</span>
+                  <span className="text-xs uppercase tracking-widest text-[#6B7C75]">Digital Creative Suite</span>
                 </div>
               )}
 
@@ -471,10 +471,10 @@ export default function DigitalProductDetail() {
               Technical Dossier
             </span>
             <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-3xl sm:text-4xl font-normal text-[#1C2B26]">
-              Architectural Specifications & Documentation
+              Digital Architecture &amp; Specification Dossier
             </h2>
             <p className="text-xs sm:text-sm text-[#6B7C75] mt-1.5">
-              Inspect technical geometry, software interoperability, licensing boundaries, and studio integrity verification.
+              Inspect design system hierarchy, file formats, software interoperability, and commercial deployment rights.
             </p>
           </div>
 
@@ -482,7 +482,7 @@ export default function DigitalProductDetail() {
           <div className="border-b border-[#EAE4D6] flex items-center gap-1 sm:gap-2 overflow-x-auto pb-px" style={{ scrollbarWidth: "none" }}>
             {[
               { id: "concept", label: "Asset Dossier & Philosophy", icon: <MdArchitecture className="text-base text-[#A48855]" /> },
-              { id: "manifest", label: "File Manifest & CAD Specs", icon: <MdFolderOpen className="text-base text-[#A48855]" /> },
+              { id: "manifest", label: "File Manifest & Technical Specs", icon: <MdFolderOpen className="text-base text-[#A48855]" /> },
               { id: "licensing", label: "Commercial Rights & License", icon: <MdOutlineWorkspacePremium className="text-base text-[#A48855]" /> },
               { id: "verification", label: "Integrity & Authenticity", icon: <MdSecurity className="text-base text-[#A48855]" /> },
             ].map((tab) => {
@@ -509,33 +509,33 @@ export default function DigitalProductDetail() {
             <div className="py-8 space-y-6 animate-fadeIn max-w-4xl">
               <div className="p-6 bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px]">
                 <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl font-normal text-[#1C2B26] mb-3">
-                  Design Architecture & Intent
+                  System Architecture &amp; Creative Intent
                 </h3>
                 <p className="text-xs sm:text-sm text-[#6B7C75] leading-relaxed whitespace-pre-wrap">
-                  {product.description || "Crafted to exacting studio standards, this digital asset bridges bespoke artisanal sensibility with modern technical production tolerances. Each file is generated natively within industrial-grade CAD and vector workflows, ensuring uncompromised precision across both digital renders and physical millimetric fabrication."}
+                  {product.description || "Crafted to exacting studio standards, this digital asset bridges bespoke visual design sensibility with high-performance production tolerances. Each system is authored natively in industry-leading software (Figma, React, Webflow, 3D, and AI frameworks), ensuring uncompromised precision, modular scalability, and instant commercial readiness."}
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 <div className="p-5 border border-[#EAE4D6] rounded-[4px] bg-white">
                   <MdArchitecture className="text-2xl text-[#A48855] mb-2" />
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Parametric Precision</h4>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Design System Precision</h4>
                   <p className="text-xs text-[#6B7C75] mt-1 leading-relaxed">
-                    Curvature continuity and clean polygonal quad topologies prevent artifacting across subdivision and CNC milling operations.
+                    Clean token structures, auto-layout hierarchies, and verified component libraries ensure rapid assembly and zero visual artifacting across all screens.
                   </p>
                 </div>
                 <div className="p-5 border border-[#EAE4D6] rounded-[4px] bg-white">
                   <MdLayers className="text-2xl text-[#A48855] mb-2" />
                   <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Executive Standard</h4>
                   <p className="text-xs text-[#6B7C75] mt-1 leading-relaxed">
-                    Typography hierarchies, grid ratios, and proportion canons are calibrated to meet Fortune 500 board and sovereign investor scrutiny.
+                    Typography hierarchies, grid ratios, and proportion canons are calibrated to meet Fortune 500 board, high-growth startup, and luxury brand scrutiny.
                   </p>
                 </div>
                 <div className="p-5 border border-[#EAE4D6] rounded-[4px] bg-white">
                   <MdBolt className="text-2xl text-[#A48855] mb-2" />
                   <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Production Ready</h4>
                   <p className="text-xs text-[#6B7C75] mt-1 leading-relaxed">
-                    Zero missing font warnings or broken linked textures. Everything needed for immediate execution is packaged into the archive.
+                    Zero missing font warnings or broken assets. Complete source files, documentation, and design tokens are packaged into the release archive.
                   </p>
                 </div>
               </div>
@@ -548,7 +548,7 @@ export default function DigitalProductDetail() {
               <div className="bg-white border border-[#EAE4D6] rounded-[4px] overflow-hidden shadow-xs">
                 <div className="bg-[#FAF6EE] px-5 py-3 border-b border-[#EAE4D6]">
                   <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-normal text-[#1C2B26]">
-                    Technical File Manifest & System Compatibility
+                    Technical File Manifest &amp; Software Compatibility
                   </h3>
                 </div>
                 <div className="divide-y divide-[#EAE4D6] text-xs">
@@ -562,19 +562,19 @@ export default function DigitalProductDetail() {
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
                     <span className="font-bold text-[#A48855] uppercase tracking-wider">Supported Software</span>
-                    <span className="sm:col-span-2 text-[#1C2B26]">AutoCAD, Rhinoceros 3D, Blender, 3ds Max, Adobe Illustrator, Figma, Keynote, PowerPoint</span>
+                    <span className="sm:col-span-2 text-[#1C2B26]">Figma, Webflow, React, Next.js, Blender, Cinema 4D, Adobe Creative Cloud, Framer, and Modern AI Pipelines</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
                     <span className="font-bold text-[#A48855] uppercase tracking-wider">Layer Structure</span>
                     <span className="sm:col-span-2 text-[#1C2B26]">Cleanly named, grouped, zero unlinked assets, non-destructive vector paths</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
-                    <span className="font-bold text-[#A48855] uppercase tracking-wider">Color & Scale Space</span>
-                    <span className="sm:col-span-2 text-[#1C2B26]">Metric Millimeters (1:1 scale) · sRGB / CMYK Swatches Included</span>
+                    <span className="font-bold text-[#A48855] uppercase tracking-wider">Color &amp; Scale Space</span>
+                    <span className="sm:col-span-2 text-[#1C2B26]">Scalable Vectors, 8pt Grid Standards &amp; Display P3 / sRGB Color Palettes</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
                     <span className="font-bold text-[#A48855] uppercase tracking-wider">Typography Hierarchy</span>
-                    <span className="sm:col-span-2 text-[#1C2B26]">Cormorant Garamond & DM Sans Google Fonts open-source pairing</span>
+                    <span className="sm:col-span-2 text-[#1C2B26]">Cormorant Garamond &amp; DM Sans Google Fonts open-source pairing</span>
                   </div>
                 </div>
               </div>
@@ -601,10 +601,10 @@ export default function DigitalProductDetail() {
                       <MdCheck /> Authorized Use
                     </div>
                     <ul className="text-xs text-[#6B7C75] space-y-1">
-                      <li>• Unlimited commercial & client projects</li>
-                      <li>• Physical CNC fabrication & carpentry execution</li>
-                      <li>• Corporate presentations, pitches & proposals</li>
-                      <li>• Modification and adaptation for client brand guidelines</li>
+                      <li>• Unlimited commercial &amp; client projects</li>
+                      <li>• Multi-platform web, mobile app development &amp; client deliverables</li>
+                      <li>• Corporate presentations, pitches &amp; marketing campaigns</li>
+                      <li>• Modification and adaptation for brand design guidelines</li>
                     </ul>
                   </div>
 

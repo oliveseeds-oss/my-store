@@ -51,10 +51,10 @@ export default function CuteLoader() {
         </div>
 
         <span 
-          style={{ letterSpacing: "0.2em" }}
-          className="text-[10px] uppercase font-semibold text-[#8A8D88]"
+          style={{ letterSpacing: "0.24em" }}
+          className="text-[11px] uppercase font-semibold text-[#8A8D88]"
         >
-          Olive Seeds Studio
+          Olive Seeds
         </span>
       </div>
     </div>
