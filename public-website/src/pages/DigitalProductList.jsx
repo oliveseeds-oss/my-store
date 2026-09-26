@@ -93,36 +93,43 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
 
   return (
     <div 
-      className="group relative flex flex-col justify-between bg-white border border-[#EAE4D6] hover:border-[#23483D] rounded-[4px] overflow-hidden transition-all duration-300 shadow-xs hover:shadow-md"
+      className="group relative flex flex-col h-full bg-white border border-[#EAE4D6]/70 hover:border-[#A48855]/60 rounded-[2px] overflow-hidden transition-colors duration-250"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Top Image Preview */}
-      <div className="relative aspect-[16/10] sm:aspect-[4/3] bg-[#FAF6EE] overflow-hidden border-b border-[#EAE4D6]/70">
+      {/* Top Image Preview (~65-70% visual presence with consistent 4:5 aspect ratio) */}
+      <div className="relative aspect-[4/5] bg-[#FAF6EE] overflow-hidden border-b border-[#EAE4D6]/50">
         <Link to={`/digital/${p.id}`} className="block w-full h-full">
           {img ? (
             <img 
               src={img} 
               alt={p.name} 
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
+              className="w-full h-full object-cover transition-transform duration-350 ease-out" 
+              style={{
+                transform: hovered ? "scale(1.02)" : "scale(1)",
+              }}
               loading="lazy" 
               decoding="async" 
             />
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center text-[#23483D] bg-[#FAF6EE] p-4 text-center">
-              <div className="w-12 h-12 rounded-full border border-[#A48855]/40 flex flex-col items-center justify-center bg-white shadow-2xs mb-2">
-                <span className="font-serif text-lg font-bold tracking-widest text-[#A48855]">OS</span>
-              </div>
-              <span style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.2em", color: "#A48855", fontWeight: 700 }}>Digital Vault</span>
+              <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 32, color: "rgba(164, 136, 85, 0.4)", letterSpacing: "0.1em" }}>OS</span>
+              <span style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.2em", color: "#A48855", fontWeight: 700, marginTop: 4 }}>Digital Vault</span>
             </div>
           )}
         </Link>
 
         {/* Discreet Micro-Badge */}
-        <div className="absolute top-2.5 left-2.5 z-10 pointer-events-none">
-          <span className="px-2 py-0.5 rounded-[2px] text-[9px] font-bold tracking-[0.14em] uppercase bg-white/95 backdrop-blur-md text-[#23483D] border border-[#EAE4D6] shadow-2xs">
-            {formatBadge}
-          </span>
+        <div className="absolute top-2.5 left-2.5 z-10 pointer-events-none flex items-center gap-1.5">
+          {discount > 0 ? (
+            <span className="px-1.5 py-0.5 rounded-[2px] text-[8.5px] font-bold tracking-[0.1em] uppercase bg-[#23483D] text-white">
+              −{discount}%
+            </span>
+          ) : (
+            <span className="px-1.5 py-0.5 rounded-[2px] text-[8.5px] font-semibold tracking-[0.1em] uppercase bg-white/95 text-[#23483D] border border-[#EAE4D6]">
+              {formatBadge}
+            </span>
+          )}
         </div>
 
         {/* Wishlist Button */}
@@ -134,7 +141,8 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
             onWishlist();
           }}
           aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-          className="absolute top-2.5 right-2.5 z-20 w-8 h-8 rounded-full flex items-center justify-center bg-white/90 backdrop-blur-md border border-[#EAE4D6] shadow-2xs cursor-pointer transition hover:scale-105"
+          className="absolute top-2.5 right-2.5 z-20 w-[30px] h-[30px] rounded-full flex items-center justify-center bg-white/90 border border-[#EAE4D6] cursor-pointer transition-opacity duration-200"
+          style={{ opacity: isWishlisted || hovered ? 1 : 0.85 }}
         >
           {isWishlisted ? (
             <MdFavorite className="text-rose-600 text-sm" />
@@ -144,20 +152,20 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
         </button>
       </div>
 
-      {/* Content Area */}
-      <div className="p-3.5 sm:p-4 flex flex-col flex-1 justify-between gap-3">
+      {/* Content Area with Controlled Vertical Rhythm */}
+      <div className="p-3.5 sm:p-4 flex flex-col flex-1 justify-between">
         <div>
-          {p.category_name && (
-            <p className="text-[9.5px] uppercase font-bold tracking-[0.18em] text-[#A48855] truncate mb-1">
-              {p.category_name}
-            </p>
-          )}
+          {/* Category */}
+          <p className="text-[9px] uppercase font-bold tracking-[0.18em] text-[#A48855] truncate mb-1.5 leading-tight min-h-[1.2em]">
+            {p.category_name || "Digital Architecture"}
+          </p>
 
-          <Link to={`/digital/${p.id}`} className="block">
+          {/* Asset Title (2 Lines Min Height) */}
+          <Link to={`/digital/${p.id}`} className="block mb-2.5">
             <h3 
               style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} 
-              className={`text-base sm:text-lg font-medium transition line-clamp-2 leading-snug min-h-[2.8em] break-words ${
-                hovered ? "text-[#23483D]" : "text-[#1C2B26]"
+              className={`text-[18px] sm:text-[19px] font-medium transition-colors duration-200 line-clamp-2 leading-[1.28] min-h-[2.56em] break-words ${
+                hovered ? "text-[#23483D]" : "text-[#181A18]"
               }`}
             >
               {p.name}
@@ -165,44 +173,52 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
           </Link>
         </div>
 
-        {/* Pricing & Acquisition Bar (Stack vertically on mobile to prevent ANY text collision) */}
-        <div className="pt-2 border-t border-[#EAE4D6]/60 flex flex-col gap-2 mt-auto">
+        {/* Pricing & Editorial CTA Row (mt-auto ensures perfect row alignment) */}
+        <div className="mt-auto pt-2.5 border-t border-[#FAF6EE] flex flex-col gap-3">
           <div className="flex items-baseline justify-between">
-            <span 
-              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} 
-              className="text-lg sm:text-xl font-bold text-[#1C2B26]"
-            >
-              {convert(finalPrice)}
-            </span>
-            {discount > 0 && (
-              <span className="text-[11px] text-stone-400 line-through">
-                {convert(p.price)}
+            <div className="flex items-baseline gap-2">
+              <span 
+                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} 
+                className="text-[20px] font-semibold text-[#181A18]"
+              >
+                {convert(finalPrice)}
+              </span>
+              {discount > 0 && (
+                <span className="text-[11.5px] text-[#8A8D88] line-through">
+                  {convert(p.price)}
+                </span>
+              )}
+            </div>
+            {p.file_format && (
+              <span className="text-[8.5px] font-semibold tracking-[0.12em] uppercase text-[#A48855]">
+                {p.file_format}
               </span>
             )}
           </div>
 
-          <div className="flex items-center gap-1.5 w-full">
+          <div className="flex items-center justify-between gap-2.5 pt-0.5">
             <Link
               to={`/digital/${p.id}`}
-              className="flex-1 py-2 text-center text-[10px] sm:text-[11px] font-bold tracking-[0.12em] uppercase rounded-[3px] border border-[#EAE4D6] bg-[#FAF6EE] text-[#1C2B26] hover:bg-[#23483D] hover:text-white hover:border-[#23483D] transition duration-300"
+              className="group/cta inline-flex items-center gap-1.5 text-[10.5px] font-bold tracking-[0.15em] uppercase text-[#181A18] hover:text-[#23483D] transition-colors"
+              style={{ fontFamily: "'DM Sans', sans-serif" }}
             >
-              Inspect
+              <span>Inspect Piece</span>
+              <span className="inline-block transition-transform duration-200 group-hover/cta:translate-x-1 text-xs">→</span>
             </Link>
             <button
               onClick={handleAdd}
               aria-label="Add digital asset to order"
-              className={`px-3.5 py-2 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase rounded-[3px] transition shadow-xs cursor-pointer flex items-center justify-center shrink-0 ${
+              title={added ? "Added to Order" : "Add to Order"}
+              className={`w-8 h-8 rounded-[3px] border border-[#EAE4D6] transition-all duration-200 cursor-pointer flex items-center justify-center shrink-0 ${
                 added 
-                  ? "bg-[#16a34a] text-white" 
-                  : "bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D]"
+                  ? "bg-[#16a34a] text-white border-[#16a34a]" 
+                  : "bg-[#FAF6EE] text-[#23483D] hover:bg-[#23483D] hover:text-white hover:border-[#23483D]"
               }`}
-              title="Add to Order"
             >
-              {added ? <MdCheck className="text-xs" /> : <MdShoppingBag className="text-xs" />}
+              {added ? <MdCheck className="text-sm" /> : <MdShoppingBag className="text-sm" />}
             </button>
           </div>
         </div>
-
       </div>
     </div>
   );
@@ -637,7 +653,7 @@ export default function DigitalProductList() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-7 sm:gap-x-8 gap-y-10 sm:gap-y-12">
               {products.map((p) => (
                 <DigitalCard
                   key={p.id}

@@ -84,23 +84,20 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
       onMouseLeave={() => setHovered(false)}
       style={{
         background: "#FFFFFF",
-        borderRadius: 4,
-        border: `1px solid ${hovered ? "#C5A880" : "#EAE4D6"}`,
+        borderRadius: 2,
+        border: `1px solid ${hovered ? "rgba(164, 136, 85, 0.4)" : "rgba(234, 228, 214, 0.7)"}`,
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
         height: "100%",
-        transition: "box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease",
-        boxShadow: hovered
-          ? "0 14px 32px rgba(20,25,22,0.06)"
-          : "0 2px 8px rgba(20,25,22,0.02)",
-        transform: hovered ? "translateY(-3px)" : "translateY(0)",
+        transition: "border-color 0.25s ease",
+        boxShadow: "none",
         position: "relative",
       }}
     >
-      {/* Image Frame */}
-      <Link to={`/products/${p.id}`} style={{ display: "block", position: "relative", overflow: "hidden" }}>
-        <div style={{ height: 240, width: "100%", background: "#FAF6EE", overflow: "hidden", position: "relative", flexShrink: 0 }}>
+      {/* Image Frame (~65-70% visual presence with consistent 4:5 aspect ratio) */}
+      <Link to={`/products/${p.id}`} style={{ display: "block", position: "relative", overflow: "hidden", width: "100%" }}>
+        <div style={{ aspectRatio: "4 / 5", width: "100%", background: "#FAF6EE", overflow: "hidden", position: "relative", flexShrink: 0 }}>
           {img ? (
             <img
               src={img}
@@ -112,8 +109,8 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
-                transition: "transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)",
-                transform: hovered ? "scale(1.06)" : "scale(1)",
+                transition: "transform 0.35s ease-out",
+                transform: hovered ? "scale(1.02)" : "scale(1)",
                 display: "block",
               }}
             />
@@ -123,51 +120,26 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
               <span style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.2em", color: "#A48855", fontWeight: 700, marginTop: 4 }}>Atelier Archive</span>
             </div>
           )}
-
-          {/* Quick View Overlay Pill */}
-          <div 
-            style={{
-              position: "absolute", bottom: 12, left: "50%", transform: `translateX(-50%) translateY(${hovered ? "0" : "8px"})`,
-              opacity: hovered ? 1 : 0,
-              background: "rgba(255,255,255,0.96)",
-              backdropFilter: "blur(8px)",
-              borderRadius: 3,
-              border: "1px solid #EAE4D6",
-              padding: "6px 16px",
-              fontSize: 10,
-              fontFamily: "'DM Sans', sans-serif",
-              fontWeight: 700,
-              color: "#23483D",
-              letterSpacing: "0.16em",
-              textTransform: "uppercase",
-              whiteSpace: "nowrap",
-              boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
-              transition: "all 0.25s ease",
-            }}
-          >
-            Inspect Piece
-          </div>
         </div>
 
-        {/* Single Discreet Luxury Status Tag (No Clutter, No Emoji) */}
+        {/* Small Discreet Product Metadata Tag (No Loud Sale Badges) */}
         {(discount > 0 || tags.length > 0) && (
-          <div style={{ position: "absolute", top: 10, left: 10, zIndex: 10, display: "flex", gap: 5 }}>
+          <div style={{ position: "absolute", top: 10, left: 10, zIndex: 10, display: "flex", gap: 5, pointerEvents: "none" }}>
             {discount > 0 ? (
               <span style={{
-                fontSize: 9, fontWeight: 700, padding: "3px 8px",
+                fontSize: 8.5, fontWeight: 700, padding: "2.5px 7px",
                 borderRadius: 2, background: "#23483D", color: "#FFFFFF",
-                fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.12em",
+                fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.1em",
                 textTransform: "uppercase"
               }}>
-                Privilege · -{discount}%
+                −{discount}%
               </span>
             ) : (
               <span style={{
-                fontSize: 9, fontWeight: 600, padding: "3px 8px",
+                fontSize: 8.5, fontWeight: 600, padding: "2.5px 7px",
                 borderRadius: 2, background: "rgba(255, 255, 255, 0.95)",
-                backdropFilter: "blur(4px)",
-                border: "1px solid #EAE4D6", color: "#23483D",
-                fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.12em",
+                border: "1px solid rgba(234, 228, 214, 0.8)", color: "#23483D",
+                fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.1em",
                 textTransform: "uppercase"
               }}>
                 {tags[0]}
@@ -176,19 +148,19 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
           </div>
         )}
 
-        {/* Wishlist Button (Sleek Minimal SVG Icon) */}
+        {/* Wishlist Heart (Subtle, Compact, No Heavy Drop Shadows) */}
         <button
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); onWishlist(); }}
           aria-label={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
           style={{
-            position: "absolute", top: 8, right: 8, zIndex: 25,
-            width: 34, height: 34, borderRadius: "50%",
-            background: "rgba(255,255,255,0.92)",
-            backdropFilter: "blur(6px)",
-            border: "1px solid #EAE4D6", cursor: "pointer",
+            position: "absolute", top: 10, right: 10, zIndex: 25,
+            width: 30, height: 30, borderRadius: "50%",
+            background: "rgba(255, 255, 255, 0.9)",
+            border: "1px solid rgba(234, 228, 214, 0.8)",
+            cursor: "pointer",
             display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
-            transition: "all 0.2s ease",
+            opacity: isWishlisted || hovered ? 1 : 0.85,
+            transition: "opacity 0.2s ease, transform 0.2s ease",
           }}
         >
           {isWishlisted ? (
@@ -199,96 +171,105 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
         </button>
       </Link>
 
-      {/* Card Body */}
-      <div style={{ padding: "16px 18px 18px", display: "flex", flexDirection: "column", flex: 1 }}>
-        {p.category_name && (
-          <p style={{
-            fontSize: 9.5, textTransform: "uppercase", letterSpacing: "0.18em",
-            color: "#A48855", fontFamily: "'DM Sans', sans-serif", fontWeight: 700, marginBottom: 5,
-          }}>
-            {p.category_name}
-          </p>
-        )}
+      {/* Card Body with Precise Vertical Rhythm */}
+      <div style={{ padding: "14px 16px 16px", display: "flex", flexDirection: "column", flex: 1 }}>
+        {/* Category (Subtle, Small, Non-competing) */}
+        <p style={{
+          fontSize: 9, textTransform: "uppercase", letterSpacing: "0.18em",
+          color: "#A48855", fontFamily: "'DM Sans', sans-serif", fontWeight: 700,
+          marginBottom: 7, lineHeight: 1.2,
+          minHeight: "1.2em",
+        }}>
+          {p.category_name || "Bespoke Collection"}
+        </p>
 
-        <Link to={`/products/${p.id}`} style={{ textDecoration: "none" }}>
+        {/* Product Name (Primary Textual Element, 2 Lines Min Height) */}
+        <Link to={`/products/${p.id}`} style={{ textDecoration: "none", marginBottom: 11 }}>
           <h3 style={{
             fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 500,
-            fontSize: 19, lineHeight: 1.3,
+            fontSize: 18, lineHeight: 1.28,
             color: hovered ? "#23483D" : "#181A18",
             transition: "color 0.2s ease",
             display: "-webkit-box", WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical", overflow: "hidden",
-            minHeight: "2.6em",
-            marginBottom: 6,
+            minHeight: "2.56em",
+            margin: 0,
           }}>
             {p.name}
           </h3>
         </Link>
 
-        {/* Quiet Price & Stock Row */}
-        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginTop: "auto", paddingTop: 10, borderTop: "1px solid #FAF6EE" }}>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+        {/* Price Area (Primary Current Price, Subtle Strike-through, mt-auto for row alignment) */}
+        <div style={{
+          marginTop: "auto",
+          paddingTop: 10,
+          borderTop: "1px solid #FAF6EE",
+          display: "flex",
+          alignItems: "baseline",
+          justifyContent: "space-between",
+          marginBottom: 16,
+        }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 7 }}>
             <span style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 22, fontWeight: 700, color: "#181A18",
+              fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 20, fontWeight: 600, color: "#181A18",
             }}>
               {convert(finalPrice)}
             </span>
-            {p.discount_price && (
-              <span style={{ fontSize: 12, textDecoration: "line-through", color: "#8A8D88" }}>
+            {p.discount_price && Number(p.discount_price) < Number(p.price) && (
+              <span style={{ fontSize: 11.5, textDecoration: "line-through", color: "#8A8D88" }}>
                 {convert(p.price)}
               </span>
             )}
           </div>
           {p.stock <= 5 && p.stock > 0 && (
-            <span style={{ fontSize: 9.5, color: "#A48855", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>
+            <span style={{ fontSize: 8.5, color: "#A48855", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" }}>
               Limited Reserve
             </span>
           )}
         </div>
 
-        {/* Clean Luxury Action Bar */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 14 }}>
+        {/* Editorial Action Bar: Primary "Inspect Piece →" Link + Compact Secondary Cart Bag */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
           <Link
             to={`/products/${p.id}`}
             style={{
-              flex: 1,
-              display: "flex",
+              display: "inline-flex",
               alignItems: "center",
-              justifyContent: "center",
-              padding: "10px 0",
-              borderRadius: 3,
-              border: "1px solid #EAE4D6",
+              gap: 6,
               textDecoration: "none",
               fontFamily: "'DM Sans', sans-serif",
-              fontSize: 11,
+              fontSize: 10.5,
               fontWeight: 700,
-              letterSpacing: "0.14em",
+              letterSpacing: "0.15em",
               textTransform: "uppercase",
-              transition: "all 0.25s ease",
-              background: "#FAF6EE",
               color: "#181A18",
+              transition: "color 0.2s ease",
             }}
-            className="hover:bg-[#23483D] hover:text-white hover:border-[#23483D]"
+            className="group/cta hover:text-[#23483D]"
           >
-            Inspect Piece
+            <span>Inspect Piece</span>
+            <span className="inline-block transition-transform duration-200 group-hover/cta:translate-x-1" style={{ fontSize: 12 }}>→</span>
           </Link>
+
           <button
             onClick={handleAdd}
             aria-label="Add to cart"
             title={added ? "Added to Order" : "Add to Order"}
             style={{
-              padding: "10px 14px",
+              width: 32,
+              height: 32,
               borderRadius: 3,
-              border: "none",
+              border: "1px solid #EAE4D6",
               cursor: "pointer",
               transition: "all 0.2s ease",
-              background: added ? "#16a34a" : "#23483D",
-              color: "#FFFFFF",
+              background: added ? "#16a34a" : "#FAF6EE",
+              color: added ? "#FFFFFF" : "#23483D",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              shrink: 0,
+              flexShrink: 0,
             }}
+            className="hover:bg-[#23483D] hover:text-white hover:border-[#23483D]"
           >
             {added ? <MdCheck className="text-sm" /> : <MdShoppingBag className="text-sm" />}
           </button>
@@ -788,9 +769,7 @@ export default function ProductList() {
               )}
             </div>
           ) : (
-            <div className="products-grid" style={{
-              display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 24,
-            }}>
+            <div className="products-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-7 sm:gap-x-8 gap-y-10 sm:gap-y-12">
               {products.map((p) => {
                 const pUid = String(p.product_uid || p.id);
                 return (
