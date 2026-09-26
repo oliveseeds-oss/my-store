@@ -10,6 +10,10 @@ import SEO from "../components/SEO";
 import SmartAddressForm from "../components/SmartAddressForm";
 import { Country } from "country-state-city";
 import { trackGA4Event } from "../utils/ga4";
+import { 
+  MdLocalShipping, MdCreditCard, MdAccountBalanceWallet, 
+  MdSecurity, MdWorkspacePremium 
+} from "react-icons/md";
 
 import {
   PayPalProvider,
@@ -663,7 +667,7 @@ export default function Checkout() {
               <div className="border-t border-[#EAE4D6] pt-5 mt-3 flex flex-col gap-3">
                 <div className="flex items-center justify-between">
                   <h4 className="text-sm font-semibold text-[#181A18] flex items-center gap-2">
-                    <span>🚚</span> Select Shipping Method
+                    <MdLocalShipping className="text-base text-[#23483D]" /> Select Shipping Method
                   </h4>
                   {shippingZoneInfo && (
                     <span className="text-[10px] font-semibold text-[#23483D] bg-[#FAF6EE] border border-[#EAE4D6] px-2.5 py-0.5 rounded-[4px]">
@@ -674,11 +678,11 @@ export default function Checkout() {
 
                 {shippingLoading ? (
                   <div className="p-4 bg-[#FAF6EE] rounded-[4px] border border-[#EAE4D6] text-xs text-[#676A65] font-medium flex items-center justify-center gap-2">
-                    <span className="animate-spin">⏳</span> Calculating best shipping options for {form.delivery_country}...
+                    <span className="animate-spin text-sm">↻</span> Calculating best shipping options for {form.delivery_country}...
                   </div>
                 ) : shippingError ? (
                   <div className="p-4 bg-amber-50 rounded-[4px] border border-amber-200 text-xs text-amber-800 font-bold">
-                    ⚠️ {shippingError}
+                    {shippingError}
                   </div>
                 ) : shippingMethods.length === 0 ? (
                   <div className="p-4 bg-rose-50 rounded-[4px] border border-rose-200 text-xs text-rose-700 font-bold">
@@ -737,7 +741,9 @@ export default function Checkout() {
             <div className="border-t border-[#EAE4D6] pt-5 mt-3">
               <h4 className="text-sm font-semibold text-[#181A18] mb-3">Secure Payment Methods Available</h4>
               <div className="p-4 border border-[#EAE4D6] bg-[#FAF6EE] rounded-[4px] flex flex-col gap-2">
-                <span className="text-xs font-bold text-[#181A18]">💳 Online Payments Gateways Enabled</span>
+                <span className="text-xs font-bold text-[#181A18] flex items-center gap-1.5">
+                  <MdSecurity className="text-base text-[#A48855]" /> Online Payment Gateways Enabled
+                </span>
                 <span className="text-[11px] text-[#676A65] font-normal leading-relaxed">
                   We securely accept Debit Cards, Credit Cards (Visa, Mastercard, RuPay, etc.), UPI, and Netbanking via <strong>Razorpay</strong> for domestic orders, and international card payments via <strong>PayPal</strong>.
                 </span>
@@ -832,7 +838,7 @@ export default function Checkout() {
               {isFreeOrder ? (
                 <div className="mt-4 mb-2 flex flex-col gap-3">
                   <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-[4px] flex items-center gap-3">
-                    <span className="text-2xl">🎉</span>
+                    <MdWorkspacePremium className="text-2xl text-emerald-850" />
                     <div>
                       <p className="text-xs font-bold text-emerald-900">Complimentary Commission</p>
                       <p className="text-[11px] text-emerald-700">No payment card required. Direct file download upon completion.</p>
@@ -844,7 +850,7 @@ export default function Checkout() {
                     disabled={placing || cart.length === 0}
                     className="w-full py-3.5 rounded-[4px] font-semibold text-xs uppercase tracking-wider bg-emerald-700 hover:bg-emerald-800 text-white transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    {placing ? "Processing Order..." : "⚡ Complete Free Order & Download"}
+                    {placing ? "Processing Order..." : "Complete Free Order & Download"}
                   </button>
                 </div>
               ) : (
@@ -857,7 +863,9 @@ export default function Checkout() {
                         onClick={() => setPaymentMethod("razorpay")}
                         className={`p-3.5 rounded-[4px] border text-left transition-all ${paymentMethod === "razorpay" ? "border-[#23483D] bg-[#FAF6EE]" : "border-[#EAE4D6] bg-white hover:bg-[#FAF6EE]"}`}
                       >
-                        <div className="font-bold text-xs text-[#181A18]">💳 Razorpay</div>
+                        <div className="font-bold text-xs text-[#181A18] flex items-center gap-1.5">
+                          <MdCreditCard className="text-base text-[#23483D]" /> Razorpay
+                        </div>
                         <div className="text-[9px] text-[#676A65] mt-0.5">Cards, UPI, Netbanking</div>
                       </button>
                       <button
@@ -865,7 +873,9 @@ export default function Checkout() {
                         onClick={() => setPaymentMethod("paypal")}
                         className={`p-3.5 rounded-[4px] border text-left transition-all ${paymentMethod === "paypal" ? "border-[#23483D] bg-[#FAF6EE]" : "border-[#EAE4D6] bg-white hover:bg-[#FAF6EE]"}`}
                       >
-                        <div className="font-bold text-xs text-[#181A18]">🅿️ PayPal</div>
+                        <div className="font-bold text-xs text-[#181A18] flex items-center gap-1.5">
+                          <MdAccountBalanceWallet className="text-base text-[#23483D]" /> PayPal
+                        </div>
                         <div className="text-[9px] text-[#676A65] mt-0.5">International Wallet & Cards</div>
                       </button>
                     </div>

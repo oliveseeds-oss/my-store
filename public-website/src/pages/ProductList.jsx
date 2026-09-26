@@ -10,21 +10,12 @@ import { useMember } from "../context/MemberContext";
 import SEO from "../components/SEO";
 import AdBanner from "../components/AdBanner";
 import { getProductMainImage } from "../utils/imageHelper";
+import { 
+  MdSearch, MdTune, MdStar, MdFavorite, MdFavoriteBorder, 
+  MdShoppingBag, MdCheck, MdClose
+} from "react-icons/md";
 
-/* ─── Google Fonts ────────────────────────────────────────────────────── */
-const FontLink = () => {
-  useEffect(() => {
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href =
-      "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap";
-    document.head.appendChild(link);
-    return () => document.head.removeChild(link);
-  }, []);
-  return null;
-};
-
-/* ─── Design tokens ───────────────────────────────────────────────────── */
+/* ─── Design Tokens ───────────────────────────────────────────────────── */
 const T = {
   bg: "#FFFFFF",
   card: "#FFFFFF",
@@ -32,43 +23,31 @@ const T = {
   textSec: "#676A65",
   accent: "#23483D",
   highlight: "#A48855",
-  border: "#E7E7E2",
+  border: "#EAE4D6",
   hover: "#16352D",
   headingFont: "'Cormorant Garamond', Georgia, serif",
   bodyFont: "'DM Sans', sans-serif",
 };
 
-/* ─── Sort options (unchanged logic) ─────────────────────────────────── */
+/* ─── Sort options ───────────────────────────────────────────────────── */
 const SORT_OPTIONS = [
   { value: "newest", label: "Featured" },
-  { value: "rating", label: "Best Selling" },
+  { value: "rating", label: "Signature Works" },
   { value: "price_asc", label: "Price: Low to High" },
   { value: "price_desc", label: "Price: High to Low" },
 ];
 
-/* ─── Star Rating (unchanged logic) ──────────────────────────────────── */
-function StarRating({ rating, count }) {
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-      <div style={{ display: "flex" }}>
-        {[1, 2, 3, 4, 5].map((i) => (
-          <span
-            key={i}
-            style={{
-              fontSize: 12,
-              color: i <= Math.round(rating) ? "#A48855" : "#E7E7E2",
-            }}
-          >
-            ★
-          </span>
-        ))}
-      </div>
-      <span style={{ fontSize: 11, color: T.textSec }}>({count || 0})</span>
-    </div>
-  );
-}
+/* ─── Badge / Curated Filter Tags (No Emojis / Smileys) ──────────────── */
+const BADGE_FILTERS = [
+  { id: "", name: "All Works" },
+  { id: "Best Seller", name: "Signature Works" },
+  { id: "New Arrival", name: "Recent Releases" },
+  { id: "Limited Edition", name: "Limited Commissions" },
+  { id: "Top Rated", name: "Private Reserve" },
+  { id: "Staff Pick", name: "Studio Selection" },
+];
 
-/* ─── Product Card ────────────────────────────────────────────────────── */
+/* ─── Product Card (High Luxury Atelier Styling) ─────────────────────── */
 function ProductCard({ p, onWishlist, isWishlisted }) {
   const { addToCart } = useCart();
   const { convert } = useCurrency();
@@ -86,6 +65,7 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
 
   const handleAdd = (e) => {
     e.preventDefault();
+    e.stopPropagation();
     addToCart({
       ...p,
       type: "physical",
@@ -94,7 +74,7 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
       discount_price: p.discount_price ? Number(p.discount_price) : null
     });
     setAdded(true);
-    setTimeout(() => setAdded(false), 1500);
+    setTimeout(() => setAdded(false), 1600);
   };
 
   return (
@@ -105,14 +85,14 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
       style={{
         background: "#FFFFFF",
         borderRadius: 4,
-        border: `1px solid ${hovered ? "#D5CAA8" : "#EAE4D6"}`,
+        border: `1px solid ${hovered ? "#C5A880" : "#EAE4D6"}`,
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
         height: "100%",
         transition: "box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease",
         boxShadow: hovered
-          ? "0 12px 30px rgba(20,25,22,0.06)"
+          ? "0 14px 32px rgba(20,25,22,0.06)"
           : "0 2px 8px rgba(20,25,22,0.02)",
         transform: hovered ? "translateY(-3px)" : "translateY(0)",
         position: "relative",
@@ -120,7 +100,7 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
     >
       {/* Image Frame */}
       <Link to={`/products/${p.id}`} style={{ display: "block", position: "relative", overflow: "hidden" }}>
-        <div style={{ height: 230, width: "100%", background: "#FAF6EE", overflow: "hidden", position: "relative", flexShrink: 0 }}>
+        <div style={{ height: 240, width: "100%", background: "#FAF6EE", overflow: "hidden", position: "relative", flexShrink: 0 }}>
           {img ? (
             <img
               src={img}
@@ -132,14 +112,15 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
-                transition: "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
+                transition: "transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)",
                 transform: hovered ? "scale(1.06)" : "scale(1)",
                 display: "block",
               }}
             />
           ) : (
-            <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ fontSize: 48, opacity: 0.8 }}>🪵</span>
+            <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "#FAF6EE" }}>
+              <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 32, color: "rgba(164, 136, 85, 0.4)", letterSpacing: "0.1em" }}>OS</span>
+              <span style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.2em", color: "#A48855", fontWeight: 700, marginTop: 4 }}>Atelier Archive</span>
             </div>
           )}
 
@@ -148,19 +129,19 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
             style={{
               position: "absolute", bottom: 12, left: "50%", transform: `translateX(-50%) translateY(${hovered ? "0" : "8px"})`,
               opacity: hovered ? 1 : 0,
-              background: "rgba(255,255,255,0.95)",
+              background: "rgba(255,255,255,0.96)",
               backdropFilter: "blur(8px)",
               borderRadius: 3,
               border: "1px solid #EAE4D6",
-              padding: "5px 14px",
-              fontSize: 10.5,
+              padding: "6px 16px",
+              fontSize: 10,
               fontFamily: "'DM Sans', sans-serif",
-              fontWeight: 600,
+              fontWeight: 700,
               color: "#23483D",
-              letterSpacing: "0.14em",
+              letterSpacing: "0.16em",
               textTransform: "uppercase",
               whiteSpace: "nowrap",
-              boxShadow: "0 4px 14px rgba(0,0,0,0.06)",
+              boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
               transition: "all 0.25s ease",
             }}
           >
@@ -168,24 +149,25 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
           </div>
         </div>
 
-        {/* Single Discreet Status Tag (No Clutter) */}
+        {/* Single Discreet Luxury Status Tag (No Clutter, No Emoji) */}
         {(discount > 0 || tags.length > 0) && (
           <div style={{ position: "absolute", top: 10, left: 10, zIndex: 10, display: "flex", gap: 5 }}>
             {discount > 0 ? (
               <span style={{
-                fontSize: 9.5, fontWeight: 700, padding: "2.5px 7px",
+                fontSize: 9, fontWeight: 700, padding: "3px 8px",
                 borderRadius: 2, background: "#23483D", color: "#FFFFFF",
-                fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.08em",
+                fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.12em",
                 textTransform: "uppercase"
               }}>
-                Exclusive • -{discount}%
+                Privilege · -{discount}%
               </span>
             ) : (
               <span style={{
-                fontSize: 9.5, fontWeight: 600, padding: "2.5px 7px",
-                borderRadius: 2, background: "rgba(250, 246, 238, 0.94)",
+                fontSize: 9, fontWeight: 600, padding: "3px 8px",
+                borderRadius: 2, background: "rgba(255, 255, 255, 0.95)",
+                backdropFilter: "blur(4px)",
                 border: "1px solid #EAE4D6", color: "#23483D",
-                fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.08em",
+                fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.12em",
                 textTransform: "uppercase"
               }}>
                 {tags[0]}
@@ -194,10 +176,10 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
           </div>
         )}
 
-        {/* Wishlist Button */}
+        {/* Wishlist Button (Sleek Minimal SVG Icon) */}
         <button
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); onWishlist(); }}
-          aria-label="Add to Wishlist"
+          aria-label={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
           style={{
             position: "absolute", top: 8, right: 8, zIndex: 25,
             width: 34, height: 34, borderRadius: "50%",
@@ -205,13 +187,15 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
             backdropFilter: "blur(6px)",
             border: "1px solid #EAE4D6", cursor: "pointer",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 15,
             boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
             transition: "all 0.2s ease",
-            color: isWishlisted ? "#e11d48" : "#8A8D88",
           }}
         >
-          {isWishlisted ? "♥" : "♡"}
+          {isWishlisted ? (
+            <MdFavorite className="text-rose-600 text-sm" />
+          ) : (
+            <MdFavoriteBorder className="text-stone-400 hover:text-stone-700 text-sm" />
+          )}
         </button>
       </Link>
 
@@ -219,8 +203,8 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
       <div style={{ padding: "16px 18px 18px", display: "flex", flexDirection: "column", flex: 1 }}>
         {p.category_name && (
           <p style={{
-            fontSize: 10, textTransform: "uppercase", letterSpacing: "0.16em",
-            color: "#A48855", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, marginBottom: 5,
+            fontSize: 9.5, textTransform: "uppercase", letterSpacing: "0.18em",
+            color: "#A48855", fontFamily: "'DM Sans', sans-serif", fontWeight: 700, marginBottom: 5,
           }}>
             {p.category_name}
           </p>
@@ -229,7 +213,7 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
         <Link to={`/products/${p.id}`} style={{ textDecoration: "none" }}>
           <h3 style={{
             fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 500,
-            fontSize: 18, lineHeight: 1.3,
+            fontSize: 19, lineHeight: 1.3,
             color: hovered ? "#23483D" : "#181A18",
             transition: "color 0.2s ease",
             display: "-webkit-box", WebkitLineClamp: 2,
@@ -245,7 +229,7 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginTop: "auto", paddingTop: 10, borderTop: "1px solid #FAF6EE" }}>
           <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
             <span style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 22, fontWeight: 500, color: "#181A18",
+              fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 22, fontWeight: 700, color: "#181A18",
             }}>
               {convert(finalPrice)}
             </span>
@@ -256,55 +240,57 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
             )}
           </div>
           {p.stock <= 5 && p.stock > 0 && (
-            <span style={{ fontSize: 10, color: "#991b1b", fontWeight: 600, letterSpacing: "0.04em" }}>
-              {p.stock} left
+            <span style={{ fontSize: 9.5, color: "#A48855", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>
+              Limited Reserve
             </span>
           )}
         </div>
 
-        {/* Clean Luxury Action */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 8, marginTop: 12 }}>
+        {/* Clean Luxury Action Bar */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 14 }}>
           <Link
             to={`/products/${p.id}`}
             style={{
+              flex: 1,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              padding: "9px 0",
+              padding: "10px 0",
               borderRadius: 3,
               border: "1px solid #EAE4D6",
               textDecoration: "none",
               fontFamily: "'DM Sans', sans-serif",
               fontSize: 11,
-              fontWeight: 600,
-              letterSpacing: "0.08em",
+              fontWeight: 700,
+              letterSpacing: "0.14em",
               textTransform: "uppercase",
-              transition: "all 0.2s ease",
+              transition: "all 0.25s ease",
               background: "#FAF6EE",
-              color: "#23483D",
+              color: "#181A18",
             }}
+            className="hover:bg-[#23483D] hover:text-white hover:border-[#23483D]"
           >
-            View Piece
+            Inspect Piece
           </Link>
           <button
             onClick={handleAdd}
             aria-label="Add to cart"
             title={added ? "Added to Order" : "Add to Order"}
             style={{
-              padding: "0 14px",
+              padding: "10px 14px",
               borderRadius: 3,
               border: "none",
               cursor: "pointer",
               transition: "all 0.2s ease",
               background: added ? "#16a34a" : "#23483D",
               color: "#FFFFFF",
-              fontSize: 13,
               display: "flex",
               alignItems: "center",
-              justifyContent: "center"
+              justifyContent: "center",
+              shrink: 0,
             }}
           >
-            {added ? "✓" : "+"}
+            {added ? <MdCheck className="text-sm" /> : <MdShoppingBag className="text-sm" />}
           </button>
         </div>
       </div>
@@ -312,17 +298,7 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
   );
 }
 
-const BADGE_FILTERS = [
-  { id: "", name: "All Products", icon: "✨" },
-  { id: "Best Seller", name: "Best Seller", icon: "⭐" },
-  { id: "New Arrival", name: "New Arrival", icon: "🆕" },
-  { id: "Limited Edition", name: "Limited Edition", icon: "💎" },
-  { id: "Top Rated", name: "Top Rated", icon: "★" },
-  { id: "Flash Sale", name: "Flash Sale", icon: "⚡" },
-  { id: "Staff Pick", name: "Staff Pick", icon: "🏷️" },
-];
-
-/* ─── Main Export ─────────────────────────────────────────────────────── */
+/* ─── Main ProductList Component ──────────────────────────────────────── */
 export default function ProductList() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -332,7 +308,6 @@ export default function ProductList() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [wishlist, setWishlist] = useState([]);
-  const [email, setEmail] = useState("");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const [filters, setFilters] = useState({
@@ -345,16 +320,7 @@ export default function ProductList() {
     minRating: "",
   });
 
-  /* ── Page Title & Meta ── */
-  useEffect(() => {
-    document.title = "Bespoke Design Products | Olive Seeds Design Studio";
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-      metaDesc.setAttribute("content", "Explore our curated collection of bespoke design products — custom corporate gifts, branded décor, and premium design objects for discerning B2B clients.");
-    }
-  }, []);
-
-  /* ── Sync category & tag from URL search query or route parameter ── */
+  /* Sync category & tag from URL search query or route parameter */
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const cat = slug || urlParams.get("category") || urlParams.get("category_id") || "";
@@ -368,24 +334,6 @@ export default function ProductList() {
     }));
   }, [location.search, slug]);
 
-  /* ── Data-loading logic ── */
-  const load = useCallback(async () => {
-    setLoading(true);
-    const params = new URLSearchParams();
-    Object.entries(filters).forEach(([k, v]) => { if (v) params.set(k, v); });
-    const [r, c] = await Promise.all([
-      API.get(`/products?${params}`),
-      API.get("/categories?type=physical"),
-    ]);
-    setProducts(r.data);
-    setCategories(c.data);
-    setLoading(false);
-  }, [filters]);
-
-  useEffect(() => { load(); }, [load]);
-
-
-
   const loadWishlist = useCallback(async () => {
     if (!member) {
       setWishlist([]);
@@ -394,10 +342,10 @@ export default function ProductList() {
     try {
       const res = await API.get("/wishlist/my");
       if (Array.isArray(res.data)) {
-        setWishlist(res.data.map(item => String(item)));
+        setWishlist(res.data.map((item) => String(item)));
       }
     } catch {
-      // Guest mode or not logged in
+      // Guest mode
     }
   }, [member]);
 
@@ -411,7 +359,7 @@ export default function ProductList() {
       return;
     }
     const uidStr = String(targetUid);
-    const isWishlisted = wishlist.some(x => String(x) === uidStr);
+    const isWishlisted = wishlist.some((x) => String(x) === uidStr);
     setWishlist((w) => isWishlisted ? w.filter((x) => String(x) !== uidStr) : [...w, uidStr]);
     try {
       if (isWishlisted) {
@@ -424,27 +372,37 @@ export default function ProductList() {
     }
   };
 
+  const load = useCallback(async () => {
+    setLoading(true);
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([k, v]) => {
+      if (v) params.set(k, v);
+    });
+    try {
+      const [pRes, cRes] = await Promise.all([
+        API.get(`/products?${params.toString()}`),
+        API.get("/categories?type=physical"),
+      ]);
+      setProducts(Array.isArray(pRes.data) ? pRes.data : []);
+      setCategories(Array.isArray(cRes.data) ? cRes.data : []);
+    } catch (err) {
+      console.error("Failed to load products:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [filters]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
   const setFilter = (key, value) =>
     setFilters((f) => ({ ...f, [key]: value }));
 
   const ratingOptions = [4, 3, 2, 1];
 
-  const eyebrow = (centered = false) => ({
-    fontFamily: T.bodyFont,
-    fontSize: 10,
-    fontWeight: 700,
-    letterSpacing: "0.3em",
-    textTransform: "uppercase",
-    color: T.accent,
-    textAlign: centered ? "center" : "left",
-    marginBottom: 12,
-  });
-
-  /* ─── JSX ───────────────────────────────────────────── */
   return (
     <div style={{ background: T.bg, minHeight: "100vh", fontFamily: T.bodyFont }}>
-      <FontLink />
-
       <SEO
         title="Bespoke Design Products | Olive Seeds Design Studio"
         description="Explore our curated collection of bespoke design products — custom corporate gifts, branded décor, and premium design objects for discerning B2B clients."
@@ -453,9 +411,7 @@ export default function ProductList() {
 
       <Navbar />
 
-      {/* ═══════════════════════════════════════════════════
-          HERO SECTION (QUIET LUXURY ATELIER SHOWCASE)
-      ═══════════════════════════════════════════════════ */}
+      {/* ── Hero Showcase Section ── */}
       <section className="products-hero relative" style={{
         background: "#FFFFFF",
         borderBottom: `1px solid ${T.border}`,
@@ -463,92 +419,17 @@ export default function ProductList() {
         position: "relative",
         overflow: "hidden",
       }}>
-        {/* Ambient Warm Champagne Gold Glow Decoration with Motion */}
+        {/* Subtle Warm Halo Decor */}
         <motion.div
-          animate={{
-            scale: [1, 1.15, 1],
-            opacity: [0.4, 0.65, 0.4],
-            x: [0, 25, 0],
-            y: [0, -15, 0]
-          }}
+          animate={{ scale: [1, 1.15, 1], opacity: [0.35, 0.55, 0.35] }}
           transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
           style={{
-            position: "absolute",
-            top: "-15%",
-            right: "12%",
-            width: 580,
-            height: 580,
-            borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(197, 168, 128, 0.16) 0%, rgba(197, 168, 128, 0.04) 50%, transparent 70%)",
-            pointerEvents: "none",
-            zIndex: 1
+            position: "absolute", top: "-15%", right: "12%", width: 580, height: 580,
+            borderRadius: "50%", background: "radial-gradient(circle, rgba(197, 168, 128, 0.16) 0%, transparent 70%)",
+            pointerEvents: "none", zIndex: 1
           }}
         />
 
-        {/* Ambient Second Subtle Halo Bottom-Left */}
-        <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.25, 0.45, 0.25],
-            y: [0, 20, 0]
-          }}
-          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
-          style={{
-            position: "absolute",
-            bottom: "-10%",
-            left: "5%",
-            width: 480,
-            height: 480,
-            borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(164, 136, 85, 0.12) 0%, transparent 70%)",
-            pointerEvents: "none",
-            zIndex: 1
-          }}
-        />
-
-        {/* Delicate Animated Geometric Gold Rings Motion Decor */}
-        <motion.div
-          animate={{
-            rotate: [0, 360],
-            y: [0, -10, 0]
-          }}
-          transition={{
-            rotate: { duration: 60, repeat: Infinity, ease: "linear" },
-            y: { duration: 8, repeat: Infinity, ease: "easeInOut" }
-          }}
-          style={{
-            position: "absolute",
-            top: "18%",
-            right: "10%",
-            width: 320,
-            height: 320,
-            borderRadius: "50%",
-            border: "1px dashed rgba(197, 168, 128, 0.28)",
-            pointerEvents: "none",
-            zIndex: 1,
-            display: "none",
-          }}
-          className="lg:block"
-        >
-          <div style={{
-            position: "absolute",
-            inset: 32,
-            borderRadius: "50%",
-            border: "1px solid rgba(197, 168, 128, 0.18)",
-          }} />
-          <div style={{
-            position: "absolute",
-            top: -4,
-            left: "50%",
-            width: 8,
-            height: 8,
-            borderRadius: "50%",
-            background: "#C5A880",
-            boxShadow: "0 0 10px rgba(197, 168, 128, 0.6)"
-          }} />
-        </motion.div>
-
-        {/* Clean, Serene, Uncluttered Editorial Content */}
         <div style={{ maxWidth: 880, margin: "0 auto", textAlign: "center", position: "relative", zIndex: 2 }}>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -556,21 +437,13 @@ export default function ProductList() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
             <span style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              background: "#FAF6EE",
-              border: `1px solid ${T.border}`,
-              borderRadius: 4,
-              padding: "6px 16px",
-              marginBottom: 24,
-              fontSize: 11,
-              fontWeight: 600,
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-              color: T.accent,
+              display: "inline-flex", alignItems: "center", gap: 8,
+              background: "#FAF6EE", border: `1px solid ${T.border}`,
+              borderRadius: 4, padding: "6px 16px", marginBottom: 24,
+              fontSize: 11, fontWeight: 700, letterSpacing: "0.2em",
+              textTransform: "uppercase", color: T.accent,
             }}>
-              <span style={{ color: "#C5A880" }}>✦</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#A48855]" />
               Olive Seeds Atelier · Physical Editions
             </span>
           </motion.div>
@@ -580,13 +453,9 @@ export default function ProductList() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             style={{
-              fontFamily: T.headingFont,
-              fontWeight: 400,
-              fontSize: "clamp(38px, 5.5vw, 68px)",
-              color: T.text,
-              lineHeight: 1.12,
-              letterSpacing: "-0.01em",
-              marginBottom: 20,
+              fontFamily: T.headingFont, fontWeight: 400,
+              fontSize: "clamp(38px, 5.5vw, 68px)", color: T.text,
+              lineHeight: 1.12, letterSpacing: "-0.01em", marginBottom: 20,
             }}
           >
             The Physical Collection
@@ -597,13 +466,9 @@ export default function ProductList() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             style={{
-              fontFamily: T.bodyFont,
-              fontSize: "clamp(15px, 1.8vw, 17px)",
-              lineHeight: 1.8,
-              color: T.textSec,
-              maxWidth: 640,
-              margin: "0 auto 36px",
-              fontWeight: 400,
+              fontFamily: T.bodyFont, fontSize: "clamp(15px, 1.8vw, 17px)",
+              lineHeight: 1.8, color: T.textSec, maxWidth: 640,
+              margin: "0 auto 36px", fontWeight: 400,
             }}
           >
             Curated objects of enduring presence and tactile weight — hand-finished in organic hardwoods, optical acrylic, and precious metals for discerning brands and private collectors.
@@ -621,18 +486,10 @@ export default function ProductList() {
                 document.getElementById("product-grid")?.scrollIntoView({ behavior: "smooth" });
               }}
               style={{
-                padding: "14px 32px",
-                background: T.accent,
-                color: "#FFFFFF",
-                border: "none",
-                borderRadius: 4,
-                fontFamily: T.bodyFont,
-                fontSize: 12,
-                fontWeight: 600,
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
+                padding: "14px 32px", background: T.accent, color: "#FFFFFF",
+                border: "none", borderRadius: 4, fontFamily: T.bodyFont,
+                fontSize: 12, fontWeight: 700, letterSpacing: "0.12em",
+                textTransform: "uppercase", cursor: "pointer", transition: "all 0.2s ease",
               }}
               className="hover:bg-[#16352D] shadow-sm hover:shadow"
             >
@@ -641,20 +498,11 @@ export default function ProductList() {
             <Link
               to="/bulk-order"
               style={{
-                padding: "14px 28px",
-                background: "#FFFFFF",
-                color: T.text,
-                border: `1px solid ${T.border}`,
-                borderRadius: 4,
-                fontFamily: T.bodyFont,
-                fontSize: 12,
-                fontWeight: 600,
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                textDecoration: "none",
-                display: "inline-flex",
-                alignItems: "center",
-                transition: "all 0.2s ease",
+                padding: "14px 28px", background: "#FFFFFF", color: T.text,
+                border: `1px solid ${T.border}`, borderRadius: 4, fontFamily: T.bodyFont,
+                fontSize: 12, fontWeight: 700, letterSpacing: "0.12em",
+                textTransform: "uppercase", textDecoration: "none", display: "inline-flex",
+                alignItems: "center", transition: "all 0.2s ease",
               }}
               className="hover:bg-[#FAF6EE]"
             >
@@ -664,45 +512,36 @@ export default function ProductList() {
         </div>
       </section>
 
-
-
-      {/* ═══════════════════════════════════════════════════
-          AD BANNER
-      ═══════════════════════════════════════════════════ */}
+      {/* ── Ad Banner ── */}
       <div style={{ maxWidth: 1280, margin: "40px auto 48px", padding: "0 24px" }}>
         <AdBanner placement="Horizontal Banner" />
       </div>
 
-
-
-      {/* ═══════════════════════════════════════════════════
-          MAIN PRODUCT AREA (Sidebar + Grid)
-      ═══════════════════════════════════════════════════ */}
+      {/* ── Main Product Area (Sidebar + Grid) ── */}
       <section id="product-grid" style={{
         maxWidth: 1280, margin: "0 auto", padding: "0 24px 80px",
         display: "flex", gap: 32, alignItems: "flex-start",
       }}>
 
-        {/* ── SIDEBAR ── */}
+        {/* ── DESKTOP SIDEBAR ── */}
         <aside style={{
-          display: "none", /* shown via media query override below */
+          display: "none",
           width: 250, flexShrink: 0,
           position: "sticky", top: 88,
           maxHeight: "calc(100vh - 108px)",
-          overflowY: "auto",
-          overflowX: "hidden",
+          overflowY: "auto", overflowX: "hidden",
           overscrollBehavior: "contain",
           flexDirection: "column", gap: 16,
           paddingRight: 6,
           scrollbarWidth: "thin",
-          scrollbarColor: "#C6A77D transparent",
+          scrollbarColor: "#C5A880 transparent",
         }}
           className="luxury-sidebar"
         >
           {/* Categories */}
           <SidebarPanel title="Categories">
             {[
-              { id: "", name: "All Products" },
+              { id: "", name: "All Works" },
               ...categories,
             ].map((c) => {
               const isAllOption = c.id === "";
@@ -750,22 +589,28 @@ export default function ProductList() {
                 onClick={() => setFilter("minRating", filters.minRating === r ? "" : r)}
                 style={{
                   display: "flex", alignItems: "center", gap: 8,
-                  padding: "9px 12px", borderRadius: 10, border: "none",
+                  padding: "9px 12px", borderRadius: 4, border: "none",
                   cursor: "pointer", width: "100%",
                   fontFamily: T.bodyFont, fontSize: 12,
-                  background: filters.minRating === r ? "#FFF8EC" : "transparent",
+                  background: filters.minRating === r ? "#FAF6EE" : "transparent",
                   color: filters.minRating === r ? T.accent : T.textSec,
-                  fontWeight: filters.minRating === r ? 600 : 400,
+                  fontWeight: filters.minRating === r ? 700 : 400,
                   transition: "all 0.2s ease",
                   textAlign: "left",
                 }}
               >
-                <span>
+                <div style={{ display: "flex", gap: 2 }}>
                   {[1, 2, 3, 4, 5].map((i) => (
-                    <span key={i} style={{ color: i <= r ? "#C6A77D" : "#D6CEC4", fontSize: 12 }}>★</span>
+                    <MdStar
+                      key={i}
+                      style={{
+                        color: i <= r ? "#A48855" : "#EAE4D6",
+                        fontSize: 14,
+                      }}
+                    />
                   ))}
-                </span>
-                & Up
+                </div>
+                <span>&amp; Above</span>
               </button>
             ))}
           </SidebarPanel>
@@ -776,18 +621,18 @@ export default function ProductList() {
           {/* Top Bar */}
           <div style={{
             display: "flex", justifyContent: "space-between", alignItems: "flex-start",
-            gap: 16, marginBottom: 36, flexWrap: "wrap",
+            gap: 16, marginBottom: 28, flexWrap: "wrap",
           }}>
             <div>
               <h2 style={{
-                fontFamily: T.headingFont, fontStyle: "italic",
-                fontSize: "clamp(24px, 4vw, 38px)", fontWeight: 400,
+                fontFamily: T.headingFont,
+                fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 400,
                 color: T.text, marginBottom: 4,
               }}>
                 {filters.tag
-                  ? `${filters.tag} Objects`
+                  ? `${filters.tag}`
                   : filters.category === "Best Sellers" || filters.category === "best-sellers"
-                  ? "⭐ Best Selling Pieces"
+                  ? "Signature Works"
                   : filters.category || "The Collection"}
               </h2>
               <p style={{ fontFamily: T.bodyFont, fontSize: 13, color: T.textSec }}>
@@ -801,16 +646,16 @@ export default function ProductList() {
                 <input
                   value={filters.search}
                   onChange={(e) => setFilter("search", e.target.value)}
-                  placeholder="Search products…"
+                  placeholder="Search works…"
                   style={{
-                    width: 240, padding: "10px 36px 10px 14px",
+                    width: 240, padding: "10px 38px 10px 14px",
                     borderRadius: 4, border: `1px solid ${T.border}`,
                     fontFamily: T.bodyFont, fontSize: 13,
                     background: T.card, color: T.text,
                     outline: "none",
                   }}
                 />
-                <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", color: T.textSec, fontSize: 13 }}>🔍</span>
+                <MdSearch style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", color: T.textSec, fontSize: 18, pointerEvents: "none" }} />
               </div>
 
               {/* Sort */}
@@ -822,8 +667,7 @@ export default function ProductList() {
                   borderRadius: 4, border: `1px solid ${T.border}`,
                   fontFamily: T.bodyFont, fontSize: 13,
                   background: T.card, color: T.text,
-                  outline: "none",
-                  cursor: "pointer",
+                  outline: "none", cursor: "pointer",
                 }}
               >
                 {SORT_OPTIONS.map((o) => (
@@ -831,34 +675,32 @@ export default function ProductList() {
                 ))}
               </select>
 
-              {/* Mobile Filter Toggle */}
+              {/* Mobile Filter Toggle Button */}
               <button
                 className="mobile-filter-btn"
                 onClick={() => setShowMobileFilters(true)}
                 style={{
-                  padding: "10px 14px",
-                  borderRadius: 4, border: `1px solid ${T.border}`,
-                  fontFamily: T.bodyFont, fontSize: 13,
-                  background: T.card, color: T.text,
-                  cursor: "pointer",
                   display: "none",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "10px 16px",
+                  borderRadius: 4, border: `1px solid ${T.border}`,
+                  fontFamily: T.bodyFont, fontSize: 12, fontWeight: 700,
+                  letterSpacing: "0.1em", textTransform: "uppercase",
+                  background: T.card, color: T.text, cursor: "pointer",
                 }}
               >
-                🎛️ Filters
+                <MdTune style={{ color: "#A48855", fontSize: 16 }} />
+                <span>Filter &amp; Refine</span>
               </button>
             </div>
           </div>
 
-          {/* Horizontal Badge & Collection Filter Pills (corner round buttons) */}
+          {/* Horizontal Badge & Collection Filter Pills */}
           <div className="category-pills-bar" style={{
-            display: "flex",
-            gap: "8px",
-            overflowX: "auto",
-            WebkitOverflowScrolling: "touch",
-            paddingBottom: "14px",
-            marginBottom: "24px",
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
+            display: "flex", gap: "8px", overflowX: "auto",
+            WebkitOverflowScrolling: "touch", paddingBottom: "14px",
+            marginBottom: "24px", scrollbarWidth: "none",
           }}>
             {BADGE_FILTERS.map((badge) => {
               const isActive = (!filters.tag && !badge.id) || filters.tag === badge.id;
@@ -873,25 +715,17 @@ export default function ProductList() {
                     }));
                   }}
                   style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    padding: "7px 14px",
-                    borderRadius: "4px",
-                    fontSize: "12px",
-                    fontWeight: isActive ? 600 : 400,
-                    fontFamily: T.bodyFont,
+                    display: "inline-flex", alignItems: "center",
+                    padding: "8px 16px", borderRadius: "4px", fontSize: "12px",
+                    fontWeight: isActive ? 700 : 500, fontFamily: T.bodyFont,
                     border: `1px solid ${isActive ? T.accent : T.border}`,
-                    background: isActive ? "#FAF6EE" : T.card,
-                    color: isActive ? T.accent : T.textSec,
-                    cursor: "pointer",
-                    whiteSpace: "nowrap",
-                    flexShrink: 0,
+                    background: isActive ? T.accent : "#FAF6EE",
+                    color: isActive ? "#FFFFFF" : T.text,
+                    cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0,
                     transition: "all 0.2s ease",
                   }}
                 >
-                  <span>{badge.icon}</span>
-                  <span>{badge.name}</span>
+                  {badge.name}
                 </button>
               );
             })}
@@ -900,68 +734,62 @@ export default function ProductList() {
           {/* Product Grid */}
           {loading ? (
             <div className="products-grid" style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-              gap: 24,
+              display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 24,
             }}>
               {[...Array(8)].map((_, i) => (
                 <div key={i} style={{
-                  background: T.card, borderRadius: 20,
+                  background: T.card, borderRadius: 4,
                   overflow: "hidden", border: `1px solid ${T.border}`,
                 }}>
-                  <div style={{ aspectRatio: "1/1", background: "#EDE8E0", animation: "pulse 1.5s infinite" }} />
+                  <div style={{ aspectRatio: "4/3", background: "#EDE8E0", animation: "pulse 1.5s infinite" }} />
                   <div style={{ padding: 20 }}>
-                    <div style={{ height: 12, background: "#EDE8E0", borderRadius: 6, marginBottom: 10, width: "70%" }} />
-                    <div style={{ height: 10, background: "#EDE8E0", borderRadius: 6, width: "50%" }} />
-                    <div style={{ height: 40, background: "#F0EBE3", borderRadius: 12, marginTop: 16 }} />
+                    <div style={{ height: 12, background: "#EDE8E0", borderRadius: 2, marginBottom: 10, width: "60%" }} />
+                    <div style={{ height: 14, background: "#EDE8E0", borderRadius: 2, width: "80%" }} />
+                    <div style={{ height: 38, background: "#F0EBE3", borderRadius: 2, marginTop: 16 }} />
                   </div>
                 </div>
               ))}
             </div>
           ) : products.length === 0 ? (
             <div style={{
-              background: T.card, borderRadius: 20, padding: "60px 20px",
+              background: "#FAF6EE", borderRadius: 4, padding: "60px 20px",
               textAlign: "center", border: `1px solid ${T.border}`,
-              color: "#888",
             }}>
-              <p style={{ fontSize: 48, marginBottom: 16 }}>🪵</p>
-              <p style={{ fontFamily: T.headingFont, fontStyle: "italic", fontSize: 26, color: T.text, marginBottom: 8 }}>
-                No Products Found
-              </p>
-              <p style={{ fontSize: "1.1rem", color: "#888", fontFamily: T.bodyFont }}>
+              <div style={{
+                width: 60, height: 60, margin: "0 auto 16px",
+                borderRadius: "50%", border: "1px solid #EAE4D6",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontFamily: T.headingFont, fontSize: 24, color: "#A48855"
+              }}>
+                OS
+              </div>
+              <h3 style={{ fontFamily: T.headingFont, fontSize: 26, color: T.text, marginBottom: 8 }}>
+                No Pieces Found
+              </h3>
+              <p style={{ fontSize: "14px", color: T.textSec, fontFamily: T.bodyFont, maxWidth: 440, margin: "0 auto" }}>
                 {filters.tag
-                  ? `No products found under "${filters.tag}" right now. Try another filter or browse all products.`
-                  : filters.category === "Best Sellers" || filters.category === "best-sellers"
-                  ? "No best seller products found right now. Check back soon or browse all collections."
+                  ? `No creations currently catalogued under "${filters.tag}". Browse our complete collection archive.`
                   : filters.category
-                  ? `No products found in "${filters.category}" yet.`
-                  : "Try adjusting your filters or browse all products."}
+                  ? `No creations filed in "${filters.category}" at this time.`
+                  : "Try resetting your search filter or exploring all pieces."}
               </p>
-              {(filters.tag || filters.category) && (
+              {(filters.tag || filters.category || filters.search) && (
                 <button
-                  onClick={() => setFilters(f => ({ ...f, tag: "", category: "", search: "" }))}
+                  onClick={() => setFilters({ search: "", category: "", tag: "", sort: "newest", minPrice: "", maxPrice: "", minRating: "" })}
                   style={{
-                    marginTop: 16,
-                    padding: "10px 24px",
-                    borderRadius: 50,
-                    background: T.accent,
-                    color: "#fff",
-                    border: "none",
-                    cursor: "pointer",
-                    fontSize: 12,
-                    fontWeight: 600,
-                    fontFamily: T.bodyFont
+                    marginTop: 20, padding: "10px 24px",
+                    borderRadius: 4, background: T.accent, color: "#fff",
+                    border: "none", cursor: "pointer", fontFamily: T.bodyFont,
+                    fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase"
                   }}
                 >
-                  View All Products
+                  Reset Catalog Filters
                 </button>
               )}
             </div>
           ) : (
             <div className="products-grid" style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-              gap: 24,
+              display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 24,
             }}>
               {products.map((p) => {
                 const pUid = String(p.product_uid || p.id);
@@ -970,7 +798,7 @@ export default function ProductList() {
                     key={p.id}
                     p={p}
                     onWishlist={() => toggleWishlist(pUid)}
-                    isWishlisted={wishlist.some(x => String(x) === pUid)}
+                    isWishlisted={wishlist.some((x) => String(x) === pUid)}
                   />
                 );
               })}
@@ -979,156 +807,40 @@ export default function ProductList() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════
-          NEWSLETTER — DARK LUXURY
-      ═══════════════════════════════════════════════════ */}
-      <section style={{
-        background: "linear-gradient(135deg, #0F2744 0%, #071524 100%)",
-        padding: "clamp(60px, 6vw, 100px) 24px",
-        position: "relative",
-        overflow: "hidden",
-      }}>
-        <div style={{
-          position: "absolute", top: -100, right: -100,
-          width: 400, height: 400, borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(201,168,106,0.1), transparent 65%)",
-          pointerEvents: "none",
-        }} />
-        <div style={{ maxWidth: "680px", margin: "0 auto", textAlign: "center", position: "relative", zIndex: 2 }}>
-          <div style={{
-            background: "#081322",
-            border: "2px solid #C9A86A",
-            borderRadius: "32px",
-            padding: "48px 32px",
-            boxShadow: "0 24px 60px rgba(0,0,0,0.5)",
-            backdropFilter: "blur(20px)"
-          }}>
-            <p style={{ ...eyebrow(true), color: "#C9A86A", marginBottom: "12px" }}>B2B &amp; Volume Orders</p>
-            <h2 className="clash" style={{
-              fontWeight: 400, fontSize: "clamp(28px, 4vw, 44px)",
-              color: "#ffffff", lineHeight: 1.15, marginBottom: "16px",
-            }}>
-              Ordering for Your Organisation?
-            </h2>
-            <p style={{
-              fontFamily: T.bodyFont, fontSize: "14px", color: "rgba(255,255,255,0.8)",
-              lineHeight: 1.7, marginBottom: "32px",
-            }}>
-              We work directly with corporate procurement teams, interior design studios, and event agencies. Tiered pricing, custom branding, and dedicated production management available.
-            </p>
-            <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: "32px" }}>
-              <input
-                type="email"
-                placeholder="Your email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                style={{
-                  flex: "1 1 240px", maxWidth: "300px",
-                  padding: "14px 20px",
-                  borderRadius: 50,
-                  border: `1px solid #C9A86A`,
-                  background: "rgba(255,255,255,0.06)",
-                  color: "#ffffff",
-                  fontFamily: T.bodyFont, fontSize: 13,
-                  outline: "none",
-                }}
-              />
-              <button style={{
-                padding: "14px 28px",
-                borderRadius: 50,
-                border: "none",
-                background: "linear-gradient(135deg, #C9A86A 0%, #a87c3a 100%)",
-                color: "#081322",
-                fontFamily: T.bodyFont, fontSize: 12,
-                fontWeight: 750, letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                cursor: "pointer",
-                flexShrink: 0,
-                boxShadow: "0 8px 24px rgba(201,168,106,0.3)"
-              }}>
-                Subscribe
-              </button>
-            </div>
-
-            <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", paddingTop: "24px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-              <Link to="/contact" style={{
-                display: "inline-flex",
-                alignItems: "center",
-                background: "linear-gradient(135deg, #C9A86A 0%, #a87c3a 100%)",
-                color: "#081322",
-                fontSize: 12,
-                fontWeight: 750,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                padding: "14px 30px",
-                borderRadius: 100,
-                textDecoration: "none",
-                boxShadow: "0 6px 20px rgba(201,168,106,0.25)",
-                transition: "all 0.3s ease",
-              }}>
-                Request a B2B Quote
-              </Link>
-              <Link to="/engraving" style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 10,
-                background: "rgba(255,255,255,0.08)",
-                color: "#ffffff",
-                fontSize: 12,
-                fontWeight: 750,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                padding: "14px 30px",
-                borderRadius: 100,
-                border: `1.5px solid #C9A86A`,
-                textDecoration: "none",
-                transition: "all 0.3s ease",
-              }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = "#ffffff"; e.currentTarget.style.background = "rgba(255,255,255,0.12)"; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "#C9A86A"; e.currentTarget.style.background = "rgba(255,255,255,0.08)"; }}
-              >
-                Learn About Our Craft
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Mobile Filters Drawer Overlay */}
+      {/* ── Mobile Filters Drawer Overlay ── */}
       {showMobileFilters && (
         <div style={{
           position: "fixed", inset: 0, zIndex: 9999,
-          background: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "flex-end"
+          background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)",
+          display: "flex", justifyContent: "flex-end"
         }}>
           <div style={{
-            width: "300px", background: "#FAF8F5", height: "100%", overflowY: "auto",
-            padding: "30px 24px", display: "flex", flexDirection: "column", gap: 20,
+            width: "320px", background: "#FFFFFF", height: "100%", overflowY: "auto",
+            padding: "28px 24px", display: "flex", flexDirection: "column", gap: 20,
             position: "relative", boxShadow: "-8px 0 32px rgba(0,0,0,0.15)"
           }}>
-            <button
-              onClick={() => setShowMobileFilters(false)}
-              style={{
-                position: "absolute", top: 20, right: 20,
-                border: "none", background: "none", fontSize: 24, cursor: "pointer",
-                color: T.text
-              }}
-            >
-              ×
-            </button>
-            <h3 style={{ fontFamily: T.headingFont, fontSize: 22, fontStyle: "italic", margin: "0 0 10px 0", color: T.text }}>Filters</h3>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${T.border}`, pb: 12 }}>
+              <h3 style={{ fontFamily: T.headingFont, fontSize: 24, fontWeight: 500, margin: 0, color: T.text }}>
+                Filter Catalog
+              </h3>
+              <button
+                onClick={() => setShowMobileFilters(false)}
+                style={{
+                  border: "none", background: "none", fontSize: 22, cursor: "pointer", color: T.text,
+                }}
+              >
+                <MdClose />
+              </button>
+            </div>
 
             {/* Categories */}
             <SidebarPanel title="Categories">
               {[
-                { id: "", name: "All Products" },
-                { id: "best-sellers", name: "⭐ Best Sellers" },
+                { id: "", name: "All Works" },
                 ...categories,
               ].map((c) => {
-                const isBestSellerOption = c.id === "best-sellers";
                 const isAllOption = c.id === "";
-                const isActive = isBestSellerOption
-                  ? (filters.category === "Best Sellers" || filters.category === "best-sellers")
-                  : isAllOption
+                const isActive = isAllOption
                   ? (!filters.category)
                   : filters.category === c.name;
                 return (
@@ -1137,11 +849,7 @@ export default function ProductList() {
                     label={c.name}
                     active={isActive}
                     onClick={() => {
-                      if (isBestSellerOption) {
-                        setFilters((f) => ({ ...f, category: "Best Sellers", sort: "rating" }));
-                      } else {
-                        setFilters((f) => ({ ...f, category: isAllOption ? "" : c.name, sort: isAllOption ? "newest" : f.sort }));
-                      }
+                      setFilters((f) => ({ ...f, category: isAllOption ? "" : c.name, sort: isAllOption ? "newest" : f.sort }));
                       setShowMobileFilters(false);
                     }}
                   />
@@ -1177,22 +885,28 @@ export default function ProductList() {
                   onClick={() => { setFilter("minRating", filters.minRating === r ? "" : r); setShowMobileFilters(false); }}
                   style={{
                     display: "flex", alignItems: "center", gap: 8,
-                    padding: "9px 12px", borderRadius: 10, border: "none",
+                    padding: "9px 12px", borderRadius: 4, border: "none",
                     cursor: "pointer", width: "100%",
                     fontFamily: T.bodyFont, fontSize: 12,
-                    background: filters.minRating === r ? "#FFF8EC" : "transparent",
+                    background: filters.minRating === r ? "#FAF6EE" : "transparent",
                     color: filters.minRating === r ? T.accent : T.textSec,
-                    fontWeight: filters.minRating === r ? 600 : 400,
+                    fontWeight: filters.minRating === r ? 700 : 400,
                     transition: "all 0.2s ease",
                     textAlign: "left",
                   }}
                 >
-                  <span>
+                  <div style={{ display: "flex", gap: 2 }}>
                     {[1, 2, 3, 4, 5].map((i) => (
-                      <span key={i} style={{ color: i <= r ? "#C6A77D" : "#D6CEC4", fontSize: 12 }}>★</span>
+                      <MdStar
+                        key={i}
+                        style={{
+                          color: i <= r ? "#A48855" : "#EAE4D6",
+                          fontSize: 14,
+                        }}
+                      />
                     ))}
-                  </span>
-                  & Up
+                  </div>
+                  <span>&amp; Above</span>
                 </button>
               ))}
             </SidebarPanel>
@@ -1200,7 +914,7 @@ export default function ProductList() {
         </div>
       )}
 
-      {/* ─── B2B Ordering Strip ─── */}
+      {/* ── B2B Institutional Ordering Banner ── */}
       <section style={{
         background: "#FAF6EE",
         color: T.text,
@@ -1219,7 +933,7 @@ export default function ProductList() {
               display: "block",
               marginBottom: 8,
             }}>
-              Corporate & Institutional
+              Corporate &amp; Institutional Commissions
             </span>
             <h2 style={{
               fontFamily: T.headingFont,
@@ -1241,7 +955,7 @@ export default function ProductList() {
           </div>
           <div>
             <Link
-              to="/contact"
+              to="/bulk-order"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -1251,14 +965,15 @@ export default function ProductList() {
                 borderRadius: 4,
                 fontFamily: T.bodyFont,
                 fontSize: 12,
-                fontWeight: 600,
-                letterSpacing: "0.08em",
+                fontWeight: 700,
+                letterSpacing: "0.12em",
                 textTransform: "uppercase",
                 textDecoration: "none",
                 transition: "all 0.2s ease",
               }}
+              className="hover:bg-[#16352D]"
             >
-              Request a B2B Quote
+              Request Institutional Quote
             </Link>
           </div>
         </div>
@@ -1266,7 +981,7 @@ export default function ProductList() {
 
       <Footer />
 
-      {/* ─── Inline responsive styles ─────────────────── */}
+      {/* ── Inline Responsive Styles ── */}
       <style>{`
         @keyframes pulse {
           0%, 100% { opacity: 1; }
@@ -1277,14 +992,9 @@ export default function ProductList() {
         }
         .products-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-          gap: 20px;
+          grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+          gap: 24px;
           align-items: stretch;
-        }
-        .product-card {
-          display: flex;
-          flex-direction: column;
-          height: 100%;
         }
         .luxury-sidebar::-webkit-scrollbar {
           width: 5px;
@@ -1293,25 +1003,19 @@ export default function ProductList() {
           background: transparent;
         }
         .luxury-sidebar::-webkit-scrollbar-thumb {
-          background: #DADCD7;
+          background: #EAE4D6;
           border-radius: 4px;
         }
         @media (min-width: 1024px) {
           .luxury-sidebar { display: flex !important; }
         }
         @media (max-width: 1023px) {
-          .mobile-filter-btn { display: block !important; }
+          .mobile-filter-btn { display: flex !important; }
         }
         @media (max-width: 768px) {
           .products-grid {
             grid-template-columns: repeat(2, 1fr) !important;
             gap: 12px !important;
-          }
-          .product-card-image-wrap {
-            height: 180px !important;
-          }
-          .product-card-content {
-            padding: 12px !important;
           }
         }
       `}</style>
@@ -1330,9 +1034,9 @@ function SidebarPanel({ title, children }) {
       padding: "18px",
     }}>
       <h3 style={{
-        fontFamily: T.bodyFont, fontSize: 11, fontWeight: 700,
-        letterSpacing: "0.15em", textTransform: "uppercase",
-        color: T.text, marginBottom: 12,
+        fontFamily: T.bodyFont, fontSize: 10, fontWeight: 700,
+        letterSpacing: "0.18em", textTransform: "uppercase",
+        color: T.accent, marginBottom: 12,
         paddingBottom: 10, borderBottom: `1px solid ${T.border}`,
       }}>
         {title}
@@ -1353,7 +1057,7 @@ function SidebarBtn({ label, active, onClick }) {
         borderRadius: 4, border: "none",
         cursor: "pointer", width: "100%",
         fontFamily: T.bodyFont, fontSize: 13,
-        fontWeight: active ? 600 : 400,
+        fontWeight: active ? 700 : 400,
         background: active ? "#FAF6EE" : "transparent",
         color: active ? T.accent : T.textSec,
         transition: "all 0.15s ease",
@@ -1371,4 +1075,3 @@ const priceInputStyle = {
   color: "#181A18", background: "#FFFFFF",
   outline: "none", width: "100%",
 };
-

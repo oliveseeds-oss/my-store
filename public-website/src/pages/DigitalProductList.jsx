@@ -9,9 +9,13 @@ import { useCurrency } from "../context/CurrencyContext";
 import SEO from "../components/SEO";
 import AdBanner from "../components/AdBanner";
 import { getProductMainImage } from "../utils/imageHelper";
+import { 
+  MdSearch, MdTune, MdStar, MdFavorite, MdFavoriteBorder, 
+  MdShoppingBag, MdCheck, MdClose
+} from "react-icons/md";
 
 const SORT_OPTIONS = [
-  { value: "newest", label: "Latest Drops" },
+  { value: "newest", label: "Featured" },
   { value: "price_asc", label: "Price: Low to High" },
   { value: "price_desc", label: "Price: High to Low" },
   { value: "rating", label: "Top Rated" },
@@ -19,36 +23,37 @@ const SORT_OPTIONS = [
 
 const COLLECTIONS = [
   {
-    icon: "📐",
+    numeral: "I",
     title: "Parametric CAD & 3D Blueprints",
     desc: "Production-ready millimetric 3D CAD models (STEP, OBJ, DWG) engineered to exacting tolerances for precision fabrication and bespoke joinery.",
     category: "CAD & 3D Models",
   },
   {
-    icon: "🏛️",
+    numeral: "II",
     title: "Brand Identity Frameworks",
     desc: "Complete corporate identity systems for distinguished practices. Includes vector typography, grid architectures, and comprehensive brand guidelines.",
     category: "Brand Identity Kits",
   },
   {
-    icon: "📊",
+    numeral: "III",
     title: "Executive Presentation Systems",
     desc: "Editorial slide architectures and pitch decks designed for executive boardrooms, sovereign capital briefs, and high-stakes venture summits.",
     category: "Presentation Templates",
   },
   {
-    icon: "📜",
+    numeral: "IV",
     title: "Architectural Stationery Suites",
     desc: "Typography hierarchies, letterheads, proposal dossiers, and certificates calibrated for luxury physical embossing or digital correspondence.",
     category: "Business Stationery",
   },
 ];
 
-/* ─── Digital Product Card ────────────────────────────────────── */
+/* ─── Digital Product Card (No Overlap & Quiet Luxury) ─────────── */
 function DigitalCard({ p, onWishlist, isWishlisted }) {
   const { addToCart } = useCart();
   const { convert } = useCurrency();
   const [added, setAdded] = useState(false);
+  const [hovered, setHovered] = useState(false);
 
   const img = getProductMainImage(p);
   const finalPrice = (p.discount_price !== null && p.discount_price !== undefined && p.discount_price !== "")
@@ -72,11 +77,14 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
     setTimeout(() => setAdded(false), 1600);
   };
 
-  const formatBadge = p.file_format || (Array.isArray(p.tags) && p.tags[0]) || "DIGITAL ASSET";
+  const formatBadge = p.file_format || (Array.isArray(p.tags) && p.tags[0]) || "CAD ASSET";
 
   return (
-    <div className="group relative flex flex-col justify-between bg-white border border-[#EAE4D6] hover:border-[#23483D] rounded-[4px] overflow-hidden transition-all duration-300 shadow-sm hover:shadow-md">
-      
+    <div 
+      className="group relative flex flex-col justify-between bg-white border border-[#EAE4D6] hover:border-[#23483D] rounded-[4px] overflow-hidden transition-all duration-300 shadow-xs hover:shadow-md"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       {/* Top Image Preview */}
       <div className="relative aspect-[16/10] sm:aspect-[4/3] bg-[#FAF6EE] overflow-hidden border-b border-[#EAE4D6]/70">
         <Link to={`/digital/${p.id}`} className="block w-full h-full">
@@ -89,20 +97,21 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
               decoding="async" 
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-4xl opacity-15 text-[#23483D]">
-              📐
+            <div className="w-full h-full flex flex-col items-center justify-center text-[#A48855]/50 bg-[#FAF6EE]">
+              <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 28, letterSpacing: "0.1em" }}>CAD</span>
+              <span style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.2em", color: "#A48855", fontWeight: 700, marginTop: 4 }}>Atelier Vault</span>
             </div>
           )}
         </Link>
 
         {/* Discreet Micro-Badge */}
         <div className="absolute top-2.5 left-2.5 z-10 pointer-events-none">
-          <span className="px-2 py-0.5 rounded-[2px] text-[9px] font-bold tracking-[0.12em] uppercase bg-white/90 backdrop-blur-md text-[#23483D] border border-[#EAE4D6] shadow-xs">
+          <span className="px-2 py-0.5 rounded-[2px] text-[9px] font-bold tracking-[0.14em] uppercase bg-white/95 backdrop-blur-md text-[#23483D] border border-[#EAE4D6] shadow-2xs">
             {formatBadge}
           </span>
         </div>
 
-        {/* Minimal Wishlist Heart Button */}
+        {/* Wishlist Button */}
         <button
           type="button"
           onClick={(e) => {
@@ -111,13 +120,13 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
             onWishlist();
           }}
           aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-          className={`absolute top-2.5 right-2.5 z-20 w-8 h-8 rounded-full flex items-center justify-center text-sm transition shadow-xs cursor-pointer ${
-            isWishlisted 
-              ? "bg-[#23483D] text-[#FAF6EE]" 
-              : "bg-white/90 backdrop-blur-md text-stone-500 hover:text-red-600 border border-[#EAE4D6]"
-          }`}
+          className="absolute top-2.5 right-2.5 z-20 w-8 h-8 rounded-full flex items-center justify-center bg-white/90 backdrop-blur-md border border-[#EAE4D6] shadow-2xs cursor-pointer transition hover:scale-105"
         >
-          {isWishlisted ? "♥" : "♡"}
+          {isWishlisted ? (
+            <MdFavorite className="text-rose-600 text-sm" />
+          ) : (
+            <MdFavoriteBorder className="text-stone-400 hover:text-stone-700 text-sm" />
+          )}
         </button>
       </div>
 
@@ -125,7 +134,7 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
       <div className="p-3.5 sm:p-4 flex flex-col flex-1 justify-between gap-3">
         <div>
           {p.category_name && (
-            <p className="text-[9px] sm:text-[10px] uppercase font-bold tracking-[0.16em] text-[#A48855] truncate mb-1">
+            <p className="text-[9.5px] uppercase font-bold tracking-[0.18em] text-[#A48855] truncate mb-1">
               {p.category_name}
             </p>
           )}
@@ -133,48 +142,49 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
           <Link to={`/digital/${p.id}`} className="block">
             <h3 
               style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} 
-              className="text-base sm:text-lg font-medium text-[#1C2B26] group-hover:text-[#23483D] transition line-clamp-2 leading-snug"
+              className={`text-base sm:text-lg font-medium transition line-clamp-2 leading-snug min-h-[2.8em] break-words ${
+                hovered ? "text-[#23483D]" : "text-[#1C2B26]"
+              }`}
             >
               {p.name}
             </h3>
           </Link>
         </div>
 
-        {/* Pricing & Acquisition Bar */}
-        <div className="pt-2 border-t border-[#EAE4D6]/60 flex items-center justify-between gap-2 mt-auto">
-          <div className="min-w-0">
-            <div className="flex items-baseline gap-1.5 flex-wrap">
-              <span 
-                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} 
-                className="text-lg sm:text-xl font-bold text-[#1C2B26]"
-              >
-                {convert(finalPrice)}
+        {/* Pricing & Acquisition Bar (Stack vertically on mobile to prevent ANY text collision) */}
+        <div className="pt-2 border-t border-[#EAE4D6]/60 flex flex-col gap-2 mt-auto">
+          <div className="flex items-baseline justify-between">
+            <span 
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} 
+              className="text-lg sm:text-xl font-bold text-[#1C2B26]"
+            >
+              {convert(finalPrice)}
+            </span>
+            {discount > 0 && (
+              <span className="text-[11px] text-stone-400 line-through">
+                {convert(p.price)}
               </span>
-              {discount > 0 && (
-                <span className="text-[11px] text-stone-400 line-through">
-                  {convert(p.price)}
-                </span>
-              )}
-            </div>
+            )}
           </div>
 
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-1.5 w-full">
             <Link
               to={`/digital/${p.id}`}
-              className="px-2.5 py-1.5 text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase border border-[#EAE4D6] hover:border-[#23483D] text-[#1C2B26] rounded-[3px] transition"
+              className="flex-1 py-2 text-center text-[10px] sm:text-[11px] font-bold tracking-[0.12em] uppercase rounded-[3px] border border-[#EAE4D6] bg-[#FAF6EE] text-[#1C2B26] hover:bg-[#23483D] hover:text-white hover:border-[#23483D] transition duration-300"
             >
-              View
+              Inspect
             </Link>
             <button
               onClick={handleAdd}
               aria-label="Add digital asset to order"
-              className={`px-3 py-1.5 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase rounded-[3px] transition shadow-xs cursor-pointer flex items-center gap-1 ${
+              className={`px-3.5 py-2 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase rounded-[3px] transition shadow-xs cursor-pointer flex items-center justify-center shrink-0 ${
                 added 
                   ? "bg-[#16a34a] text-white" 
                   : "bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D]"
               }`}
+              title="Add to Order"
             >
-              {added ? "✓ Added" : "+ Add"}
+              {added ? <MdCheck className="text-xs" /> : <MdShoppingBag className="text-xs" />}
             </button>
           </div>
         </div>
@@ -184,25 +194,7 @@ function DigitalCard({ p, onWishlist, isWishlisted }) {
   );
 }
 
-/* ─── Skeleton Card ───────────────────────────────────────────── */
-function SkeletonCard() {
-  return (
-    <div className="border border-[#EAE4D6] rounded-[4px] overflow-hidden bg-white animate-pulse">
-      <div className="aspect-[4/3] bg-stone-100" />
-      <div className="p-4 space-y-3">
-        <div className="h-2.5 bg-stone-200 rounded w-1/3" />
-        <div className="h-4 bg-stone-200 rounded w-4/5" />
-        <div className="h-4 bg-stone-200 rounded w-2/3" />
-        <div className="pt-2 border-t border-stone-100 flex justify-between items-center">
-          <div className="h-5 bg-stone-200 rounded w-1/4" />
-          <div className="h-7 bg-stone-200 rounded w-16" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ─── Main Digital Products Page ───────────────────────────────── */
+/* ─── Main DigitalProductList ──────────────────────────────────── */
 export default function DigitalProductList() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -213,6 +205,7 @@ export default function DigitalProductList() {
   const [categories, setCategories] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const [filters, setFilters] = useState({
     search: "",
@@ -270,7 +263,7 @@ export default function DigitalProductList() {
     Object.entries(filters).forEach(([k, v]) => { if (v) params.set(k, v); });
     try {
       const [r, c] = await Promise.all([
-        API.get(`/digital-products?${params}`),
+        API.get(`/digital-products?${params.toString()}`),
         API.get("/categories?type=digital"),
       ]);
       setProducts(Array.isArray(r.data) ? r.data : []);
@@ -285,6 +278,8 @@ export default function DigitalProductList() {
   useEffect(() => { load(); loadWishlist(); }, [load, loadWishlist]);
 
   const setFilter = (key, val) => setFilters((f) => ({ ...f, [key]: val }));
+
+  const ratingOptions = [4, 3, 2, 1];
 
   /* Custom project brief form */
   const [form, setForm] = useState({
@@ -336,19 +331,14 @@ export default function DigitalProductList() {
       />
       <Navbar />
 
-      {/* ── Architectural Masthead & Quiet Luxury Hero ── */}
+      {/* ── Masthead Hero ── */}
       <section className="relative border-b border-[#EAE4D6] overflow-hidden" style={{ background: "#FAF6EE" }}>
-        {/* Subtle decorative watermark */}
-        <div className="absolute right-8 -bottom-14 select-none pointer-events-none opacity-[0.03] text-stone-900 font-serif text-[240px] leading-none">
-          CAD
-        </div>
-
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 relative z-10">
           <div className="max-w-3xl">
             <div className="flex items-center gap-2 mb-3">
               <span className="w-1.5 h-1.5 rounded-full bg-[#A48855]" />
               <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase text-[#A48855]">
-                Digital Design Vault & CAD Atelier
+                Digital Design Vault &amp; CAD Atelier
               </span>
             </div>
 
@@ -356,7 +346,7 @@ export default function DigitalProductList() {
               style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} 
               className="text-3xl sm:text-5xl lg:text-6xl font-normal text-[#1C2B26] tracking-tight leading-[1.08] mb-4"
             >
-              Architectural Blueprints, Parametric CAD & Digital Systems
+              Architectural Blueprints, Parametric CAD &amp; Digital Systems
             </h1>
 
             <p className="text-sm sm:text-base text-[#6B7C75] leading-relaxed max-w-2xl mb-8">
@@ -369,7 +359,7 @@ export default function DigitalProductList() {
                   const el = document.getElementById("vault-archive");
                   if (el) el.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="px-6 py-3.5 bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D] text-xs font-semibold tracking-wider uppercase rounded-[4px] transition shadow-sm cursor-pointer"
+                className="px-6 py-3.5 bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D] text-xs font-bold tracking-[0.12em] uppercase rounded-[4px] transition shadow-sm cursor-pointer"
               >
                 Explore Vault Archive ↓
               </button>
@@ -378,7 +368,7 @@ export default function DigitalProductList() {
                   const el = document.getElementById("commission-brief");
                   if (el) el.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="px-6 py-3.5 bg-white hover:bg-stone-50 border border-[#EAE4D6] text-[#1C2B26] text-xs font-semibold tracking-wider uppercase rounded-[4px] transition cursor-pointer"
+                className="px-6 py-3.5 bg-white hover:bg-stone-50 border border-[#EAE4D6] text-[#1C2B26] text-xs font-bold tracking-[0.12em] uppercase rounded-[4px] transition cursor-pointer"
               >
                 Custom Design Brief
               </button>
@@ -409,7 +399,6 @@ export default function DigitalProductList() {
               </div>
             </div>
           </div>
-
         </div>
       </section>
 
@@ -418,25 +407,124 @@ export default function DigitalProductList() {
         <AdBanner placement="Horizontal Banner" />
       </div>
 
-      {/* ── Main Vault Archive Section ── */}
-      <section id="vault-archive" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow">
+      {/* ── Main Vault Archive Section (Sidebar + Grid) ── */}
+      <section id="vault-archive" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow flex gap-8 items-start">
         
-        {/* Controls Bar: Search, Category Pills & Sort */}
-        <div className="space-y-4 mb-8">
+        {/* ── DESKTOP LUXURY SIDEBAR (Restored Full Filtering) ── */}
+        <aside 
+          style={{
+            width: 250, flexShrink: 0,
+            position: "sticky", top: 88,
+            maxHeight: "calc(100vh - 108px)",
+            overflowY: "auto", overflowX: "hidden",
+            overscrollBehavior: "contain",
+            display: "none",
+            flexDirection: "column", gap: 16,
+            scrollbarWidth: "thin",
+            scrollbarColor: "#C5A880 transparent",
+          }}
+          className="luxury-sidebar"
+        >
+          {/* Categories */}
+          <div className="bg-white border border-[#EAE4D6] rounded-[4px] p-4">
+            <h3 className="text-[10px] uppercase font-bold tracking-[0.18em] text-[#23483D] mb-3 pb-2 border-b border-[#EAE4D6]">
+              Categories
+            </h3>
+            <div className="flex flex-col gap-1">
+              <button
+                onClick={() => setFilter("category", "")}
+                className={`text-left px-2.5 py-1.5 rounded-[3px] text-xs transition cursor-pointer ${
+                  !filters.category ? "bg-[#FAF6EE] text-[#23483D] font-bold" : "text-[#6B7C75] hover:text-[#1C2B26]"
+                }`}
+              >
+                All Digital Assets
+              </button>
+              {categories.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => setFilter("category", c.name)}
+                  className={`text-left px-2.5 py-1.5 rounded-[3px] text-xs transition cursor-pointer ${
+                    filters.category === c.name ? "bg-[#FAF6EE] text-[#23483D] font-bold" : "text-[#6B7C75] hover:text-[#1C2B26]"
+                  }`}
+                >
+                  {c.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Price Range */}
+          <div className="bg-white border border-[#EAE4D6] rounded-[4px] p-4">
+            <h3 className="text-[10px] uppercase font-bold tracking-[0.18em] text-[#23483D] mb-3 pb-2 border-b border-[#EAE4D6]">
+              Price Range
+            </h3>
+            <div className="flex gap-2">
+              <input
+                type="number"
+                placeholder="Min"
+                value={filters.minPrice}
+                onChange={(e) => setFilter("minPrice", e.target.value)}
+                className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[3px] px-2.5 py-1.5 text-xs text-[#1C2B26] outline-none"
+              />
+              <input
+                type="number"
+                placeholder="Max"
+                value={filters.maxPrice}
+                onChange={(e) => setFilter("maxPrice", e.target.value)}
+                className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[3px] px-2.5 py-1.5 text-xs text-[#1C2B26] outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Customer Rating */}
+          <div className="bg-white border border-[#EAE4D6] rounded-[4px] p-4">
+            <h3 className="text-[10px] uppercase font-bold tracking-[0.18em] text-[#23483D] mb-3 pb-2 border-b border-[#EAE4D6]">
+              Customer Rating
+            </h3>
+            <div className="flex flex-col gap-1.5">
+              {ratingOptions.map((r) => (
+                <button
+                  key={r}
+                  onClick={() => setFilter("minRating", filters.minRating === r ? "" : r)}
+                  className={`flex items-center gap-2 px-2.5 py-1.5 rounded-[3px] text-xs transition cursor-pointer text-left ${
+                    filters.minRating === r ? "bg-[#FAF6EE] text-[#23483D] font-bold" : "text-[#6B7C75]"
+                  }`}
+                >
+                  <div className="flex gap-1 text-sm">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <MdStar
+                        key={i}
+                        className={i <= r ? "text-[#A48855]" : "text-[#EAE4D6]"}
+                      />
+                    ))}
+                  </div>
+                  <span>&amp; Above</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </aside>
+
+        {/* ── Product Catalog Main Content ── */}
+        <div className="flex-1 min-w-0">
           
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          {/* Top Controls Bar */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
               <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#A48855] block">
                 Atelier Catalog
               </span>
               <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl sm:text-3xl font-medium text-[#1C2B26]">
-                Curated Digital Assets
+                {filters.category || "All Digital Assets"}
               </h2>
+              <p className="text-xs text-[#6B7C75] mt-0.5">
+                {loading ? "Accessing vault..." : `${products.length} authenticated assets available`}
+              </p>
             </div>
 
-            {/* Search Input & Sort Dropdown */}
-            <div className="flex items-center gap-3 flex-wrap">
-              <div className="relative min-w-[220px] sm:min-w-[260px]">
+            {/* Search Input, Sort & Mobile Filter Toggle */}
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <div className="relative min-w-[200px] sm:min-w-[240px]">
                 <input
                   type="text"
                   value={filters.search}
@@ -444,14 +532,7 @@ export default function DigitalProductList() {
                   placeholder="Search assets, CAD, formats..."
                   className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2 text-xs focus:outline-none text-[#1C2B26]"
                 />
-                {filters.search && (
-                  <button 
-                    onClick={() => setFilter("search", "")}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 text-xs"
-                  >
-                    ✕
-                  </button>
-                )}
+                <MdSearch className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 text-lg pointer-events-none" />
               </div>
 
               <select
@@ -465,20 +546,39 @@ export default function DigitalProductList() {
                   </option>
                 ))}
               </select>
+
+              {/* Mobile Filter Button */}
+              <button
+                className="mobile-filter-btn"
+                onClick={() => setShowMobileFilters(true)}
+                style={{
+                  display: "none",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "8px 14px",
+                  borderRadius: 4, border: "1px solid #EAE4D6",
+                  fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700,
+                  letterSpacing: "0.1em", textTransform: "uppercase",
+                  background: "#FAF6EE", color: "#1C2B26", cursor: "pointer",
+                }}
+              >
+                <MdTune className="text-sm text-[#A48855]" />
+                <span>Filter &amp; Refine</span>
+              </button>
             </div>
           </div>
 
-          {/* Horizontal Category Filter Pills (Touch friendly, no scrollbars) */}
-          <div className="flex items-center gap-2 overflow-x-auto py-1 scroll-smooth" style={{ scrollbarWidth: "none" }}>
-            {[{ id: "", name: "All Digital Assets" }, ...categories].map((c) => {
+          {/* Horizontal Category Quick Filter Pills */}
+          <div className="flex items-center gap-2 overflow-x-auto py-1 pb-3 mb-6 scroll-smooth" style={{ scrollbarWidth: "none" }}>
+            {[{ id: "", name: "All Works" }, ...categories].map((c) => {
               const isActive = filters.category === c.name || (!filters.category && c.id === "");
               return (
                 <button
                   key={c.id || "all"}
                   onClick={() => setFilter("category", c.id === "" ? "" : c.name)}
-                  className={`whitespace-nowrap px-4 py-2 rounded-[4px] text-xs transition cursor-pointer shrink-0 font-medium ${
+                  className={`whitespace-nowrap px-3.5 py-1.5 rounded-[4px] text-xs transition cursor-pointer shrink-0 font-medium ${
                     isActive
-                      ? "bg-[#23483D] text-[#FAF6EE] shadow-sm font-semibold"
+                      ? "bg-[#23483D] text-[#FAF6EE] shadow-xs font-semibold"
                       : "bg-[#FAF6EE] text-[#6B7C75] hover:text-[#1C2B26] border border-[#EAE4D6]"
                   }`}
                 >
@@ -488,47 +588,163 @@ export default function DigitalProductList() {
             })}
           </div>
 
+          {/* ── Product Grid (Guaranteed No Overlap on Mobile) ── */}
+          {loading ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="border border-[#EAE4D6] rounded-[4px] overflow-hidden bg-white animate-pulse">
+                  <div className="aspect-[4/3] bg-stone-100" />
+                  <div className="p-3 space-y-2">
+                    <div className="h-2 bg-stone-200 rounded w-1/3" />
+                    <div className="h-3.5 bg-stone-200 rounded w-4/5" />
+                    <div className="h-6 bg-stone-200 rounded mt-3" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : products.length === 0 ? (
+            <div className="border border-dashed border-[#EAE4D6] rounded-[4px] p-16 text-center bg-[#FAF6EE]/40">
+              <div className="w-14 h-14 mx-auto mb-3 rounded-full border border-[#EAE4D6] bg-white flex items-center justify-center font-serif text-lg text-[#A48855]">
+                CAD
+              </div>
+              <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl font-normal text-[#1C2B26]">
+                No Assets Found
+              </h3>
+              <p className="text-xs text-[#6B7C75] mt-1.5 max-w-sm mx-auto">
+                {filters.category
+                  ? `No assets currently filed under "${filters.category}". Explore our complete vault archive.`
+                  : "No matching digital files or CAD assets found. Try resetting your search filter."}
+              </p>
+              <button
+                onClick={() => setFilters({ search: "", category: "", sort: "newest", minPrice: "", maxPrice: "", minRating: "" })}
+                className="mt-5 px-5 py-2.5 bg-[#23483D] text-[#FAF6EE] text-xs font-semibold uppercase tracking-wider rounded-[4px] hover:bg-[#16352D] transition cursor-pointer"
+              >
+                Reset Vault Filters
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
+              {products.map((p) => (
+                <DigitalCard
+                  key={p.id}
+                  p={p}
+                  onWishlist={() => toggleWishlist(p.product_uid || p.id)}
+                  isWishlisted={wishlist.includes(String(p.product_uid || p.id))}
+                />
+              ))}
+            </div>
+          )}
+
         </div>
-
-        {/* ── Product Grid ── */}
-        {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
-            {[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}
-          </div>
-        ) : products.length === 0 ? (
-          <div className="border border-dashed border-[#EAE4D6] rounded-[4px] p-16 text-center bg-[#FAF6EE]/30">
-            <span className="text-4xl block mb-3 opacity-30">📐</span>
-            <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl font-normal text-[#1C2B26]">
-              No Assets Found
-            </h3>
-            <p className="text-xs text-[#6B7C75] mt-1.5 max-w-sm mx-auto">
-              {filters.category
-                ? `No assets currently filed under "${filters.category}". Explore our complete vault archive.`
-                : "No matching digital files or CAD assets found for your query. Try resetting your search filter."}
-            </p>
-            <button
-              onClick={() => setFilters({ search: "", category: "", sort: "newest", minPrice: "", maxPrice: "", minRating: "" })}
-              className="mt-5 px-5 py-2.5 bg-[#23483D] text-[#FAF6EE] text-xs font-semibold uppercase tracking-wider rounded-[4px] hover:bg-[#16352D] transition cursor-pointer"
-            >
-              Reset Vault Filters
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
-            {products.map((p) => (
-              <DigitalCard
-                key={p.id}
-                p={p}
-                onWishlist={() => toggleWishlist(p.product_uid || p.id)}
-                isWishlisted={wishlist.includes(String(p.product_uid || p.id))}
-              />
-            ))}
-          </div>
-        )}
-
       </section>
 
-      {/* ── Featured Curated Vaults ── */}
+      {/* ── Mobile Filters Drawer Overlay ── */}
+      {showMobileFilters && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 9999,
+          background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)",
+          display: "flex", justifyContent: "flex-end"
+        }}>
+          <div style={{
+            width: "320px", background: "#FFFFFF", height: "100%", overflowY: "auto",
+            padding: "28px 24px", display: "flex", flexDirection: "column", gap: 20,
+            position: "relative", boxShadow: "-8px 0 32px rgba(0,0,0,0.15)"
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #EAE4D6", paddingBottom: 12 }}>
+              <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 24, fontWeight: 500, margin: 0, color: "#1C2B26" }}>
+                Filter Digital Vault
+              </h3>
+              <button
+                onClick={() => setShowMobileFilters(false)}
+                style={{ border: "none", background: "none", fontSize: 22, cursor: "pointer", color: "#1C2B26" }}
+              >
+                <MdClose />
+              </button>
+            </div>
+
+            {/* Categories */}
+            <div className="bg-[#FAF6EE]/50 border border-[#EAE4D6] rounded-[4px] p-4">
+              <h4 className="text-[10px] uppercase font-bold tracking-[0.18em] text-[#23483D] mb-3 pb-1.5 border-b border-[#EAE4D6]">
+                Categories
+              </h4>
+              <div className="flex flex-col gap-1">
+                <button
+                  onClick={() => { setFilter("category", ""); setShowMobileFilters(false); }}
+                  className={`text-left px-2.5 py-1.5 rounded-[3px] text-xs transition ${
+                    !filters.category ? "bg-[#23483D] text-white font-bold" : "text-[#6B7C75]"
+                  }`}
+                >
+                  All Digital Assets
+                </button>
+                {categories.map((c) => (
+                  <button
+                    key={c.id}
+                    onClick={() => { setFilter("category", c.name); setShowMobileFilters(false); }}
+                    className={`text-left px-2.5 py-1.5 rounded-[3px] text-xs transition ${
+                      filters.category === c.name ? "bg-[#23483D] text-white font-bold" : "text-[#6B7C75]"
+                    }`}
+                  >
+                    {c.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Price Range */}
+            <div className="bg-[#FAF6EE]/50 border border-[#EAE4D6] rounded-[4px] p-4">
+              <h4 className="text-[10px] uppercase font-bold tracking-[0.18em] text-[#23483D] mb-3 pb-1.5 border-b border-[#EAE4D6]">
+                Price Range
+              </h4>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  placeholder="Min"
+                  value={filters.minPrice}
+                  onChange={(e) => setFilter("minPrice", e.target.value)}
+                  className="w-full bg-white border border-[#EAE4D6] rounded-[3px] px-2.5 py-1.5 text-xs text-[#1C2B26] outline-none"
+                />
+                <input
+                  type="number"
+                  placeholder="Max"
+                  value={filters.maxPrice}
+                  onChange={(e) => setFilter("maxPrice", e.target.value)}
+                  className="w-full bg-white border border-[#EAE4D6] rounded-[3px] px-2.5 py-1.5 text-xs text-[#1C2B26] outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Rating */}
+            <div className="bg-[#FAF6EE]/50 border border-[#EAE4D6] rounded-[4px] p-4">
+              <h4 className="text-[10px] uppercase font-bold tracking-[0.18em] text-[#23483D] mb-3 pb-1.5 border-b border-[#EAE4D6]">
+                Customer Rating
+              </h4>
+              <div className="flex flex-col gap-1.5">
+                {ratingOptions.map((r) => (
+                  <button
+                    key={r}
+                    onClick={() => { setFilter("minRating", filters.minRating === r ? "" : r); setShowMobileFilters(false); }}
+                    className={`flex items-center gap-2 px-2.5 py-1.5 rounded-[3px] text-xs transition text-left ${
+                      filters.minRating === r ? "bg-[#23483D] text-white font-bold" : "text-[#6B7C75]"
+                    }`}
+                  >
+                    <div className="flex gap-1 text-sm">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <MdStar
+                          key={i}
+                          className={i <= r ? "text-[#A48855]" : "text-[#EAE4D6]"}
+                        />
+                      ))}
+                    </div>
+                    <span>&amp; Above</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Featured Curated Vaults (Roman Numerals, No Emojis) ── */}
       <section className="border-t border-[#EAE4D6] py-14 sm:py-18 bg-[#FAF6EE]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           
@@ -549,11 +765,11 @@ export default function DigitalProductList() {
               <div 
                 key={col.title}
                 onClick={() => setFilter("category", col.category)}
-                className="group bg-white border border-[#EAE4D6] hover:border-[#23483D] rounded-[4px] p-6 transition duration-300 shadow-sm hover:shadow-md cursor-pointer flex flex-col justify-between"
+                className="group bg-white border border-[#EAE4D6] hover:border-[#23483D] rounded-[4px] p-6 transition duration-300 shadow-xs hover:shadow-md cursor-pointer flex flex-col justify-between"
               >
                 <div>
-                  <span className="text-2xl block mb-3 group-hover:scale-110 transition-transform">
-                    {col.icon}
+                  <span className="font-serif text-2xl font-bold text-[#A48855] block mb-2 group-hover:scale-105 transition-transform">
+                    {col.numeral}.
                   </span>
                   <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-lg font-semibold text-[#1C2B26] group-hover:text-[#23483D] transition">
                     {col.title}
@@ -563,7 +779,7 @@ export default function DigitalProductList() {
                   </p>
                 </div>
                 <div className="mt-5 pt-3 border-t border-[#EAE4D6]/60 flex items-center justify-between text-xs font-semibold text-[#23483D]">
-                  <span>Filter Collection</span>
+                  <span>Filter Discipline</span>
                   <span className="group-hover:translate-x-1 transition-transform">→</span>
                 </div>
               </div>
@@ -571,17 +787,19 @@ export default function DigitalProductList() {
           </div>
 
           {/* White Glove Digital Assurance */}
-          <div className="mt-10 p-5 sm:p-6 bg-white border border-[#EAE4D6] rounded-[4px] flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left shadow-sm">
-            <span className="text-3xl shrink-0">🛡️</span>
+          <div className="mt-10 p-5 sm:p-6 bg-white border border-[#EAE4D6] rounded-[4px] flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left shadow-xs">
+            <div className="w-12 h-12 rounded-full border border-[#EAE4D6] bg-[#FAF6EE] flex items-center justify-center font-serif text-lg text-[#23483D] shrink-0">
+              OS
+            </div>
             <div className="flex-1">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Studio File Integrity & Verification</h4>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Studio File Integrity &amp; Verification</h4>
               <p className="text-xs text-[#6B7C75] mt-0.5 leading-relaxed">
                 All digital deliverables are SHA-256 integrity-verified, uncompressed, and backed by lifetime re-downloads directly from your private Client Atelier.
               </p>
             </div>
             <Link 
               to="/profile?tab=digital" 
-              className="shrink-0 px-4 py-2 border border-[#23483D] text-[#23483D] hover:bg-[#23483D] hover:text-white text-xs font-semibold rounded-[4px] transition uppercase tracking-wider"
+              className="shrink-0 px-4 py-2 border border-[#23483D] text-[#23483D] hover:bg-[#23483D] hover:text-white text-xs font-bold tracking-[0.1em] rounded-[4px] transition uppercase"
             >
               Your Vault
             </Link>
@@ -611,12 +829,12 @@ export default function DigitalProductList() {
 
               <div className="space-y-4 pt-2">
                 {[
-                  { icon: "⏱", title: "Direct Director Review", desc: "Every project brief is personally assessed within 24 hours." },
-                  { icon: "🔒", title: "Mutual Confidentiality", desc: "Standard NDA protection furnished prior to schematic disclosure." },
-                  { icon: "📐", title: "Parametric Precision", desc: "Files furnished in native Rhino, STEP, DWG, and vector master formats." }
-                ].map((item, idx) => (
-                  <div key={idx} className="flex gap-3.5 items-start">
-                    <span className="text-lg shrink-0 p-2 bg-[#FAF6EE] rounded-[4px] border border-[#EAE4D6]">{item.icon}</span>
+                  { id: "01", title: "Direct Director Review", desc: "Every project brief is personally assessed within 24 hours." },
+                  { id: "02", title: "Mutual Confidentiality", desc: "Standard NDA protection furnished prior to schematic disclosure." },
+                  { id: "03", title: "Parametric Precision", desc: "Files furnished in native Rhino, STEP, DWG, and vector master formats." }
+                ].map((item) => (
+                  <div key={item.id} className="flex gap-3.5 items-start">
+                    <span className="font-mono text-xs font-bold text-[#A48855] p-2 bg-[#FAF6EE] rounded-[4px] border border-[#EAE4D6] shrink-0">{item.id}</span>
                     <div>
                       <h4 className="text-xs font-bold text-[#1C2B26] uppercase tracking-wider">{item.title}</h4>
                       <p className="text-xs text-[#6B7C75] mt-0.5">{item.desc}</p>
@@ -627,10 +845,10 @@ export default function DigitalProductList() {
             </div>
 
             {/* Right Column: Brief Form */}
-            <div className="lg:col-span-7 bg-[#FAF6EE] border border-[#EAE4D6] p-6 sm:p-8 rounded-[4px] shadow-sm">
+            <div className="lg:col-span-7 bg-[#FAF6EE] border border-[#EAE4D6] p-6 sm:p-8 rounded-[4px] shadow-xs">
               {success ? (
                 <div className="text-center py-12 space-y-3">
-                  <span className="text-4xl block text-[#23483D]">✓</span>
+                  <span className="w-12 h-12 mx-auto rounded-full bg-[#23483D] text-white flex items-center justify-center text-xl font-bold">✓</span>
                   <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl font-normal text-[#1C2B26]">
                     Commission Brief Transmitted
                   </h3>
@@ -710,7 +928,7 @@ export default function DigitalProductList() {
                       >
                         <option value="">Select scope...</option>
                         <option>3D Parametric CAD / BIM</option>
-                        <option>Joinery Blueprints & CNC</option>
+                        <option>Joinery Blueprints &amp; CNC</option>
                         <option>Corporate Brand Identity</option>
                         <option>Executive Keynote Presentation</option>
                         <option>Custom Architectural Model</option>
@@ -754,7 +972,7 @@ export default function DigitalProductList() {
 
                   <div>
                     <label className="text-[10px] uppercase font-bold tracking-widest text-[#A48855] block mb-1">
-                      Project Specifications & Goals *
+                      Project Specifications &amp; Goals *
                     </label>
                     <textarea
                       rows={4}
@@ -769,7 +987,7 @@ export default function DigitalProductList() {
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full py-3.5 bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D] text-xs font-semibold tracking-wider uppercase rounded-[4px] transition shadow-sm active:scale-98 cursor-pointer disabled:opacity-50"
+                    className="w-full py-3.5 bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D] text-xs font-bold tracking-[0.12em] uppercase rounded-[4px] transition shadow-xs active:scale-98 cursor-pointer disabled:opacity-50"
                   >
                     {submitting ? "Transmitting Brief..." : "Submit Project Brief →"}
                   </button>
@@ -782,6 +1000,26 @@ export default function DigitalProductList() {
       </section>
 
       <Footer />
+
+      {/* ── Inline Responsive Styles ── */}
+      <style>{`
+        .luxury-sidebar::-webkit-scrollbar {
+          width: 5px;
+        }
+        .luxury-sidebar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .luxury-sidebar::-webkit-scrollbar-thumb {
+          background: #EAE4D6;
+          border-radius: 4px;
+        }
+        @media (min-width: 1024px) {
+          .luxury-sidebar { display: flex !important; }
+        }
+        @media (max-width: 1023px) {
+          .mobile-filter-btn { display: flex !important; }
+        }
+      `}</style>
     </div>
   );
 }

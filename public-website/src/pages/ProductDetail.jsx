@@ -12,13 +12,18 @@ import RecentlyViewed, { trackRecentlyViewed } from "../components/RecentlyViewe
 import ReviewSection from "../components/ReviewSection";
 import { trackGA4Event } from "../utils/ga4";
 import { getAllProductImages, resolveImageUrl } from "../utils/imageHelper";
+import { 
+  MdLocalShipping, MdFavorite, MdFavoriteBorder, MdStar, MdStarBorder
+} from "react-icons/md";
 
 function Stars({ rating, size = "md" }) {
   const sz = size === "sm" ? "text-xs" : "text-base";
   return (
-    <div className="flex">
+    <div className="flex items-center text-[#A48855]">
       {[1, 2, 3, 4, 5].map(i => (
-        <span key={i} className={`${sz} ${i <= Math.round(rating) ? "text-amber-500" : "text-stone-300"}`}>★</span>
+        i <= Math.round(rating) 
+          ? <MdStar key={i} className={sz} /> 
+          : <MdStarBorder key={i} className={`${sz} text-stone-300`} />
       ))}
     </div>
   );
@@ -150,7 +155,7 @@ function ProductShippingEstimate({ productId }) {
     <div className="border border-stone-200/80 bg-stone-50/60 p-4 rounded-2xl flex flex-col gap-2.5 mt-3 text-xs">
       <div className="flex items-center justify-between">
         <span className="font-bold text-stone-900 flex items-center gap-1.5 text-[13px]">
-          <span>🚚</span> Shipping Estimate
+          <MdLocalShipping className="text-base text-[#23483D]" /> Shipping Estimate
         </span>
         {shippingData?.zone && (
           <span className="text-[10px] text-stone-500 font-semibold bg-white border px-2 py-0.5 rounded-full">
@@ -612,8 +617,12 @@ export default function ProductDetail() {
                 <img src={allImages[selectedImg]} alt={product.name}
                   className="w-full aspect-square object-cover" />
               ) : (
-                <div className="w-full aspect-square flex items-center justify-center bg-stone-100">
-                  <span className="text-8xl">🪵</span>
+                <div className="w-full aspect-square flex flex-col items-center justify-center bg-[#FAF6EE] text-[#23483D]">
+                  <div className="w-20 h-20 rounded-full border border-[#A48855]/40 flex flex-col items-center justify-center bg-white shadow-2xs mb-2">
+                    <span className="font-serif text-2xl font-bold tracking-widest text-[#A48855]">OS</span>
+                    <span className="text-[8px] uppercase tracking-widest text-[#6B7C75]">Atelier</span>
+                  </div>
+                  <span className="text-xs uppercase tracking-widest text-[#6B7C75]">Architectural Piece</span>
                 </div>
               )}
             </div>
@@ -661,10 +670,9 @@ export default function ProductDetail() {
                 }}
                 title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
                 aria-label="Wishlist"
-                className="w-10 h-10 rounded-full border border-[#E7E7E2] bg-white flex items-center justify-center text-xl shadow-none hover:border-[#23483D] transition shrink-0 cursor-pointer"
-                style={{ color: isWishlisted ? "#e11d48" : "#64748b" }}
+                className="w-10 h-10 rounded-full border border-[#E7E7E2] bg-white flex items-center justify-center text-lg shadow-none hover:border-[#23483D] transition shrink-0 cursor-pointer"
               >
-                {isWishlisted ? "♥" : "♡"}
+                {isWishlisted ? <MdFavorite className="text-rose-600 text-lg" /> : <MdFavoriteBorder className="text-stone-400 text-lg" />}
               </button>
             </div>
 
@@ -780,7 +788,7 @@ export default function ProductDetail() {
             {product.enable_personalization && product.templates?.length > 0 && (
               <div className="border border-[#E7E7E2] bg-white p-5 flex flex-col gap-4 mb-2 rounded-[4px]">
                 <div>
-                  <span className="text-[10px] text-[#23483D] font-bold uppercase tracking-wider block">✏️ Customisation Details</span>
+                  <span className="text-[10px] text-[#23483D] font-bold uppercase tracking-wider block">Customisation Details</span>
                   <h3 className="text-lg font-bold text-[#181A18]">Personalise Your Piece</h3>
                 </div>
 

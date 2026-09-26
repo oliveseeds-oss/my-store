@@ -4,13 +4,13 @@ import Navbar from "../components/Navbar";
 import { useCurrency } from "../context/CurrencyContext";
 import AdBanner from "../components/AdBanner";
 import SEO from "../components/SEO";
+import { MdShoppingBag } from "react-icons/md";
 
 export default function Cart() {
   const { cart, removeFromCart, updateQty, total, count } = useCart();
   const { convert } = useCurrency();
   const navigate = useNavigate();
   const hasPhysicalItems = cart.some(i => i.type === "physical" || (!i.type && !i.is_digital));
-  const shippingCharge = hasPhysicalItems ? (total >= 999 ? 0 : 60) : 0;
 
   return (
     <div style={{ background: "#FFFFFF", color: "#181A18", fontFamily: "'DM Sans', sans-serif" }} className="min-h-screen">
@@ -33,7 +33,9 @@ export default function Cart() {
           <div 
             className="text-center py-20 rounded-[4px] border border-[#E7E7E2] bg-white flex flex-col items-center gap-4"
           >
-            <p className="text-6xl">🛒</p>
+            <div className="w-16 h-16 rounded-full bg-[#FAF6EE] border border-[#EAE4D6] flex items-center justify-center text-[#A48855] mb-1">
+              <MdShoppingBag className="text-3xl" />
+            </div>
             <p className="text-xs text-[#676A65] font-semibold uppercase tracking-wider">Your shopping cart is empty</p>
             <Link 
               to="/products"
@@ -59,7 +61,9 @@ export default function Cart() {
                         className="w-full h-full object-cover" 
                       />
                     ) : (
-                      <span className="text-3xl">{item.type === "digital" ? "📦" : "🪵"}</span>
+                      <div className="w-10 h-10 rounded-full border border-[#A48855]/30 flex flex-col items-center justify-center bg-white shadow-2xs">
+                        <span className="font-serif text-xs font-bold text-[#A48855]">OS</span>
+                      </div>
                     )}
                   </div>
                   
@@ -70,7 +74,8 @@ export default function Cart() {
                     </p>
                     {item.customizationSummary && (
                       <p className="text-[11px] text-[#23483D] bg-[#FAF6EE] rounded-[4px] px-2.5 py-1.5 font-medium mt-1.5 border border-[#EAE4D6]">
-                        ✒️ Custom: {item.customizationSummary}
+                        <span className="font-bold uppercase tracking-wider text-[9px] text-[#A48855] mr-1.5">Customization:</span>
+                        {item.customizationSummary}
                       </p>
                     )}
                     <div className="flex items-center gap-2 mt-2">

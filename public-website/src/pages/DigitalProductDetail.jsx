@@ -13,7 +13,10 @@ import ReviewSection from "../components/ReviewSection";
 import { getAllProductImages } from "../utils/imageHelper";
 import { 
   MdShield, MdOutlineFileDownload, MdOutlineCheckCircle, 
-  MdOutlineWorkspacePremium, MdShare
+  MdOutlineWorkspacePremium, MdShare, MdStar, MdStarBorder,
+  MdFavorite, MdFavoriteBorder, MdCheck, MdClose,
+  MdCreditCard, MdAccountBalanceWallet, MdArchitecture,
+  MdFolderOpen, MdLayers, MdSecurity, MdBolt
 } from "react-icons/md";
 
 export default function DigitalProductDetail() {
@@ -227,8 +230,12 @@ export default function DigitalProductDetail() {
                   className="w-full h-full object-cover transition-all duration-500" 
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-6xl opacity-15 text-[#23483D]">
-                  📐
+                <div className="w-full h-full flex flex-col items-center justify-center bg-[#FAF6EE] text-[#23483D] p-6 text-center">
+                  <div className="w-20 h-20 rounded-full border border-[#A48855]/40 flex flex-col items-center justify-center bg-white shadow-2xs mb-3">
+                    <span className="font-serif text-2xl font-bold tracking-widest text-[#A48855]">OS</span>
+                    <span className="text-[8px] uppercase tracking-widest text-[#6B7C75]">Vault</span>
+                  </div>
+                  <span className="text-xs uppercase tracking-widest text-[#6B7C75]">Architectural CAD Suite</span>
                 </div>
               )}
 
@@ -244,13 +251,13 @@ export default function DigitalProductDetail() {
                 type="button"
                 onClick={toggleWishlist}
                 aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-                className={`absolute top-3 right-3 z-20 w-9 h-9 rounded-full flex items-center justify-center text-base transition shadow-xs cursor-pointer ${
+                className={`absolute top-3 right-3 z-20 w-9 h-9 rounded-full flex items-center justify-center transition shadow-xs cursor-pointer ${
                   isWishlisted 
                     ? "bg-[#23483D] text-[#FAF6EE]" 
-                    : "bg-white/90 backdrop-blur-md text-stone-500 hover:text-red-600 border border-[#EAE4D6]"
+                    : "bg-white/90 backdrop-blur-md text-stone-500 hover:text-rose-600 border border-[#EAE4D6]"
                 }`}
               >
-                {isWishlisted ? "♥" : "♡"}
+                {isWishlisted ? <MdFavorite className="text-base text-rose-300" /> : <MdFavoriteBorder className="text-base" />}
               </button>
             </div>
 
@@ -321,9 +328,11 @@ export default function DigitalProductDetail() {
 
               {/* Star Rating & Reviews Count */}
               <div className="flex items-center gap-2 mt-2.5">
-                <div className="flex text-[#A48855] text-sm">
+                <div className="flex items-center text-[#A48855] text-sm">
                   {[1, 2, 3, 4, 5].map((s) => (
-                    <span key={s}>{s <= Math.round(product.rating || 5) ? "★" : "☆"}</span>
+                    s <= Math.round(product.rating || 5) 
+                      ? <MdStar key={s} className="text-base" /> 
+                      : <MdStarBorder key={s} className="text-base text-stone-300" />
                   ))}
                 </div>
                 <span className="text-xs text-[#6B7C75]">
@@ -373,7 +382,7 @@ export default function DigitalProductDetail() {
                 className="w-full py-4 bg-[#23483D] hover:bg-[#16352D] text-[#FAF6EE] text-xs font-bold tracking-[0.12em] uppercase rounded-[4px] transition shadow-sm active:scale-98 cursor-pointer flex items-center justify-center gap-2"
               >
                 <MdOutlineFileDownload className="text-base" />
-                {finalPrice === 0 ? "⚡ Download Free Asset" : "Acquire Asset — Instant Vault Release"}
+                {finalPrice === 0 ? "Download Complimentary Asset" : "Acquire Asset — Instant Vault Release"}
               </button>
 
               <button
@@ -384,7 +393,14 @@ export default function DigitalProductDetail() {
                     : "bg-white hover:bg-[#FAF6EE] text-[#1C2B26] border-[#EAE4D6]"
                 }`}
               >
-                {added ? "✓ Deposited in Order Cart" : "+ Add to Studio Order"}
+                {added ? (
+                  <>
+                    <MdCheck className="text-base" />
+                    <span>Deposited in Order Cart</span>
+                  </>
+                ) : (
+                  <span>+ Add to Studio Order</span>
+                )}
               </button>
             </div>
 
@@ -403,14 +419,14 @@ export default function DigitalProductDetail() {
                     onClick={() => handleInstantAcquire("razorpay")}
                     className="flex items-center justify-center gap-2 py-2.5 px-3 bg-white hover:border-[#23483D] border border-[#EAE4D6] rounded-[3px] text-xs font-semibold text-[#1C2B26] transition shadow-2xs cursor-pointer"
                   >
-                    <span>💳</span> Razorpay
+                    <MdCreditCard className="text-base text-[#23483D]" /> Razorpay
                   </button>
                   <button
                     type="button"
                     onClick={() => handleInstantAcquire("paypal")}
                     className="flex items-center justify-center gap-2 py-2.5 px-3 bg-white hover:border-[#23483D] border border-[#EAE4D6] rounded-[3px] text-xs font-semibold text-[#1C2B26] transition shadow-2xs cursor-pointer"
                   >
-                    <span>🅿️</span> PayPal
+                    <MdAccountBalanceWallet className="text-base text-[#23483D]" /> PayPal
                   </button>
                 </div>
               </div>
@@ -423,17 +439,17 @@ export default function DigitalProductDetail() {
                 <span>Olive Seeds Digital Guarantee</span>
               </div>
               <ul className="space-y-1.5 pl-1">
-                <li className="flex items-center gap-2">
-                  <span className="text-emerald-700">✓</span> Instant cloud delivery upon payment completion
+                <li className="flex items-center gap-2 text-stone-700">
+                  <MdCheck className="text-emerald-700 shrink-0 text-sm" /> Instant cloud delivery upon payment completion
                 </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-emerald-700">✓</span> Full uncompressed source formats & clean layer stacks
+                <li className="flex items-center gap-2 text-stone-700">
+                  <MdCheck className="text-emerald-700 shrink-0 text-sm" /> Full uncompressed source formats & clean layer stacks
                 </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-emerald-700">✓</span> Perpetual commercial royalty-free deployment license
+                <li className="flex items-center gap-2 text-stone-700">
+                  <MdCheck className="text-emerald-700 shrink-0 text-sm" /> Perpetual commercial royalty-free deployment license
                 </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-emerald-700">✓</span> Lifetime re-download authorization via Client Atelier
+                <li className="flex items-center gap-2 text-stone-700">
+                  <MdCheck className="text-emerald-700 shrink-0 text-sm" /> Lifetime re-download authorization via Client Atelier
                 </li>
               </ul>
             </div>
@@ -465,10 +481,10 @@ export default function DigitalProductDetail() {
           {/* Dossier Interactive Tabs */}
           <div className="border-b border-[#EAE4D6] flex items-center gap-1 sm:gap-2 overflow-x-auto pb-px" style={{ scrollbarWidth: "none" }}>
             {[
-              { id: "concept", label: "Asset Dossier & Philosophy", icon: "📐" },
-              { id: "manifest", label: "File Manifest & CAD Specs", icon: "📁" },
-              { id: "licensing", label: "Commercial Rights & Rights", icon: "📜" },
-              { id: "verification", label: "Integrity & Authenticity", icon: "🛡️" },
+              { id: "concept", label: "Asset Dossier & Philosophy", icon: <MdArchitecture className="text-base text-[#A48855]" /> },
+              { id: "manifest", label: "File Manifest & CAD Specs", icon: <MdFolderOpen className="text-base text-[#A48855]" /> },
+              { id: "licensing", label: "Commercial Rights & License", icon: <MdOutlineWorkspacePremium className="text-base text-[#A48855]" /> },
+              { id: "verification", label: "Integrity & Authenticity", icon: <MdSecurity className="text-base text-[#A48855]" /> },
             ].map((tab) => {
               const active = activeTab === tab.id;
               return (
@@ -481,7 +497,7 @@ export default function DigitalProductDetail() {
                       : "border-transparent text-[#6B7C75] hover:text-[#1C2B26] hover:bg-[#FAF6EE]/30"
                   }`}
                 >
-                  <span>{tab.icon}</span>
+                  {tab.icon}
                   <span>{tab.label}</span>
                 </button>
               );
@@ -502,21 +518,21 @@ export default function DigitalProductDetail() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 <div className="p-5 border border-[#EAE4D6] rounded-[4px] bg-white">
-                  <span className="text-xl block mb-2">📐</span>
+                  <MdArchitecture className="text-2xl text-[#A48855] mb-2" />
                   <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Parametric Precision</h4>
                   <p className="text-xs text-[#6B7C75] mt-1 leading-relaxed">
                     Curvature continuity and clean polygonal quad topologies prevent artifacting across subdivision and CNC milling operations.
                   </p>
                 </div>
                 <div className="p-5 border border-[#EAE4D6] rounded-[4px] bg-white">
-                  <span className="text-xl block mb-2">🏛️</span>
+                  <MdLayers className="text-2xl text-[#A48855] mb-2" />
                   <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Executive Standard</h4>
                   <p className="text-xs text-[#6B7C75] mt-1 leading-relaxed">
                     Typography hierarchies, grid ratios, and proportion canons are calibrated to meet Fortune 500 board and sovereign investor scrutiny.
                   </p>
                 </div>
                 <div className="p-5 border border-[#EAE4D6] rounded-[4px] bg-white">
-                  <span className="text-xl block mb-2">⚡</span>
+                  <MdBolt className="text-2xl text-[#A48855] mb-2" />
                   <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B26]">Production Ready</h4>
                   <p className="text-xs text-[#6B7C75] mt-1 leading-relaxed">
                     Zero missing font warnings or broken linked textures. Everything needed for immediate execution is packaged into the archive.
@@ -581,7 +597,9 @@ export default function DigitalProductDetail() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                   <div className="p-4 bg-white border border-[#EAE4D6] rounded-[3px]">
-                    <h4 className="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-1.5">✓ Authorized Use</h4>
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-800 uppercase tracking-wider mb-1.5">
+                      <MdCheck /> Authorized Use
+                    </div>
                     <ul className="text-xs text-[#6B7C75] space-y-1">
                       <li>• Unlimited commercial & client projects</li>
                       <li>• Physical CNC fabrication & carpentry execution</li>
@@ -591,7 +609,9 @@ export default function DigitalProductDetail() {
                   </div>
 
                   <div className="p-4 bg-white border border-[#EAE4D6] rounded-[3px]">
-                    <h4 className="text-xs font-bold text-rose-800 uppercase tracking-wider mb-1.5">✕ Restricted Use</h4>
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-rose-800 uppercase tracking-wider mb-1.5">
+                      <MdClose /> Restricted Use
+                    </div>
                     <ul className="text-xs text-[#6B7C75] space-y-1">
                       <li>• Resale, sub-licensing, or raw file re-distribution</li>
                       <li>• Inclusion in competing digital template vaults</li>
@@ -608,7 +628,7 @@ export default function DigitalProductDetail() {
             <div className="py-8 space-y-6 animate-fadeIn max-w-4xl">
               <div className="p-6 bg-white border border-[#EAE4D6] rounded-[4px] space-y-4">
                 <div className="flex items-center gap-2">
-                  <MdShield className="text-xl text-[#A48855]" />
+                  <MdSecurity className="text-xl text-[#A48855]" />
                   <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl font-normal text-[#1C2B26]">
                     Studio Security & Integrity Guarantee
                   </h3>
@@ -617,10 +637,10 @@ export default function DigitalProductDetail() {
                   Your acquisition payload is mirrored across redundant encrypted cloud storage clusters. Download links never expire and can be retrieved at any hour via your private Client Atelier.
                 </p>
 
-                <div className="p-4 bg-[#FAF6EE] border border-[#EAE4D6] rounded-[3px] font-mono text-[11px] text-[#23483D] space-y-1">
-                  <p>SHA256 CHECKSUM: VERIFIED ✓</p>
-                  <p>MALWARE SCAN: 0/72 CLEAN ENGINES ✓</p>
-                  <p>CLOUD BACKUP: GLOBAL REDUNDANCY ACTIVE ✓</p>
+                <div className="p-4 bg-[#FAF6EE] border border-[#EAE4D6] rounded-[3px] font-mono text-[11px] text-[#23483D] space-y-1.5">
+                  <p className="flex items-center gap-2"><MdCheck className="text-emerald-700" /> SHA256 CHECKSUM: VERIFIED & SEALED</p>
+                  <p className="flex items-center gap-2"><MdCheck className="text-emerald-700" /> MALWARE SCAN: 0/72 CLEAN ENGINES</p>
+                  <p className="flex items-center gap-2"><MdCheck className="text-emerald-700" /> CLOUD BACKUP: GLOBAL REDUNDANCY ACTIVE</p>
                 </div>
               </div>
             </div>
@@ -669,7 +689,9 @@ export default function DigitalProductDetail() {
                         {img ? (
                           <img src={img} alt={r.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                         ) : (
-                          <span className="text-2xl opacity-20">📐</span>
+                          <div className="w-10 h-10 rounded-full border border-[#A48855]/30 flex flex-col items-center justify-center bg-white shadow-2xs">
+                            <span className="font-serif text-xs font-bold text-[#A48855]">OS</span>
+                          </div>
                         )}
                       </div>
                       <h4 
