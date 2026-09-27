@@ -92,6 +92,13 @@ export default function MemberLogin() {
       if (tab === "login") {
         const res = await API.post("/members/login", { email: form.email, password: form.password });
         login(res.data);
+        // Automatically sync cached address to server if saved locally
+        try {
+          const cached = JSON.parse(localStorage.getItem("member_address") || "null");
+          if (cached && (cached.street_address || cached.delivery_street || cached.city)) {
+            API.put("/members/profile", cached).catch(() => {});
+          }
+        } catch (e) {}
         const params = new URLSearchParams(window.location.search);
         const redirectUrl = params.get("redirect") || "/profile";
         navigate(redirectUrl);

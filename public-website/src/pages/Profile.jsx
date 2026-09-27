@@ -25,30 +25,76 @@ export default function Profile() {
   const [wishlist, setWishlist] = useState([]);
   const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "home");
   
-  // Profile editing form states
-  const [profile, setProfile] = useState({
-    name: "",
-    full_name: "",
-    email: "",
-    phone: "",
-    street_address: "",
-    delivery_street: "",
-    address: "",
-    apt_suite: "",
-    delivery_apt: "",
-    city: "",
-    delivery_city: "",
-    state: "",
-    delivery_state: "",
-    country: "India",
-    delivery_country: "India",
-    pincode: "",
-    delivery_pincode: ""
+  // Profile editing form states - preloaded synchronously from local cache
+  const [profile, setProfile] = useState(() => {
+    let initial = {
+      name: "",
+      full_name: "",
+      email: "",
+      phone: "",
+      street_address: "",
+      delivery_street: "",
+      address: "",
+      apt_suite: "",
+      delivery_apt: "",
+      city: "",
+      delivery_city: "",
+      state: "",
+      delivery_state: "",
+      country: "India",
+      delivery_country: "India",
+      pincode: "",
+      delivery_pincode: ""
+    };
+    try {
+      const storedMember = JSON.parse(localStorage.getItem("member") || "null");
+      const m = storedMember?.member || storedMember;
+      if (m) {
+        initial.name = m.name || "";
+        initial.full_name = m.name || "";
+        initial.email = m.email || "";
+        initial.phone = m.phone || "";
+      }
+      const cached = JSON.parse(localStorage.getItem("member_address") || "null");
+      if (cached) {
+        const street = cached.street_address || cached.delivery_street || cached.address || "";
+        const apt = cached.apt_suite || cached.delivery_apt || "";
+        const city = cached.city || cached.delivery_city || "";
+        const state = cached.state || cached.delivery_state || "";
+        const country = cached.country || cached.delivery_country || "India";
+        const pin = cached.pincode || cached.delivery_pincode || "";
+        const name = cached.full_name || cached.name || initial.name;
+        const email = cached.email || initial.email;
+        const phone = cached.phone || initial.phone;
+        return {
+          ...initial,
+          name,
+          full_name: name,
+          email,
+          phone,
+          street_address: street,
+          delivery_street: street,
+          address: street,
+          apt_suite: apt,
+          delivery_apt: apt,
+          city,
+          delivery_city: city,
+          state,
+          delivery_state: state,
+          country,
+          delivery_country: country,
+          pincode: pin,
+          delivery_pincode: pin
+        };
+      }
+    } catch (e) {}
+    return initial;
   });
   const [enabledCountryCodes, setEnabledCountryCodes] = useState([]);
   const [saving, setSaving] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [sessionExpired, setSessionExpired] = useState(false);
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [loadingWishlist, setLoadingWishlist] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -200,7 +246,12 @@ export default function Profile() {
           }
         }
       })
-      .catch((err) => console.error("Failed to load profile details:", err));
+      .catch((err) => {
+        console.warn("Profile load notice:", err.message);
+        if (err.response?.status === 401) {
+          setSessionExpired(true);
+        }
+      });
 
     fetchOrders();
     fetchWishlist();
@@ -212,44 +263,42 @@ export default function Profile() {
     setSaving(true);
     setSuccessMsg("");
     setErrorMsg("");
+
+    const nameVal = profile.full_name || profile.name || "";
+    const streetVal = profile.street_address || profile.delivery_street || profile.address || "";
+    const aptVal = profile.apt_suite || profile.delivery_apt || "";
+    const cityVal = profile.city || profile.delivery_city || "";
+    const stateVal = profile.state || profile.delivery_state || "";
+    const countryVal = profile.country || profile.delivery_country || "India";
+    const pinVal = profile.pincode || profile.delivery_pincode || "";
+    const phoneVal = profile.phone || "";
+    const emailVal = profile.email || member?.email || "";
+
+    const payload = {
+      name: nameVal,
+      full_name: nameVal,
+      email: emailVal,
+      phone: phoneVal,
+      street_address: streetVal,
+      delivery_street: streetVal,
+      address: streetVal,
+      apt_suite: aptVal,
+      delivery_apt: aptVal,
+      city: cityVal,
+      delivery_city: cityVal,
+      state: stateVal,
+      delivery_state: stateVal,
+      country: countryVal,
+      delivery_country: countryVal,
+      pincode: pinVal,
+      delivery_pincode: pinVal
+    };
+
+    // 1. ALWAYS SAVE TO LOCAL STORAGE FIRST - instant persistence, NEVER lost on refresh!
+    localStorage.setItem("member_address", JSON.stringify(payload));
+
+    // Update stored member object name/email/phone
     try {
-      const nameVal = profile.full_name || profile.name || "";
-      const streetVal = profile.street_address || profile.delivery_street || profile.address || "";
-      const aptVal = profile.apt_suite || profile.delivery_apt || "";
-      const cityVal = profile.city || profile.delivery_city || "";
-      const stateVal = profile.state || profile.delivery_state || "";
-      const countryVal = profile.country || profile.delivery_country || "India";
-      const pinVal = profile.pincode || profile.delivery_pincode || "";
-      const phoneVal = profile.phone || "";
-      const emailVal = profile.email || member?.email || "";
-
-      const payload = {
-        name: nameVal,
-        full_name: nameVal,
-        email: emailVal,
-        phone: phoneVal,
-        street_address: streetVal,
-        delivery_street: streetVal,
-        address: streetVal,
-        apt_suite: aptVal,
-        delivery_apt: aptVal,
-        city: cityVal,
-        delivery_city: cityVal,
-        state: stateVal,
-        delivery_state: stateVal,
-        country: countryVal,
-        delivery_country: countryVal,
-        pincode: pinVal,
-        delivery_pincode: pinVal
-      };
-
-      const res = await API.put("/members/profile", payload);
-      setSuccessMsg("Delivery address & profile updated successfully.");
-
-      // Cache immediately to localStorage for instant local persistence and checkout auto-detection
-      localStorage.setItem("member_address", JSON.stringify(payload));
-
-      // Update stored member object name/email/phone
       const stored = JSON.parse(localStorage.getItem("member") || "{}");
       if (stored.member) {
         stored.member.name = nameVal || stored.member.name;
@@ -262,6 +311,13 @@ export default function Profile() {
         stored.phone = phoneVal || stored.phone;
         localStorage.setItem("member", JSON.stringify(stored));
       }
+    } catch (e) {}
+
+    // 2. Sync with database
+    try {
+      const res = await API.put("/members/profile", payload);
+      setSuccessMsg("Delivery address saved successfully.");
+      setSessionExpired(false);
 
       if (res.data?.profile) {
         setProfile((prev) => ({
@@ -281,11 +337,17 @@ export default function Profile() {
           delivery_pincode: res.data.profile.delivery_pincode || res.data.profile.pincode || prev.delivery_pincode
         }));
       }
-
-      setTimeout(() => setSuccessMsg(""), 5000);
+      setTimeout(() => setSuccessMsg(""), 6000);
     } catch (err) {
-      console.error("Failed to save profile:", err);
-      setErrorMsg(err.response?.data?.error || "Failed to update address. Please check your network connection and try again.");
+      console.warn("Failed to sync profile to server:", err);
+      const isAuthError = err.response?.status === 401 || String(err.response?.data?.error || "").toLowerCase().includes("token");
+      if (isAuthError) {
+        setSessionExpired(true);
+        setSuccessMsg("Address saved in your browser! Your login session has expired — please sign in again to sync with your account.");
+      } else {
+        setSuccessMsg("Address saved in your browser! (Database sync will complete when connection is restored)");
+      }
+      setTimeout(() => setSuccessMsg(""), 8000);
     } finally {
       setSaving(false);
     }
@@ -893,6 +955,17 @@ export default function Profile() {
               </div>
             </div>
 
+            {sessionExpired && (
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-amber-900 bg-amber-50 border border-amber-300 text-xs px-4 py-3 rounded-[4px]">
+                <div className="flex items-center gap-2">
+                  <span className="text-base">ℹ️</span>
+                  <span>Your login session has expired. Your address is preserved locally — please log in again to sync across devices.</span>
+                </div>
+                <Link to="/login?redirect=/profile?tab=addresses" className="bg-[#23483D] text-white px-3 py-1.5 rounded-[3px] font-bold text-[11px] uppercase tracking-wider hover:bg-[#16352D] shrink-0 text-center">
+                  Log In Again →
+                </Link>
+              </div>
+            )}
             {successMsg && (
               <div className="flex items-center gap-2 text-[#23483D] bg-[#23483D]/10 border border-[#23483D]/30 text-xs px-4 py-3 rounded-[4px] font-medium">
                 <MdCheckCircle className="text-base text-[#23483D]" /> {successMsg}

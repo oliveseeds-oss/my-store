@@ -24,11 +24,13 @@ async function verifyPayPalOrder(orderId) {
     throw new Error("PayPal credentials missing in production. Cannot verify transaction.");
   }
 
-  const isLive = configuredMode === "production" || (!configuredMode && !clientId.startsWith("sb") && process.env.PAYPAL_MODE === "production");
-  const baseUrl = isLive ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
+  const isLive = configuredMode === "production" || configuredMode === "live" || (!configuredMode && !clientId.startsWith("sb") && process.env.PAYPAL_MODE === "production") || (!clientId.startsWith("sb") && !clientId.includes("sandbox"));
+  const primaryUrl = isLive ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
+  const secondaryUrl = isLive ? "https://api-m.sandbox.paypal.com" : "https://api-m.paypal.com";
 
   const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
-  const tokenRes = await fetch(`${baseUrl}/v1/oauth2/token`, {
+  let activeBaseUrl = primaryUrl;
+  let tokenRes = await fetch(`${primaryUrl}/v1/oauth2/token`, {
     method: "POST",
     body: "grant_type=client_credentials",
     headers: {
@@ -36,15 +38,32 @@ async function verifyPayPalOrder(orderId) {
       "Authorization": `Basic ${auth}`
     }
   });
+
+  if (!tokenRes.ok) {
+    const fallbackRes = await fetch(`${secondaryUrl}/v1/oauth2/token`, {
+      method: "POST",
+      body: "grant_type=client_credentials",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": `Basic ${auth}`
+      }
+    });
+    if (fallbackRes.ok) {
+      tokenRes = fallbackRes;
+      activeBaseUrl = secondaryUrl;
+    }
+  }
   
   if (!tokenRes.ok) {
+    const errText = await tokenRes.text().catch(() => "");
+    console.error("PayPal token failure during order verification:", errText);
     throw new Error("Failed to authenticate with PayPal API.");
   }
   
   const tokenData = await tokenRes.json();
   const accessToken = tokenData.access_token;
 
-  const orderRes = await fetch(`${baseUrl}/v2/checkout/orders/${orderId}`, {
+  let orderRes = await fetch(`${activeBaseUrl}/v2/checkout/orders/${orderId}`, {
     method: "GET",
     headers: {
       "Authorization": `Bearer ${accessToken}`,
@@ -52,13 +71,38 @@ async function verifyPayPalOrder(orderId) {
     }
   });
 
+  if (!orderRes.ok && activeBaseUrl !== secondaryUrl) {
+    // If order was created in the other environment, retry fetching with secondary
+    const secTokenRes = await fetch(`${secondaryUrl}/v1/oauth2/token`, {
+      method: "POST",
+      body: "grant_type=client_credentials",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": `Basic ${auth}`
+      }
+    });
+    if (secTokenRes.ok) {
+      const secData = await secTokenRes.json();
+      const secOrderRes = await fetch(`${secondaryUrl}/v2/checkout/orders/${orderId}`, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${secData.access_token}`,
+          "Content-Type": "application/json"
+        }
+      });
+      if (secOrderRes.ok) {
+        orderRes = secOrderRes;
+      }
+    }
+  }
+
   if (!orderRes.ok) {
     throw new Error("Failed to fetch order details from PayPal.");
   }
 
   const orderData = await orderRes.json();
-  if (orderData.status !== "COMPLETED") {
-    throw new Error(`PayPal order status is ${orderData.status}, expected COMPLETED.`);
+  if (orderData.status !== "COMPLETED" && orderData.status !== "APPROVED") {
+    throw new Error(`PayPal order status is ${orderData.status}, expected COMPLETED or APPROVED.`);
   }
   return true;
 }

@@ -46,7 +46,8 @@ function PayPalButtonSection({
   form,
   placeOrder,
   setPaymentMethod,
-  checkShippingEligibility
+  checkShippingEligibility,
+  validationError
 }) {
   const isSupported = PAYPAL_SUPPORTED_CURRENCIES.has(selected?.currency_code);
   const activePaypalCurrency = isSupported ? selected.currency_code : "USD";
@@ -73,6 +74,12 @@ function PayPalButtonSection({
 
   return (
     <div className="w-full flex flex-col items-center">
+      {validationError && (
+        <div className="w-full mb-3 p-3 bg-rose-50 border border-rose-200 rounded-[4px] text-xs font-semibold text-rose-800 flex items-center gap-2 text-left">
+          <span>⚠️</span>
+          <span>{validationError}</span>
+        </div>
+      )}
       <div className="w-full min-w-full paypal-button-container">
         <PayPalButtons
           style={{
@@ -84,24 +91,32 @@ function PayPalButtonSection({
           }}
           className="w-full"
           onClick={(data, actions) => {
-            if (!checkShippingEligibility()) {
+            if (!checkShippingEligibility({ silent: true })) {
               return actions.reject();
             }
             return actions.resolve();
           }}
           createOrder={(data, actions) => {
+            if (!checkShippingEligibility({ silent: true })) {
+              throw new Error("Please complete required shipping details first.");
+            }
             console.log("PayPal createOrder initiated:", {
               currency_code: activePaypalCurrency,
               value: convertedVal
             });
             return actions.order.create({
               purchase_units: [{
-                description: "Olive Seeds Studio Order",
                 amount: {
                   currency_code: activePaypalCurrency,
                   value: convertedVal
-                }
-              }]
+                },
+                description: "Olive Seeds Studio Order"
+              }],
+              application_context: {
+                brand_name: "Olive Seeds",
+                shipping_preference: "NO_SHIPPING",
+                user_action: "PAY_NOW"
+              }
             });
           }}
           onApprove={async (data, actions) => {
@@ -129,7 +144,10 @@ function PayPalButtonSection({
             const errStr = String(err?.message || err || "");
             if (
               errStr.includes("Please complete required shipping details") ||
-              errStr.includes("do not ship")
+              errStr.includes("do not ship") ||
+              errStr.includes("reject") ||
+              errStr.includes("detected popup close") ||
+              errStr.includes("window closed")
             ) {
               return;
             }
@@ -193,19 +211,53 @@ export default function Checkout() {
   const payableTotal = Math.max(0, total + shipping - couponDiscount);
   const isFreeOrder = payableTotal === 0;
 
-  const [form, setForm] = useState({
-    name: member?.name || "",
-    email: member?.email || "",
-    phone: "",
-    delivery_street: "",
-    delivery_apt: "",
-    delivery_city: "",
-    delivery_state: "",
-    delivery_country: "India",
-    delivery_pincode: "",
+  const [form, setForm] = useState(() => {
+    let cached = null;
+    try {
+      cached = JSON.parse(localStorage.getItem("member_address") || "null");
+    } catch (e) {}
+
+    let memberData = null;
+    try {
+      memberData = JSON.parse(localStorage.getItem("member") || "null");
+    } catch (e) {}
+    const m = memberData?.member || memberData || {};
+
+    const street = cached?.delivery_street || cached?.street_address || cached?.address || "";
+    const apt = cached?.delivery_apt || cached?.apt_suite || "";
+    const city = cached?.delivery_city || cached?.city || "";
+    const state = cached?.delivery_state || cached?.state || "";
+    const country = cached?.delivery_country || cached?.country || "India";
+    const pincode = cached?.delivery_pincode || cached?.pincode || "";
+    const name = cached?.full_name || cached?.name || m?.name || "";
+    const email = cached?.email || m?.email || "";
+    const phone = cached?.phone || m?.phone || "";
+
+    return {
+      name,
+      email,
+      phone,
+      delivery_street: street,
+      delivery_apt: apt,
+      delivery_city: city,
+      delivery_state: state,
+      delivery_country: country,
+      delivery_pincode: pincode,
+    };
   });
 
-  const [hasSavedAddress, setHasSavedAddress] = useState(false);
+  const [hasSavedAddress, setHasSavedAddress] = useState(() => {
+    try {
+      const cached = JSON.parse(localStorage.getItem("member_address") || "null");
+      const street = cached?.delivery_street || cached?.street_address || cached?.address || "";
+      const city = cached?.delivery_city || cached?.city || "";
+      return !!(street && city);
+    } catch (e) {
+      return false;
+    }
+  });
+
+  const [validationError, setValidationError] = useState("");
   const [enabledCountryCodes, setEnabledCountryCodes] = useState([]);
   const [placing, setPlacing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState(() => {
@@ -276,19 +328,21 @@ export default function Checkout() {
     // Preload from cached address if available
     try {
       const cached = JSON.parse(localStorage.getItem("member_address") || "null");
-      if (cached && (cached.street_address || cached.city)) {
-        setHasSavedAddress(true);
+      const street = cached?.delivery_street || cached?.street_address || cached?.address || "";
+      const city = cached?.delivery_city || cached?.city || "";
+      if (street || city) {
+        setHasSavedAddress(!!(street && city));
         setForm((prev) => ({
           ...prev,
-          name: cached.full_name || prev.name,
-          email: cached.email || prev.email,
-          phone: cached.phone || prev.phone || "",
-          delivery_street: cached.street_address || "",
-          delivery_apt: cached.apt_suite || "",
-          delivery_city: cached.city || "",
-          delivery_state: cached.state || "",
-          delivery_country: cached.country || "India",
-          delivery_pincode: cached.pincode || "",
+          name: cached?.full_name || cached?.name || prev.name,
+          email: cached?.email || prev.email,
+          phone: cached?.phone || prev.phone || "",
+          delivery_street: street,
+          delivery_apt: cached?.delivery_apt || cached?.apt_suite || "",
+          delivery_city: city,
+          delivery_state: cached?.delivery_state || cached?.state || "",
+          delivery_country: cached?.delivery_country || cached?.country || "India",
+          delivery_pincode: cached?.delivery_pincode || cached?.pincode || "",
         }));
       }
     } catch (e) {}
@@ -297,23 +351,39 @@ export default function Checkout() {
       API.get("/members/profile")
         .then((res) => {
           const p = res.data;
-          const hasAddr = !!((p.street_address || p.address) && p.city);
+          const street = p.delivery_street || p.street_address || p.address || "";
+          const city = p.delivery_city || p.city || "";
+          const hasAddr = !!(street && city);
           setHasSavedAddress(hasAddr);
+
+          const updated = {
+            name: p.full_name || p.name || form.name,
+            email: p.email || form.email,
+            phone: p.phone || form.phone || "",
+            delivery_street: street,
+            delivery_apt: p.delivery_apt || p.apt_suite || "",
+            delivery_city: city,
+            delivery_state: p.delivery_state || p.state || "",
+            delivery_country: p.delivery_country || p.country || "India",
+            delivery_pincode: p.delivery_pincode || p.pincode || "",
+          };
 
           setForm((prev) => ({
             ...prev,
-            name: p.full_name || p.name || prev.name,
-            email: p.email || prev.email,
-            phone: p.phone || prev.phone || "",
-            delivery_street: p.street_address || p.address || "",
-            delivery_apt: p.apt_suite || "",
-            delivery_city: p.city || "",
-            delivery_state: p.state || "",
-            delivery_country: p.country || "India",
-            delivery_pincode: p.pincode || "",
+            ...updated
           }));
-          if (p.street_address || p.city) {
-            localStorage.setItem("member_address", JSON.stringify(p));
+
+          if (street || city) {
+            localStorage.setItem("member_address", JSON.stringify({
+              ...updated,
+              full_name: updated.name,
+              street_address: street,
+              apt_suite: updated.delivery_apt,
+              city: updated.delivery_city,
+              state: updated.delivery_state,
+              country: updated.delivery_country,
+              pincode: updated.delivery_pincode
+            }));
           }
         })
         .catch(() => {
@@ -394,15 +464,22 @@ export default function Checkout() {
 
 
 
-  const checkShippingEligibility = () => {
+  const checkShippingEligibility = (options = { silent: false }) => {
+    setValidationError("");
     if (!form.name || !form.email) {
-      alert("Please provide your name and email address for order processing.");
+      const msg = "Please provide your name and email address for order processing.";
+      setValidationError(msg);
+      if (!options?.silent) alert(msg);
+      document.getElementById("delivery-section")?.scrollIntoView({ behavior: "smooth" });
       return false;
     }
 
     if (hasPhysicalItems) {
       if (!form.delivery_street || !form.delivery_city || !form.delivery_state) {
-        alert("Please fill in all required delivery details first.");
+        const msg = "Please fill in all required delivery details (street, city, state) first.";
+        setValidationError(msg);
+        if (!options?.silent) alert(msg);
+        document.getElementById("delivery-section")?.scrollIntoView({ behavior: "smooth" });
         return false;
       }
 
@@ -414,7 +491,9 @@ export default function Checkout() {
         );
         const iso = selectedCountryObj?.isoCode?.toUpperCase();
         if (iso && !enabledCountryCodes.includes(iso)) {
-          alert("We currently do not ship physical products to your country.");
+          const msg = "We currently do not ship physical products to your country.";
+          setValidationError(msg);
+          if (!options?.silent) alert(msg);
           return false;
         }
       }
@@ -614,11 +693,19 @@ export default function Checkout() {
 
           {/* Delivery Details Form */}
           <div 
+            id="delivery-section"
             className="lg:col-span-2 rounded-[4px] border border-[#E7E7E2] bg-white p-4 sm:p-6 md:p-8 flex flex-col gap-5"
           >
             <h3 className="text-xl font-medium text-[#181A18] tracking-tight">
               {hasPhysicalItems ? "Delivery Details" : "Contact & Digital Delivery Details"}
             </h3>
+
+            {validationError && (
+              <div className="p-3 bg-rose-50 border border-rose-200 rounded-[4px] text-xs font-semibold text-rose-800 flex items-center gap-2">
+                <span>⚠️</span>
+                <span>{validationError}</span>
+              </div>
+            )}
             
             {hasSavedAddress ? (
               <div className="bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px] p-5 text-xs text-[#181A18] space-y-3">
@@ -652,17 +739,30 @@ export default function Checkout() {
                   delivery_pincode: form.delivery_pincode
                 }}
                 onChange={(updated) => {
-                  setForm({
+                  const newForm = {
                     ...form,
-                    name: updated.name || form.name,
-                    phone: updated.phone,
-                    delivery_street: updated.delivery_street,
-                    delivery_apt: updated.delivery_apt,
-                    delivery_city: updated.delivery_city,
-                    delivery_state: updated.delivery_state,
-                    delivery_country: updated.country,
-                    delivery_pincode: updated.delivery_pincode
-                  });
+                    name: updated.name !== undefined ? updated.name : form.name,
+                    phone: updated.phone !== undefined ? updated.phone : form.phone,
+                    delivery_street: updated.delivery_street !== undefined ? updated.delivery_street : form.delivery_street,
+                    delivery_apt: updated.delivery_apt !== undefined ? updated.delivery_apt : form.delivery_apt,
+                    delivery_city: updated.delivery_city !== undefined ? updated.delivery_city : form.delivery_city,
+                    delivery_state: updated.delivery_state !== undefined ? updated.delivery_state : form.delivery_state,
+                    delivery_country: updated.country !== undefined ? updated.country : form.delivery_country,
+                    delivery_pincode: updated.delivery_pincode !== undefined ? updated.delivery_pincode : form.delivery_pincode
+                  };
+                  setForm(newForm);
+                  try {
+                    localStorage.setItem("member_address", JSON.stringify({
+                      full_name: newForm.name,
+                      phone: newForm.phone,
+                      street_address: newForm.delivery_street,
+                      apt_suite: newForm.delivery_apt,
+                      city: newForm.delivery_city,
+                      state: newForm.delivery_state,
+                      country: newForm.delivery_country,
+                      pincode: newForm.delivery_pincode
+                    }));
+                  } catch (e) {}
                 }}
                 enabledCountryCodes={enabledCountryCodes}
                 isPhysical={hasPhysicalItems}
@@ -928,6 +1028,7 @@ export default function Checkout() {
                           placeOrder={placeOrder}
                           setPaymentMethod={setPaymentMethod}
                           checkShippingEligibility={checkShippingEligibility}
+                          validationError={validationError}
                         />
                       </PayPalScriptProvider>
                     ) : (

@@ -22,10 +22,31 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle global responses without arbitrarily clearing member session on background requests
+// Handle global responses and cleanly clear dead/expired member tokens
 API.interceptors.response.use(
   (response) => response,
   (error) => {
+    if (error.response?.status === 401) {
+      const errMsg = String(error.response?.data?.error || "").toLowerCase();
+      if (errMsg.includes("token") || errMsg.includes("expired") || errMsg.includes("invalid")) {
+        // Clear dead member session token so stale state stops breaking requests
+        const currentMember = localStorage.getItem("member");
+        if (currentMember) {
+          try {
+            const parsed = JSON.parse(currentMember);
+            if (parsed.token || parsed.member?.token) {
+              console.warn("Member session expired, clearing stale auth token.");
+              localStorage.removeItem("member");
+              if (typeof window !== "undefined") {
+                window.dispatchEvent(new CustomEvent("member:expired"));
+              }
+            }
+          } catch (e) {
+            localStorage.removeItem("member");
+          }
+        }
+      }
+    }
     return Promise.reject(error);
   }
 );
