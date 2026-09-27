@@ -11,7 +11,8 @@ import {
 import {
   MdShoppingBag, MdDownload, MdPeople, MdMail,
   MdNotifications, MdWarning, MdFileDownload,
-  MdRefresh, MdCheckCircle, MdTrendingUp
+  MdRefresh, MdCheckCircle, MdTrendingUp,
+  MdDeleteSweep, MdDeleteOutline, MdPublic, MdDoneAll
 } from "react-icons/md";
 
 function StatCard({ icon, label, value, sub, color, border }) {
@@ -36,6 +37,9 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [notifOpen, setNotifOpen] = useState(false);
   const [exporting, setExporting] = useState("");
+  const [notifFilter, setNotifFilter] = useState("all");
+  const [markingRead, setMarkingRead] = useState(false);
+  const [clearingNotifs, setClearingNotifs] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -58,8 +62,81 @@ export default function Dashboard() {
   }, [load]);
 
   const markAllRead = async () => {
-    await API.put("/notifications/read-all");
-    load();
+    setMarkingRead(true);
+    try {
+      await API.put("/notifications/admin/read-all");
+      setStats(prev => ({
+        ...prev,
+        unread_notifications: 0,
+        recent_notifications: prev?.recent_notifications?.map(n => ({ ...n, is_read: true })) || []
+      }));
+    } catch (err) {
+      console.error("Failed to mark all notifications read:", err);
+    } finally {
+      setMarkingRead(false);
+      load();
+    }
+  };
+
+  const clearAllAlerts = async (scope = "all") => {
+    const confirmMsg = scope === "visitors_only"
+      ? "Clear all website visitor alerts?"
+      : "Are you sure you want to clear system and visitor alerts?";
+    if (!window.confirm(confirmMsg)) return;
+
+    setClearingNotifs(true);
+    try {
+      await API.delete(`/notifications/admin/clear-all?scope=${scope}`);
+      setStats(prev => {
+        const remaining = scope === "visitors_only"
+          ? prev?.recent_notifications?.filter(n => n.type !== "visitor") || []
+          : [];
+        const unreadCount = remaining.filter(n => !n.is_read).length;
+        return {
+          ...prev,
+          unread_notifications: unreadCount,
+          recent_notifications: remaining
+        };
+      });
+    } catch (err) {
+      console.error("Failed to clear notifications:", err);
+      alert("Failed to clear alerts. Please try again.");
+    } finally {
+      setClearingNotifs(false);
+      load();
+    }
+  };
+
+  const deleteNotification = async (id, e) => {
+    if (e) e.stopPropagation();
+    try {
+      await API.delete(`/notifications/admin/${id}`);
+      setStats(prev => {
+        const target = prev?.recent_notifications?.find(n => n.id === id);
+        const remaining = prev?.recent_notifications?.filter(n => n.id !== id) || [];
+        return {
+          ...prev,
+          unread_notifications: Math.max(0, (prev?.unread_notifications || 0) - (target && !target.is_read ? 1 : 0)),
+          recent_notifications: remaining
+        };
+      });
+    } catch (err) {
+      console.error("Failed to delete notification:", err);
+    }
+  };
+
+  const markSingleRead = async (id, e) => {
+    if (e) e.stopPropagation();
+    try {
+      await API.put(`/notifications/admin/${id}/read`);
+      setStats(prev => ({
+        ...prev,
+        unread_notifications: Math.max(0, (prev?.unread_notifications || 0) - 1),
+        recent_notifications: prev?.recent_notifications?.map(n => n.id === id ? { ...n, is_read: true } : n) || []
+      }));
+    } catch (err) {
+      console.error("Failed to mark notification read:", err);
+    }
   };
 
   const exportCSV = async (type) => {
@@ -121,6 +198,13 @@ export default function Dashboard() {
   const p = stats?.physical || {};
   const d = stats?.digital || {};
   const unread = stats?.unread_notifications || 0;
+  const allNotifs = stats?.recent_notifications || [];
+  const filteredNotifs = allNotifs.filter(n => {
+    if (notifFilter === "unread") return !n.is_read;
+    if (notifFilter === "orders") return n.type === "new_order" || n.type === "order";
+    if (notifFilter === "visitors") return n.type === "visitor";
+    return true;
+  });
 
   // Merge weekly data
   const allDays = {};
@@ -199,44 +283,130 @@ export default function Dashboard() {
           {/* Notification panel */}
           {notifOpen && (
             <div className="bg-white rounded-2xl border border-stone-200 p-5 shadow-sm animate-fadeIn">
-              <div className="flex items-center justify-between mb-4 border-b border-stone-100 pb-3">
-                <h3 className="text-sm font-bold text-stone-700">
-                  Recent System Notifications ({unread} unread)
-                </h3>
-                <button onClick={markAllRead}
-                  className="text-xs text-indigo-600 hover:text-indigo-800 font-bold hover:underline flex items-center gap-1">
-                  <MdCheckCircle /> Mark all read
-                </button>
+              <div className="flex items-center justify-between mb-3 border-b border-stone-100 pb-3 flex-wrap gap-2">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-stone-800">
+                    System Alerts & Notifications
+                  </h3>
+                  {unread > 0 ? (
+                    <span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                      {unread} unread
+                    </span>
+                  ) : (
+                    <span className="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                      All caught up
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2 flex-wrap">
+                  {unread > 0 && (
+                    <button onClick={markAllRead} disabled={markingRead}
+                      className="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 cursor-pointer">
+                      <MdCheckCircle className="text-sm" /> {markingRead ? "Marking..." : "Mark all read"}
+                    </button>
+                  )}
+                  {allNotifs.length > 0 && (
+                    <button onClick={() => clearAllAlerts("all")} disabled={clearingNotifs}
+                      className="text-xs bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 cursor-pointer">
+                      <MdDeleteSweep className="text-sm" /> {clearingNotifs ? "Clearing..." : "Clear all alerts"}
+                    </button>
+                  )}
+                </div>
               </div>
-              <div className="flex flex-col gap-2 max-h-60 overflow-y-auto">
-                {stats?.recent_notifications?.length > 0 ? (
-                  stats.recent_notifications.map(n => (
+
+              {/* Filter Tabs */}
+              <div className="flex items-center gap-1.5 mb-3 border-b border-stone-100 pb-2 flex-wrap">
+                {[
+                  { id: "all", label: `All (${allNotifs.length})` },
+                  { id: "unread", label: `Unread (${unread})` },
+                  { id: "orders", label: `Orders (${allNotifs.filter(n => n.type === "new_order" || n.type === "order").length})` },
+                  { id: "visitors", label: `Visitors (${allNotifs.filter(n => n.type === "visitor").length})` }
+                ].map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setNotifFilter(tab.id)}
+                    className={`text-[11px] font-bold px-2.5 py-1 rounded-md transition cursor-pointer ${
+                      notifFilter === tab.id
+                        ? "bg-stone-800 text-white"
+                        : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+                {allNotifs.some(n => n.type === "visitor") && notifFilter === "visitors" && (
+                  <button
+                    onClick={() => clearAllAlerts("visitors_only")}
+                    className="ml-auto text-[10px] text-rose-600 hover:text-rose-800 font-bold hover:underline cursor-pointer"
+                  >
+                    Clear only visitor alerts
+                  </button>
+                )}
+              </div>
+              <div className="flex flex-col gap-2 max-h-80 overflow-y-auto pr-1">
+                {filteredNotifs.length > 0 ? (
+                  filteredNotifs.map(n => (
                     <div key={n.id}
-                      className={`flex items-start justify-between gap-4 p-3 rounded-xl text-xs transition
-                        ${!n.is_read ? "bg-indigo-50/50 border border-indigo-100" : "bg-stone-50 border border-transparent"}`}>
-                      <div className="flex items-start gap-3">
-                        <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0
-                          ${n.type === "new_order" ? "bg-green-500"
-                            : n.type === "new_member" ? "bg-indigo-500"
-                              : n.type === "contact_message" ? "bg-amber-500"
-                                : "bg-stone-400"}`} />
-                        <div>
-                          <p className="font-bold text-stone-700">{n.title}</p>
-                          <p className="text-stone-500 mt-0.5">{n.message}</p>
+                      className={`flex items-start justify-between gap-3 p-3 rounded-xl text-xs transition border
+                        ${!n.is_read ? "bg-indigo-50/40 border-indigo-100" : "bg-stone-50/70 border-stone-200/60"}`}>
+                      <div className="flex items-start gap-3 min-w-0 flex-1">
+                        <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm shrink-0 mt-0.5
+                          ${n.type === "new_order" ? "bg-green-100 text-green-700"
+                            : n.type === "visitor" ? "bg-cyan-100 text-cyan-800"
+                            : n.type === "new_member" ? "bg-indigo-100 text-indigo-700"
+                            : n.type === "contact_message" ? "bg-amber-100 text-amber-800"
+                            : "bg-stone-200 text-stone-700"}`}>
+                          {n.type === "new_order" ? <MdShoppingBag />
+                            : n.type === "visitor" ? <MdPublic />
+                            : n.type === "contact_message" ? <MdMail />
+                            : <MdNotifications />}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <p className="font-bold text-stone-800">{n.title}</p>
+                            {!n.is_read && (
+                              <span className="bg-indigo-600 text-white text-[9px] font-black uppercase px-1.5 py-0.2 rounded">
+                                New
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-stone-600 text-[11px] mt-0.5 break-words leading-relaxed">{n.message}</p>
                           <p className="text-[10px] text-stone-400 mt-1">
                             {new Date(n.created_at).toLocaleString("en-IN")}
                           </p>
                         </div>
                       </div>
-                      {n.link && (
-                        <Link to={n.link} className="text-indigo-600 hover:text-indigo-800 font-bold hover:underline">
-                          View →
-                        </Link>
-                      )}
+
+                      <div className="flex items-center gap-1.5 shrink-0 self-center">
+                        {n.link && (
+                          <Link to={n.link} className="text-indigo-600 hover:text-indigo-800 font-bold hover:underline text-[11px]">
+                            View →
+                          </Link>
+                        )}
+                        {!n.is_read && (
+                          <button
+                            onClick={(e) => markSingleRead(n.id, e)}
+                            title="Mark as read"
+                            className="p-1.5 text-stone-400 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 transition cursor-pointer"
+                          >
+                            <MdDoneAll className="text-sm" />
+                          </button>
+                        )}
+                        <button
+                          onClick={(e) => deleteNotification(n.id, e)}
+                          title="Delete alert"
+                          className="p-1.5 text-stone-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition cursor-pointer"
+                        >
+                          <MdDeleteOutline className="text-sm" />
+                        </button>
+                      </div>
                     </div>
                   ))
                 ) : (
-                  <p className="text-center py-6 text-stone-400 text-xs">No alerts active</p>
+                  <p className="text-center py-6 text-stone-400 text-xs">
+                    {notifFilter === "all" ? "No alerts active" : `No ${notifFilter} alerts found`}
+                  </p>
                 )}
               </div>
             </div>

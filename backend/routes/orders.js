@@ -910,7 +910,7 @@ router.get("/admin/stats", verifyAdmin, async (req, res) => {
       "SELECT product_uid, name, stock FROM products WHERE stock <= 5 AND is_active=TRUE ORDER BY stock"
     );
     const [recentNotif] = await db.query(
-      "SELECT * FROM notifications ORDER BY created_at DESC LIMIT 20"
+      "SELECT * FROM notifications ORDER BY created_at DESC LIMIT 60"
     );
     res.json({
       physical: physStats[0],

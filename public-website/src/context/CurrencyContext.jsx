@@ -60,6 +60,23 @@ export function CurrencyProvider({ children }) {
             }
         });
 
+        // Helper to ping visitor notification with rich location data
+        function sendVisitorPing(geoInfo = null) {
+            let finalGeo = geoInfo;
+            if (!finalGeo) {
+                try {
+                    finalGeo = JSON.parse(sessionStorage.getItem("visitor_geo") || "null");
+                } catch (e) {}
+            }
+            API.post("/notifications/visitor", {
+                page: window.location.pathname,
+                city: finalGeo?.city || null,
+                region: finalGeo?.region || null,
+                country: finalGeo?.country_name || finalGeo?.country || null,
+                country_code: finalGeo?.country_code || null
+            }).catch(() => {});
+        }
+
         // Helper to detect currency by visitor's IP geolocation
         function detectIPCurrency(list) {
             fetch("https://ipapi.co/json/")
@@ -67,14 +84,35 @@ export function CurrencyProvider({ children }) {
                     if (!res.ok) throw new Error("Primary geo-lookup failed");
                     return res.json();
                 })
-                .then(geo => handleGeoResult(geo.country_code, list))
+                .then(geo => {
+                    const geoData = {
+                        city: geo.city,
+                        region: geo.region,
+                        country_name: geo.country_name,
+                        country_code: geo.country_code
+                    };
+                    try { sessionStorage.setItem("visitor_geo", JSON.stringify(geoData)); } catch (e) {}
+                    handleGeoResult(geo.country_code, list);
+                    sendVisitorPing(geoData);
+                })
                 .catch(err => {
                     console.warn("Primary geolocation failed, trying fallback:", err.message);
                     fetch("https://ip-api.com/json")
                         .then(res => res.json())
-                        .then(geo => handleGeoResult(geo.countryCode, list))
+                        .then(geo => {
+                            const geoData = {
+                                city: geo.city,
+                                region: geo.regionName,
+                                country_name: geo.country,
+                                country_code: geo.countryCode
+                            };
+                            try { sessionStorage.setItem("visitor_geo", JSON.stringify(geoData)); } catch (e) {}
+                            handleGeoResult(geo.countryCode, list);
+                            sendVisitorPing(geoData);
+                        })
                         .catch(fallbackErr => {
                             console.warn("Fallback geolocation failed:", fallbackErr.message);
+                            sendVisitorPing();
                         });
                 });
         }
@@ -95,8 +133,8 @@ export function CurrencyProvider({ children }) {
             }
         }
 
-        // Visitor ping
-        API.post("/notifications/visitor", { page: window.location.pathname }).catch(() => { });
+        // Initial visitor ping
+        sendVisitorPing();
     }, []);
 
     const choose = (c) => {
