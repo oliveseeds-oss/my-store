@@ -83,23 +83,25 @@ function PayPalButtonSection({
             height: 48,
           }}
           className="w-full"
-          createOrder={(data, actions) => {
+          onClick={(data, actions) => {
             if (!checkShippingEligibility()) {
-              throw new Error("Please complete required shipping details first.");
+              return actions.reject();
             }
+            return actions.resolve();
+          }}
+          createOrder={(data, actions) => {
+            console.log("PayPal createOrder initiated:", {
+              currency_code: activePaypalCurrency,
+              value: convertedVal
+            });
             return actions.order.create({
               purchase_units: [{
+                description: "Olive Seeds Studio Order",
                 amount: {
                   currency_code: activePaypalCurrency,
                   value: convertedVal
-                },
-                description: "Olive Seeds Studio Order"
-              }],
-              application_context: {
-                brand_name: "Olive Seeds",
-                shipping_preference: "NO_SHIPPING",
-                user_action: "PAY_NOW"
-              }
+                }
+              }]
             });
           }}
           onApprove={async (data, actions) => {
@@ -127,16 +129,15 @@ function PayPalButtonSection({
             const errStr = String(err?.message || err || "");
             if (
               errStr.includes("Please complete required shipping details") ||
-              errStr.includes("do not ship") ||
-              errStr.includes("PayPal error:")
+              errStr.includes("do not ship")
             ) {
               return;
             }
             if (errStr.includes("DOMESTIC_TRANSACTION_NOT_ALLOWED") || errStr.includes("domestic")) {
-              alert("PayPal India cannot process domestic transactions between Indian accounts under RBI regulations. Please choose Razorpay (Cards, UPI, Netbanking) for domestic orders.");
+              alert("PayPal Notice: PayPal India does not allow domestic transactions between Indian accounts under RBI regulations. Please choose Razorpay (Cards, UPI, Netbanking) for domestic orders.");
               setPaymentMethod("razorpay");
             } else {
-              alert("PayPal encountered a processing error. If paying from India, please select Razorpay for instant checkout.");
+              alert("PayPal Notice: " + (err?.message || "Payment window was closed or could not be completed. If paying from India, please select Razorpay for instant checkout."));
             }
           }}
         />
@@ -910,9 +911,9 @@ export default function Checkout() {
                       </div>
                     ) : siteSettings.paypal_client_id && !siteSettings.paypal_client_id.includes("your_paypal") ? (
                       <PayPalScriptProvider
-                        key={`${siteSettings.paypal_client_id}-${PAYPAL_SUPPORTED_CURRENCIES.has(selected?.currency_code) ? selected.currency_code : "USD"}`}
+                        key={`${(siteSettings.paypal_client_id || "").trim()}-${PAYPAL_SUPPORTED_CURRENCIES.has(selected?.currency_code) ? selected.currency_code : "USD"}`}
                         options={{
-                          clientId: siteSettings.paypal_client_id,
+                          clientId: (siteSettings.paypal_client_id || "").trim(),
                           currency: PAYPAL_SUPPORTED_CURRENCIES.has(selected?.currency_code) ? selected.currency_code : "USD",
                           intent: "capture",
                         }}

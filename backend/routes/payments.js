@@ -660,11 +660,14 @@ async function getPayPalAccessToken() {
     throw new Error("PayPal credentials missing in store settings.");
   }
 
-  const isLive = configuredMode === "production" || (!configuredMode && !clientId.startsWith("sb") && process.env.PAYPAL_MODE === "production");
-  const baseUrl = isLive ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
+  const isLive = configuredMode === "production" || configuredMode === "live" || (!configuredMode && !clientId.startsWith("sb") && process.env.PAYPAL_MODE === "production") || (!clientId.startsWith("sb") && !clientId.includes("sandbox"));
+  const primaryUrl = isLive ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
+  const secondaryUrl = isLive ? "https://api-m.sandbox.paypal.com" : "https://api-m.paypal.com";
 
   const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
-  const tokenRes = await fetch(`${baseUrl}/v1/oauth2/token`, {
+  let activeBaseUrl = primaryUrl;
+
+  let tokenRes = await fetch(`${primaryUrl}/v1/oauth2/token`, {
     method: "POST",
     body: "grant_type=client_credentials",
     headers: {
@@ -674,13 +677,30 @@ async function getPayPalAccessToken() {
   });
 
   if (!tokenRes.ok) {
+    // Attempt fallback in case of mismatched credentials/environment setting
+    const fallbackRes = await fetch(`${secondaryUrl}/v1/oauth2/token`, {
+      method: "POST",
+      body: "grant_type=client_credentials",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": `Basic ${auth}`
+      }
+    });
+
+    if (fallbackRes.ok) {
+      tokenRes = fallbackRes;
+      activeBaseUrl = secondaryUrl;
+    }
+  }
+
+  if (!tokenRes.ok) {
     const errText = await tokenRes.text();
     console.error("PayPal token request failed:", errText);
     throw new Error("Failed to authenticate with PayPal.");
   }
 
   const tokenData = await tokenRes.json();
-  return { accessToken: tokenData.access_token, baseUrl };
+  return { accessToken: tokenData.access_token, baseUrl: activeBaseUrl };
 }
 
 // 5. PayPal v2 Server-Side Order Creation (for React SDK v6)

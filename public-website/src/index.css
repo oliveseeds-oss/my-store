@@ -344,3 +344,17 @@ a, button, select, input, textarea {
   .blog-content table { font-size: 0.85rem; }
   .blog-content pre { font-size: 0.8rem; }
 }
+
+/* ─── Equalized Payment Gateway Buttons (Desktop, Tablet & Mobile) ─── */
+.paypal-button-container {
+  width: 100% !important;
+  min-width: 100% !important;
+}
+.paypal-button-container > div {
+  width: 100% !important;
+  min-width: 100% !important;
+}
+.paypal-button-container iframe {
+  width: 100% !important;
+  min-width: 100% !important;
+}

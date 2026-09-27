@@ -197,11 +197,13 @@ router.post("/test-paypal", verifyAdmin, async (req, res) => {
       return res.json({ success: false, message: "PayPal Client ID or Secret Key not configured." });
     }
 
-    const isLive = mode === "production" || (!mode && !clientId.startsWith("sb") && process.env.PAYPAL_MODE === "production");
-    const baseUrl = isLive ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
+    const isLive = mode === "production" || mode === "live" || (!mode && !clientId.startsWith("sb") && process.env.PAYPAL_MODE === "production") || (!clientId.startsWith("sb") && !clientId.includes("sandbox"));
+    const primaryUrl = isLive ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
+    const secondaryUrl = isLive ? "https://api-m.sandbox.paypal.com" : "https://api-m.paypal.com";
     const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
 
-    const tokenRes = await fetch(`${baseUrl}/v1/oauth2/token`, {
+    let activeIsLive = isLive;
+    let tokenRes = await fetch(`${primaryUrl}/v1/oauth2/token`, {
       method: "POST",
       body: "grant_type=client_credentials",
       headers: {
@@ -210,10 +212,25 @@ router.post("/test-paypal", verifyAdmin, async (req, res) => {
       }
     });
 
+    if (!tokenRes.ok) {
+      const fallbackRes = await fetch(`${secondaryUrl}/v1/oauth2/token`, {
+        method: "POST",
+        body: "grant_type=client_credentials",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": `Basic ${auth}`
+        }
+      });
+      if (fallbackRes.ok) {
+        tokenRes = fallbackRes;
+        activeIsLive = !isLive;
+      }
+    }
+
     if (tokenRes.ok) {
       const data = await tokenRes.json();
       if (data.access_token) {
-        return res.json({ success: true, message: `PayPal connection successful (${isLive ? "Live" : "Sandbox"} mode).` });
+        return res.json({ success: true, message: `PayPal connection successful (${activeIsLive ? "Live" : "Sandbox"} mode).` });
       }
     }
     
