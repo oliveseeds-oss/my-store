@@ -427,6 +427,34 @@ async function initializeDatabase() {
 
   await runSafe("ALTER TABLE visitor_logs ADD INDEX idx_visited_at (visited_at)");
 
+  // 10. Member Profiles & Saved Addresses Schema
+  await runSafe(`
+    CREATE TABLE IF NOT EXISTS member_profiles (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      member_uid VARCHAR(100) NOT NULL UNIQUE,
+      full_name VARCHAR(150) DEFAULT NULL,
+      email VARCHAR(150) DEFAULT NULL,
+      phone VARCHAR(25) DEFAULT NULL,
+      street_address TEXT DEFAULT NULL,
+      apt_suite VARCHAR(100) DEFAULT NULL,
+      city VARCHAR(100) DEFAULT NULL,
+      state VARCHAR(100) DEFAULT NULL,
+      country VARCHAR(100) DEFAULT 'India',
+      pincode VARCHAR(20) DEFAULT NULL,
+      address TEXT DEFAULT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )
+  `);
+
+  await runSafe("ALTER TABLE members ADD COLUMN street_address TEXT DEFAULT NULL");
+  await runSafe("ALTER TABLE members ADD COLUMN apt_suite VARCHAR(100) DEFAULT NULL");
+  await runSafe("ALTER TABLE members ADD COLUMN address TEXT DEFAULT NULL");
+  await runSafe("ALTER TABLE members ADD COLUMN city VARCHAR(100) DEFAULT NULL");
+  await runSafe("ALTER TABLE members ADD COLUMN state VARCHAR(100) DEFAULT NULL");
+  await runSafe("ALTER TABLE members ADD COLUMN country VARCHAR(100) DEFAULT 'India'");
+  await runSafe("ALTER TABLE members ADD COLUMN pincode VARCHAR(20) DEFAULT NULL");
+
   console.log("✅ Database tables and schema migrations verified successfully.");
 }
 

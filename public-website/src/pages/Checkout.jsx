@@ -271,11 +271,32 @@ export default function Checkout() {
   useEffect(() => {
     const memberData = JSON.parse(localStorage.getItem("member") || "null");
     const token = memberData?.token || memberData?.member?.token;
+
+    // Preload from cached address if available
+    try {
+      const cached = JSON.parse(localStorage.getItem("member_address") || "null");
+      if (cached && (cached.street_address || cached.city)) {
+        setHasSavedAddress(true);
+        setForm((prev) => ({
+          ...prev,
+          name: cached.full_name || prev.name,
+          email: cached.email || prev.email,
+          phone: cached.phone || prev.phone || "",
+          delivery_street: cached.street_address || "",
+          delivery_apt: cached.apt_suite || "",
+          delivery_city: cached.city || "",
+          delivery_state: cached.state || "",
+          delivery_country: cached.country || "India",
+          delivery_pincode: cached.pincode || "",
+        }));
+      }
+    } catch (e) {}
+
     if (member && token) {
       API.get("/members/profile")
         .then((res) => {
           const p = res.data;
-          const hasAddr = !!(p.street_address && p.city && p.country);
+          const hasAddr = !!((p.street_address || p.address) && p.city);
           setHasSavedAddress(hasAddr);
 
           setForm((prev) => ({
@@ -283,19 +304,22 @@ export default function Checkout() {
             name: p.full_name || p.name || prev.name,
             email: p.email || prev.email,
             phone: p.phone || prev.phone || "",
-            delivery_street: p.street_address || "",
+            delivery_street: p.street_address || p.address || "",
             delivery_apt: p.apt_suite || "",
             delivery_city: p.city || "",
             delivery_state: p.state || "",
             delivery_country: p.country || "India",
             delivery_pincode: p.pincode || "",
           }));
+          if (p.street_address || p.city) {
+            localStorage.setItem("member_address", JSON.stringify(p));
+          }
         })
         .catch(() => {
           // Token expired or invalid, fail silently without flooding console
         });
     }
-  }, [member]);
+  }, [member?.id, member?.member_uid]);
 
   // Step 5: Automatically calculate shipping rates when delivery country or cart changes
   useEffect(() => {

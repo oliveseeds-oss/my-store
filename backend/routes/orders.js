@@ -183,6 +183,29 @@ router.post("/", async (req, res) => {
         ]
       );
 
+      // Automatically sync delivery address to member profile if member_uid is present
+      if (member_uid && (streetVal || cityVal)) {
+        db.query(`
+          INSERT INTO member_profiles 
+            (member_uid, full_name, email, phone, street_address, apt_suite, city, state, country, pincode, address)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          ON DUPLICATE KEY UPDATE
+            street_address = VALUES(street_address),
+            apt_suite = VALUES(apt_suite),
+            city = VALUES(city),
+            state = VALUES(state),
+            country = VALUES(country),
+            pincode = VALUES(pincode),
+            address = VALUES(address)
+        `, [member_uid, guest_name || null, guest_email || null, guest_phone || null, streetVal, aptVal, cityVal, stateVal, countryVal, pincodeVal, streetVal]).catch(() => {});
+
+        db.query(`
+          UPDATE members 
+          SET street_address = ?, apt_suite = ?, city = ?, state = ?, country = ?, pincode = ?, address = ?
+          WHERE member_uid = ?
+        `, [streetVal, aptVal, cityVal, stateVal, countryVal, pincodeVal, streetVal, member_uid]).catch(() => {});
+      }
+
       // Save extended shipping charge fields if available (Step 9)
       if (shipping_method_id || shipping_method_name || shipping_zone || shipping_cost !== undefined) {
         await db.query(

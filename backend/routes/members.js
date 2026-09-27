@@ -11,8 +11,34 @@ const { sendMail } = require("../utils/mailer");
 // Run schema extensions
 db.query("ALTER TABLE members ADD COLUMN failed_otp_attempts INT DEFAULT 0").catch(() => {});
 db.query("ALTER TABLE members ADD COLUMN locked_until DATETIME DEFAULT NULL").catch(() => {});
+db.query("ALTER TABLE members ADD COLUMN street_address TEXT DEFAULT NULL").catch(() => {});
+db.query("ALTER TABLE members ADD COLUMN apt_suite VARCHAR(100) DEFAULT NULL").catch(() => {});
+db.query("ALTER TABLE members ADD COLUMN address TEXT DEFAULT NULL").catch(() => {});
+db.query("ALTER TABLE members ADD COLUMN city VARCHAR(100) DEFAULT NULL").catch(() => {});
+db.query("ALTER TABLE members ADD COLUMN state VARCHAR(100) DEFAULT NULL").catch(() => {});
+db.query("ALTER TABLE members ADD COLUMN country VARCHAR(100) DEFAULT 'India'").catch(() => {});
+db.query("ALTER TABLE members ADD COLUMN pincode VARCHAR(20) DEFAULT NULL").catch(() => {});
 
-// Ensure member_profiles table has all profile and address fields
+// Ensure member_profiles table exists and has all profile and address fields
+db.query(`
+  CREATE TABLE IF NOT EXISTS member_profiles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    member_uid VARCHAR(100) NOT NULL UNIQUE,
+    full_name VARCHAR(150) DEFAULT NULL,
+    email VARCHAR(150) DEFAULT NULL,
+    phone VARCHAR(25) DEFAULT NULL,
+    street_address TEXT DEFAULT NULL,
+    apt_suite VARCHAR(100) DEFAULT NULL,
+    city VARCHAR(100) DEFAULT NULL,
+    state VARCHAR(100) DEFAULT NULL,
+    country VARCHAR(100) DEFAULT 'India',
+    pincode VARCHAR(20) DEFAULT NULL,
+    address TEXT DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  )
+`).catch(() => {});
+
 db.query("ALTER TABLE member_profiles ADD COLUMN full_name VARCHAR(150) DEFAULT NULL").catch(() => {});
 db.query("ALTER TABLE member_profiles ADD COLUMN email VARCHAR(150) DEFAULT NULL").catch(() => {});
 db.query("ALTER TABLE member_profiles ADD COLUMN phone VARCHAR(25) DEFAULT NULL").catch(() => {});
@@ -416,30 +442,33 @@ router.get("/profile", verifyMember, async (req, res) => {
     const memberUid = req.member.member_uid;
     // 1. Fetch from members table
     const [memberRows] = await db.query(
-      "SELECT member_uid, name, email, phone, status, created_at FROM members WHERE member_uid = ?",
+      "SELECT * FROM members WHERE member_uid = ?",
       [memberUid]
     );
     if (!memberRows.length) return res.status(404).json({ error: "Member not found" });
     const m = memberRows[0];
 
     // 2. Fetch or initialize member_profiles row
-    let profileData = {};
+    let p = {};
     try {
       const [pRows] = await db.query(
         "SELECT * FROM member_profiles WHERE member_uid = ?",
         [memberUid]
       );
       if (pRows.length > 0) {
-        profileData = pRows[0];
-      } else {
-        await db.query(
-          "INSERT IGNORE INTO member_profiles (member_uid, full_name, email, phone) VALUES (?, ?, ?, ?)",
-          [memberUid, m.name, m.email, m.phone]
-        ).catch(() => {});
+        p = pRows[0];
       }
     } catch (e) {
       console.warn("member_profiles query fallback:", e.message);
     }
+
+    const resolvedName = p.full_name || m.name || "";
+    const resolvedStreet = p.street_address || p.address || m.street_address || m.address || "";
+    const resolvedApt = p.apt_suite || m.apt_suite || "";
+    const resolvedCity = p.city || m.city || "";
+    const resolvedState = p.state || m.state || "";
+    const resolvedCountry = p.country || m.country || "India";
+    const resolvedPincode = p.pincode || m.pincode || "";
 
     res.json({
       member_uid: m.member_uid,
@@ -448,13 +477,13 @@ router.get("/profile", verifyMember, async (req, res) => {
       phone: m.phone,
       status: m.status,
       created_at: m.created_at,
-      full_name: profileData.full_name || m.name || "",
-      street_address: profileData.street_address || profileData.address || "",
-      apt_suite: profileData.apt_suite || "",
-      city: profileData.city || "",
-      state: profileData.state || "",
-      country: profileData.country || "India",
-      pincode: profileData.pincode || ""
+      full_name: resolvedName,
+      street_address: resolvedStreet,
+      apt_suite: resolvedApt,
+      city: resolvedCity,
+      state: resolvedState,
+      country: resolvedCountry,
+      pincode: resolvedPincode
     });
   } catch (err) {
     console.error("GET /profile failed:", err);
@@ -470,63 +499,100 @@ router.put("/profile", verifyMember, async (req, res) => {
     const resolvedStreet = street_address || "";
     const resolvedCountry = country || "India";
 
-    // 1. Check if row exists in member_profiles
-    const [existing] = await db.query(
-      "SELECT id FROM member_profiles WHERE member_uid = ?",
-      [memberUid]
-    ).catch(() => [[]]);
-    
-    if (existing && existing.length > 0) {
+    // Ensure table exists safely before update
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS member_profiles (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        member_uid VARCHAR(100) NOT NULL UNIQUE,
+        full_name VARCHAR(150) DEFAULT NULL,
+        email VARCHAR(150) DEFAULT NULL,
+        phone VARCHAR(25) DEFAULT NULL,
+        street_address TEXT DEFAULT NULL,
+        apt_suite VARCHAR(100) DEFAULT NULL,
+        city VARCHAR(100) DEFAULT NULL,
+        state VARCHAR(100) DEFAULT NULL,
+        country VARCHAR(100) DEFAULT 'India',
+        pincode VARCHAR(20) DEFAULT NULL,
+        address TEXT DEFAULT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )
+    `).catch(() => {});
+
+    // 1. Upsert into member_profiles using ON DUPLICATE KEY UPDATE
+    try {
+      await db.query(
+        `INSERT INTO member_profiles 
+          (member_uid, full_name, email, phone, street_address, apt_suite, city, state, country, pincode, address)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE
+          full_name = VALUES(full_name),
+          email = VALUES(email),
+          phone = VALUES(phone),
+          street_address = VALUES(street_address),
+          apt_suite = VALUES(apt_suite),
+          city = VALUES(city),
+          state = VALUES(state),
+          country = VALUES(country),
+          pincode = VALUES(pincode),
+          address = VALUES(address)`,
+        [memberUid, full_name || null, email || null, phone || null, resolvedStreet, apt_suite || null, city || null, state || null, resolvedCountry, pincode || null, resolvedStreet]
+      );
+    } catch (upsertErr) {
+      console.warn("member_profiles upsert fallback:", upsertErr.message);
+      // Fallback update
       await db.query(
         `UPDATE member_profiles 
          SET full_name = ?, street_address = ?, address = ?, apt_suite = ?, city = ?, state = ?, country = ?, pincode = ?, phone = ?, email = ?
          WHERE member_uid = ?`,
         [full_name || null, resolvedStreet, resolvedStreet, apt_suite || null, city || null, state || null, resolvedCountry, pincode || null, phone || null, email || null, memberUid]
-      ).catch(async () => {
-        // Fallback for legacy columns
-        await db.query(
-          "UPDATE member_profiles SET address = ?, city = ?, state = ?, pincode = ? WHERE member_uid = ?",
-          [resolvedStreet, city || null, state || null, pincode || null, memberUid]
-        ).catch(() => {});
-      });
-    } else {
-      await db.query(
-        `INSERT INTO member_profiles 
-         (member_uid, full_name, street_address, address, apt_suite, city, state, country, pincode, phone, email)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [memberUid, full_name || null, resolvedStreet, resolvedStreet, apt_suite || null, city || null, state || null, resolvedCountry, pincode || null, phone || null, email || null]
-      ).catch(async () => {
-        await db.query(
-          "INSERT INTO member_profiles (member_uid, address, city, state, pincode) VALUES (?, ?, ?, ?, ?)",
-          [memberUid, resolvedStreet, city || null, state || null, pincode || null]
-        ).catch(() => {});
-      });
+      ).catch(() => {});
     }
 
-    // 2. Also keep members table updated
-    const updates = [];
-    const params = [];
-    if (full_name) {
-      updates.push("name = ?");
-      params.push(full_name);
-    }
-    if (phone) {
-      updates.push("phone = ?");
-      params.push(phone);
-    }
-    if (email) {
-      updates.push("email = ?");
-      params.push(email);
-    }
-    if (updates.length > 0) {
-      params.push(memberUid);
-      await db.query(`UPDATE members SET ${updates.join(", ")} WHERE member_uid = ?`, params).catch(() => {});
-    }
+    // 2. Also keep members table directly updated with address and personal details
+    await db.query(
+      `UPDATE members 
+       SET name = COALESCE(?, name),
+           email = COALESCE(?, email),
+           phone = COALESCE(?, phone),
+           street_address = ?,
+           apt_suite = ?,
+           city = ?,
+           state = ?,
+           country = ?,
+           pincode = ?,
+           address = ?
+       WHERE member_uid = ?`,
+      [full_name || null, email || null, phone || null, resolvedStreet, apt_suite || null, city || null, state || null, resolvedCountry, pincode || null, resolvedStreet, memberUid]
+    ).catch(async () => {
+      // Fallback if some address columns don't exist yet on members table
+      const updates = [];
+      const params = [];
+      if (full_name) { updates.push("name = ?"); params.push(full_name); }
+      if (phone) { updates.push("phone = ?"); params.push(phone); }
+      if (email) { updates.push("email = ?"); params.push(email); }
+      if (updates.length > 0) {
+        params.push(memberUid);
+        await db.query(`UPDATE members SET ${updates.join(", ")} WHERE member_uid = ?`, params).catch(() => {});
+      }
+    });
 
-    res.json({ message: "Profile updated successfully" });
+    const savedProfile = {
+      full_name: full_name || "",
+      street_address: resolvedStreet,
+      apt_suite: apt_suite || "",
+      city: city || "",
+      state: state || "",
+      country: resolvedCountry,
+      pincode: pincode || "",
+      phone: phone || "",
+      email: email || ""
+    };
+
+    res.json({ message: "Profile updated successfully", profile: savedProfile });
   } catch (err) {
     console.error("PUT /profile failed:", err);
-    res.status(500).json({ error: "Failed to update profile" });
+    res.status(500).json({ error: "Failed to update profile: " + err.message });
   }
 });
 

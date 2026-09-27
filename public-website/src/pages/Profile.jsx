@@ -17,7 +17,7 @@ import { getFlagEmoji } from "../components/SmartAddressForm";
 
 export default function Profile() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { member, login, logout } = useMember();
+  const { member, logout } = useMember();
   const { addToCart } = useCart();
   const { convert } = useCurrency();
   const navigate = useNavigate();
@@ -40,6 +40,7 @@ export default function Profile() {
   });
   const [saving, setSaving] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [loadingWishlist, setLoadingWishlist] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -123,11 +124,25 @@ export default function Profile() {
       return;
     }
 
-    // Load full member profile details
+    // Preload from cached address so fields are immediately populated on refresh
+    try {
+      const cached = JSON.parse(localStorage.getItem("member_address") || "null");
+      if (cached && (cached.street_address || cached.city)) {
+        setProfile((prev) => ({
+          ...prev,
+          ...cached,
+          full_name: cached.full_name || member?.name || prev.full_name,
+          email: cached.email || member?.email || prev.email,
+          phone: cached.phone || member?.phone || prev.phone
+        }));
+      }
+    } catch (e) {}
+
+    // Load full member profile details from database
     API.get("/members/profile")
       .then((r) => {
         if (r.data) {
-          setProfile({
+          const loaded = {
             full_name: r.data.full_name || r.data.name || member?.name || "",
             email: r.data.email || member?.email || "",
             phone: r.data.phone || member?.phone || "",
@@ -137,7 +152,11 @@ export default function Profile() {
             state: r.data.state || "",
             country: r.data.country || "India",
             pincode: r.data.pincode || ""
-          });
+          };
+          setProfile(loaded);
+          if (loaded.street_address || loaded.city) {
+            localStorage.setItem("member_address", JSON.stringify(loaded));
+          }
         }
       })
       .catch((err) => console.error("Failed to load profile details:", err));
@@ -145,39 +164,45 @@ export default function Profile() {
     fetchOrders();
     fetchWishlist();
     fetchNotifications();
-  }, [member, navigate, fetchOrders, fetchWishlist, fetchNotifications]);
+  }, [member?.id, member?.member_uid, navigate, fetchOrders, fetchWishlist, fetchNotifications]);
 
   const handleSave = async (e) => {
     e.preventDefault();
     setSaving(true);
     setSuccessMsg("");
+    setErrorMsg("");
     try {
-      await API.put("/members/profile", profile);
-      setSuccessMsg("Client dossier updated and secured successfully.");
+      const res = await API.put("/members/profile", profile);
+      setSuccessMsg("Delivery address & dossier updated successfully.");
 
+      // Cache immediately to localStorage for instant local persistence
+      localStorage.setItem("member_address", JSON.stringify(profile));
+
+      // Update stored member object name/email/phone
       const stored = JSON.parse(localStorage.getItem("member") || "{}");
       if (stored.member) {
-        login({
-          ...stored,
-          member: {
-            ...stored.member,
-            name: profile.full_name || stored.member.name,
-            email: profile.email || stored.member.email,
-            phone: profile.phone || stored.member.phone
-          }
-        });
+        stored.member.name = profile.full_name || stored.member.name;
+        stored.member.email = profile.email || stored.member.email;
+        stored.member.phone = profile.phone || stored.member.phone;
+        localStorage.setItem("member", JSON.stringify(stored));
       } else if (stored.token) {
-        login({
-          ...stored,
-          name: profile.full_name || stored.name,
-          email: profile.email || stored.email,
-          phone: profile.phone || stored.phone
-        });
+        stored.name = profile.full_name || stored.name;
+        stored.email = profile.email || stored.email;
+        stored.phone = profile.phone || stored.phone;
+        localStorage.setItem("member", JSON.stringify(stored));
       }
 
-      setTimeout(() => setSuccessMsg(""), 4500);
+      if (res.data?.profile) {
+        setProfile((prev) => ({
+          ...prev,
+          ...res.data.profile
+        }));
+      }
+
+      setTimeout(() => setSuccessMsg(""), 5000);
     } catch (err) {
       console.error("Failed to save profile:", err);
+      setErrorMsg(err.response?.data?.error || "Failed to update address. Please check your network connection and try again.");
     } finally {
       setSaving(false);
     }
@@ -790,6 +815,11 @@ export default function Profile() {
                 <MdCheckCircle className="text-base text-[#23483D]" /> {successMsg}
               </div>
             )}
+            {errorMsg && (
+              <div className="flex items-center gap-2 text-rose-700 bg-rose-50 border border-rose-200 text-xs px-4 py-3 rounded-[4px] font-medium">
+                <span className="text-base">⚠️</span> {errorMsg}
+              </div>
+            )}
 
             {/* Active Destination Card */}
             {(profile.street_address || profile.city) && (
@@ -1100,6 +1130,11 @@ export default function Profile() {
             {successMsg && (
               <div className="flex items-center gap-2 text-[#23483D] bg-[#23483D]/10 border border-[#23483D]/30 text-xs px-4 py-3 rounded-[4px] font-medium">
                 <MdCheckCircle className="text-base text-[#23483D]" /> {successMsg}
+              </div>
+            )}
+            {errorMsg && (
+              <div className="flex items-center gap-2 text-rose-700 bg-rose-50 border border-rose-200 text-xs px-4 py-3 rounded-[4px] font-medium">
+                <span className="text-base">⚠️</span> {errorMsg}
               </div>
             )}
 
