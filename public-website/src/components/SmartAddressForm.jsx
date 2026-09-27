@@ -82,8 +82,9 @@ export default function SmartAddressForm({
     onChange({
       ...form,
       country: countryObj.name,
+      delivery_country: countryObj.name,
       state: defaultState,
-      // Update dial code in phone if formatted or prefix set
+      delivery_state: defaultState,
     });
   };
 

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import API from "../api";
 import { useMember } from "../context/MemberContext";
@@ -12,8 +12,7 @@ import {
   MdFavorite, MdExitToApp, MdArrowBack, MdCheckCircle, MdSave, MdNotifications,
   MdOutlineLocalShipping, MdOutlineReceiptLong, MdShield
 } from "react-icons/md";
-import { Country, State } from "country-state-city";
-import { getFlagEmoji } from "../components/SmartAddressForm";
+import SmartAddressForm from "../components/SmartAddressForm";
 
 export default function Profile() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -28,16 +27,25 @@ export default function Profile() {
   
   // Profile editing form states
   const [profile, setProfile] = useState({
+    name: "",
     full_name: "",
     email: "",
     phone: "",
     street_address: "",
+    delivery_street: "",
+    address: "",
     apt_suite: "",
+    delivery_apt: "",
     city: "",
+    delivery_city: "",
     state: "",
+    delivery_state: "",
     country: "India",
-    pincode: ""
+    delivery_country: "India",
+    pincode: "",
+    delivery_pincode: ""
   });
+  const [enabledCountryCodes, setEnabledCountryCodes] = useState([]);
   const [saving, setSaving] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -46,21 +54,7 @@ export default function Profile() {
   const [notifications, setNotifications] = useState([]);
   const [loadingNotifications, setLoadingNotifications] = useState(false);
 
-  // Country & State handling for Address management
-  const allCountries = useMemo(() => Country.getAllCountries(), []);
-  const selectedCountryObj = useMemo(() => {
-    if (!profile.country) return allCountries.find(c => c.isoCode === "IN") || allCountries[0];
-    return (
-      allCountries.find(c => c.name.toLowerCase() === profile.country.toLowerCase()) ||
-      allCountries.find(c => c.isoCode.toLowerCase() === profile.country.toLowerCase()) ||
-      allCountries[0]
-    );
-  }, [profile.country, allCountries]);
 
-  const statesList = useMemo(() => {
-    if (!selectedCountryObj) return [];
-    return State.getStatesOfCountry(selectedCountryObj.isoCode);
-  }, [selectedCountryObj]);
 
   // Sync tab with URL
   const switchTab = (tab) => {
@@ -124,16 +118,45 @@ export default function Profile() {
       return;
     }
 
+    // Fetch enabled shipping countries
+    API.get("/shipping-countries/enabled")
+      .then((res) => {
+        const codes = (res.data || []).map((c) => c.country_code.toUpperCase());
+        setEnabledCountryCodes(codes);
+      })
+      .catch(() => {});
+
     // Preload from cached address so fields are immediately populated on refresh
     try {
       const cached = JSON.parse(localStorage.getItem("member_address") || "null");
-      if (cached && (cached.street_address || cached.city)) {
+      if (cached && (cached.street_address || cached.delivery_street || cached.city || cached.delivery_city)) {
+        const nameVal = cached.full_name || cached.name || member?.name || "";
+        const streetVal = cached.street_address || cached.delivery_street || cached.address || "";
+        const aptVal = cached.apt_suite || cached.delivery_apt || "";
+        const cityVal = cached.city || cached.delivery_city || "";
+        const stateVal = cached.state || cached.delivery_state || "";
+        const countryVal = cached.country || cached.delivery_country || "India";
+        const pinVal = cached.pincode || cached.delivery_pincode || "";
+
         setProfile((prev) => ({
           ...prev,
-          ...cached,
-          full_name: cached.full_name || member?.name || prev.full_name,
+          name: nameVal,
+          full_name: nameVal,
           email: cached.email || member?.email || prev.email,
-          phone: cached.phone || member?.phone || prev.phone
+          phone: cached.phone || member?.phone || prev.phone,
+          street_address: streetVal,
+          delivery_street: streetVal,
+          address: streetVal,
+          apt_suite: aptVal,
+          delivery_apt: aptVal,
+          city: cityVal,
+          delivery_city: cityVal,
+          state: stateVal,
+          delivery_state: stateVal,
+          country: countryVal,
+          delivery_country: countryVal,
+          pincode: pinVal,
+          delivery_pincode: pinVal
         }));
       }
     } catch (e) {}
@@ -142,19 +165,37 @@ export default function Profile() {
     API.get("/members/profile")
       .then((r) => {
         if (r.data) {
+          const nameVal = r.data.full_name || r.data.name || member?.name || "";
+          const streetVal = r.data.street_address || r.data.delivery_street || r.data.address || "";
+          const aptVal = r.data.apt_suite || r.data.delivery_apt || "";
+          const cityVal = r.data.city || r.data.delivery_city || "";
+          const stateVal = r.data.state || r.data.delivery_state || "";
+          const countryVal = r.data.country || r.data.delivery_country || "India";
+          const pinVal = r.data.pincode || r.data.delivery_pincode || "";
           const loaded = {
-            full_name: r.data.full_name || r.data.name || member?.name || "",
+            name: nameVal,
+            full_name: nameVal,
             email: r.data.email || member?.email || "",
             phone: r.data.phone || member?.phone || "",
-            street_address: r.data.street_address || r.data.address || "",
-            apt_suite: r.data.apt_suite || "",
-            city: r.data.city || "",
-            state: r.data.state || "",
-            country: r.data.country || "India",
-            pincode: r.data.pincode || ""
+            street_address: streetVal,
+            delivery_street: streetVal,
+            address: streetVal,
+            apt_suite: aptVal,
+            delivery_apt: aptVal,
+            city: cityVal,
+            delivery_city: cityVal,
+            state: stateVal,
+            delivery_state: stateVal,
+            country: countryVal,
+            delivery_country: countryVal,
+            pincode: pinVal,
+            delivery_pincode: pinVal
           };
-          setProfile(loaded);
-          if (loaded.street_address || loaded.city) {
+          setProfile((prev) => ({
+            ...prev,
+            ...loaded
+          }));
+          if (streetVal || cityVal) {
             localStorage.setItem("member_address", JSON.stringify(loaded));
           }
         }
@@ -167,35 +208,77 @@ export default function Profile() {
   }, [member?.id, member?.member_uid, navigate, fetchOrders, fetchWishlist, fetchNotifications]);
 
   const handleSave = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     setSaving(true);
     setSuccessMsg("");
     setErrorMsg("");
     try {
-      const res = await API.put("/members/profile", profile);
-      setSuccessMsg("Delivery address & dossier updated successfully.");
+      const nameVal = profile.full_name || profile.name || "";
+      const streetVal = profile.street_address || profile.delivery_street || profile.address || "";
+      const aptVal = profile.apt_suite || profile.delivery_apt || "";
+      const cityVal = profile.city || profile.delivery_city || "";
+      const stateVal = profile.state || profile.delivery_state || "";
+      const countryVal = profile.country || profile.delivery_country || "India";
+      const pinVal = profile.pincode || profile.delivery_pincode || "";
+      const phoneVal = profile.phone || "";
+      const emailVal = profile.email || member?.email || "";
 
-      // Cache immediately to localStorage for instant local persistence
-      localStorage.setItem("member_address", JSON.stringify(profile));
+      const payload = {
+        name: nameVal,
+        full_name: nameVal,
+        email: emailVal,
+        phone: phoneVal,
+        street_address: streetVal,
+        delivery_street: streetVal,
+        address: streetVal,
+        apt_suite: aptVal,
+        delivery_apt: aptVal,
+        city: cityVal,
+        delivery_city: cityVal,
+        state: stateVal,
+        delivery_state: stateVal,
+        country: countryVal,
+        delivery_country: countryVal,
+        pincode: pinVal,
+        delivery_pincode: pinVal
+      };
+
+      const res = await API.put("/members/profile", payload);
+      setSuccessMsg("Delivery address & profile updated successfully.");
+
+      // Cache immediately to localStorage for instant local persistence and checkout auto-detection
+      localStorage.setItem("member_address", JSON.stringify(payload));
 
       // Update stored member object name/email/phone
       const stored = JSON.parse(localStorage.getItem("member") || "{}");
       if (stored.member) {
-        stored.member.name = profile.full_name || stored.member.name;
-        stored.member.email = profile.email || stored.member.email;
-        stored.member.phone = profile.phone || stored.member.phone;
+        stored.member.name = nameVal || stored.member.name;
+        stored.member.email = emailVal || stored.member.email;
+        stored.member.phone = phoneVal || stored.member.phone;
         localStorage.setItem("member", JSON.stringify(stored));
       } else if (stored.token) {
-        stored.name = profile.full_name || stored.name;
-        stored.email = profile.email || stored.email;
-        stored.phone = profile.phone || stored.phone;
+        stored.name = nameVal || stored.name;
+        stored.email = emailVal || stored.email;
+        stored.phone = phoneVal || stored.phone;
         localStorage.setItem("member", JSON.stringify(stored));
       }
 
       if (res.data?.profile) {
         setProfile((prev) => ({
           ...prev,
-          ...res.data.profile
+          ...res.data.profile,
+          name: res.data.profile.name || res.data.profile.full_name || prev.name,
+          full_name: res.data.profile.full_name || res.data.profile.name || prev.full_name,
+          street_address: res.data.profile.street_address || res.data.profile.delivery_street || prev.street_address,
+          delivery_street: res.data.profile.delivery_street || res.data.profile.street_address || prev.delivery_street,
+          city: res.data.profile.city || res.data.profile.delivery_city || prev.city,
+          delivery_city: res.data.profile.delivery_city || res.data.profile.city || prev.delivery_city,
+          state: res.data.profile.state || res.data.profile.delivery_state || prev.state,
+          delivery_state: res.data.profile.delivery_state || res.data.profile.state || prev.delivery_state,
+          country: res.data.profile.country || res.data.profile.delivery_country || prev.country,
+          delivery_country: res.data.profile.delivery_country || res.data.profile.country || prev.delivery_country,
+          pincode: res.data.profile.pincode || res.data.profile.delivery_pincode || prev.pincode,
+          delivery_pincode: res.data.profile.delivery_pincode || res.data.profile.pincode || prev.delivery_pincode
         }));
       }
 
@@ -476,7 +559,7 @@ export default function Profile() {
                       <MdHome />
                     </span>
                     <span className="text-[11px] font-bold text-[#A48855] tracking-wider uppercase">
-                      {profile.city ? "Verified" : "Default"}
+                      {(profile.city || profile.delivery_city || profile.street_address) ? "Verified" : "Default"}
                     </span>
                   </div>
                   <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-semibold text-[#1C2B26] group-hover:text-[#23483D] transition">
@@ -822,23 +905,23 @@ export default function Profile() {
             )}
 
             {/* Active Destination Card */}
-            {(profile.street_address || profile.city) && (
+            {(profile.street_address || profile.delivery_street || profile.city || profile.delivery_city) && (
               <div className="bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px] p-5 sm:p-6 shadow-sm">
                 <div className="flex items-center justify-between gap-2 mb-3">
                   <span className="text-[10px] uppercase tracking-[0.16em] font-bold bg-[#23483D] text-[#FAF6EE] px-2.5 py-0.5 rounded-[3px]">
                     Default Shipping Address
                   </span>
                   <span className="text-xs font-semibold text-[#23483D] flex items-center gap-1">
-                    ✓ Verified on File
+                    ✓ Verified on File (Synced to Checkout)
                   </span>
                 </div>
                 <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-bold text-[#1C2B26]">
-                  {profile.full_name || member?.name || "Member Residence"}
+                  {profile.full_name || profile.name || member?.name || "Member Residence"}
                 </p>
                 <div className="text-xs text-[#6B7C75] mt-1.5 leading-relaxed space-y-0.5">
-                  <p>{profile.street_address}{profile.apt_suite ? `, ${profile.apt_suite}` : ""}</p>
-                  <p>{[profile.city, profile.state, profile.pincode].filter(Boolean).join(", ")}</p>
-                  <p className="font-medium text-[#1C2B26]">{profile.country}</p>
+                  <p>{profile.street_address || profile.delivery_street}{(profile.apt_suite || profile.delivery_apt) ? `, ${profile.apt_suite || profile.delivery_apt}` : ""}</p>
+                  <p>{[profile.city || profile.delivery_city, profile.state || profile.delivery_state, profile.pincode || profile.delivery_pincode].filter(Boolean).join(", ")}</p>
+                  <p className="font-medium text-[#1C2B26]">{profile.country || profile.delivery_country || "India"}</p>
                 </div>
                 {profile.phone && (
                   <p className="text-xs text-[#23483D] font-mono mt-3 flex items-center gap-1.5">
@@ -848,168 +931,70 @@ export default function Profile() {
               </div>
             )}
 
+            {/* Smart Address Form — EXACT same component & fields as Checkout */}
             <form onSubmit={handleSave} className="space-y-5 bg-white border border-[#EAE4D6] p-6 sm:p-7 rounded-[4px] shadow-sm">
-              <div className="border-b border-[#EAE4D6] pb-3 mb-2">
-                <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-normal text-[#1C2B26]">
-                  {profile.street_address ? "Edit Delivery Address" : "Add Delivery Address"}
-                </h3>
-                <p className="text-xs text-[#6B7C75] mt-0.5">
-                  Enter your complete shipping destination coordinates for seamless order dispatch.
-                </p>
-              </div>
-
-              {/* Grid 1: Full Name & Phone */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="border-b border-[#EAE4D6] pb-3 mb-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
-                  <label className="text-[10px] uppercase font-bold text-[#A48855] tracking-widest block mb-1.5">
-                    Full Recipient Name *
-                  </label>
-                  <input 
-                    type="text" 
-                    required
-                    value={profile.full_name}
-                    onChange={(e) => setProfile({...profile, full_name: e.target.value})}
-                    className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
-                    placeholder="e.g. Alistair Vance"
-                  />
+                  <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-normal text-[#1C2B26]">
+                    {(profile.street_address || profile.delivery_street) ? "Edit / Update Delivery Address" : "Add Delivery Address"}
+                  </h3>
+                  <p className="text-xs text-[#6B7C75] mt-0.5">
+                    Enter your complete shipping destination coordinates. This address automatically populates in your Checkout session.
+                  </p>
                 </div>
-
-                <div>
-                  <label className="text-[10px] uppercase font-bold text-[#A48855] tracking-widest block mb-1.5">
-                    Contact Phone Number *
-                  </label>
-                  <input 
-                    type="tel" 
-                    required
-                    value={profile.phone}
-                    onChange={(e) => setProfile({...profile, phone: e.target.value})}
-                    className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
-                    placeholder="e.g. +91 98765 43210"
-                  />
-                </div>
+                <span className="text-[10px] text-[#A48855] font-bold uppercase tracking-wider bg-[#FAF6EE] px-2.5 py-1 rounded-[3px] border border-[#EAE4D6] self-start sm:self-auto">
+                  Checkout Delivery Sync
+                </span>
               </div>
 
-              {/* Street Address */}
-              <div>
-                <label className="text-[10px] uppercase font-bold text-[#A48855] tracking-widest block mb-1.5">
-                  Street Address / House / Flat No. *
-                </label>
-                <input 
-                  type="text" 
-                  required
-                  value={profile.street_address}
-                  onChange={(e) => setProfile({...profile, street_address: e.target.value})}
-                  className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
-                  placeholder="Flat / House No., Building Name, Street / Road, Area"
-                />
-              </div>
+              <SmartAddressForm
+                form={{
+                  name: profile.full_name || profile.name || "",
+                  full_name: profile.full_name || profile.name || "",
+                  phone: profile.phone || "",
+                  delivery_street: profile.delivery_street || profile.street_address || "",
+                  street_address: profile.street_address || profile.delivery_street || "",
+                  delivery_apt: profile.delivery_apt || profile.apt_suite || "",
+                  apt_suite: profile.apt_suite || profile.delivery_apt || "",
+                  delivery_city: profile.delivery_city || profile.city || "",
+                  city: profile.city || profile.delivery_city || "",
+                  delivery_state: profile.delivery_state || profile.state || "",
+                  state: profile.state || profile.delivery_state || "",
+                  country: profile.country || profile.delivery_country || "India",
+                  delivery_country: profile.delivery_country || profile.country || "India",
+                  delivery_pincode: profile.delivery_pincode || profile.pincode || "",
+                  pincode: profile.pincode || profile.delivery_pincode || ""
+                }}
+                onChange={(updated) => {
+                  setProfile((prev) => ({
+                    ...prev,
+                    ...updated,
+                    full_name: updated.name || updated.full_name || prev.full_name,
+                    name: updated.name || updated.full_name || prev.name,
+                    phone: updated.phone !== undefined ? updated.phone : prev.phone,
+                    delivery_street: updated.delivery_street || updated.street_address || prev.delivery_street,
+                    street_address: updated.street_address || updated.delivery_street || prev.street_address,
+                    delivery_apt: updated.delivery_apt !== undefined ? updated.delivery_apt : prev.delivery_apt,
+                    apt_suite: updated.apt_suite !== undefined ? updated.apt_suite : prev.apt_suite,
+                    delivery_city: updated.delivery_city || updated.city || prev.delivery_city,
+                    city: updated.city || updated.delivery_city || prev.city,
+                    delivery_state: updated.delivery_state || updated.state || prev.delivery_state,
+                    state: updated.state || updated.delivery_state || prev.state,
+                    country: updated.country || updated.delivery_country || prev.country,
+                    delivery_country: updated.delivery_country || updated.country || prev.delivery_country,
+                    delivery_pincode: updated.delivery_pincode || updated.pincode || prev.delivery_pincode,
+                    pincode: updated.pincode || updated.delivery_pincode || prev.pincode
+                  }));
+                }}
+                enabledCountryCodes={enabledCountryCodes}
+                isPhysical={true}
+              />
 
-              {/* Apartment / Suite */}
-              <div>
-                <label className="text-[10px] uppercase font-bold text-[#A48855] tracking-widest block mb-1.5">
-                  Apartment, Suite, Unit, Landmark (Optional)
-                </label>
-                <input 
-                  type="text" 
-                  value={profile.apt_suite}
-                  onChange={(e) => setProfile({...profile, apt_suite: e.target.value})}
-                  className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
-                  placeholder="Apt, Suite, Floor, Landmark"
-                />
-              </div>
-
-              {/* City, State, Pincode */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <label className="text-[10px] uppercase font-bold text-[#A48855] tracking-widest block mb-1.5">
-                    City / Town *
-                  </label>
-                  <input 
-                    type="text" 
-                    required
-                    value={profile.city}
-                    onChange={(e) => setProfile({...profile, city: e.target.value})}
-                    className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
-                    placeholder="e.g. Mumbai"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[10px] uppercase font-bold text-[#A48855] tracking-widest block mb-1.5">
-                    State / Province *
-                  </label>
-                  {statesList.length > 0 ? (
-                    <select
-                      value={profile.state}
-                      onChange={(e) => setProfile({...profile, state: e.target.value})}
-                      className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
-                    >
-                      <option value="">Select State</option>
-                      {statesList.map((s) => (
-                        <option key={s.isoCode || s.name} value={s.name}>
-                          {s.name}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    <input 
-                      type="text" 
-                      required
-                      value={profile.state}
-                      onChange={(e) => setProfile({...profile, state: e.target.value})}
-                      className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
-                      placeholder="e.g. Maharashtra"
-                    />
-                  )}
-                </div>
-
-                <div>
-                  <label className="text-[10px] uppercase font-bold text-[#A48855] tracking-widest block mb-1.5">
-                    PIN / Postal Code *
-                  </label>
-                  <input 
-                    type="text" 
-                    required
-                    value={profile.pincode}
-                    onChange={(e) => setProfile({...profile, pincode: e.target.value})}
-                    className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
-                    placeholder="e.g. 400001"
-                  />
-                </div>
-              </div>
-
-              {/* Country */}
-              <div>
-                <label className="text-[10px] uppercase font-bold text-[#A48855] tracking-widest block mb-1.5">
-                  Country / Region *
-                </label>
-                <select
-                  value={selectedCountryObj?.isoCode}
-                  onChange={(e) => {
-                    const countryObj = allCountries.find(c => c.isoCode === e.target.value);
-                    if (countryObj) {
-                      setProfile({
-                        ...profile,
-                        country: countryObj.name,
-                        state: ""
-                      });
-                    }
-                  }}
-                  className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
-                >
-                  {allCountries.map((c) => (
-                    <option key={c.isoCode} value={c.isoCode}>
-                      {c.flag || getFlagEmoji(c.isoCode)} {c.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="pt-2">
+              <div className="pt-3 border-t border-[#EAE4D6]">
                 <button
                   type="submit"
                   disabled={saving}
-                  className="w-full sm:w-auto px-6 py-3.5 bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D] text-xs font-semibold tracking-wider uppercase rounded-[4px] transition shadow-sm active:scale-98 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="w-full sm:w-auto px-7 py-3 bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D] text-xs font-semibold tracking-wider uppercase rounded-[4px] transition shadow-sm active:scale-98 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <MdSave className="text-sm" /> {saving ? "Saving Address..." : "Save Delivery Address"}
                 </button>

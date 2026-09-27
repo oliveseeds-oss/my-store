@@ -463,6 +463,8 @@ router.get("/profile", verifyMember, async (req, res) => {
     }
 
     const resolvedName = p.full_name || m.name || "";
+    const resolvedEmail = p.email || m.email || "";
+    const resolvedPhone = p.phone || m.phone || "";
     const resolvedStreet = p.street_address || p.address || m.street_address || m.address || "";
     const resolvedApt = p.apt_suite || m.apt_suite || "";
     const resolvedCity = p.city || m.city || "";
@@ -472,18 +474,25 @@ router.get("/profile", verifyMember, async (req, res) => {
 
     res.json({
       member_uid: m.member_uid,
-      name: m.name,
-      email: m.email,
-      phone: m.phone,
+      name: resolvedName,
+      full_name: resolvedName,
+      email: resolvedEmail,
+      phone: resolvedPhone,
       status: m.status,
       created_at: m.created_at,
-      full_name: resolvedName,
       street_address: resolvedStreet,
+      delivery_street: resolvedStreet,
+      address: resolvedStreet,
       apt_suite: resolvedApt,
+      delivery_apt: resolvedApt,
       city: resolvedCity,
+      delivery_city: resolvedCity,
       state: resolvedState,
+      delivery_state: resolvedState,
       country: resolvedCountry,
-      pincode: resolvedPincode
+      delivery_country: resolvedCountry,
+      pincode: resolvedPincode,
+      delivery_pincode: resolvedPincode
     });
   } catch (err) {
     console.error("GET /profile failed:", err);
@@ -495,9 +504,27 @@ router.get("/profile", verifyMember, async (req, res) => {
 router.put("/profile", verifyMember, async (req, res) => {
   try {
     const memberUid = req.member.member_uid;
-    const { full_name, street_address, apt_suite, city, state, country, pincode, phone, email } = req.body;
-    const resolvedStreet = street_address || "";
-    const resolvedCountry = country || "India";
+    const {
+      full_name, name,
+      email,
+      phone,
+      street_address, delivery_street, address,
+      apt_suite, delivery_apt,
+      city, delivery_city,
+      state, delivery_state,
+      country, delivery_country,
+      pincode, delivery_pincode
+    } = req.body;
+
+    const resolvedName = (full_name !== undefined && full_name !== null && full_name !== "" ? full_name : name) || "";
+    const resolvedStreet = (street_address !== undefined && street_address !== null && street_address !== "" ? street_address : (delivery_street !== undefined && delivery_street !== null && delivery_street !== "" ? delivery_street : address)) || "";
+    const resolvedApt = (apt_suite !== undefined && apt_suite !== null ? apt_suite : delivery_apt) || "";
+    const resolvedCity = (city !== undefined && city !== null && city !== "" ? city : delivery_city) || "";
+    const resolvedState = (state !== undefined && state !== null && state !== "" ? state : delivery_state) || "";
+    const resolvedCountry = (country !== undefined && country !== null && country !== "" ? country : delivery_country) || "India";
+    const resolvedPincode = (pincode !== undefined && pincode !== null && pincode !== "" ? pincode : delivery_pincode) || "";
+    const resolvedPhone = phone || "";
+    const resolvedEmail = email || "";
 
     // Ensure table exists safely before update
     await db.query(`
@@ -536,7 +563,19 @@ router.put("/profile", verifyMember, async (req, res) => {
           country = VALUES(country),
           pincode = VALUES(pincode),
           address = VALUES(address)`,
-        [memberUid, full_name || null, email || null, phone || null, resolvedStreet, apt_suite || null, city || null, state || null, resolvedCountry, pincode || null, resolvedStreet]
+        [
+          memberUid,
+          resolvedName || null,
+          resolvedEmail || null,
+          resolvedPhone || null,
+          resolvedStreet,
+          resolvedApt || null,
+          resolvedCity || null,
+          resolvedState || null,
+          resolvedCountry,
+          resolvedPincode || null,
+          resolvedStreet
+        ]
       );
     } catch (upsertErr) {
       console.warn("member_profiles upsert fallback:", upsertErr.message);
@@ -545,7 +584,19 @@ router.put("/profile", verifyMember, async (req, res) => {
         `UPDATE member_profiles 
          SET full_name = ?, street_address = ?, address = ?, apt_suite = ?, city = ?, state = ?, country = ?, pincode = ?, phone = ?, email = ?
          WHERE member_uid = ?`,
-        [full_name || null, resolvedStreet, resolvedStreet, apt_suite || null, city || null, state || null, resolvedCountry, pincode || null, phone || null, email || null, memberUid]
+        [
+          resolvedName || null,
+          resolvedStreet,
+          resolvedStreet,
+          resolvedApt || null,
+          resolvedCity || null,
+          resolvedState || null,
+          resolvedCountry,
+          resolvedPincode || null,
+          resolvedPhone || null,
+          resolvedEmail || null,
+          memberUid
+        ]
       ).catch(() => {});
     }
 
@@ -563,14 +614,26 @@ router.put("/profile", verifyMember, async (req, res) => {
            pincode = ?,
            address = ?
        WHERE member_uid = ?`,
-      [full_name || null, email || null, phone || null, resolvedStreet, apt_suite || null, city || null, state || null, resolvedCountry, pincode || null, resolvedStreet, memberUid]
+      [
+        resolvedName || null,
+        resolvedEmail || null,
+        resolvedPhone || null,
+        resolvedStreet,
+        resolvedApt || null,
+        resolvedCity || null,
+        resolvedState || null,
+        resolvedCountry,
+        resolvedPincode || null,
+        resolvedStreet,
+        memberUid
+      ]
     ).catch(async () => {
       // Fallback if some address columns don't exist yet on members table
       const updates = [];
       const params = [];
-      if (full_name) { updates.push("name = ?"); params.push(full_name); }
-      if (phone) { updates.push("phone = ?"); params.push(phone); }
-      if (email) { updates.push("email = ?"); params.push(email); }
+      if (resolvedName) { updates.push("name = ?"); params.push(resolvedName); }
+      if (resolvedPhone) { updates.push("phone = ?"); params.push(resolvedPhone); }
+      if (resolvedEmail) { updates.push("email = ?"); params.push(resolvedEmail); }
       if (updates.length > 0) {
         params.push(memberUid);
         await db.query(`UPDATE members SET ${updates.join(", ")} WHERE member_uid = ?`, params).catch(() => {});
@@ -578,15 +641,23 @@ router.put("/profile", verifyMember, async (req, res) => {
     });
 
     const savedProfile = {
-      full_name: full_name || "",
+      name: resolvedName,
+      full_name: resolvedName,
       street_address: resolvedStreet,
-      apt_suite: apt_suite || "",
-      city: city || "",
-      state: state || "",
+      delivery_street: resolvedStreet,
+      address: resolvedStreet,
+      apt_suite: resolvedApt,
+      delivery_apt: resolvedApt,
+      city: resolvedCity,
+      delivery_city: resolvedCity,
+      state: resolvedState,
+      delivery_state: resolvedState,
       country: resolvedCountry,
-      pincode: pincode || "",
-      phone: phone || "",
-      email: email || ""
+      delivery_country: resolvedCountry,
+      pincode: resolvedPincode,
+      delivery_pincode: resolvedPincode,
+      phone: resolvedPhone,
+      email: resolvedEmail
     };
 
     res.json({ message: "Profile updated successfully", profile: savedProfile });
