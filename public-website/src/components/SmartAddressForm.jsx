@@ -286,7 +286,7 @@ export default function SmartAddressForm({
         >
           {allCountries.map((c) => {
             const upperIso = c.isoCode.toUpperCase();
-            const isEnabled = !isPhysical || enabledCountryCodes.includes(upperIso);
+            const isEnabled = !isPhysical || enabledCountryCodes.length === 0 || enabledCountryCodes.includes(upperIso);
 
             return (
               <option

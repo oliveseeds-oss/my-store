@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import API from "../api";
 import { useMember } from "../context/MemberContext";
@@ -12,7 +12,8 @@ import {
   MdFavorite, MdExitToApp, MdArrowBack, MdCheckCircle, MdSave, MdNotifications,
   MdOutlineLocalShipping, MdOutlineReceiptLong, MdShield
 } from "react-icons/md";
-import SmartAddressForm from "../components/SmartAddressForm";
+import { Country, State } from "country-state-city";
+import { getFlagEmoji } from "../components/SmartAddressForm";
 
 export default function Profile() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -43,6 +44,22 @@ export default function Profile() {
   const [loadingWishlist, setLoadingWishlist] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [loadingNotifications, setLoadingNotifications] = useState(false);
+
+  // Country & State handling for Address management
+  const allCountries = useMemo(() => Country.getAllCountries(), []);
+  const selectedCountryObj = useMemo(() => {
+    if (!profile.country) return allCountries.find(c => c.isoCode === "IN") || allCountries[0];
+    return (
+      allCountries.find(c => c.name.toLowerCase() === profile.country.toLowerCase()) ||
+      allCountries.find(c => c.isoCode.toLowerCase() === profile.country.toLowerCase()) ||
+      allCountries[0]
+    );
+  }, [profile.country, allCountries]);
+
+  const statesList = useMemo(() => {
+    if (!selectedCountryObj) return [];
+    return State.getStatesOfCountry(selectedCountryObj.isoCode);
+  }, [selectedCountryObj]);
 
   // Sync tab with URL
   const switchTab = (tab) => {
@@ -314,7 +331,7 @@ export default function Profile() {
                 { key: "home", label: "Overview", icon: "🏛️" },
                 { key: "orders", label: "Commissions & Orders", count: orders.length, icon: "📜" },
                 { key: "digital", label: "Digital Vault", count: digitalOrders.length, icon: "💾" },
-                { key: "addresses", label: "Delivery Sanctum", icon: "📍" },
+                { key: "addresses", label: "Delivery Address", icon: "📍" },
                 { key: "wishlist", label: "Curated Wishlist", count: wishlist.length, icon: "⚜️" },
                 { key: "security", label: "Client Dossier", icon: "🔐" },
                 { key: "notifications", label: "Studio Despatches", count: unreadNotificationsCount, icon: "📬" },
@@ -423,7 +440,7 @@ export default function Profile() {
                 </div>
               </div>
 
-              {/* Tile 3: Addresses */}
+              {/* Tile 3: Delivery Address */}
               <div 
                 onClick={() => switchTab("addresses")}
                 className="group p-6 rounded-[4px] border border-[#EAE4D6] hover:border-[#23483D] bg-white transition duration-300 cursor-pointer shadow-sm hover:shadow-md flex flex-col justify-between"
@@ -438,14 +455,14 @@ export default function Profile() {
                     </span>
                   </div>
                   <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-semibold text-[#1C2B26] group-hover:text-[#23483D] transition">
-                    Delivery Sanctum
+                    Delivery Address
                   </h3>
                   <p className="text-xs text-[#6B7C75] mt-2 leading-relaxed">
-                    Manage private residential freight coordinates, gated dispatch instructions, and global delivery jurisdictions.
+                    Manage residential shipping address, street details, apartment/suite, city, state, postal code, and country.
                   </p>
                 </div>
                 <div className="mt-5 pt-3 border-t border-[#EAE4D6]/60 flex items-center text-xs font-semibold text-[#23483D] group-hover:translate-x-1 transition">
-                  Edit Delivery Destination →
+                  Manage Delivery Address →
                 </div>
               </div>
 
@@ -750,7 +767,7 @@ export default function Profile() {
           </div>
         )}
 
-        {/* ─── 3. DELIVERY SANCTUM PANEL ─── */}
+        {/* ─── 3. DELIVERY ADDRESS PANEL ─── */}
         {activeTab === "addresses" && (
           <div className="space-y-6 animate-fadeIn max-w-3xl">
             <div className="flex items-center justify-between border-b border-[#EAE4D6] pb-4">
@@ -762,9 +779,9 @@ export default function Profile() {
                   <MdArrowBack /> Atelier Overview
                 </button>
                 <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl sm:text-3xl font-normal text-[#1C2B26]">
-                  Delivery Sanctum
+                  Delivery Address & Shipping Details
                 </h2>
-                <p className="text-xs text-[#6B7C75] mt-1">Configure default destination coordinates for white-glove packaging and freight logistics.</p>
+                <p className="text-xs text-[#6B7C75] mt-1">Manage default destination coordinates and freight delivery parameters.</p>
               </div>
             </div>
 
@@ -776,64 +793,197 @@ export default function Profile() {
 
             {/* Active Destination Card */}
             {(profile.street_address || profile.city) && (
-              <div className="bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px] p-5 shadow-sm">
+              <div className="bg-[#FAF6EE] border border-[#EAE4D6] rounded-[4px] p-5 sm:p-6 shadow-sm">
                 <div className="flex items-center justify-between gap-2 mb-3">
                   <span className="text-[10px] uppercase tracking-[0.16em] font-bold bg-[#23483D] text-[#FAF6EE] px-2.5 py-0.5 rounded-[3px]">
-                    Active Delivery Destination
+                    Default Shipping Address
                   </span>
                   <span className="text-xs font-semibold text-[#23483D] flex items-center gap-1">
                     ✓ Verified on File
                   </span>
                 </div>
-                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-lg font-bold text-[#1C2B26]">
+                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-bold text-[#1C2B26]">
                   {profile.full_name || member?.name || "Member Residence"}
                 </p>
-                <p className="text-xs text-[#6B7C75] mt-1 leading-relaxed">
-                  {[profile.street_address, profile.apt_suite, profile.city, profile.state, profile.pincode, profile.country].filter(Boolean).join(", ")}
-                </p>
-                {profile.phone && <p className="text-xs text-[#6B7C75] font-mono mt-2">📞 {profile.phone}</p>}
+                <div className="text-xs text-[#6B7C75] mt-1.5 leading-relaxed space-y-0.5">
+                  <p>{profile.street_address}{profile.apt_suite ? `, ${profile.apt_suite}` : ""}</p>
+                  <p>{[profile.city, profile.state, profile.pincode].filter(Boolean).join(", ")}</p>
+                  <p className="font-medium text-[#1C2B26]">{profile.country}</p>
+                </div>
+                {profile.phone && (
+                  <p className="text-xs text-[#23483D] font-mono mt-3 flex items-center gap-1.5">
+                    <span>📞</span> {profile.phone}
+                  </p>
+                )}
               </div>
             )}
 
-            <form onSubmit={handleSave} className="space-y-6 bg-white border border-[#EAE4D6] p-6 rounded-[4px] shadow-sm">
-              <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-normal text-[#1C2B26]">
-                Update Destination Parameters
-              </h3>
-              
-              <SmartAddressForm
-                form={{
-                  name: profile.full_name,
-                  phone: profile.phone,
-                  delivery_street: profile.street_address,
-                  delivery_apt: profile.apt_suite,
-                  delivery_city: profile.city,
-                  delivery_state: profile.state,
-                  country: profile.country,
-                  delivery_pincode: profile.pincode
-                }}
-                onChange={(updated) => {
-                  setProfile((prev) => ({
-                    ...prev,
-                    full_name: updated.name !== undefined ? updated.name : (updated.full_name !== undefined ? updated.full_name : prev.full_name),
-                    phone: updated.phone !== undefined ? updated.phone : prev.phone,
-                    street_address: updated.delivery_street !== undefined ? updated.delivery_street : (updated.street_address !== undefined ? updated.street_address : prev.street_address),
-                    apt_suite: updated.delivery_apt !== undefined ? updated.delivery_apt : (updated.apt_suite !== undefined ? updated.apt_suite : prev.apt_suite),
-                    city: updated.delivery_city !== undefined ? updated.delivery_city : (updated.city !== undefined ? updated.city : prev.city),
-                    state: updated.delivery_state !== undefined ? updated.delivery_state : (updated.state !== undefined ? updated.state : prev.state),
-                    country: updated.country || prev.country,
-                    pincode: updated.delivery_pincode !== undefined ? updated.delivery_pincode : (updated.pincode !== undefined ? updated.pincode : prev.pincode)
-                  }));
-                }}
-                isPhysical={false}
-              />
+            <form onSubmit={handleSave} className="space-y-5 bg-white border border-[#EAE4D6] p-6 sm:p-7 rounded-[4px] shadow-sm">
+              <div className="border-b border-[#EAE4D6] pb-3 mb-2">
+                <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-normal text-[#1C2B26]">
+                  {profile.street_address ? "Edit Delivery Address" : "Add Delivery Address"}
+                </h3>
+                <p className="text-xs text-[#6B7C75] mt-0.5">
+                  Enter your complete shipping destination coordinates for seamless order dispatch.
+                </p>
+              </div>
 
-              <button
-                type="submit"
-                disabled={saving}
-                className="w-full sm:w-auto px-6 py-3.5 bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D] text-xs font-semibold tracking-wider uppercase rounded-[4px] transition shadow-sm active:scale-98 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-              >
-                <MdSave className="text-sm" /> {saving ? "Securing Coordinates..." : "Save Delivery Sanctum"}
-              </button>
+              {/* Grid 1: Full Name & Phone */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-[10px] uppercase font-bold text-[#A48855] tracking-widest block mb-1.5">
+                    Full Recipient Name *
+                  </label>
+                  <input 
+                    type="text" 
+                    required
+                    value={profile.full_name}
+                    onChange={(e) => setProfile({...profile, full_name: e.target.value})}
+                    className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
+                    placeholder="e.g. Alistair Vance"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] uppercase font-bold text-[#A48855] tracking-widest block mb-1.5">
+                    Contact Phone Number *
+                  </label>
+                  <input 
+                    type="tel" 
+                    required
+                    value={profile.phone}
+                    onChange={(e) => setProfile({...profile, phone: e.target.value})}
+                    className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
+                    placeholder="e.g. +91 98765 43210"
+                  />
+                </div>
+              </div>
+
+              {/* Street Address */}
+              <div>
+                <label className="text-[10px] uppercase font-bold text-[#A48855] tracking-widest block mb-1.5">
+                  Street Address / House / Flat No. *
+                </label>
+                <input 
+                  type="text" 
+                  required
+                  value={profile.street_address}
+                  onChange={(e) => setProfile({...profile, street_address: e.target.value})}
+                  className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
+                  placeholder="Flat / House No., Building Name, Street / Road, Area"
+                />
+              </div>
+
+              {/* Apartment / Suite */}
+              <div>
+                <label className="text-[10px] uppercase font-bold text-[#A48855] tracking-widest block mb-1.5">
+                  Apartment, Suite, Unit, Landmark (Optional)
+                </label>
+                <input 
+                  type="text" 
+                  value={profile.apt_suite}
+                  onChange={(e) => setProfile({...profile, apt_suite: e.target.value})}
+                  className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
+                  placeholder="Apt, Suite, Floor, Landmark"
+                />
+              </div>
+
+              {/* City, State, Pincode */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="text-[10px] uppercase font-bold text-[#A48855] tracking-widest block mb-1.5">
+                    City / Town *
+                  </label>
+                  <input 
+                    type="text" 
+                    required
+                    value={profile.city}
+                    onChange={(e) => setProfile({...profile, city: e.target.value})}
+                    className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
+                    placeholder="e.g. Mumbai"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] uppercase font-bold text-[#A48855] tracking-widest block mb-1.5">
+                    State / Province *
+                  </label>
+                  {statesList.length > 0 ? (
+                    <select
+                      value={profile.state}
+                      onChange={(e) => setProfile({...profile, state: e.target.value})}
+                      className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
+                    >
+                      <option value="">Select State</option>
+                      {statesList.map((s) => (
+                        <option key={s.isoCode || s.name} value={s.name}>
+                          {s.name}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input 
+                      type="text" 
+                      required
+                      value={profile.state}
+                      onChange={(e) => setProfile({...profile, state: e.target.value})}
+                      className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
+                      placeholder="e.g. Maharashtra"
+                    />
+                  )}
+                </div>
+
+                <div>
+                  <label className="text-[10px] uppercase font-bold text-[#A48855] tracking-widest block mb-1.5">
+                    PIN / Postal Code *
+                  </label>
+                  <input 
+                    type="text" 
+                    required
+                    value={profile.pincode}
+                    onChange={(e) => setProfile({...profile, pincode: e.target.value})}
+                    className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
+                    placeholder="e.g. 400001"
+                  />
+                </div>
+              </div>
+
+              {/* Country */}
+              <div>
+                <label className="text-[10px] uppercase font-bold text-[#A48855] tracking-widest block mb-1.5">
+                  Country / Region *
+                </label>
+                <select
+                  value={selectedCountryObj?.isoCode}
+                  onChange={(e) => {
+                    const countryObj = allCountries.find(c => c.isoCode === e.target.value);
+                    if (countryObj) {
+                      setProfile({
+                        ...profile,
+                        country: countryObj.name,
+                        state: ""
+                      });
+                    }
+                  }}
+                  className="w-full bg-[#FAF6EE]/50 border border-[#EAE4D6] focus:border-[#23483D] rounded-[4px] px-3.5 py-2.5 text-xs focus:outline-none text-[#1C2B26]"
+                >
+                  {allCountries.map((c) => (
+                    <option key={c.isoCode} value={c.isoCode}>
+                      {c.flag || getFlagEmoji(c.isoCode)} {c.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="w-full sm:w-auto px-6 py-3.5 bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D] text-xs font-semibold tracking-wider uppercase rounded-[4px] transition shadow-sm active:scale-98 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                >
+                  <MdSave className="text-sm" /> {saving ? "Saving Address..." : "Save Delivery Address"}
+                </button>
+              </div>
             </form>
           </div>
         )}
@@ -1030,6 +1180,17 @@ export default function Profile() {
                   className="w-full sm:w-auto px-6 py-3.5 bg-[#23483D] text-[#FAF6EE] hover:bg-[#16352D] text-xs font-semibold tracking-wider uppercase rounded-[4px] transition shadow-sm active:scale-98 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <MdSave className="text-sm" /> {saving ? "Encrypting Changes..." : "Save Patron Credentials"}
+                </button>
+              </div>
+
+              <div className="pt-4 border-t border-[#EAE4D6] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <span className="text-xs text-[#6B7C75]">Need to manage your shipping and physical delivery destination?</span>
+                <button
+                  type="button"
+                  onClick={() => switchTab("addresses")}
+                  className="text-xs font-semibold text-[#23483D] hover:underline cursor-pointer flex items-center gap-1 self-start sm:self-auto"
+                >
+                  Manage Delivery Address →
                 </button>
               </div>
             </form>
