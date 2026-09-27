@@ -83,42 +83,36 @@ function PayPalButtonSection({
             height: 48,
           }}
           className="w-full"
-          createOrder={async (data, actions) => {
+          createOrder={(data, actions) => {
             if (!checkShippingEligibility()) {
               throw new Error("Please complete required shipping details first.");
             }
-            try {
-              const res = await API.post("/payments/paypal/create-order", {
-                currency_code: activePaypalCurrency,
-                amount: convertedVal
-              });
-              if (!res.data?.orderId) {
-                throw new Error(res.data?.error || "Failed to create PayPal order.");
+            return actions.order.create({
+              purchase_units: [{
+                amount: {
+                  currency_code: activePaypalCurrency,
+                  value: convertedVal
+                },
+                description: "Olive Seeds Studio Order"
+              }],
+              application_context: {
+                brand_name: "Olive Seeds",
+                shipping_preference: "NO_SHIPPING",
+                user_action: "PAY_NOW"
               }
-              return res.data.orderId;
-            } catch (createErr) {
-              const msg = createErr.response?.data?.error || createErr.message || "PayPal checkout failed.";
-              console.error("PayPal createOrder error:", msg);
-              if (msg.includes("DOMESTIC_TRANSACTION_NOT_ALLOWED") || msg.includes("domestic")) {
-                alert("PayPal India cannot process domestic transactions between Indian accounts under RBI regulations. Please choose Razorpay (Cards, UPI, Netbanking).");
-                setPaymentMethod("razorpay");
-              } else if (msg.includes("PAYEE_ACCOUNT_RESTRICTED") || msg.includes("restricted")) {
-                alert("PayPal merchant account is currently restricted. Please use Razorpay or contact store support.");
-              } else {
-                alert(`PayPal error: ${msg}`);
-              }
-              throw createErr;
-            }
+            });
           }}
           onApprove={async (data, actions) => {
             try {
-              const orderId = data?.orderID || data?.orderId;
-              if (!orderId) {
-                throw new Error("No PayPal order confirmation ID returned from PayPal.");
+              let orderId = data?.orderID || data?.orderId;
+              if (actions?.order?.capture) {
+                const details = await actions.order.capture();
+                orderId = details?.id || orderId;
+              } else {
+                await API.post("/payments/paypal/capture-order", {
+                  orderId
+                });
               }
-              await API.post("/payments/paypal/capture-order", {
-                orderId
-              });
               await placeOrder({
                 mode: "PayPal",
                 transactionId: orderId
