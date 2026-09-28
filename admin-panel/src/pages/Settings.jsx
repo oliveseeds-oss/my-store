@@ -522,13 +522,13 @@ bulk_material_6: settings.bulk_material_6,
                 {[1,2,3,4,5,6].map(num => (
                   <div key={num} className="flex gap-2 items-center">
                     <span className="text-xs text-gray-500 w-16">Material {num}</span>
-                    <input type="text" value={settings[`"bulk_material_`" + num] || ""} onChange={(e) => update("bulk_material_" + num, e.target.value)} placeholder={"https://... or upload image " + num} className="flex-1 border border-gray-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+                    <input type="text" value={settings["bulk_material_" + num] || ""} onChange={(e) => update("bulk_material_" + num, e.target.value)} placeholder={"https://... or upload image " + num} className="flex-1 border border-gray-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-300" />
                     <label className="bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold py-2 px-3 rounded-xl transition cursor-pointer shrink-0">
                       Upload
                       <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, "bulk_material_" + num)} />
                     </label>
-                    {settings[`"bulk_material_`" + num] && (
-                      <div className="w-12 h-8 rounded overflow-hidden border border-gray-200"><img src={settings[`"bulk_material_`" + num]} alt="" className="w-full h-full object-cover"/></div>
+                    {settings["bulk_material_" + num] && (
+                      <div className="w-12 h-8 rounded overflow-hidden border border-gray-200"><img src={settings["bulk_material_" + num]} alt="" className="w-full h-full object-cover"/></div>
                     )}
                   </div>
                 ))}
@@ -553,5 +553,6 @@ bulk_material_6: settings.bulk_material_6,
     </div>
   );
 }
+
 
 
