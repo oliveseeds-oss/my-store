@@ -73,9 +73,30 @@ const server = http.createServer(async (req, res) => {
       let desc = "Oliveseeds Creative Studio offers premium personalized laser engravings, custom gifts, acrylic and wood keepsakes, alongside professional UI/UX design systems.";
       let ogImage = "https://www.oliveseedsdesignstudio.com/logo512.png";
       let jsonLd = "";
+      let globalTags = "";
 
-      // Intercept paths and inject tags dynamically (Priority 7/9)
       try {
+        // Fetch global SEO settings to inject verification tags
+        const globalSeo = await getBackendData("/seo/global");
+        if (globalSeo) {
+           if (globalSeo.google_verify_code) globalTags += `<meta name="google-site-verification" content="${globalSeo.google_verify_code}" />\n`;
+           if (globalSeo.pinterest_verify_code) globalTags += `<meta name="p:domain_verify" content="${globalSeo.pinterest_verify_code}" />\n`;
+           if (globalSeo.bing_verify_code) globalTags += `<meta name="msvalidate.01" content="${globalSeo.bing_verify_code}" />\n`;
+           if (globalSeo.yandex_verify_code) globalTags += `<meta name="yandex-verification" content="${globalSeo.yandex_verify_code}" />\n`;
+           if (globalSeo.baidu_verify_code) globalTags += `<meta name="baidu-site-verification" content="${globalSeo.baidu_verify_code}" />\n`;
+           
+           if (globalSeo.ga4_id) {
+              globalTags += `<script async src="https://www.googletagmanager.com/gtag/js?id=${globalSeo.ga4_id}"></script>
+              <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${globalSeo.ga4_id}');
+              </script>\n`;
+           }
+        }
+
+        // Intercept paths and inject tags dynamically
         if (pathname.startsWith("/products/")) {
           const prodId = pathname.split("/")[2];
           if (prodId) {
@@ -86,6 +107,15 @@ const server = http.createServer(async (req, res) => {
               if (product.image_url) {
                 ogImage = `https://www.oliveseedsdesignstudio.com${product.image_url}`;
               }
+
+              // Apply custom SEO from SEO Manager if saved
+              const productSeo = await getBackendData(`/seo/product/${prodId}`);
+              if (productSeo && Object.keys(productSeo).length > 0) {
+                if (productSeo.meta_title) title = productSeo.meta_title;
+                if (productSeo.meta_description) desc = productSeo.meta_description;
+                if (productSeo.og_image) ogImage = productSeo.og_image;
+              }
+
               jsonLd = `
               <script type="application/ld+json">
               {
@@ -136,26 +166,40 @@ const server = http.createServer(async (req, res) => {
               </script>`;
             }
           }
+        } else if (pathname.startsWith("/blog/")) {
+          const blogId = pathname.split("/")[2];
+          if (blogId) {
+             const blogSeo = await getBackendData(`/seo/blog/${blogId}`);
+             if (blogSeo && Object.keys(blogSeo).length > 0) {
+                if (blogSeo.meta_title) title = blogSeo.meta_title;
+                if (blogSeo.meta_description) desc = blogSeo.meta_description;
+                if (blogSeo.og_image) ogImage = blogSeo.og_image;
+             }
+          }
         } else {
-          // Fetch dynamic static page SEO settings from db (Priority 6)
+          // Fetch dynamic static page SEO settings from db
           let activePage = "home";
           if (pathname.startsWith("/about")) activePage = "about";
           else if (pathname.startsWith("/contact")) activePage = "contact";
           else if (pathname.startsWith("/service")) activePage = "service";
-          else if (pathname.startsWith("/blog")) activePage = "blogs";
-          else if (pathname.startsWith("/catalog")) activePage = "products";
+          else if (pathname.startsWith("/blog")) activePage = "blog"; // Note it was 'blogs' before but the key is 'blog' in STATIC_PAGES
+          else if (pathname.startsWith("/catalog")) activePage = "catalog"; // previously it used 'products', but STATIC_PAGES uses 'catalog' for /catalog
+          else if (pathname.startsWith("/products")) activePage = "products";
+          else if (pathname.startsWith("/digital")) activePage = "digital";
 
-          const seoData = await getBackendData(`/seo/${activePage}`);
-          if (seoData) {
-            title = seoData.title.includes("Olive Seeds") ? seoData.title : `${seoData.title} | Olive Seeds`;
+          // Fixed the URL to match backend's /seo/page/:pageKey
+          const seoData = await getBackendData(`/seo/page/${activePage}`);
+          if (seoData && Object.keys(seoData).length > 0) {
+            title = seoData.meta_title || seoData.title || title;
             desc = seoData.meta_description || desc;
+            if (seoData.og_image) ogImage = seoData.og_image;
           }
         }
       } catch (e) {
         console.error("Meta injection failure:", e.message);
       }
 
-      // Perform string injection into template HTML (Priority 3/4/9/6)
+      // Perform string injection into template HTML
       let html = content
         .replace("<title>React App</title>", `<title>${title}</title>`)
         .replace(
@@ -167,8 +211,9 @@ const server = http.createServer(async (req, res) => {
           `${jsonLd}<div id="root"></div>`
         );
 
-      // Inject standard Open Graph tags if missing (Priority 9)
+      // Inject standard Open Graph and Global tags
       const ogMeta = `
+      ${globalTags}
       <meta property="og:title" content="${title}" />
       <meta property="og:description" content="${desc.replace(/"/g, '&quot;')}" />
       <meta property="og:image" content="${ogImage}" />

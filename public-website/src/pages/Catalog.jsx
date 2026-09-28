@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import API from "../api";
+import { resolveImageUrl } from "../utils/imageHelper";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SEO from "../components/SEO";
@@ -148,14 +149,14 @@ export default function Catalog() {
                   className="hover:text-[#181A18] transition ml-1"
                   title="Clear filter"
                 >
-                  ✕
+                  âœ•
                 </button>
               </span>
               <Link
                 to={`/products?category=${encodeURIComponent(searchQuery)}`}
                 className="text-[#23483D] hover:text-[#16352D] font-medium underline flex items-center gap-1"
               >
-                View matching products in shop →
+                View matching products in shop â†’
               </Link>
             </div>
           )}
@@ -176,7 +177,7 @@ export default function Catalog() {
           </div>
         ) : filteredCategories.length === 0 ? (
           <div className="text-center py-16 px-6 bg-[#FAF6EE] rounded-[4px] border border-[#E7E7E2] shadow-sm max-w-lg mx-auto">
-            <span className="text-4xl block mb-3">🔍</span>
+            <span className="text-4xl block mb-3">ðŸ”</span>
             <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-xl font-normal text-[#181A18] mb-2">No Specific Categories for "{searchQuery}"</h3>
             <p className="text-[#676A65] text-xs mb-6 leading-relaxed">
               We couldn't find a dedicated category page for this collection yet, but you can explore all available products or clear the filter.
@@ -186,7 +187,7 @@ export default function Catalog() {
                 to={`/products?category=${encodeURIComponent(searchQuery)}`}
                 className="bg-[#23483D] hover:bg-[#16352D] text-white text-xs font-medium px-5 py-2.5 rounded-[4px] transition shadow-sm"
               >
-                Browse Products in Shop →
+                Browse Products in Shop â†’
               </Link>
               <button
                 onClick={() => setSearchQuery("")}
@@ -208,13 +209,13 @@ export default function Catalog() {
                 <div className="aspect-square w-full bg-[#FAF6EE] overflow-hidden relative border-b border-[#E7E7E2]">
                   {c.image_url ? (
                     <img 
-                      src={c.image_url} 
+                      src={resolveImageUrl(c.image_url)} 
                       alt={c.name} 
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-[#FAF6EE]">
-                      <span className="text-4xl group-hover:scale-110 transition duration-300">🪵</span>
+                      <span className="text-4xl group-hover:scale-110 transition duration-300">ðŸªµ</span>
                     </div>
                   )}
                   <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -230,7 +231,7 @@ export default function Catalog() {
                   </p>
                   
                   <span className="text-[11px] text-[#23483D] font-semibold uppercase tracking-wider mt-auto pt-2 flex items-center gap-1">
-                    Explore Collection →
+                    Explore Collection â†’
                   </span>
                 </div>
               </Link>
@@ -243,3 +244,4 @@ export default function Catalog() {
     </div>
   );
 }
+

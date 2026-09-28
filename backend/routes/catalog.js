@@ -1,8 +1,8 @@
-const router = require("express").Router();
+﻿const router = require("express").Router();
 const db = require("../db");
 const { verifyAdmin } = require("../middleware/auth");
 
-// PUBLIC — catalog by type
+// PUBLIC â€” catalog by type
 router.get("/", async (req, res) => {
   const { type } = req.query;
   let sql = "SELECT * FROM catalog";
@@ -13,13 +13,13 @@ router.get("/", async (req, res) => {
   res.json(rows);
 });
 
-// ADMIN — all
+// ADMIN â€” all
 router.get("/admin/all", verifyAdmin, async (req, res) => {
   const [rows] = await db.query("SELECT * FROM catalog ORDER BY name");
   res.json(rows);
 });
 
-// ADMIN — add
+// ADMIN â€” add
 router.post("/", verifyAdmin, async (req, res) => {
   const { name, type, description, image_url, image_urls } = req.body;
   
@@ -27,10 +27,10 @@ router.post("/", verifyAdmin, async (req, res) => {
   if (Array.isArray(image_urls)) {
     urls = image_urls.map(u => String(u || "").trim()).filter(Boolean);
   } else if (typeof image_urls === "string" && image_urls.trim()) {
-    urls = image_urls.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
+    urls = image_urls.split(/[\n,\s]+/).map(u => u.trim()).filter(Boolean);
   }
   if (image_url && typeof image_url === "string" && image_url.trim()) {
-    const splitUrls = image_url.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
+    const splitUrls = image_url.split(/[\n,\s]+/).map(u => u.trim()).filter(Boolean);
     urls.push(...splitUrls);
   }
   urls = [...new Set(urls)];
@@ -54,7 +54,7 @@ router.post("/", verifyAdmin, async (req, res) => {
   res.json({ id: result.insertId });
 });
 
-// ADMIN — update
+// ADMIN â€” update
 router.put("/:id", verifyAdmin, async (req, res) => {
   const { name, type, description, image_url } = req.body;
   await db.query(
@@ -64,7 +64,7 @@ router.put("/:id", verifyAdmin, async (req, res) => {
   res.json({ message: "Updated" });
 });
 
-// ADMIN — delete
+// ADMIN â€” delete
 router.delete("/:id", verifyAdmin, async (req, res) => {
   await db.query("DELETE FROM catalog WHERE id = ?", [req.params.id]);
   res.json({ message: "Deleted" });

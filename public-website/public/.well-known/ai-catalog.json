@@ -1,0 +1,23 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Olive Seeds Design Studio",
+    "identifier": "did:web:oliveseeds-studio.com"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:oliveseeds-studio.com:info:ai-agent",
+      "displayName": "Olive Seeds Design Studio Information",
+      "type": "application/json",
+      "url": "https://oliveseeds-studio.com/ai-agent.json",
+      "description": "JSON representation of Olive Seeds Design Studio services, products, and FAQs."
+    },
+    {
+      "identifier": "urn:air:oliveseeds-studio.com:info:llms",
+      "displayName": "LLM Instructions",
+      "type": "text/markdown",
+      "url": "https://oliveseeds-studio.com/llms.txt",
+      "description": "Markdown representation of Olive Seeds Design Studio for Large Language Models."
+    }
+  ]
+}

@@ -6,7 +6,10 @@ const API_BASE = (process.env.REACT_APP_API_URL || "").replace(/\/api\/?$/, "");
 
 export function resolveImageUrl(url) {
   if (!url || typeof url !== "string") return "";
-  const trimmed = url.trim();
+  let trimmed = url.trim();
+  if (trimmed.includes(",") || trimmed.includes(" ")) {
+    trimmed = trimmed.split(/[\s,]+/)[0].trim();
+  }
   if (!trimmed || trimmed === "[" || trimmed === "]" || trimmed.length < 5) return "";
   if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("data:")) {
     return trimmed;
@@ -66,12 +69,12 @@ export function getAllProductImages(product) {
   const list = [];
   
   if (product.image_url) {
-    const resolved = resolveImageUrl(product.image_url);
-    if (resolved) list.push(resolved);
+    const fromImageUrl = parseImagesList(product.image_url);
+    list.push(...fromImageUrl);
   }
   if (product.thumbnail_url) {
-    const resolved = resolveImageUrl(product.thumbnail_url);
-    if (resolved) list.push(resolved);
+    const fromThumbnail = parseImagesList(product.thumbnail_url);
+    list.push(...fromThumbnail);
   }
   
   const fromImages = parseImagesList(product.images);

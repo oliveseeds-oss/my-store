@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import API from "../api";
+import { resolveImageUrl } from "../utils/imageHelper";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SEO from "../components/SEO";
@@ -66,7 +67,7 @@ export default function Gallery() {
       <section className="max-w-5xl mx-auto px-6 mt-10">
         <div className="bg-[#FFFFFF] border border-[#E7E7E2] rounded-[4px] p-5 md:p-6 shadow-sm flex flex-wrap gap-4 items-center justify-between">
           <div className="flex items-center gap-2 text-xs text-[#181A18] font-medium tracking-wide">
-            <span className="text-[#23483D]">✦</span> Material & Style Filters:
+            <span className="text-[#23483D]">âœ¦</span> Material & Style Filters:
           </div>
           
           <div className="flex flex-wrap gap-3 flex-1">
@@ -129,7 +130,7 @@ export default function Gallery() {
           </div>
         ) : items.length === 0 ? (
           <div className="text-center py-20 bg-[#FAF6EE] rounded-[4px] border border-[#E7E7E2] shadow-sm">
-            <span className="text-4xl block mb-3">🍂</span>
+            <span className="text-4xl block mb-3">ðŸ‚</span>
             <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }} className="text-2xl font-normal text-[#181A18] mb-2">No custom creations match this search</h3>
             <p className="text-[#676A65] text-xs">Clear the filters to view the complete catalog.</p>
           </div>
@@ -147,13 +148,13 @@ export default function Gallery() {
                 >
                   <div className="aspect-square w-full overflow-hidden bg-[#FAF6EE] relative">
                     <img 
-                      src={item.image_url} 
+                      src={resolveImageUrl(item.image_url)} 
                       alt={item.title || "Custom crafted item"} 
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                     />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                       <span className="text-[#181A18] text-xs font-medium bg-white/95 backdrop-blur px-4 py-2 rounded-[4px] uppercase tracking-wider border border-[#E7E7E2] shadow-sm">
-                        🔍 Inspect Material Details
+                        ðŸ” Inspect Material Details
                       </span>
                     </div>
                   </div>
@@ -196,11 +197,11 @@ export default function Gallery() {
                 className="absolute top-4 right-4 bg-white/90 hover:bg-white text-[#181A18] border border-[#E7E7E2] rounded-[4px] w-8 h-8 flex items-center justify-center z-10 transition text-sm cursor-pointer"
                 onClick={() => setLightboxImage(null)}
               >
-                ✕
+                âœ•
               </button>
 
               <img 
-                src={lightboxImage.image_url} 
+                src={resolveImageUrl(lightboxImage.image_url)} 
                 alt={lightboxImage.title || "Custom crafted item details"} 
                 className="w-full max-h-[380px] object-cover"
               />
@@ -237,7 +238,7 @@ export default function Gallery() {
                     }}
                     className="bg-[#23483D] hover:bg-[#16352D] text-white text-xs font-medium uppercase tracking-wider px-5 py-3 rounded-[4px] shadow-sm transition whitespace-nowrap cursor-pointer w-full md:w-auto text-center"
                   >
-                    💬 Customize via WhatsApp
+                    ðŸ’¬ Customize via WhatsApp
                   </button>
                 </div>
               </div>
@@ -250,3 +251,4 @@ export default function Gallery() {
     </div>
   );
 }
+

@@ -51,6 +51,12 @@ async function initializeDatabase() {
   await runSafe("ALTER TABLE settings ADD COLUMN engraving_hero_image VARCHAR(500) DEFAULT NULL");
   await runSafe("ALTER TABLE settings ADD COLUMN engraving_showcase_image VARCHAR(500) DEFAULT NULL");
   await runSafe("ALTER TABLE settings ADD COLUMN about_story_image VARCHAR(500) DEFAULT NULL");
+  await runSafe("ALTER TABLE settings ADD COLUMN bulk_material_1 VARCHAR(500) DEFAULT NULL");
+  await runSafe("ALTER TABLE settings ADD COLUMN bulk_material_2 VARCHAR(500) DEFAULT NULL");
+  await runSafe("ALTER TABLE settings ADD COLUMN bulk_material_3 VARCHAR(500) DEFAULT NULL");
+  await runSafe("ALTER TABLE settings ADD COLUMN bulk_material_4 VARCHAR(500) DEFAULT NULL");
+  await runSafe("ALTER TABLE settings ADD COLUMN bulk_material_5 VARCHAR(500) DEFAULT NULL");
+  await runSafe("ALTER TABLE settings ADD COLUMN bulk_material_6 VARCHAR(500) DEFAULT NULL");
   await runSafe("INSERT IGNORE INTO settings (id, site_name) VALUES (1, 'My Engraving Store')");
   await runSafe("ALTER TABLE gallery ADD COLUMN description TEXT DEFAULT NULL");
 
