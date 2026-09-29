@@ -397,7 +397,7 @@ export default function Engraving() {
                     onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "#E7E7E2"; }}
                   >
                     <div style={{ height: "190px", overflow: "hidden", position: "relative" }}>
-                      <img src={settings[ulk_material_\] || mat.img} alt={mat.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      <img src={settings[`bulk_material_${i + 1}`] || mat.img} alt={mat.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                       <div style={{ position: "absolute", top: "14px", left: "14px", background: "#FFFFFF", padding: "8px", borderRadius: "4px", border: "1px solid #E7E7E2", display: "flex" }}>
                         <Icon size={16} color="#23483D" />
                       </div>
