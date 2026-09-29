@@ -147,7 +147,7 @@ export default function Gallery() {
                   onClick={() => setLightboxImage(item)}
                   className="group bg-white rounded-[4px] border border-[#E7E7E2] overflow-hidden shadow-sm hover:shadow-md hover:border-[#23483D] transition-all duration-300 flex flex-col cursor-pointer"
                 >
-                  <div className="aspect-square w-full overflow-hidden bg-[#FAF6EE] relative">
+                  <div className="aspect-[3/4] w-full overflow-hidden bg-[#FAF6EE] relative">
                     {(() => {
                       const imgs = parseImagesList(item.image_url);
                       return imgs.length > 1 ? (
@@ -220,7 +220,7 @@ export default function Gallery() {
                   <HoverSlideshow 
                     imageUrls={imgs} 
                     alt={lightboxImage.title || "Custom crafted item details"}
-                    className="w-full max-h-[380px]"
+                    className="w-full aspect-[3/4]"
                     imageClassName="w-full h-full object-cover"
                     imageStyle={{}}
                   />
@@ -228,7 +228,7 @@ export default function Gallery() {
                   <img 
                     src={imgs[0] || ""} 
                     alt={lightboxImage.title || "Custom crafted item details"} 
-                    className="w-full max-h-[380px] object-cover"
+                    className="w-full aspect-[3/4] object-cover"
                   />
                 );
               })()}
