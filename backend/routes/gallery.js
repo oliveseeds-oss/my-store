@@ -37,10 +37,10 @@ router.post("/", verifyAdmin, async (req, res) => {
   if (Array.isArray(image_urls)) {
     urls = image_urls.map(u => String(u || "").trim()).filter(Boolean);
   } else if (typeof image_urls === "string" && image_urls.trim()) {
-    urls = image_urls.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
+    urls = image_urls.split(/[\n]+|[,\s]+\s*(?=(?:https?:\/\/|\/))/).map(u => u.trim()).filter(Boolean);
   }
   if (image_url && typeof image_url === "string" && image_url.trim()) {
-    const splitUrls = image_url.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
+    const splitUrls = image_url.split(/[\n]+|[,\s]+\s*(?=(?:https?:\/\/|\/))/).map(u => u.trim()).filter(Boolean);
     urls.push(...splitUrls);
   }
   urls = [...new Set(urls)];

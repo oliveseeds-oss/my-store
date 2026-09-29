@@ -66,7 +66,7 @@ export default function DigitalProducts() {
     if (!form.name || !form.price) return;
     const payload = {
       ...form,
-      images: form.images ? form.images.split(",").map(s => s.trim()).filter(Boolean) : [],
+      images: form.images ? form.images.split(/[\n]+|[,\s]+\s*(?=(?:https?:\/\/|\/))/).map(s => s.trim()).filter(Boolean) : [],
       tags: form.tags ? form.tags.split(",").map(s => s.trim()).filter(Boolean) : [],
     };
     if (editId) await API.put(`/digital-products/${editId}`, payload);

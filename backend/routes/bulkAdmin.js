@@ -141,7 +141,7 @@ router.post("/products/physical/bulk-upload", verifyAdmin, upload.single("file")
       const mainImageUrl = norm.main_image_url || norm.image_url || norm.image || "";
       const additionalImagesStr = norm.additional_image_urls || norm.images || "";
       const imagesArray = additionalImagesStr
-        ? additionalImagesStr.split(",").map((s) => s.trim()).filter(Boolean)
+        ? additionalImagesStr.split(/[\n]+|[,\s]+\s*(?=(?:https?:\/\/|\/))/).map((s) => s.trim()).filter(Boolean)
         : [];
       if (mainImageUrl && !imagesArray.includes(mainImageUrl)) {
         imagesArray.unshift(mainImageUrl);
@@ -351,7 +351,7 @@ router.post("/products/physical/bulk-update", verifyAdmin, upload.single("file")
       const categoryId = await resolveCategoryId(norm.category, "physical");
       const mainImageUrl = norm.main_image_url || norm.image_url || norm.image || "";
       const additionalImagesStr = norm.additional_image_urls || norm.images || "";
-      const imagesArray = additionalImagesStr ? additionalImagesStr.split(",").map((s) => s.trim()).filter(Boolean) : [];
+      const imagesArray = additionalImagesStr ? additionalImagesStr.split(/[\n]+|[,\s]+\s*(?=(?:https?:\/\/|\/))/).map((s) => s.trim()).filter(Boolean) : [];
       if (mainImageUrl && !imagesArray.includes(mainImageUrl)) imagesArray.unshift(mainImageUrl);
 
       const sizesArray = (norm.available_sizes || norm.sizes || "").split(",").map((s) => s.trim()).filter(Boolean);
@@ -523,7 +523,7 @@ router.post("/products/digital/bulk-upload", verifyAdmin, upload.single("file"),
       const finalUid = norm.product_id_sku || norm.sku || norm.product_uid || generateDigitalProductUid();
       const thumbnailUrl = norm.thumbnail_url || norm.preview_image_url || "";
       const previewImagesStr = norm.preview_image_urls || norm.images || "";
-      const imagesArray = previewImagesStr ? previewImagesStr.split(",").map((s) => s.trim()).filter(Boolean) : [];
+      const imagesArray = previewImagesStr ? previewImagesStr.split(/[\n]+|[,\s]+\s*(?=(?:https?:\/\/|\/))/).map((s) => s.trim()).filter(Boolean) : [];
       if (thumbnailUrl && !imagesArray.includes(thumbnailUrl)) imagesArray.unshift(thumbnailUrl);
 
       const tagsArray = (norm.tags || "").split(",").map((s) => s.trim()).filter(Boolean);
@@ -706,7 +706,7 @@ router.post("/products/digital/bulk-update", verifyAdmin, upload.single("file"),
       const categoryId = await resolveCategoryId(norm.category, "digital");
       const thumbnailUrl = norm.thumbnail_url || norm.preview_image_url || "";
       const previewImagesStr = norm.preview_image_urls || norm.images || "";
-      const imagesArray = previewImagesStr ? previewImagesStr.split(",").map((s) => s.trim()).filter(Boolean) : [];
+      const imagesArray = previewImagesStr ? previewImagesStr.split(/[\n]+|[,\s]+\s*(?=(?:https?:\/\/|\/))/).map((s) => s.trim()).filter(Boolean) : [];
       if (thumbnailUrl && !imagesArray.includes(thumbnailUrl)) imagesArray.unshift(thumbnailUrl);
 
       const tagsArray = (norm.tags || "").split(",").map((s) => s.trim()).filter(Boolean);

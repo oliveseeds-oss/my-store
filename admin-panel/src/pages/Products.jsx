@@ -69,7 +69,7 @@ export default function Products() {
     if (!form.name || !form.price) return;
     const payload = {
       ...form,
-      images: form.images ? form.images.split(",").map(s => s.trim()).filter(Boolean) : [],
+      images: form.images ? form.images.split(/[\n]+|[,\s]+\s*(?=(?:https?:\/\/|\/))/).map(s => s.trim()).filter(Boolean) : [],
       sizes: form.sizes ? form.sizes.split(",").map(s => s.trim()).filter(Boolean) : [],
       tags: form.tags ? form.tags.split(",").map(s => s.trim()).filter(Boolean) : [],
     };
