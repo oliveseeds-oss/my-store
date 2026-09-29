@@ -45,7 +45,7 @@ export function parseImagesList(rawImages) {
         // Fall back to splitting
       }
     }
-    return trimmed.split(/[\n,\s]+/).map(u => u.trim()).filter(Boolean).map(resolveImageUrl).filter(Boolean);
+    return trimmed.split(/[\n,]+/).map(u => u.trim()).filter(Boolean).map(resolveImageUrl).filter(Boolean);
   }
   return [];
 }
