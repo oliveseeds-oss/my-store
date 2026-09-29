@@ -1,8 +1,8 @@
-﻿const router = require("express").Router();
+const router = require("express").Router();
 const db = require("../db");
 const { verifyAdmin } = require("../middleware/auth");
 
-// PUBLIC â€” List gallery items (supports filtering by style, category, industry, material)
+// PUBLIC — List gallery items (supports filtering by style, category, industry, material)
 router.get("/", async (req, res) => {
   const { style, category, industry, material } = req.query;
   let sql = "SELECT * FROM gallery";
@@ -28,7 +28,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ADMIN â€” Add gallery item (supports single image_url or multiple image_urls)
+// ADMIN — Add gallery item (supports single image_url or multiple image_urls)
 router.post("/", verifyAdmin, async (req, res) => {
   const { image_url, image_urls, title, style, category, industry, material, description } = req.body;
   
@@ -37,10 +37,10 @@ router.post("/", verifyAdmin, async (req, res) => {
   if (Array.isArray(image_urls)) {
     urls = image_urls.map(u => String(u || "").trim()).filter(Boolean);
   } else if (typeof image_urls === "string" && image_urls.trim()) {
-    urls = image_urls.split(/[\n,\s]+/).map(u => u.trim()).filter(Boolean);
+    urls = image_urls.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
   }
   if (image_url && typeof image_url === "string" && image_url.trim()) {
-    const splitUrls = image_url.split(/[\n,\s]+/).map(u => u.trim()).filter(Boolean);
+    const splitUrls = image_url.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
     urls.push(...splitUrls);
   }
   urls = [...new Set(urls)];
@@ -50,21 +50,18 @@ router.post("/", verifyAdmin, async (req, res) => {
   }
 
   try {
-    const insertedIds = [];
-    for (const url of urls) {
-      const [result] = await db.query(
-        "INSERT INTO gallery (image_url, title, style, category, industry, material, description) VALUES (?,?,?,?,?,?,?)",
-        [url, title || null, style || null, category || null, industry || null, material || null, description || null]
-      );
-      insertedIds.push(result.insertId);
-    }
-    res.json({ ids: insertedIds, count: insertedIds.length, message: `${insertedIds.length} showcase design image(s) added` });
+    const combinedUrl = urls.join(',');
+    const [result] = await db.query(
+      "INSERT INTO gallery (image_url, title, style, category, industry, material, description) VALUES (?,?,?,?,?,?,?)",
+      [combinedUrl, title || null, style || null, category || null, industry || null, material || null, description || null]
+    );
+    res.json({ id: result.insertId, message: "Gallery item added" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// ADMIN â€” Update gallery item
+// ADMIN — Update gallery item
 router.put("/:id", verifyAdmin, async (req, res) => {
   const { image_url, title, style, category, industry, material, description } = req.body;
   try {
@@ -78,7 +75,7 @@ router.put("/:id", verifyAdmin, async (req, res) => {
   }
 });
 
-// ADMIN â€” Delete gallery item
+// ADMIN — Delete gallery item
 router.delete("/:id", verifyAdmin, async (req, res) => {
   try {
     await db.query("DELETE FROM gallery WHERE id = ?", [req.params.id]);

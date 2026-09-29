@@ -145,7 +145,7 @@ const server = http.createServer(async (req, res) => {
           else if (pathname.startsWith("/blog")) activePage = "blogs";
           else if (pathname.startsWith("/catalog")) activePage = "products";
 
-          const seoData = await getBackendData(`/seo/page/${activePage}`);
+          const seoData = await getBackendData(`/seo/${activePage}`);
           if (seoData) {
             title = seoData.title.includes("Olive Seeds") ? seoData.title : `${seoData.title} | Olive Seeds`;
             desc = seoData.meta_description || desc;
@@ -154,15 +154,6 @@ const server = http.createServer(async (req, res) => {
       } catch (e) {
         console.error("Meta injection failure:", e.message);
       }
-
-      try {
-        const globalSeo = await getBackendData(`/seo/global`);
-        if (globalSeo) {
-          if (globalSeo.google_verify_code) content = content.replace("</head>", `  <meta name="google-site-verification" content="${globalSeo.google_verify_code}" />\n</head>`);
-          if (globalSeo.pinterest_verify_code) content = content.replace("</head>", `  <meta name="p:domain_verify" content="${globalSeo.pinterest_verify_code}" />\n</head>`);
-          if (globalSeo.bing_verify_code) content = content.replace("</head>", `  <meta name="msvalidate.01" content="${globalSeo.bing_verify_code}" />\n</head>`);
-        }
-      } catch(e) {}
 
       // Perform string injection into template HTML (Priority 3/4/9/6)
       let html = content

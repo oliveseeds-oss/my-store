@@ -9,7 +9,8 @@ import { useCurrency } from "../context/CurrencyContext";
 import { useMember } from "../context/MemberContext";
 import SEO from "../components/SEO";
 import AdBanner from "../components/AdBanner";
-import { getProductMainImage } from "../utils/imageHelper";
+import { getProductMainImage, getAllProductImages } from "../utils/imageHelper";
+import HoverSlideshow from "../components/HoverSlideshow";
 import { 
   MdSearch, MdTune, MdStar, MdFavorite, MdFavoriteBorder, 
   MdShoppingBag, MdCheck, MdClose
@@ -55,6 +56,7 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
   const [hovered, setHovered] = useState(false);
 
   const img = getProductMainImage(p);
+  const allImages = getAllProductImages(p);
   const finalPrice = (p.discount_price && Number(p.discount_price) > 0 && Number(p.discount_price) < Number(p.price))
     ? Number(p.discount_price)
     : Number(p.price);
@@ -98,7 +100,15 @@ function ProductCard({ p, onWishlist, isWishlisted }) {
       {/* Image Frame (~65-70% visual presence with consistent 4:5 aspect ratio) */}
       <Link to={`/products/${p.id}`} style={{ display: "block", position: "relative", overflow: "hidden", width: "100%" }}>
         <div style={{ aspectRatio: "4 / 5", width: "100%", background: "#FAF6EE", overflow: "hidden", position: "relative", flexShrink: 0 }}>
-          {img ? (
+          {allImages.length > 1 ? (
+            <HoverSlideshow 
+              imageUrls={allImages}
+              alt={p.name}
+              className="product-card-image"
+              style={{ width: "100%", height: "100%" }}
+              imageStyle={{ transform: hovered ? "scale(1.02)" : "scale(1)" }}
+            />
+          ) : img ? (
             <img
               src={img}
               alt={p.name}

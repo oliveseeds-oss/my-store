@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import API from "../api";
@@ -28,13 +28,7 @@ export default function Settings() {
     shiprocket_password: "",
     engraving_hero_image: "",
     engraving_showcase_image: "",
-    about_story_image: "",
-bulk_material_1: "",
-bulk_material_2: "",
-bulk_material_3: "",
-bulk_material_4: "",
-bulk_material_5: "",
-bulk_material_6: "",
+    about_story_image: "", bulk_material_1: "", bulk_material_2: "", bulk_material_3: "", bulk_material_4: "", bulk_material_5: "", bulk_material_6: "",
     admin_password: "",
     new_password: "",
   });
@@ -59,13 +53,7 @@ bulk_material_6: "",
           shiprocket_password: res.data.shiprocket_password || "",
           engraving_hero_image: res.data.engraving_hero_image || "",
           engraving_showcase_image: res.data.engraving_showcase_image || "",
-          about_story_image: res.data.about_story_image || "",
-bulk_material_1: res.data.bulk_material_1 || "",
-bulk_material_2: res.data.bulk_material_2 || "",
-bulk_material_3: res.data.bulk_material_3 || "",
-bulk_material_4: res.data.bulk_material_4 || "",
-bulk_material_5: res.data.bulk_material_5 || "",
-bulk_material_6: res.data.bulk_material_6 || "",
+          about_story_image: res.data.about_story_image || "", bulk_material_1: res.data.bulk_material_1 || "", bulk_material_2: res.data.bulk_material_2 || "", bulk_material_3: res.data.bulk_material_3 || "", bulk_material_4: res.data.bulk_material_4 || "", bulk_material_5: res.data.bulk_material_5 || "", bulk_material_6: res.data.bulk_material_6 || "",
           admin_password: "",
           new_password: "",
         });
@@ -116,12 +104,6 @@ bulk_material_6: res.data.bulk_material_6 || "",
         engraving_hero_image: settings.engraving_hero_image,
         engraving_showcase_image: settings.engraving_showcase_image,
         about_story_image: settings.about_story_image,
-bulk_material_1: settings.bulk_material_1,
-bulk_material_2: settings.bulk_material_2,
-bulk_material_3: settings.bulk_material_3,
-bulk_material_4: settings.bulk_material_4,
-bulk_material_5: settings.bulk_material_5,
-bulk_material_6: settings.bulk_material_6,
       };
 
       if (settings.new_password) {
@@ -150,12 +132,12 @@ bulk_material_6: settings.bulk_material_6,
         shiprocket_password: settings.shiprocket_password
       });
       if (res.data.success) {
-        alert("âœ… " + res.data.message);
+        alert("✅ " + res.data.message);
       } else {
-        alert("âŒ " + res.data.message);
+        alert("❌ " + res.data.message);
       }
     } catch (e) {
-      alert("âŒ Request failed: " + (e.response?.data?.error || e.message));
+      alert("❌ Request failed: " + (e.response?.data?.error || e.message));
     } finally {
       setTestingConnection(false);
     }
@@ -169,12 +151,12 @@ bulk_material_6: settings.bulk_material_6,
         razorpay_secret: settings.razorpay_secret
       });
       if (res.data.success) {
-        alert("âœ… " + res.data.message);
+        alert("✅ " + res.data.message);
       } else {
-        alert("âŒ " + res.data.message);
+        alert("❌ " + res.data.message);
       }
     } catch (e) {
-      alert("âŒ Request failed: " + (e.response?.data?.error || e.message));
+      alert("❌ Request failed: " + (e.response?.data?.error || e.message));
     } finally {
       setTestingRazorpay(false);
     }
@@ -189,12 +171,12 @@ bulk_material_6: settings.bulk_material_6,
         paypal_mode: settings.paypal_mode
       });
       if (res.data.success) {
-        alert("âœ… " + res.data.message);
+        alert("✅ " + res.data.message);
       } else {
-        alert("âŒ " + res.data.message);
+        alert("❌ " + res.data.message);
       }
     } catch (e) {
-      alert("âŒ Request failed: " + (e.response?.data?.error || e.message));
+      alert("❌ Request failed: " + (e.response?.data?.error || e.message));
     } finally {
       setTestingPayPal(false);
     }
@@ -269,8 +251,8 @@ bulk_material_6: settings.bulk_material_6,
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Field label="Default Currency" fieldKey="currency" placeholder="INR" />
-              <Field label="Flat Shipping Fee (â‚¹)" fieldKey="shipping_fee" placeholder="60" />
-              <Field label="Free Shipping Above Threshold (â‚¹)" fieldKey="free_shipping_above" placeholder="999" />
+              <Field label="Flat Shipping Fee (₹)" fieldKey="shipping_fee" placeholder="60" />
+              <Field label="Free Shipping Above Threshold (₹)" fieldKey="free_shipping_above" placeholder="999" />
             </div>
           </div>
 
@@ -292,7 +274,7 @@ bulk_material_6: settings.bulk_material_6,
                 label="Razorpay API Key Secret"
                 fieldKey="razorpay_secret"
                 type="password"
-                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                placeholder="••••••••••••••••••••••••"
               />
               <button
                 type="button"
@@ -300,7 +282,7 @@ bulk_material_6: settings.bulk_material_6,
                 disabled={testingRazorpay}
                 className="mt-2 bg-stone-100 hover:bg-stone-200 disabled:opacity-50 text-stone-700 text-xs font-bold py-2 px-4 rounded-lg transition self-start cursor-pointer"
               >
-                {testingRazorpay ? "Testing Connection..." : "ðŸ”Œ Test Razorpay Connection"}
+                {testingRazorpay ? "Testing Connection..." : "🔌 Test Razorpay Connection"}
               </button>
               <p className="text-[10px] text-gray-400">
                 Enter your live key API token and secret from the{" "}
@@ -324,7 +306,7 @@ bulk_material_6: settings.bulk_material_6,
                 label="PayPal Client Secret Key"
                 fieldKey="paypal_client_secret"
                 type="password"
-                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                placeholder="••••••••••••••••••••••••"
               />
               <div className="flex flex-col gap-1">
                 <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wider">PayPal Environment</label>
@@ -343,7 +325,7 @@ bulk_material_6: settings.bulk_material_6,
                 disabled={testingPayPal}
                 className="mt-2 bg-stone-100 hover:bg-stone-200 disabled:opacity-50 text-stone-700 text-xs font-bold py-2 px-4 rounded-lg transition self-start cursor-pointer"
               >
-                {testingPayPal ? "Testing Connection..." : "ðŸ”Œ Test PayPal Connection"}
+                {testingPayPal ? "Testing Connection..." : "🔌 Test PayPal Connection"}
               </button>
               <p className="text-[10px] text-gray-400">
                 Enter your Live REST API Client ID & Client Secret from the{" "}
@@ -358,7 +340,7 @@ bulk_material_6: settings.bulk_material_6,
           <div className="bg-white rounded-2xl border border-gray-100 p-5 flex flex-col gap-4 shadow-sm">
             <div className="flex items-center justify-between pb-2 border-b border-gray-100">
               <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider text-xs">
-                âš¡ Webhook Endpoints Management
+                ⚡ Webhook Endpoints Management
               </h3>
               <span className="text-[10px] bg-indigo-50 text-indigo-600 font-semibold px-2 py-0.5 rounded-md">
                 Easy Copy & Paste
@@ -379,7 +361,7 @@ bulk_material_6: settings.bulk_material_6,
                     onClick={() => copyToClipboard(item.url, item.id)}
                     className="bg-white border border-stone-200 hover:bg-stone-100 text-stone-700 text-[11px] font-bold py-1.5 px-3 rounded-lg transition self-start sm:self-center shrink-0 cursor-pointer"
                   >
-                    {copiedWebhook === item.id ? "âœ… Copied!" : "ðŸ“‹ Copy Webhook URL"}
+                    {copiedWebhook === item.id ? "✅ Copied!" : "📋 Copy Webhook URL"}
                   </button>
                 </div>
               ))}
@@ -404,7 +386,7 @@ bulk_material_6: settings.bulk_material_6,
                 label="Shiprocket Password"
                 fieldKey="shiprocket_password"
                 type="password"
-                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                placeholder="••••••••"
               />
               <button
                 type="button"
@@ -412,7 +394,7 @@ bulk_material_6: settings.bulk_material_6,
                 disabled={testingConnection}
                 className="mt-2 bg-stone-100 hover:bg-stone-200 disabled:opacity-50 text-stone-700 text-xs font-bold py-2 px-4 rounded-lg transition self-start cursor-pointer"
               >
-                {testingConnection ? "Testing Connection..." : "ðŸ”Œ Test Shiprocket Connection"}
+                {testingConnection ? "Testing Connection..." : "🔌 Test Shiprocket Connection"}
               </button>
               <p className="text-[10px] text-gray-400">
                 Enter your registered Shiprocket credentials to automatically book and assign shipments.
@@ -436,7 +418,7 @@ bulk_material_6: settings.bulk_material_6,
 
             {/* Engraving Hero Image */}
             <div className="flex flex-col gap-2">
-              <label className="text-xs font-semibold text-gray-700">Custom Objects &amp; Engraving â€” Hero Image</label>
+              <label className="text-xs font-semibold text-gray-700">Custom Objects &amp; Engraving — Hero Image</label>
               <div className="flex gap-2 items-center">
                 <input
                   type="text"
@@ -446,7 +428,7 @@ bulk_material_6: settings.bulk_material_6,
                   className="flex-1 border border-gray-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-300"
                 />
                 <label className="bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold py-2 px-3 rounded-xl transition cursor-pointer shrink-0">
-                  ðŸ“ Upload
+                  📁 Upload
                   <input
                     type="file"
                     accept="image/*"
@@ -464,7 +446,7 @@ bulk_material_6: settings.bulk_material_6,
 
             {/* Engraving Workshop Showcase */}
             <div className="flex flex-col gap-2">
-              <label className="text-xs font-semibold text-gray-700">Custom Objects &amp; Engraving â€” Workshop Showcase</label>
+              <label className="text-xs font-semibold text-gray-700">Custom Objects &amp; Engraving — Workshop Showcase</label>
               <div className="flex gap-2 items-center">
                 <input
                   type="text"
@@ -474,7 +456,7 @@ bulk_material_6: settings.bulk_material_6,
                   className="flex-1 border border-gray-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-300"
                 />
                 <label className="bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold py-2 px-3 rounded-xl transition cursor-pointer shrink-0">
-                  ðŸ“ Upload
+                  📁 Upload
                   <input
                     type="file"
                     accept="image/*"
@@ -492,7 +474,7 @@ bulk_material_6: settings.bulk_material_6,
 
             {/* About Us Story Image */}
             <div className="flex flex-col gap-2">
-              <label className="text-xs font-semibold text-gray-700">About Us â€” Studio Story Showcase</label>
+              <label className="text-xs font-semibold text-gray-700">About Us — Studio Story Showcase</label>
               <div className="flex gap-2 items-center">
                 <input
                   type="text"
@@ -502,7 +484,7 @@ bulk_material_6: settings.bulk_material_6,
                   className="flex-1 border border-gray-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-300"
                 />
                 <label className="bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold py-2 px-3 rounded-xl transition cursor-pointer shrink-0">
-                  ðŸ“ Upload
+                  📁 Upload
                   <input
                     type="file"
                     accept="image/*"
@@ -512,36 +494,38 @@ bulk_material_6: settings.bulk_material_6,
                 </label>
               </div>
               {settings.about_story_image && (
-                  <div className="w-24 h-16 rounded-lg overflow-hidden border border-gray-200 mt-1">
-                    <img src={settings.about_story_image} alt="Preview" className="w-full h-full object-cover" />
-                  </div>
-                )}
-              </div>
-              <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-gray-100">
-                <label className="text-xs font-semibold text-gray-700">Bulk Order Materials (6 Images)</label>
-                {[1,2,3,4,5,6].map(num => (
-                  <div key={num} className="flex gap-2 items-center">
-                    <span className="text-xs text-gray-500 w-16">Material {num}</span>
-                    <input type="text" value={settings["bulk_material_" + num] || ""} onChange={(e) => update("bulk_material_" + num, e.target.value)} placeholder={"https://... or upload image " + num} className="flex-1 border border-gray-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-300" />
-                    <label className="bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold py-2 px-3 rounded-xl transition cursor-pointer shrink-0">
-                      Upload
-                      <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, "bulk_material_" + num)} />
-                    </label>
-                    {settings["bulk_material_" + num] && (
-                      <div className="w-12 h-8 rounded overflow-hidden border border-gray-200"><img src={settings["bulk_material_" + num]} alt="" className="w-full h-full object-cover"/></div>
-                    )}
-                  </div>
-                ))}
-              </div>
+                <div className="w-24 h-16 rounded-lg overflow-hidden border border-gray-200 mt-1">
+                  <img src={settings.about_story_image} alt="Preview" className="w-full h-full object-cover" />
+                </div>
+              )}
             </div>
+
+            <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-gray-100">
+              <label className="text-xs font-semibold text-gray-700">Bulk Order Materials (6 Images)</label>
+              {[1,2,3,4,5,6].map(num => (
+                <div key={num} className="flex gap-2 items-center">
+                  <span className="text-xs text-gray-500 w-16">Material {num}</span>
+                  <input type="text" value={settings["bulk_material_" + num] || ""} onChange={(e) => update("bulk_material_" + num, e.target.value)} placeholder={"https://... or upload image " + num} className="flex-1 border border-gray-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+                  <label className="bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold py-2 px-3 rounded-xl transition cursor-pointer shrink-0">
+                    Upload
+                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, "bulk_material_" + num)} />
+                  </label>
+                  {settings["bulk_material_" + num] && (
+                    <div className="w-12 h-8 rounded overflow-hidden border border-gray-200"><img src={settings["bulk_material_" + num]} alt="" className="w-full h-full object-cover"/></div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+          </div>
 
           {/* Change password */}
           <div className="bg-white rounded-2xl border border-gray-100 p-5 flex flex-col gap-4 shadow-sm">
             <h3 className="text-sm font-bold text-gray-700 pb-2 border-b border-gray-100 uppercase tracking-wider text-xs">
               Change Security Password
             </h3>
-            <Field label="Current Admin Password" fieldKey="admin_password" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" />
-            <Field label="New Secure Password" fieldKey="new_password" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" />
+            <Field label="Current Admin Password" fieldKey="admin_password" type="password" placeholder="••••••••" />
+            <Field label="New Secure Password" fieldKey="new_password" type="password" placeholder="••••••••" />
           </div>
 
           <button onClick={save}
@@ -553,6 +537,3 @@ bulk_material_6: settings.bulk_material_6,
     </div>
   );
 }
-
-
-

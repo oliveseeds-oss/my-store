@@ -1,10 +1,11 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SEO from "../components/SEO";
 import API from "../api";
-import { resolveImageUrl } from "../utils/imageHelper";
+import HoverSlideshow from "../components/HoverSlideshow";
+import { parseImagesList } from "../utils/imageHelper";
 
 // Custom inline SVG icons for premium look
 const Icons = {
@@ -135,7 +136,7 @@ export default function Portfolio() {
           </div>
         ) : filteredItems.length === 0 ? (
           <div style={{ textAlign: "center", padding: "80px 20px", background: "#FAF6EE", borderRadius: "4px", border: "1px solid #E7E7E2" }}>
-            <span style={{ fontSize: "36px" }}>ðŸ“·</span>
+            <span style={{ fontSize: "36px" }}>📷</span>
             <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: 500, marginTop: "16px", color: "#181A18" }}>No Projects Discovered</h3>
             <p style={{ color: "#676A65", fontSize: "13px", marginTop: "6px" }}>Use Admin Panel to upload showcase images with style descriptions.</p>
           </div>
@@ -162,12 +163,25 @@ export default function Portfolio() {
                   }}
                   whileHover={{ y: -4, borderColor: "#23483D", boxShadow: "0 8px 24px rgba(0,0,0,0.06)" }}
                 >
-                  <img 
-                    src={resolveImageUrl(item.image_url)} 
-                    alt={item.title} 
-                    style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)" }}
-                    className="hover-img-scale"
-                  />
+                  {(() => {
+                    const imgs = parseImagesList(item.image_url);
+                    return imgs.length > 1 ? (
+                      <HoverSlideshow 
+                        imageUrls={imgs} 
+                        alt={item.title}
+                        className="hover-img-scale"
+                        style={{ width: "100%", height: "100%" }}
+                        imageStyle={{ transition: "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)" }}
+                      />
+                    ) : (
+                      <img 
+                        src={imgs[0] || ""} 
+                        alt={item.title} 
+                        style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)" }}
+                        className="hover-img-scale"
+                      />
+                    );
+                  })()}
                   {/* Subtle caption bottom overlay */}
                   <div style={{
                     position: "absolute",
@@ -223,11 +237,22 @@ export default function Portfolio() {
               }}
               onClick={e => e.stopPropagation()}
             >
-              <img 
-                src={resolveImageUrl(activeItem.image_url)} 
-                alt={activeItem.title} 
-                style={{ width: "100%", maxHeight: "380px", objectFit: "cover" }} 
-              />
+              {(() => {
+                const imgs = parseImagesList(activeItem.image_url);
+                return imgs.length > 1 ? (
+                  <HoverSlideshow 
+                    imageUrls={imgs} 
+                    alt={activeItem.title}
+                    style={{ width: "100%", maxHeight: "380px" }}
+                  />
+                ) : (
+                  <img 
+                    src={imgs[0] || ""} 
+                    alt={activeItem.title} 
+                    style={{ width: "100%", maxHeight: "380px", objectFit: "cover" }} 
+                  />
+                );
+              })()}
               <div style={{ padding: "28px" }}>
                 <span style={{ fontSize: "10px", fontWeight: 600, letterSpacing: "0.12em", color: "#23483D", textTransform: "uppercase", display: "block", marginBottom: "8px" }}>
                   {activeItem.category || "Showcase Item"}
@@ -286,4 +311,3 @@ export default function Portfolio() {
     </div>
   );
 }
-

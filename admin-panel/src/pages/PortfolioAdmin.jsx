@@ -1,10 +1,9 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import API from "../api";
 import { MdAdd, MdDelete, MdClose, MdFilterList, MdDownload, MdCloudUpload, MdEditNote } from "react-icons/md";
 import BulkUploadModal from "../components/BulkUploadModal";
-const resolveUrl = (url) => { if (!url) return ""; let t = url.trim(); if (t.includes(",") || t.includes(" ")) { return t.split(/[\s,]+/)[0].trim(); } return t; };
 
 const INIT = { image_url: "", title: "", description: "", category: "" };
 
@@ -125,7 +124,7 @@ export default function PortfolioAdmin() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {items.map(i => (
               <div key={i.id} className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm flex flex-col group relative">
-                <img src={resolveUrl(i.image_url)} alt={i.title} className="w-full h-44 object-cover group-hover:scale-105 transition duration-350" />
+                <img src={i.image_url} alt={i.title} className="w-full h-44 object-cover group-hover:scale-105 transition duration-350" />
                 <button onClick={() => remove(i.id)}
                   className="absolute top-2.5 right-2.5 bg-red-500 hover:bg-red-650 text-white p-1.5 rounded-full shadow-lg transition opacity-0 group-hover:opacity-100">
                   <MdDelete />
@@ -207,4 +206,3 @@ export default function PortfolioAdmin() {
     </div>
   );
 }
-

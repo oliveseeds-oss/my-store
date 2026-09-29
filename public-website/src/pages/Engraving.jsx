@@ -153,7 +153,7 @@ export default function Engraving() {
     document.title = "Bespoke Design Products | Olive Seeds Design Studio";
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute("content", "Explore our curated collection of bespoke design products â€” custom corporate gifts, branded dÃ©cor, and premium design objects for discerning B2B clients.");
+      metaDesc.setAttribute("content", "Explore our curated collection of bespoke design products — custom corporate gifts, branded décor, and premium design objects for discerning B2B clients.");
     }
     API.get("/settings")
       .then((r) => { if (r.data) setSettings(r.data); })
@@ -198,7 +198,7 @@ export default function Engraving() {
     <div style={{ background: "#FFFFFF", color: "#181A18", minHeight: "100vh", fontFamily: "'DM Sans', sans-serif" }}>
       <SEO
         title="Bespoke Design Products | Olive Seeds Design Studio"
-        description="Explore our curated collection of bespoke design products â€” custom corporate gifts, branded dÃ©cor, and premium design objects for discerning B2B clients."
+        description="Explore our curated collection of bespoke design products — custom corporate gifts, branded décor, and premium design objects for discerning B2B clients."
         keywords="bespoke objects, custom corporate collections, architectural nameplates, hand-finished timber, acrylic collection"
       />
 
@@ -268,7 +268,7 @@ export default function Engraving() {
         }
       `}</style>
 
-      {/* â”€â”€ HERO BANNER â”€â”€ */}
+      {/* ── HERO BANNER ── */}
       <section style={{
         background: "#FFFFFF",
         borderBottom: "1px solid #E7E7E2",
@@ -288,7 +288,7 @@ export default function Engraving() {
               textTransform: "uppercase", color: "#23483D", marginBottom: "20px",
               marginInline: "auto"
             }} className="mx-auto lg:ml-0">
-              âš¡ High-Precision Studio
+              ⚡ High-Precision Studio
             </span>
             <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(2.4rem, 4.5vw, 4rem)", fontWeight: 400, lineHeight: 1.15, marginBottom: "20px", width: "100%", color: "#181A18" }}>
               Bespoke Custom Object Solutions
@@ -334,7 +334,7 @@ export default function Engraving() {
         </div>
       </section>
 
-      {/* â”€â”€ INTRO / IMAGES SECTION â”€â”€ */}
+      {/* ── INTRO / IMAGES SECTION ── */}
       <section style={{ padding: "80px 24px", background: "#FFFFFF", borderBottom: "1px solid #E7E7E2" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "32px", alignItems: "center" }}>
@@ -349,7 +349,7 @@ export default function Engraving() {
               <span style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "#23483D", display: "block", marginBottom: "12px" }}>Artisan Studio</span>
               <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(2rem, 3.5vw, 2.6rem)", fontWeight: 400, color: "#181A18", marginBottom: "20px", lineHeight: 1.25 }}>Exceptional Contrast &amp; Crisp Tactile Finishes</h2>
               <p style={{ color: "#676A65", fontSize: "14px", lineHeight: 1.7, marginBottom: "24px" }}>
-                Considered object design is not just about surfaces â€” it is an art of speed, power, and focal calibrations. Our studio instruments carefully craft custom vector graphics, high-end typography, and complex brand logo signatures with zero fraying or rough margins.
+                Considered object design is not just about surfaces — it is an art of speed, power, and focal calibrations. Our studio instruments carefully craft custom vector graphics, high-end typography, and complex brand logo signatures with zero fraying or rough margins.
               </p>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                 <div style={{ borderLeft: "3px solid #23483D", paddingLeft: "14px" }}>
@@ -366,7 +366,7 @@ export default function Engraving() {
         </div>
       </section>
 
-      {/* â”€â”€ MATERIAL CARDS WITH IMAGES â”€â”€ */}
+      {/* ── MATERIAL CARDS WITH IMAGES ── */}
       <section id="materials" style={{ padding: "clamp(60px, 8vw, 100px) 24px", background: "#FAF6EE", borderBottom: "1px solid #E7E7E2" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: "50px" }}>
@@ -397,7 +397,7 @@ export default function Engraving() {
                     onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "#E7E7E2"; }}
                   >
                     <div style={{ height: "190px", overflow: "hidden", position: "relative" }}>
-                      <img src={settings[`bulk_material_${i + 1}`] || mat.img} alt={mat.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      <img src={settings[ulk_material_\] || mat.img} alt={mat.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                       <div style={{ position: "absolute", top: "14px", left: "14px", background: "#FFFFFF", padding: "8px", borderRadius: "4px", border: "1px solid #E7E7E2", display: "flex" }}>
                         <Icon size={16} color="#23483D" />
                       </div>
@@ -414,7 +414,7 @@ export default function Engraving() {
         </div>
       </section>
 
-      {/* â”€â”€ WORKFLOW STEPS â”€â”€ */}
+      {/* ── WORKFLOW STEPS ── */}
       <section style={{ padding: "80px 24px", background: "#FFFFFF", borderBottom: "1px solid #E7E7E2" }}>
         <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: "48px" }}>
@@ -439,7 +439,7 @@ export default function Engraving() {
         </div>
       </section>
 
-      {/* â”€â”€ WHY OLIVE SEEDS â”€â”€ */}
+      {/* ── WHY OLIVE SEEDS ── */}
       <section style={{ padding: "80px 24px", background: "#FAF6EE", borderBottom: "1px solid #E7E7E2" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: "48px" }}>
@@ -469,7 +469,7 @@ export default function Engraving() {
         </div>
       </section>
 
-      {/* â”€â”€ BULK ORDER FORM â”€â”€ */}
+      {/* ── BULK ORDER FORM ── */}
       <section id="bulk-order" style={{ padding: "clamp(70px, 9vw, 110px) 24px", background: "#FFFFFF", color: "#181A18", position: "relative" }}>
         <div style={{ maxWidth: "720px", margin: "0 auto", position: "relative", zIndex: 2 }}>
           <div style={{ textAlign: "center", marginBottom: "40px" }}>
@@ -497,7 +497,7 @@ export default function Engraving() {
                 borderRadius: "4px", padding: "40px 28px", textAlign: "center"
               }}
             >
-              <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "24px", color: "#23483D", marginBottom: "10px" }}>âœ“ Specs Received</h3>
+              <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "24px", color: "#23483D", marginBottom: "10px" }}>✓ Specs Received</h3>
               <p style={{ fontSize: "14px", color: "#676A65", lineHeight: 1.6, margin: 0 }}>
                 Thank you for your submission. Our design director will review your specifications and respond within 24 hours with conceptual proposals and volume terms.
               </p>
@@ -651,4 +651,3 @@ export default function Engraving() {
     </div>
   );
 }
-

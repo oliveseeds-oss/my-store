@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
@@ -75,37 +75,37 @@ const SERVICES = [
   {
     title: "Brand & Visual Identity",
     iconKey: "Brand",
-    desc: "A brand is not a logo â€” it is a language. We develop complete visual identity systems for organisations that understand the difference. From mark-making and typographic systems to colour language and brand guidelines, we build identities that translate with authority across every touchpoint.",
+    desc: "A brand is not a logo — it is a language. We develop complete visual identity systems for organisations that understand the difference. From mark-making and typographic systems to colour language and brand guidelines, we build identities that translate with authority across every touchpoint.",
     tag: "Ideal for: New organisations, rebranding projects, corporate identity refreshes",
   },
   {
     title: "Custom Product Design",
     iconKey: "Sparkles",
-    desc: "We design and produce bespoke physical objects â€” from executive gift collections and branded stationery to architectural dÃ©cor pieces and custom retail products. Every object is designed to specification, produced with care, and finished to a standard your recipients will notice.",
+    desc: "We design and produce bespoke physical objects — from executive gift collections and branded stationery to architectural décor pieces and custom retail products. Every object is designed to specification, produced with care, and finished to a standard your recipients will notice.",
     tag: "Ideal for: Corporate gifting, hospitality amenities, event collections. Available for B2B volume orders.",
   },
   {
-    title: "Spatial & DÃ©cor Design",
+    title: "Spatial & Décor Design",
     iconKey: "Graphic",
-    desc: "We work with interior designers, hospitality groups, and commercial property clients to produce custom design elements for built environments â€” signage systems, branded dÃ©cor objects, and curated visual installations.",
+    desc: "We work with interior designers, hospitality groups, and commercial property clients to produce custom design elements for built environments — signage systems, branded décor objects, and curated visual installations.",
     tag: "Ideal for: Hotels, restaurants, office interiors, retail environments, boutique spaces",
   },
   {
     title: "Event & Occasion Design",
     iconKey: "Sparkles",
-    desc: "From corporate summits to private celebrations â€” we design the visual and material world of your event. Bespoke stationery, custom signage, welcome gifting, and branded experiential elements â€” produced to a unified standard of excellence.",
+    desc: "From corporate summits to private celebrations — we design the visual and material world of your event. Bespoke stationery, custom signage, welcome gifting, and branded experiential elements — produced to a unified standard of excellence.",
     tag: "Ideal for: Corporate events, product launches, award ceremonies, private occasions",
   },
   {
     title: "Digital Design & Brand Assets",
     iconKey: "WebDev",
-    desc: "Premium digital design assets â€” presentation templates, social media systems, digital stationery, and branded document suites â€” all crafted to the same standard as our physical work.",
+    desc: "Premium digital design assets — presentation templates, social media systems, digital stationery, and branded document suites — all crafted to the same standard as our physical work.",
     tag: "Ideal for: Corporate teams, agencies, content creators, educational institutions",
   },
   {
     title: "Educational & Institutional Design",
     iconKey: "Globe",
-    desc: "We partner with schools, universities, and educational organisations to produce distinguished design for their communities â€” from institutional stationery and award pieces to event design and campus visual identity.",
+    desc: "We partner with schools, universities, and educational organisations to produce distinguished design for their communities — from institutional stationery and award pieces to event design and campus visual identity.",
     tag: "Ideal for: Schools, universities, academies, foundations, training organisations",
   },
 ];
@@ -145,10 +145,10 @@ const PROCESS_STEPS = [
 
 export default function Service() {
   useEffect(() => {
-    document.title = "Bespoke Design Services | Corporate & Brand Design â€” Olive Seeds";
+    document.title = "Bespoke Design Services | Corporate & Brand Design — Olive Seeds";
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute("content", "Premium creative services for corporations, hotels, institutions, and lifestyle brands â€” from brand identity and spatial design to corporate gifting.");
+      metaDesc.setAttribute("content", "Premium creative services for corporations, hotels, institutions, and lifestyle brands — from brand identity and spatial design to corporate gifting.");
     }
     if (window.location.hash) {
       const el = document.getElementById(window.location.hash.substring(1));
@@ -209,7 +209,7 @@ export default function Service() {
         color: "#181A18",
       }}
     >
-      {/* â”€â”€â”€ GOOGLE FONTS â”€â”€â”€ */}
+      {/* ─── GOOGLE FONTS ─── */}
       <style>{`
         :root {
           --bg:          #FFFFFF;
@@ -618,15 +618,15 @@ export default function Service() {
       `}</style>
 
       <SEO
-        title="Bespoke Design Services | Corporate & Brand Design â€” Olive Seeds"
-        description="Premium creative services for corporations, hotels, institutions, and lifestyle brands â€” from brand identity and spatial design to corporate gifting."
+        title="Bespoke Design Services | Corporate & Brand Design — Olive Seeds"
+        description="Premium creative services for corporations, hotels, institutions, and lifestyle brands — from brand identity and spatial design to corporate gifting."
         keywords="bespoke design services, corporate identity, brand design, spatial design, corporate gifting, event design"
       />
       <Navbar />
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+      {/* ══════════════════════════════
           HERO
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      ══════════════════════════════ */}
       <section
         className="service-hero-section relative"
         style={{ paddingTop: "clamp(90px, 11vw, 140px)", paddingBottom: "clamp(70px, 9vw, 120px)", background: "var(--bg)", position: "relative", overflow: "hidden" }}
@@ -730,8 +730,8 @@ export default function Service() {
               padding: "6px 16px",
               marginBottom: 24,
             }}>
-              <span style={{ color: "#C5A880", fontSize: 11 }}>âœ¦</span>
-              <span className="os-label" style={{ color: "var(--accent)" }}>Olive Seeds Design Studio Â· Bespoke Practice</span>
+              <span style={{ color: "#C5A880", fontSize: 11 }}>✦</span>
+              <span className="os-label" style={{ color: "var(--accent)" }}>Olive Seeds Design Studio · Bespoke Practice</span>
             </div>
           </FadeUp>
 
@@ -777,9 +777,9 @@ export default function Service() {
         </div>
       </section>
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+      {/* ══════════════════════════════
           TRUST INDICATORS
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      ══════════════════════════════ */}
       <section style={{ background: "var(--surface)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 32px" }}>
           <style>{`
@@ -846,9 +846,9 @@ export default function Service() {
         </div>
       </section>
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+      {/* ══════════════════════════════
           PROBLEM / SOLUTION
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      ══════════════════════════════ */}
       <section className="responsive-padding" style={{ background: "var(--bg)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div className="responsive-split-2">
@@ -860,7 +860,7 @@ export default function Service() {
                 Where ordinary design falls short
               </h2>
               <p style={{ fontSize: 16, color: "var(--text-2)", lineHeight: 1.8, marginBottom: 36 }}>
-                For ambitious organisations, visual mediocrity is not simply an aesthetic flaw â€” it actively dilutes perceived value, weakens credibility, and undermines customer trust.
+                For ambitious organisations, visual mediocrity is not simply an aesthetic flaw — it actively dilutes perceived value, weakens credibility, and undermines customer trust.
               </p>
 
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
@@ -915,7 +915,7 @@ export default function Service() {
                         </div>
                         <div>
                           <span style={{ fontSize: 13.5, fontWeight: 700, color: "#ffffff", letterSpacing: "0.02em" }}>{title}</span>
-                          <span style={{ fontSize: 13.5, color: "rgba(255,255,255,0.6)" }}> â€” {desc}</span>
+                          <span style={{ fontSize: 13.5, color: "rgba(255,255,255,0.6)" }}> — {desc}</span>
                         </div>
                       </div>
                     ))}
@@ -932,9 +932,9 @@ export default function Service() {
         </div>
       </section>
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+      {/* ══════════════════════════════
           SERVICES
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      ══════════════════════════════ */}
       <section
         id="services"
         className="responsive-padding"
@@ -951,7 +951,7 @@ export default function Service() {
               </h2>
             </div>
             <p style={{ fontSize: 15, color: "var(--text-2)", maxWidth: 360, lineHeight: 1.8 }}>
-              A considered range of design services â€” each one structured for clients who hold their brand to the highest standard.
+              A considered range of design services — each one structured for clients who hold their brand to the highest standard.
             </p>
           </div>
 
@@ -1049,9 +1049,9 @@ export default function Service() {
         </div>
       </section>
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+      {/* ══════════════════════════════
           FEATURED WORK (visual proof)
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      ══════════════════════════════ */}
       <section className="responsive-padding" style={{ background: "var(--bg)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <FadeUp>
@@ -1069,7 +1069,7 @@ export default function Service() {
             <FadeUp delay={0.1}>
               <div
                 style={{
-                  backgroundImage: "url('https://images.unsplash.com/photo-1611082531336-ebcb91280fc5?auto=format&fit=crop&w=800&q=80')",
+                  backgroundImage: "url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80')",
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   borderRadius: 24,
@@ -1085,9 +1085,9 @@ export default function Service() {
               >
                 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(14,19,32,0.92) 0%, rgba(14,19,32,0.3) 60%, transparent 100%)", zIndex: 1 }} />
                 <div style={{ position: "relative", zIndex: 2 }}>
-                  <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--gold)", marginBottom: 10, display: "block" }}>Spatial &amp; DÃ©cor Design</span>
+                  <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--gold)", marginBottom: 10, display: "block" }}>Spatial &amp; Décor Design</span>
                   <h3 style={{ fontSize: 24, fontWeight: 700, color: "#ffffff", letterSpacing: "-0.03em" }}>Bespoke Hospitality Signage &amp; Interior System</h3>
-                  <p style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", marginTop: 8 }}>Architectural Materials Â· Custom Detailing Â· Spatial Identity</p>
+                  <p style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", marginTop: 8 }}>Architectural Materials · Custom Detailing · Spatial Identity</p>
                 </div>
               </div>
             </FadeUp>
@@ -1095,8 +1095,8 @@ export default function Service() {
             {/* Two smaller cards */}
             <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
               {[
-                { img: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=600&q=80", accent: "var(--gold)", label: "Corporate Gifting", title: "Executive Timber & Brass Presentation Suites", sub: "Hand-Finished Timber Â· Precision Detailing Â· Custom Packaging" },
-                { img: "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?auto=format&fit=crop&w=600&q=80", accent: "var(--gold)", label: "Brand Identity", title: "Comprehensive Visual Identity System", sub: "Typographic Architecture Â· Brand Guidelines Â· Digital Assets" },
+                { img: "https://images.unsplash.com/photo-1555774698-0b77e0d5fa6a?auto=format&fit=crop&w=600&q=80", accent: "var(--gold)", label: "Corporate Gifting", title: "Executive Timber & Brass Presentation Suites", sub: "Hand-Finished Timber · Precision Detailing · Custom Packaging" },
+                { img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80", accent: "var(--gold)", label: "Brand Identity", title: "Comprehensive Visual Identity System", sub: "Typographic Architecture · Brand Guidelines · Digital Assets" },
               ].map((item, i) => (
                 <FadeUp key={i} delay={0.15 + i * 0.08}>
                   <div
@@ -1136,9 +1136,9 @@ export default function Service() {
         </div>
       </section>
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+      {/* ══════════════════════════════
           PROCESS
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      ══════════════════════════════ */}
       <section className="responsive-padding" style={{ background: "var(--surface)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <style>{`
@@ -1194,9 +1194,9 @@ export default function Service() {
         </div>
       </section>
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+      {/* ══════════════════════════════
           WHY CLIENTS CHOOSE US
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      ══════════════════════════════ */}
       <section className="responsive-padding" style={{ background: "var(--bg)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 60 }}>
@@ -1209,11 +1209,11 @@ export default function Service() {
 
           <div className="responsive-grid-3">
             {[
-              { iconKey: "UIUX", title: "Strategic Thinking", desc: "We don't just execute briefs â€” we interrogate them. Every design decision is rooted in business strategy and measurable goals." },
+              { iconKey: "UIUX", title: "Strategic Thinking", desc: "We don't just execute briefs — we interrogate them. Every design decision is rooted in business strategy and measurable goals." },
               { iconKey: "Brand", title: "Modern Design Language", desc: "No templates. No recycled patterns. Every project gets a bespoke visual system engineered for your audience." },
-              { iconKey: "WebDev", title: "Technical Depth", desc: "Our engineers and designers work in parallel. Clean code, scalable architecture, and pixel-perfect implementation â€” always." },
-              { iconKey: "AI", title: "AI-Native Capabilities", desc: "We integrate GPT, automation, and intelligent workflows natively into your product â€” not as an afterthought." },
-              { iconKey: "Mobile", title: "Business Understanding", desc: "We speak business fluently. KPIs, conversion rates, customer lifetime value â€” these drive every design choice we make." },
+              { iconKey: "WebDev", title: "Technical Depth", desc: "Our engineers and designers work in parallel. Clean code, scalable architecture, and pixel-perfect implementation — always." },
+              { iconKey: "AI", title: "AI-Native Capabilities", desc: "We integrate GPT, automation, and intelligent workflows natively into your product — not as an afterthought." },
+              { iconKey: "Mobile", title: "Business Understanding", desc: "We speak business fluently. KPIs, conversion rates, customer lifetime value — these drive every design choice we make." },
               { iconKey: "Sparkles", title: "Long-Term Partnership", desc: "We build long relationships, not one-off projects. Ongoing support, iterations, and continuous improvement come standard." },
             ].map((item, i) => {
               const IconComponent = Icons[item.iconKey];
@@ -1233,9 +1233,9 @@ export default function Service() {
         </div>
       </section>
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+      {/* ══════════════════════════════
           RESULTS / METRICS
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      ══════════════════════════════ */}
       <section className="responsive-padding" style={{ background: "var(--surface)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <FadeUp>
@@ -1252,8 +1252,8 @@ export default function Service() {
             {[
               { metric: "+340%", label: "Average conversion rate improvement", color: "var(--accent)", bar: "85%" },
               { metric: "20hrs/wk", label: "Average time saved through automation", color: "#14B87A", bar: "70%" },
-              { metric: "+4.8â˜…", label: "Average app store rating post-redesign", color: "var(--gold)", bar: "96%" },
-              { metric: "3Ã— Faster", label: "Time-to-market vs. in-house teams", color: "var(--accent)", bar: "75%" },
+              { metric: "+4.8★", label: "Average app store rating post-redesign", color: "var(--gold)", bar: "96%" },
+              { metric: "3× Faster", label: "Time-to-market vs. in-house teams", color: "var(--accent)", bar: "75%" },
             ].map((item, i) => (
               <FadeUp key={i} delay={i * 0.08}>
                 <div style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: 20, padding: "36px" }}>
@@ -1269,9 +1269,9 @@ export default function Service() {
         </div>
       </section>
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+      {/* ══════════════════════════════
           TECHNOLOGY
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      ══════════════════════════════ */}
       <section style={{ padding: "100px 0", background: "var(--bg)", borderTop: "1px solid var(--border)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 32px" }}>
           <FadeUp>
@@ -1291,9 +1291,9 @@ export default function Service() {
         </div>
       </section>
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+      {/* ══════════════════════════════
           TESTIMONIALS
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      ══════════════════════════════ */}
       <section className="responsive-padding" style={{ background: "var(--surface)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <FadeUp>
@@ -1356,9 +1356,9 @@ export default function Service() {
         </div>
       </section>
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+      {/* ══════════════════════════════
           CONTACT / INQUIRY FORM
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      ══════════════════════════════ */}
       <section id="contact" className="responsive-padding" style={{ background: "var(--bg)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div className="responsive-split-1-2">
@@ -1375,9 +1375,9 @@ export default function Service() {
 
               <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                 {[
-                  { icon: "â±", title: "One business day response", desc: "Every enquiry reviewed by studio directors" },
-                  { icon: "ðŸ”’", title: "Strict confidentiality", desc: "Non-disclosure agreements executed on request" },
-                  { icon: "ðŸ’¬", title: "Bespoke proposal", desc: "Tailored scope, material schedules, and transparent timelines" },
+                  { icon: "⏱", title: "One business day response", desc: "Every enquiry reviewed by studio directors" },
+                  { icon: "🔒", title: "Strict confidentiality", desc: "Non-disclosure agreements executed on request" },
+                  { icon: "💬", title: "Bespoke proposal", desc: "Tailored scope, material schedules, and transparent timelines" },
                 ].map((item, i) => (
                   <div key={i} style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
                     <span style={{ fontSize: 20, flexShrink: 0, lineHeight: 1 }}>{item.icon}</span>
@@ -1402,7 +1402,7 @@ export default function Service() {
             >
               {success ? (
                 <div style={{ textAlign: "center", padding: "40px 20px" }}>
-                  <div style={{ fontSize: "48px", color: "var(--gold)", marginBottom: "16px" }}>âœ“</div>
+                  <div style={{ fontSize: "48px", color: "var(--gold)", marginBottom: "16px" }}>✓</div>
                   <h3 style={{ fontSize: "20px", fontWeight: 700, color: "var(--accent)", marginBottom: "10px" }}>Enquiry Received</h3>
                   <p style={{ fontSize: "14.5px", color: "var(--text-2)", lineHeight: 1.6 }}>
                     Thank you for contacting the studio. Our creative director will review your project details and respond within one business day.
@@ -1469,7 +1469,7 @@ export default function Service() {
                       <option value="">Select a service...</option>
                       <option>Brand & Visual Identity</option>
                       <option>Custom Product Design</option>
-                      <option>Spatial & DÃ©cor Design</option>
+                      <option>Spatial & Décor Design</option>
                       <option>Event & Occasion Design</option>
                       <option>Digital Design & Brand Assets</option>
                       <option>Educational & Institutional Design</option>
@@ -1488,9 +1488,9 @@ export default function Service() {
                     >
                       <option value="">Select budget...</option>
                       <option>Under $2,000</option>
-                      <option>$2,000 â€“ $5,000</option>
-                      <option>$5,000 â€“ $15,000</option>
-                      <option>$15,000 â€“ $50,000</option>
+                      <option>$2,000 – $5,000</option>
+                      <option>$5,000 – $15,000</option>
+                      <option>$15,000 – $50,000</option>
                       <option>$50,000+</option>
                     </select>
                   </div>
@@ -1505,8 +1505,8 @@ export default function Service() {
                     >
                       <option value="">Ideal timeline...</option>
                       <option>ASAP (less than 2 weeks)</option>
-                      <option>1 â€“ 2 months</option>
-                      <option>2 â€“ 4 months</option>
+                      <option>1 – 2 months</option>
+                      <option>2 – 4 months</option>
                       <option>4+ months</option>
                       <option>Not sure yet</option>
                     </select>
@@ -1545,9 +1545,9 @@ export default function Service() {
         </div>
       </section>
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+      {/* ══════════════════════════════
           FINAL DARK CTA
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      ══════════════════════════════ */}
       <section style={{ padding: "100px 32px", background: "var(--surface)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div className="dark-cta">
@@ -1561,7 +1561,7 @@ export default function Service() {
               Not Sure Which Service Fits Your Brief?
             </h2>
             <p style={{ fontSize: 17, color: "rgba(255,255,255,0.65)", maxWidth: 640, margin: "0 auto 40px", lineHeight: 1.8, position: "relative", zIndex: 1 }}>
-              Many of our most successful projects begin as a conversation without a clear brief. Tell us what you are trying to achieve â€” we will advise on the right approach and provide a tailored proposal at no obligation.
+              Many of our most successful projects begin as a conversation without a clear brief. Tell us what you are trying to achieve — we will advise on the right approach and provide a tailored proposal at no obligation.
             </p>
             <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap", position: "relative", zIndex: 1 }}>
               <a

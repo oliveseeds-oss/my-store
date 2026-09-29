@@ -1,10 +1,9 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import API from "../api";
 import { MdAdd, MdEdit, MdDelete, MdClose, MdDownload, MdCloudUpload, MdEditNote } from "react-icons/md";
 import BulkUploadModal from "../components/BulkUploadModal";
-const resolveUrl = (url) => { if (!url) return ""; let t = url.trim(); if (t.includes(",") || t.includes(" ")) { return t.split(/[\s,]+/)[0].trim(); } return t; };
 
 const INIT = { name: "", type: "physical", description: "", image_url: "" };
 
@@ -111,9 +110,9 @@ export default function CatalogAdmin() {
                            items-start justify-between gap-3 shadow-sm hover:shadow-md transition">
                 <div className="flex-1 flex gap-3">
                   {c.image_url ? (
-                    <img src={resolveUrl(c.image_url)} alt={c.name} className="w-14 h-14 rounded-xl object-cover border border-gray-100 flex-shrink-0" />
+                    <img src={c.image_url} alt={c.name} className="w-14 h-14 rounded-xl object-cover border border-gray-100 flex-shrink-0" />
                   ) : (
-                    <div className="w-14 h-14 bg-stone-100 rounded-xl border border-gray-205 flex items-center justify-center text-2xl flex-shrink-0">ðŸªµ</div>
+                    <div className="w-14 h-14 bg-stone-100 rounded-xl border border-gray-205 flex items-center justify-center text-2xl flex-shrink-0">🪵</div>
                   )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
@@ -213,4 +212,3 @@ export default function CatalogAdmin() {
     </div>
   );
 }
-
