@@ -203,7 +203,7 @@ export default function Gallery() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
-              className="bg-white text-[#181A18] max-w-xl w-full rounded-[4px] border border-[#E7E7E2] max-h-[95vh] overflow-y-auto shadow-2xl relative"
+              className="bg-white text-[#181A18] w-auto max-w-xl flex flex-col rounded-[4px] border border-[#E7E7E2] max-h-[95vh] overflow-hidden shadow-2xl relative"
               onClick={e => e.stopPropagation()}
             >
               {/* Close */}
@@ -214,26 +214,28 @@ export default function Gallery() {
                 ✕
               </button>
 
-              {(() => {
-                const imgs = parseImagesList(lightboxImage.image_url);
-                return imgs.length > 1 ? (
-                  <HoverSlideshow 
-                    imageUrls={imgs} 
-                    alt={lightboxImage.title || "Custom crafted item details"}
-                    className="w-full aspect-[3/4]"
-                    imageClassName="w-full h-full object-cover"
-                    imageStyle={{}}
-                  />
-                ) : (
-                  <img 
-                    src={imgs[0] || ""} 
-                    alt={lightboxImage.title || "Custom crafted item details"} 
-                    className="w-full aspect-[3/4] object-cover"
-                  />
-                );
-              })()}
+              <div className="flex-1 min-h-0 bg-[#FAF6EE] flex items-center justify-center relative">
+                {(() => {
+                  const imgs = parseImagesList(lightboxImage.image_url);
+                  return imgs.length > 1 ? (
+                    <HoverSlideshow 
+                      imageUrls={imgs} 
+                      alt={lightboxImage.title || "Custom crafted item details"}
+                      className="h-full w-auto aspect-[3/4]"
+                      imageClassName="h-full w-full object-contain"
+                      imageStyle={{}}
+                    />
+                  ) : (
+                    <img 
+                      src={imgs[0] || ""} 
+                      alt={lightboxImage.title || "Custom crafted item details"} 
+                      className="h-full w-auto aspect-[3/4] object-contain"
+                    />
+                  );
+                })()}
+              </div>
 
-              <div className="p-6 md:p-8">
+              <div className="p-6 md:p-8 shrink-0 min-w-[320px]">
                 {lightboxImage.category && (
                   <span className="text-[10px] text-[#23483D] font-semibold uppercase tracking-widest block mb-2">
                     {lightboxImage.category}
