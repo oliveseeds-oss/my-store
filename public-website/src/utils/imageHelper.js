@@ -7,9 +7,6 @@ const API_BASE = (process.env.REACT_APP_API_URL || "").replace(/\/api\/?$/, "");
 export function resolveImageUrl(url) {
   if (!url || typeof url !== "string") return "";
   let trimmed = url.trim();
-  if (trimmed.includes(",") || trimmed.includes(" ")) {
-    trimmed = trimmed.split(/[\s,]+/)[0].trim();
-  }
   if (!trimmed || trimmed === "[" || trimmed === "]" || trimmed.length < 5) return "";
   if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("data:")) {
     return trimmed;
@@ -39,7 +36,7 @@ export function parseImagesList(rawImages) {
         // Fall back to splitting
       }
     }
-    return trimmed.split(/[\n,]+/).map(resolveImageUrl).filter(Boolean);
+    return trimmed.split(/[\n,\s]+/).map(u => u.trim()).filter(Boolean).map(resolveImageUrl).filter(Boolean);
   }
   return [];
 }
@@ -48,12 +45,12 @@ export function getProductMainImage(product) {
   if (!product) return "";
   
   if (product.image_url) {
-    const resolved = resolveImageUrl(product.image_url);
-    if (resolved) return resolved;
+    const list = parseImagesList(product.image_url);
+    if (list.length > 0) return list[0];
   }
   if (product.thumbnail_url) {
-    const resolved = resolveImageUrl(product.thumbnail_url);
-    if (resolved) return resolved;
+    const list = parseImagesList(product.thumbnail_url);
+    if (list.length > 0) return list[0];
   }
   
   const fromImages = parseImagesList(product.images);
