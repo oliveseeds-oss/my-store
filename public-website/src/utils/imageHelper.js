@@ -2,7 +2,16 @@
  * Utility to reliably extract, format, and resolve product images across all devices (Mobile, Tablet, Desktop).
  */
 
-const API_BASE = (process.env.REACT_APP_API_URL || "").replace(/\/api\/?$/, "");
+const getApiBase = () => {
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    if (hostname.endsWith("oliveseedsdesignstudio.com")) {
+      return "https://apiosspanel.oliveseedsdesignstudio.com";
+    }
+  }
+  return "http://200.141.2.131:5000";
+};
+const API_BASE = getApiBase();
 
 export function resolveImageUrl(url) {
   if (!url || typeof url !== "string") return "";
