@@ -203,7 +203,7 @@ export default function Gallery() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
-              className="bg-white text-[#181A18] max-w-xl w-full rounded-[4px] border border-[#E7E7E2] overflow-hidden shadow-2xl relative"
+              className="bg-white text-[#181A18] max-w-xl w-full rounded-[4px] border border-[#E7E7E2] max-h-[95vh] overflow-y-auto shadow-2xl relative"
               onClick={e => e.stopPropagation()}
             >
               {/* Close */}

@@ -154,7 +154,7 @@ export default function Portfolio() {
                   style={{
                     position: "relative",
                     borderRadius: "4px",
-                    overflow: "hidden",
+                    maxHeight: "95vh", overflowY: "auto",
                     cursor: "pointer",
                     aspectRatio: "1.4/1",
                     background: "#FAF6EE",
