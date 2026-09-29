@@ -234,29 +234,29 @@ export default function Portfolio() {
                 width: "auto",
                 display: "flex",
                 flexDirection: "column",
-                maxHeight: "95vh",
                 overflow: "hidden",
                 boxShadow: "0 20px 50px rgba(0,0,0,0.12)",
+                margin: "0 auto",
               }}
               onClick={e => e.stopPropagation()}
             >
-              <div style={{ flex: "1 1 auto", minHeight: 0, background: "#FAF6EE", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+              <div style={{ height: "min(55vh, 600px)", aspectRatio: "3/4", background: "#FAF6EE", position: "relative", margin: "0 auto", width: "100%", maxWidth: "min(400px,100%)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
                 {(() => {
                   const imgs = parseImagesList(activeItem.image_url);
                   return imgs.length > 1 ? (
                     <HoverSlideshow 
                       imageUrls={imgs} 
                       alt={activeItem.title}
-                      className="h-full w-auto aspect-[3/4]"
-                      imageClassName="h-full w-full object-contain"
-                      style={{ height: "100%", width: "auto", aspectRatio: "3/4" }}
-                      imageStyle={{ height: "100%", width: "100%", objectFit: "contain" }}
+                      className="w-full h-full"
+                      imageClassName="object-contain w-full h-full"
+                      style={{ width: "100%", height: "100%" }}
+                      imageStyle={{ objectFit: "contain" }}
                     />
                   ) : (
                     <img 
                       src={imgs[0] || ""} 
                       alt={activeItem.title} 
-                      style={{ height: "100%", width: "auto", aspectRatio: "3/4", objectFit: "contain" }} 
+                      style={{ width: "100%", height: "100%", objectFit: "contain" }}
                     />
                   );
                 })()}

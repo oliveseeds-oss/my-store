@@ -203,7 +203,7 @@ export default function Gallery() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
-              className="bg-white text-[#181A18] w-auto max-w-xl flex flex-col rounded-[4px] border border-[#E7E7E2] max-h-[95vh] overflow-hidden shadow-2xl relative"
+              className="bg-white text-[#181A18] w-auto max-w-xl flex flex-col rounded-[4px] border border-[#E7E7E2] overflow-hidden shadow-2xl relative mx-auto"
               onClick={e => e.stopPropagation()}
             >
               {/* Close */}
@@ -214,22 +214,22 @@ export default function Gallery() {
                 ✕
               </button>
 
-              <div className="flex-1 min-h-0 bg-[#FAF6EE] flex items-center justify-center relative">
+              <div style={{ height: "min(55vh, 600px)", aspectRatio: "3/4" }} className="bg-[#FAF6EE] relative shrink-0 mx-auto w-full max-w-[min(400px,100%)] flex items-center justify-center overflow-hidden">
                 {(() => {
                   const imgs = parseImagesList(lightboxImage.image_url);
                   return imgs.length > 1 ? (
                     <HoverSlideshow 
                       imageUrls={imgs} 
                       alt={lightboxImage.title || "Custom crafted item details"}
-                      className="h-full w-auto aspect-[3/4]"
-                      imageClassName="h-full w-full object-contain"
-                      imageStyle={{}}
+                      className="w-full h-full"
+                      imageClassName="object-contain w-full h-full"
+                      imageStyle={{ objectFit: "contain" }}
                     />
                   ) : (
                     <img 
                       src={imgs[0] || ""} 
                       alt={lightboxImage.title || "Custom crafted item details"} 
-                      className="h-full w-auto aspect-[3/4] object-contain"
+                      className="w-full h-full object-contain"
                     />
                   );
                 })()}

@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect, useRef } from "react";
 import { parseImagesList } from "../utils/imageHelper";
 
-export default function HoverSlideshow({ imageUrls, alt, className, style, imageStyle }) {
+export default function HoverSlideshow({ imageUrls, alt, className, style, imageStyle, imageClassName }) {
   const images = parseImagesList(imageUrls);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -22,7 +22,7 @@ export default function HoverSlideshow({ imageUrls, alt, className, style, image
         <img
           src={images[0]}
           alt={alt || "Slideshow image"}
-          style={{ ...imageStyle, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          className={imageClassName} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", ...imageStyle }}
         />
       </div>
     );
@@ -66,8 +66,7 @@ export default function HoverSlideshow({ imageUrls, alt, className, style, image
             src={img}
             alt={alt ? `${alt} image ${i+1}` : `Slideshow image ${i+1}`}
             loading={i === 0 ? "eager" : "lazy"}
-            style={{
-              ...imageStyle,
+            className={imageClassName} style={{
               position: i === 0 ? "relative" : "absolute",
               top: 0,
               left: 0,
@@ -77,7 +76,8 @@ export default function HoverSlideshow({ imageUrls, alt, className, style, image
               opacity: i === currentIndex ? 1 : 0,
               transition: "opacity 0.6s ease",
               pointerEvents: i === currentIndex ? "auto" : "none",
-              zIndex: i === currentIndex ? 1 : 0
+              zIndex: i === currentIndex ? 1 : 0,
+              ...imageStyle
             }}
           />
         ))}
