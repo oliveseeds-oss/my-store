@@ -24,11 +24,7 @@ export default function CategoryCatalog() {
 
   return (
     <div style={{ background: "#FFFFFF", minHeight: "100vh", color: "#181A18", fontFamily: "'DM Sans', sans-serif" }}>
-      <SEO 
-        title="Browse Categories | Olive Seeds Design Studio"
-        description="Browse our bespoke design objects, digital design systems, and custom studio collections."
-        keywords="bespoke commissions, digital templates, brand systems, category collection"
-      />
+      <SEO title="Luxury Home Decor & Designer Categories | Olive Seeds Design Studio" description="Browse our bespoke design objects, including luxury home decor, elegant gifts, corporate office decor, and digital services." keywords="luxury home decor, elegant gifts, corporate office decor, bespoke commissions" />
       <Navbar />
 
       <section style={{

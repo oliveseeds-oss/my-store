@@ -617,11 +617,7 @@ export default function Service() {
         }
       `}</style>
 
-      <SEO
-        title="Bespoke Design Services | Corporate & Brand Design — Olive Seeds"
-        description="Premium creative services for corporations, hotels, institutions, and lifestyle brands — from brand identity and spatial design to corporate gifting."
-        keywords="bespoke design services, corporate identity, brand design, spatial design, corporate gifting, event design"
-      />
+      <SEO title="Digital Services | Olive Seeds Design Studio" description="Explore our bespoke digital services, branding, graphic design, UI/UX design, and website design solutions." keywords="digital services, branding, graphic design, UI/UX design, website design, digital solutions" />
       <Navbar />
 
       {/* ══════════════════════════════

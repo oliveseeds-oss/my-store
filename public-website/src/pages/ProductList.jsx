@@ -392,13 +392,48 @@ export default function ProductList() {
 
   const ratingOptions = [4, 3, 2, 1];
 
-  return (
-    <div style={{ background: T.bg, minHeight: "100vh", fontFamily: T.bodyFont }}>
-      <SEO
-        title="Bespoke Design Products | Olive Seeds Design Studio"
-        description="Explore our curated collection of bespoke design products — custom corporate gifts, branded décor, and premium design objects for discerning B2B clients."
-        keywords="bespoke design products, custom corporate gifts, branded décor, premium design objects, olive seeds design studio"
-      />
+  
+    const getCategorySEO = () => {
+      let title = "Bespoke Design Products | Olive Seeds Design Studio";
+      let desc = "Explore our curated collection of bespoke design products - custom corporate gifts, branded dAccor, and premium design objects for discerning B2B clients.";
+      let kw = "bespoke design products, custom corporate gifts, branded dAccor, premium design objects, olive seeds design studio";
+      const catName = ((typeof filters !== 'undefined' ? filters.category : '') || (typeof slug !== 'undefined' ? slug : '') || '').toLowerCase();
+      if (catName.includes('decor') && (catName.includes('home') || catName.includes('luxury'))) {
+        title = "Luxury Home Decor | Olive Seeds Design Studio";
+        desc = "Discover our premium collection of luxury home decor and designer home accessories for your interior spaces.";
+        kw = "luxury home decor, premium home decor, modern wall decor, designer home accessories, premium interior decor, bespoke decor";
+      } else if (catName.includes('gift')) {
+        title = "Elegant Gifts | Olive Seeds Design Studio";
+        desc = "Browse our selection of elegant gifts, including personalised and bespoke designer gifts for all occasions.";
+        kw = "elegant gifts, premium gifts, personalised gifts, designer gifts, custom gifts";
+      } else if (catName.includes('clock')) {
+        title = "Designer Wall Clocks | Olive Seeds Design Studio";
+        desc = "Enhance your interiors with our premium designer wall clocks, crafted for modern luxury living.";
+        kw = "designer wall clocks, premium wall clocks, modern wall clocks, decorative wall clocks, luxury wall clocks";
+      } else if (catName.includes('event') || catName.includes('wedding')) {
+        title = "Event Decor | Olive Seeds Design Studio";
+        desc = "Bespoke event decor and custom event signage designed for weddings and special occasions.";
+        kw = "event decor, event decorations, wedding decor products, event signage, personalised event decor";
+      } else if (catName.includes('kids') || catName.includes('education')) {
+        title = "Kids Educational Products | Olive Seeds Design Studio";
+        desc = "Explore our curated collection of kids educational products and learning boards.";
+        kw = "kids educational products, learning products for kids, educational learning products, kids learning boards, early learning products";
+      } else if (catName.includes('corporate') || catName.includes('office') || catName.includes('business')) {
+        title = "Corporate Office Decor | Olive Seeds Design Studio";
+        desc = "Premium corporate office decor, reception decor, and business interior products.";
+        kw = "corporate office decor, office decor, corporate interior products, reception decor, office wall decor, business interior decor";
+      } else if (catName.includes('hospitality')) {
+        title = "Hospitality Interior Design | Olive Seeds Design Studio";
+        desc = "Premium hospitality decor and design objects for hotels and restaurants.";
+        kw = "hospitality interior design, hospitality decor, hotel decor, restaurant decor";
+      }
+      return { title, desc, kw };
+    };
+    const seoData = getCategorySEO();
+    return (
+      <div style={{ background: T.bg, minHeight: '100vh', fontFamily: T.bodyFont }}>
+        <SEO title={seoData.title} description={seoData.desc} keywords={seoData.kw} />
+
 
       <Navbar />
 
@@ -615,17 +650,7 @@ export default function ProductList() {
             gap: 16, marginBottom: 28, flexWrap: "wrap",
           }}>
             <div>
-              <h2 style={{
-                fontFamily: T.headingFont,
-                fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 400,
-                color: T.text, marginBottom: 4,
-              }}>
-                {filters.tag
-                  ? `${filters.tag}`
-                  : filters.category === "Best Sellers" || filters.category === "best-sellers"
-                  ? "Signature Works"
-                  : filters.category || "The Collection"}
-              </h2>
+              <h1></h1>
               <p style={{ fontFamily: T.bodyFont, fontSize: 13, color: T.textSec }}>
                 {loading ? "Loading collection…" : `${products.length} bespoke pieces available`}
               </p>

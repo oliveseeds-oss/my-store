@@ -1183,7 +1183,7 @@ export default function Home() {
         <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
           <FadeUp style={{ textAlign: "center", marginBottom: "48px" }}>
             <span className="eyebrow" style={{ justifyContent: "center" }}>A Studio Built on Intention</span>
-            <h2 className="clash" style={{
+            <h1 className="clash" style={{
               fontSize: "clamp(2.2rem, 4vw, 4rem)",
               fontWeight: 700,
               color: "var(--accent)",
@@ -1198,7 +1198,7 @@ export default function Home() {
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
               }}>Expect More.</span>
-            </h2>
+            </h1>
             <p style={{
               color: "var(--text-2)", maxWidth: "580px", margin: "20px auto 0",
               fontSize: "15.5px", lineHeight: 1.75,

@@ -196,11 +196,7 @@ export default function Engraving() {
 
   return (
     <div style={{ background: "#FFFFFF", color: "#181A18", minHeight: "100vh", fontFamily: "'DM Sans', sans-serif" }}>
-      <SEO
-        title="Bespoke Design Products | Olive Seeds Design Studio"
-        description="Explore our curated collection of bespoke design products — custom corporate gifts, branded décor, and premium design objects for discerning B2B clients."
-        keywords="bespoke objects, custom corporate collections, architectural nameplates, hand-finished timber, acrylic collection"
-      />
+      <SEO title="B2B Bulk Corporate Gifts | Olive Seeds Design Studio" description="Premium B2B bulk corporate gifts, branded corporate gifts, and business gifting solutions." keywords="B2B bulk corporate gifts, corporate gifts, bulk corporate gifting, branded corporate gifts, business gifts, corporate gifting solutions" />
 
       <Navbar />
 
