@@ -4,12 +4,10 @@ import CuteLoader from "./components/CuteLoader";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { CartProvider } from "./context/CartContext";
 import { MemberProvider } from "./context/MemberContext";
-
-const WhatsAppChat = lazy(() => import("./components/WhatsAppChat"));
 import { CurrencyProvider } from "./context/CurrencyContext";
-
 import { initGA4 } from "./utils/ga4";
 
+const WhatsAppChat = lazy(() => import("./components/WhatsAppChat"));
 const Home = lazy(() => import("./pages/Home"));
 const ProductList = lazy(() => import("./pages/ProductList"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
