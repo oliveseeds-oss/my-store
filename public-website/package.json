@@ -25,7 +25,8 @@
     "start": "PORT=3001 NODE_OPTIONS=--no-deprecation react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "postbuild": "react-snap"
   },
   "eslintConfig": {
     "extends": [
@@ -48,6 +49,14 @@
   "devDependencies": {
     "autoprefixer": "^10.5.0",
     "postcss": "^8.5.14",
+    "react-snap": "^1.23.0",
     "tailwindcss": "^3.4.19"
+  },
+  "reactSnap": {
+    "inlineCss": true,
+    "puppeteerArgs": [
+      "--no-sandbox",
+      "--disable-setuid-sandbox"
+    ]
   }
 }

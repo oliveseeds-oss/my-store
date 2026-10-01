@@ -1,10 +1,11 @@
 import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import WhatsAppChat from "./components/WhatsAppChat";
 import CuteLoader from "./components/CuteLoader";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { CartProvider } from "./context/CartContext";
 import { MemberProvider } from "./context/MemberContext";
+
+const WhatsAppChat = lazy(() => import("./components/WhatsAppChat"));
 import { CurrencyProvider } from "./context/CurrencyContext";
 
 import { initGA4 } from "./utils/ga4";
@@ -74,10 +75,11 @@ export default function App() {
         <CartProvider>
           <BrowserRouter>
             <ScrollToTop />
+            <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[9999] focus:p-4 focus:bg-white focus:text-black">Skip to main content</a>
             <WhatsAppChat />
             <ErrorBoundary>
               <Suspense fallback={<CuteLoader />}>
-                <main>
+                <main id="main-content">
                 <Routes>
                   <Route path="/"                   element={<Home />} />
                   <Route path="/products"           element={<ProductList />} />
