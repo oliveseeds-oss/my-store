@@ -25,8 +25,7 @@
     "start": "PORT=3001 NODE_OPTIONS=--no-deprecation react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "postbuild": "react-snap"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
