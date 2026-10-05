@@ -277,9 +277,10 @@ export default function BlogList() {
         </div>
 
         {/* ── Main Editorial Article Canvas ── */}
-        <main className="flex-1 w-full pb-12">
+        <div className="max-w-6xl mx-auto w-full flex flex-col lg:flex-row gap-10 px-5 sm:px-8 pb-12 pt-6 sm:pt-10">
+          <main className="flex-1 w-full max-w-3xl">
           {/* Article Header (Hero) */}
-          <header className="max-w-3xl mx-auto px-5 sm:px-8 pt-10 sm:pt-16 pb-6 sm:pb-8">
+          <header className="w-full pb-6 sm:pb-8">
             {/* Category, Views & Read Time */}
             <div className="flex items-center gap-3 flex-wrap mb-5">
               <span className="text-[10.5px] font-semibold px-3 py-1 rounded-[3px] uppercase tracking-[0.14em] bg-[#FAF6EE] text-[#23483D] border border-[#EAE4D6]">
@@ -338,7 +339,7 @@ export default function BlogList() {
 
           {/* Featured Hero Image (if available) */}
           {(viewingPost.image_url || viewingPost.image) && (
-            <div className="max-w-4xl mx-auto px-5 sm:px-8 mb-10 sm:mb-14">
+            <div className="w-full mb-10 sm:mb-14">
               <figure className="rounded-[6px] overflow-hidden border border-[#EAE4D6] bg-[#FAF6EE] shadow-xs">
                 <img
                   src={viewingPost.image_url || viewingPost.image}
@@ -355,16 +356,16 @@ export default function BlogList() {
           )}
 
           {/* ── Dedicated Editorial Reading Body ── */}
-          <div className="max-w-4xl mx-auto px-5 sm:px-8 mb-8"><AdBanner /></div>
-          <article className="max-w-3xl mx-auto px-5 sm:px-8 md:px-10">
+          <div className="w-full mb-8 lg:hidden"><AdBanner placement="Horizontal Banner" /></div>
+          <article className="w-full">
             <div
               className="editorial-article-body"
-              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(formatContent(viewingPost.content)) }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(formatContent(viewingPost.content), { ADD_ATTR: ["target", "class", "style", "id", "href", "src"], ADD_TAGS: ["iframe", "figure", "figcaption"] }) }}
             />
           </article>
 
           {/* ── Studio Colophon / End of Article ── */}
-          <section className="max-w-3xl mx-auto px-5 sm:px-8 mt-14 sm:mt-20 mb-12">
+          <section className="w-full mt-14 sm:mt-20 mb-12">
             <div className="bg-[#FAF6EE] border border-[#EAE4D6] rounded-[6px] p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-xs">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[#A48855] font-semibold mb-1">
@@ -478,7 +479,13 @@ export default function BlogList() {
               </div>
             </section>
           )}
-        </main>
+          </main>
+
+          <aside className="hidden lg:flex w-[300px] shrink-0 sticky top-28 flex-col gap-8 self-start">
+            <AdBanner placement="Square Tile" />
+            <AdBanner placement="Vertical Tower" />
+          </aside>
+        </div>
 
         <Footer />
       </div>
