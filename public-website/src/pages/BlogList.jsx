@@ -355,6 +355,7 @@ export default function BlogList() {
           )}
 
           {/* ── Dedicated Editorial Reading Body ── */}
+          <div className="max-w-4xl mx-auto px-5 sm:px-8 mb-8"><AdBanner /></div>
           <article className="max-w-3xl mx-auto px-5 sm:px-8 md:px-10">
             <div
               className="editorial-article-body"

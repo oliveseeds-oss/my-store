@@ -30,7 +30,7 @@ export default function Navbar() {
             <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full overflow-hidden border border-[#A48855]/40 p-0.5 bg-[#FAF6EE] shadow-2xs group-hover:border-[#23483D] transition shrink-0">
               <img src="/android-chrome-192x192.png" alt="Olive Seeds Logo" className="w-full h-full object-cover rounded-full" />
             </div>
-            <span className="whitespace-nowrap truncate font-semibold">Olive Seeds</span>
+            <span className="whitespace-nowrap font-semibold">Olive Seeds</span>
           </Link>
         </div>
 
