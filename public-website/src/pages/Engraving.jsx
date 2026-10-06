@@ -148,6 +148,7 @@ export default function Engraving() {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [settings, setSettings] = useState({});
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
 
   useEffect(() => {
     document.title = "Bespoke Design Products | Olive Seeds Design Studio";
@@ -155,9 +156,7 @@ export default function Engraving() {
     if (metaDesc) {
       metaDesc.setAttribute("content", "Explore our curated collection of bespoke design products — custom corporate gifts, branded décor, and premium design objects for discerning B2B clients.");
     }
-    API.get("/settings")
-      .then((r) => { if (r.data) setSettings(r.data); })
-      .catch(() => {});
+    API.get("/settings").then((r) => { if (r.data) setSettings(r.data); setSettingsLoaded(true); }).catch(() => { setSettingsLoaded(true); });
   }, []);
 
   const handleSubmit = async (e) => {
@@ -304,11 +303,11 @@ export default function Engraving() {
 
           {/* Right graphics mockup */}
           <div className="hero-img-box">
-            <img 
+            {!settingsLoaded ? <div className="animate-pulse w-full h-full bg-[#EAE4D6]" /> : <img 
               src={settings.engraving_hero_image || "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=1200&auto=format&fit=crop"} 
               alt="Precision craft tools calibrating depth on solid teakwood template"
               style={{ width: "100%", height: "100%", objectFit: "cover" }} 
-            />
+            />}
             {/* Glass badge */}
             <div style={{
               position: "absolute", bottom: "16px", left: "16px",
@@ -335,11 +334,11 @@ export default function Engraving() {
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "32px", alignItems: "center" }}>
             <div style={{ position: "relative", borderRadius: "4px", overflow: "hidden", border: "1px solid #E7E7E2", height: "380px" }}>
-              <img 
+              {!settingsLoaded ? <div className="animate-pulse w-full h-full bg-[#EAE4D6]" /> : <img 
                 src={settings.engraving_showcase_image || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=800&auto=format&fit=crop"} 
                 alt="Personalised presentation boxes ready for dispatch" 
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
+              />}
             </div>
             <div style={{ padding: "10px" }}>
               <span style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "#23483D", display: "block", marginBottom: "12px" }}>Artisan Studio</span>
@@ -393,7 +392,7 @@ export default function Engraving() {
                     onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "#E7E7E2"; }}
                   >
                     <div style={{ height: "190px", overflow: "hidden", position: "relative" }}>
-                      <img src={settings[`bulk_material_${i + 1}`] || mat.img} alt={mat.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      {!settingsLoaded ? <div className="animate-pulse" style={{ width: "100%", height: "100%", backgroundColor: "#EAE4D6" }} /> : <img src={settings[`bulk_material_${i + 1}`] || mat.img} alt={mat.name} style={{ width: "100%", height: "100%", objectFit: "cover", animation: "fadeIn 0.5s ease" }} />}
                       <div style={{ position: "absolute", top: "14px", left: "14px", background: "#FFFFFF", padding: "8px", borderRadius: "4px", border: "1px solid #E7E7E2", display: "flex" }}>
                         <Icon size={16} color="#23483D" />
                       </div>
