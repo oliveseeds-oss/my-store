@@ -104,6 +104,12 @@ export default function Settings() {
         engraving_hero_image: settings.engraving_hero_image,
         engraving_showcase_image: settings.engraving_showcase_image,
         about_story_image: settings.about_story_image,
+        bulk_material_1: settings.bulk_material_1,
+        bulk_material_2: settings.bulk_material_2,
+        bulk_material_3: settings.bulk_material_3,
+        bulk_material_4: settings.bulk_material_4,
+        bulk_material_5: settings.bulk_material_5,
+        bulk_material_6: settings.bulk_material_6,
       };
 
       if (settings.new_password) {
