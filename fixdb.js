@@ -1,0 +1,4 @@
+const fs = require('fs');
+let db = fs.readFileSync('backend/db.js', 'utf8');
+db = db.replace('await runSafe("ALTER TABLE settings ADD COLUMN about_story_image VARCHAR(500) DEFAULT NULL");', 'await runSafe("ALTER TABLE settings ADD COLUMN about_story_image VARCHAR(500) DEFAULT NULL");\n  await runSafe("ALTER TABLE settings ADD COLUMN bulk_material_1 VARCHAR(500) DEFAULT NULL");\n  await runSafe("ALTER TABLE settings ADD COLUMN bulk_material_2 VARCHAR(500) DEFAULT NULL");\n  await runSafe("ALTER TABLE settings ADD COLUMN bulk_material_3 VARCHAR(500) DEFAULT NULL");\n  await runSafe("ALTER TABLE settings ADD COLUMN bulk_material_4 VARCHAR(500) DEFAULT NULL");\n  await runSafe("ALTER TABLE settings ADD COLUMN bulk_material_5 VARCHAR(500) DEFAULT NULL");\n  await runSafe("ALTER TABLE settings ADD COLUMN bulk_material_6 VARCHAR(500) DEFAULT NULL");');
+fs.writeFileSync('backend/db.js', db);

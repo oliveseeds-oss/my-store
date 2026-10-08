@@ -212,8 +212,8 @@ export default function BlogList() {
           description={metaDescription}
           keywords={viewingPost.tags || viewingPost.category || "blog"}
         />
-        {viewingPost.canonical_url && <link rel="canonical" href={viewingPost.canonical_url} />}
-        {viewingPost.no_index && <meta name="robots" content="noindex, nofollow" />}
+        {Boolean(viewingPost.canonical_url) && <link rel="canonical" href={viewingPost.canonical_url} />}
+        {Boolean(viewingPost.no_index) && <meta name="robots" content="noindex, nofollow" />}
         <meta property="og:title" content={ogTitle} />
         <meta property="og:description" content={ogDescription} />
         <meta property="og:image" content={ogImage} />

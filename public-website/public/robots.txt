@@ -28,6 +28,12 @@ Allow: /
 User-agent: Applebot
 Allow: /
 
+User-agent: Slurp
+Allow: /
+
+User-agent: msnbot
+Allow: /
+
 # AI Discovery & LLM Crawlers
 User-agent: GPTBot
 Allow: /
@@ -69,6 +75,18 @@ User-agent: cohere-ai
 Allow: /
 
 User-agent: Diffbot
+Allow: /
+
+User-agent: Qwen
+Allow: /
+
+User-agent: QwenBot
+Allow: /
+
+User-agent: DeepSeek
+Allow: /
+
+User-agent: deepseek-bot
 Allow: /
 
 Sitemap: https://oliveseedsdesignstudio.com/sitemap.xml
