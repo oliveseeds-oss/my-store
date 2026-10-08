@@ -780,45 +780,51 @@ export default function Home() {
           margin-bottom: -8px;
         }
 
-        /* Responsive */
-        @media (max-width: 900px) {
-          .hero-grid   { grid-template-columns: 1fr !important; gap: 48px !important; }
-          .stats-row   { grid-template-columns: repeat(2, 1fr) !important; }
-          .three-cols  { grid-template-columns: 1fr !important; }
-          .two-cols    { grid-template-columns: 1fr !important; }
-          .four-cols   { grid-template-columns: repeat(2, 1fr) !important; }
+        /* Responsive adjustments for perfect fit across all screens */
+        @media (max-width: 1280px) {
+          .hero-grid { gap: 40px !important; grid-template-columns: 1fr 400px !important; }
+          .stats-row { padding: 16px 12px !important; gap: 8px !important; }
+          .stat-num { font-size: 1.8rem !important; }
+        }
+        @media (max-width: 1024px) {
+          .hero-section { padding-top: 60px !important; min-height: auto !important; }
+          .hero-grid { grid-template-columns: 1fr !important; gap: 48px !important; text-align: center; }
+          .hero-grid > div:first-child { align-items: center !important; }
+          .hero-grid p { margin: 0 auto !important; }
+          .hero-grid .btn-primary, .hero-grid .btn-outline { justify-content: center; }
+          .hero-right-panel { max-width: 500px; margin: 0 auto; width: 100%; }
+          .stats-row { grid-template-columns: repeat(2, 1fr) !important; max-width: 600px; margin: 16px auto 0 !important; border-top: none !important; }
+          .stats-row > div:nth-child(2) { border-right: none !important; }
+          .stats-row > div:nth-child(1), .stats-row > div:nth-child(2) { border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 8px; }
+          .three-cols { grid-template-columns: 1fr 1fr !important; }
+        }
+        @media (max-width: 768px) {
+          .three-cols { grid-template-columns: 1fr !important; }
+          .two-cols { grid-template-columns: 1fr !important; }
+          .four-cols { grid-template-columns: repeat(2, 1fr) !important; }
         }
         @media (max-width: 540px) {
-          .hero-section {
-            padding-top: 50px !important;
-            padding-bottom: 24px !important;
-            min-height: auto !important;
-          }
-          .hero-grid {
-            text-align: left !important;
-            gap: 24px !important;
-          }
-          .hero-grid > div {
-            align-items: flex-start !important;
-          }
-          .stats-row {
-            grid-template-columns: 1fr 1fr !important;
-            gap: 16px !important;
-            padding: 16px !important;
-            border-radius: 16px !important;
+          .hero-section { padding-top: 40px !important; padding-bottom: 24px !important; }
+          .hero-grid { text-align: left !important; gap: 32px !important; }
+          .hero-grid > div:first-child { align-items: flex-start !important; }
+          .hero-grid p { margin: 0 !important; }
+          .hero-right-panel { max-width: 100%; }
+          .hero-right-panel > div:first-of-type { height: 320px !important; }
+          .float-a { left: -10px !important; top: 10px !important; padding: 10px !important; transform: scale(0.9); }
+          .float-b { right: -10px !important; bottom: 10px !important; padding: 10px !important; transform: scale(0.9); }
+          .stats-row { 
+            grid-template-columns: 1fr 1fr !important; 
+            gap: 16px !important; 
+            padding: 16px !important; 
+            border-radius: 12px !important; 
+            margin: 24px 0 0 0 !important;
           }
           .stats-row > div {
             border-right: none !important;
-            border-left: none !important;
             padding-right: 0 !important;
             padding-left: 0 !important;
             align-items: flex-start !important;
             text-align: left !important;
-          }
-          .stats-row > div:nth-child(1),
-          .stats-row > div:nth-child(2) {
-            border-bottom: 1px solid var(--border) !important;
-            padding-bottom: 12px !important;
           }
           .four-cols { grid-template-columns: 1fr !important; }
         }
