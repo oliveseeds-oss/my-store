@@ -331,7 +331,7 @@ export default function Engraving() {
 
       {/* ── INTRO / IMAGES SECTION ── */}
       <section style={{ padding: "80px 24px", background: "#FFFFFF", borderBottom: "1px solid #E7E7E2" }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+        <div style={{ maxWidth: "1920px", margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "32px", alignItems: "center" }}>
             <div style={{ position: "relative", borderRadius: "4px", overflow: "hidden", border: "1px solid #E7E7E2", height: "380px" }}>
               {!settingsLoaded ? <div className="animate-pulse w-full h-full bg-[#EAE4D6]" /> : <img 
@@ -363,7 +363,7 @@ export default function Engraving() {
 
       {/* ── MATERIAL CARDS WITH IMAGES ── */}
       <section id="materials" style={{ padding: "clamp(60px, 8vw, 100px) 24px", background: "#FAF6EE", borderBottom: "1px solid #E7E7E2" }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+        <div style={{ maxWidth: "1920px", margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: "50px" }}>
             <span style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "#23483D", display: "block", marginBottom: "8px" }}>Selected Materials</span>
             <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 400, color: "#181A18", marginBottom: "14px" }}>Explore Architectural Materials</h2>
@@ -411,7 +411,7 @@ export default function Engraving() {
 
       {/* ── WORKFLOW STEPS ── */}
       <section style={{ padding: "80px 24px", background: "#FFFFFF", borderBottom: "1px solid #E7E7E2" }}>
-        <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
+        <div style={{ maxWidth: "1600px", margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: "48px" }}>
             <span style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "#23483D", display: "block", marginBottom: "8px" }}>Seamless Workflow</span>
             <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(1.8rem, 3.5vw, 2.5rem)", fontWeight: 400, color: "#181A18" }}>Our Production Pipeline</h2>
@@ -436,7 +436,7 @@ export default function Engraving() {
 
       {/* ── WHY OLIVE SEEDS ── */}
       <section style={{ padding: "80px 24px", background: "#FAF6EE", borderBottom: "1px solid #E7E7E2" }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+        <div style={{ maxWidth: "1920px", margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: "48px" }}>
             <span style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "#23483D", display: "block", marginBottom: "8px" }}>Studio Guarantee</span>
             <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(1.8rem, 3.5vw, 2.5rem)", fontWeight: 400, color: "#181A18" }}>High Standards, No Compromise</h2>
@@ -638,7 +638,7 @@ export default function Engraving() {
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 pb-12">
+      <div className="max-w-[1920px] mx-auto px-4 pb-12">
         <ReviewSection productId={1} />
       </div>
 

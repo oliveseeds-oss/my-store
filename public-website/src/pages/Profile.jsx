@@ -422,7 +422,7 @@ export default function Profile() {
           OS
         </div>
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 relative z-10">
+        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 relative z-10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             
             {/* Patron Profile Info */}
@@ -495,7 +495,7 @@ export default function Profile() {
 
         {/* ── Luxury Navigation Tab Bar (Desktop & Mobile Swipeable) ── */}
         <div className="border-t border-[#EAE4D6] bg-white/70 backdrop-blur-sm">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
             <nav className="flex items-center gap-1 sm:gap-2 overflow-x-auto py-2 no-scrollbar scroll-smooth" style={{ scrollbarWidth: "none" }}>
               {[
                 { key: "home", label: "Overview", icon: "🏛️" },
@@ -539,7 +539,7 @@ export default function Profile() {
       </section>
 
       {/* ── Main Atelier Body ── */}
-      <main className="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <main className="flex-grow max-w-[1920px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         
         {/* ─── 0. ATELIER OVERVIEW (ARCHITECTURAL TILES) ─── */}
         {activeTab === "home" && (

@@ -14,7 +14,7 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 backdrop-blur-md bg-white/95 border-b border-[#E7E7E2]"
       style={{ fontFamily: "'DM Sans', sans-serif" }}>
-      <div className="max-w-7xl mx-auto px-2.5 sm:px-6 h-16 flex items-center justify-between gap-1 sm:gap-4">
+      <div className="max-w-[1920px] mx-auto px-2.5 sm:px-6 h-16 flex items-center justify-between gap-1 sm:gap-4">
         <div className="flex items-center gap-1.5 sm:gap-3 min-w-0">
           {/* Mobile Menu Button */}
           <button

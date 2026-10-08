@@ -85,7 +85,7 @@ export default function Portfolio() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden" style={{ paddingTop: "120px", paddingBottom: "60px", position: "relative", background: "#FFFFFF", borderBottom: "1px solid #E7E7E2" }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 32px", position: "relative", zIndex: 2 }}>
+        <div style={{ maxWidth: "1920px", margin: "0 auto", padding: "0 32px", position: "relative", zIndex: 2 }}>
           <div style={{ textAlign: "center" }}>
             <span style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "#23483D", display: "block", marginBottom: "12px" }}>
               Studio Portfolio
@@ -127,7 +127,7 @@ export default function Portfolio() {
       </section>
 
       {/* Gallery Showcase Grid */}
-      <main style={{ maxWidth: "1200px", margin: "0 auto", padding: "48px 32px 100px", position: "relative", zIndex: 2 }}>
+      <main style={{ maxWidth: "1920px", margin: "0 auto", padding: "48px 32px 100px", position: "relative", zIndex: 2 }}>
         {loading ? (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "28px" }}>
             {[...Array(6)].map((_, idx) => (

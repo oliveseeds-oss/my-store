@@ -324,7 +324,7 @@ export default function DigitalProductList() {
 
       {/* ── Masthead Hero (Simple, Calm & Premium Atelier Presentation) ── */}
       <section className="relative border-b border-[#EAE4D6]" style={{ background: "#FAF6EE" }}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
           <div className="max-w-2xl">
             <span className="text-[10px] font-bold tracking-[0.22em] uppercase text-[#A48855] block mb-2">
               Atelier Digital Vault
@@ -363,12 +363,12 @@ export default function DigitalProductList() {
       </section>
 
       {/* ── Brand Banner Ad ── */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 w-full">
+      <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 pt-8 w-full">
         <AdBanner placement="Horizontal Banner" />
       </div>
 
       {/* ── Main Vault Archive Section (Sidebar + Grid) ── */}
-      <section id="vault-archive" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow flex gap-8 items-start">
+      <section id="vault-archive" className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow flex gap-8 items-start">
         
         {/* ── DESKTOP LUXURY SIDEBAR (Restored Full Filtering) ── */}
         <aside 

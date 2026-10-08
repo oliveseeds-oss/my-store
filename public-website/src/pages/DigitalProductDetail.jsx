@@ -186,7 +186,7 @@ export default function DigitalProductDetail() {
 
       {/* ── Breadcrumb Masthead ── */}
       <div className="border-b border-[#EAE4D6]" style={{ background: "#FAF6EE" }}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between text-xs text-[#6B7C75]">
+        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between text-xs text-[#6B7C75]">
           <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap">
             <Link to="/" className="hover:text-[#23483D] transition">Home</Link>
             <span>/</span>
@@ -213,7 +213,7 @@ export default function DigitalProductDetail() {
       </div>
 
       {/* ── Main Product Display ── */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 w-full flex-grow">
+      <main className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 w-full flex-grow">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
           
           {/* ── Left Gallery (7 Cols on desktop) ── */}

@@ -277,7 +277,7 @@ export default function BlogList() {
         </div>
 
         {/* ── Main Editorial Article Canvas ── */}
-        <div className="max-w-6xl mx-auto w-full flex flex-col lg:flex-row gap-10 px-5 sm:px-8 pb-12 pt-6 sm:pt-10">
+        <div className="max-w-[1920px] mx-auto w-full flex flex-col lg:flex-row gap-10 px-5 sm:px-8 pb-12 pt-6 sm:pt-10">
           <main className="flex-1 w-full max-w-3xl">
           {/* Article Header (Hero) */}
           <header className="w-full pb-6 sm:pb-8">
@@ -409,7 +409,7 @@ export default function BlogList() {
           {/* ── Perspectives & Further Reading Grid ── */}
           {fallbackPosts.length > 0 && (
             <section className="border-t border-[#EAE4D6] bg-[#FAF6EE]/45 py-14 sm:py-20 mt-12">
-              <div className="max-w-6xl mx-auto px-5 sm:px-8">
+              <div className="max-w-[1920px] mx-auto px-5 sm:px-8">
                 <div className="flex items-end justify-between mb-8 sm:mb-10">
                   <div>
                     <span className="text-[10.5px] font-semibold uppercase tracking-[0.16em] text-[#A48855] block mb-2">
@@ -539,7 +539,7 @@ export default function BlogList() {
 
       {/* Category Navigation Bar */}
       <section className="border-b border-[#EAE4D6] bg-[#FAF9F6]/60 sticky top-16 z-20 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-4">
+        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none w-full">
             {categories.map((cat) => (
               <button
@@ -562,7 +562,7 @@ export default function BlogList() {
       </section>
 
       {/* Articles Main Grid */}
-      <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 w-full">
+      <main className="flex-1 max-w-[1920px] mx-auto px-4 sm:px-6 py-8 sm:py-12 w-full">
         {filteredPosts.length === 0 ? (
           <div className="bg-white border border-[#EAE4D6] rounded-[4px] p-12 text-center my-8">
             <h3

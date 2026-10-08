@@ -905,7 +905,7 @@ export default function Home() {
           alignItems: "center",
         }}
       >
-        <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px", width: "100%", position: "relative", zIndex: 1 }}>
+        <div style={{ maxWidth: "1920px", margin: "0 auto", padding: "0 32px", width: "100%", position: "relative", zIndex: 1 }}>
           <div
             className="hero-grid"
             style={{ display: "grid", gridTemplateColumns: "1fr 460px", gap: "80px", alignItems: "center" }}
@@ -1186,7 +1186,7 @@ export default function Home() {
           THREE CORE DIVISIONS
       ══════════════════════════════════════════════ */}
       <section style={{ padding: "clamp(80px, 8vw, 140px) 0", background: "var(--surface)" }}>
-        <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
+        <div style={{ maxWidth: "1920px", margin: "0 auto", padding: "0 32px" }}>
           <FadeUp style={{ textAlign: "center", marginBottom: "48px" }}>
             <span className="eyebrow" style={{ justifyContent: "center" }}>A Studio Built on Intention</span>
             <h1 className="clash" style={{
@@ -1347,7 +1347,7 @@ export default function Home() {
       {/* ══════════════════════════════════════════════
           AD BANNER (Horizontal)
       ══════════════════════════════════════════════ */}
-      <section style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px 40px" }}>
+      <section style={{ maxWidth: "1920px", margin: "0 auto", padding: "0 32px 40px" }}>
         <AdBanner placement="Horizontal Banner" />
       </section>
 
@@ -1355,7 +1355,7 @@ export default function Home() {
           STUDIO STORY / ABOUT
       ══════════════════════════════════════════════ */}
       <section style={{ padding: "clamp(80px, 8vw, 140px) 0", background: "#F4F4F1" }}>
-        <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
+        <div style={{ maxWidth: "1920px", margin: "0 auto", padding: "0 32px" }}>
           <div
             className="two-cols"
             style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "80px", alignItems: "center" }}
@@ -1454,7 +1454,7 @@ export default function Home() {
           PHYSICAL PRODUCTS
       ══════════════════════════════════════════════ */}
       <section style={{ padding: "clamp(80px, 8vw, 140px) 0", background: "#F8F8F5" }}>
-        <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
+        <div style={{ maxWidth: "1920px", margin: "0 auto", padding: "0 32px" }}>
           {/* Header */}
           <div style={{
             display: "flex", alignItems: "flex-end", justifyContent: "space-between",
@@ -1572,7 +1572,7 @@ export default function Home() {
       {/* ══════════════════════════════════════════════
           FEATURED COLLECTIONS
       ══════════════════════════════════════════════ */}
-      <section style={{ padding: "clamp(60px, 6vw, 100px) 24px", maxWidth: "1280px", margin: "0 auto" }}>
+      <section style={{ padding: "clamp(60px, 6vw, 100px) 24px", maxWidth: "1920px", margin: "0 auto" }}>
         <div style={{ marginBottom: 48, textAlign: "center" }}>
           <FadeUp>
             <span className="eyebrow" style={{ justifyContent: "center" }}>Featured Collections</span>
@@ -1609,7 +1609,7 @@ export default function Home() {
           DIGITAL PRODUCTS
       ══════════════════════════════════════════════ */}
       <section style={{ padding: "clamp(80px, 8vw, 140px) 0", background: "var(--accent)" }}>
-        <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
+        <div style={{ maxWidth: "1920px", margin: "0 auto", padding: "0 32px" }}>
           <FadeUp style={{ textAlign: "center", marginBottom: "64px" }}>
             <span style={{
               display: "inline-flex", alignItems: "center", gap: "10px",
@@ -1709,7 +1709,7 @@ export default function Home() {
           WHY CHOOSE OLIVE SEEDS
       ══════════════════════════════════════════════ */}
       <section style={{ padding: "clamp(80px, 8vw, 140px) 0", background: "#F8F8F5" }}>
-        <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
+        <div style={{ maxWidth: "1920px", margin: "0 auto", padding: "0 32px" }}>
           <FadeUp style={{ textAlign: "center", marginBottom: "72px" }}>
             <span className="eyebrow" style={{ justifyContent: "center" }}>Why Choose Us</span>
             <h2 className="clash" style={{
@@ -1778,7 +1778,7 @@ export default function Home() {
       </section>
 
       <section style={{ padding: "clamp(80px, 8vw, 140px) 0", background: "var(--surface)" }}>
-        <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
+        <div style={{ maxWidth: "1920px", margin: "0 auto", padding: "0 32px" }}>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "60px" }} className="lg-grid-cols-3">
             <style>{`
@@ -1885,7 +1885,7 @@ export default function Home() {
         borderTop: "1px solid rgba(255,255,255,0.1)",
         overflow: "hidden",
       }}>
-        <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px" }}>
+        <div style={{ maxWidth: "1920px", margin: "0 auto", padding: "0 32px" }}>
           <FadeUp style={{ textAlign: "center", marginBottom: "24px" }}>
             <span className="eyebrow" style={{ justifyContent: "center" }}>Trusted Across Industries</span>
             <h2 className="clash" style={{

@@ -43,7 +43,7 @@ export default function CategoryCatalog() {
         </div>
       </section>
 
-      <main style={{ maxWidth: "1280px", margin: "0 auto", padding: "48px 24px" }}>
+      <main style={{ maxWidth: "1920px", margin: "0 auto", padding: "48px 24px" }}>
         {loading ? (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "24px" }}>
             {[...Array(6)].map((_, idx) => (

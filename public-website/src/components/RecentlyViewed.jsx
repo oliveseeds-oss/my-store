@@ -55,7 +55,7 @@ export default function RecentlyViewed({ currentProductId = null }) {
 
   return (
     <div className="w-full my-12 pt-8 border-t border-stone-200">
-      <div className="max-w-6xl mx-auto px-4">
+      <div className="max-w-[1920px] mx-auto px-4">
         <h3 style={{ fontFamily: "'Outfit', sans-serif" }} className="text-xl font-bold text-stone-900 mb-6">
           Recently Viewed
         </h3>
